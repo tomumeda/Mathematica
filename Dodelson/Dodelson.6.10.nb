@@ -1,0 +1,2697 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     90316,       2687]
+NotebookOptionsPosition[     88231,       2618]
+NotebookOutlinePosition[     88596,       2634]
+CellTagsIndexPosition[     88553,       2631]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<TGeneralRelativity1`GeneralRelativity`\>\"", 
+  "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"ClearTensorShortcuts", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "F", ",", "dF", ",", "df"}], "}"}], ",", "0"}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "y", ",", "z", ",", "dP"}], "}"}], ",", "1"}], "}"}], 
+   ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"g", ",", "T", ",", "H"}], "}"}], ",", "2"}], "}"}]}], " ", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Clear", "[", 
+  RowBox[{
+  "\[Phi]", ",", "\[Epsilon]", ",", "w", ",", "dF", ",", "w", ",", "V", ",", 
+   "VV"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"labels", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "\[Delta]", ",", "g", ",", " ", "\[CapitalGamma]"}], 
+    "}"}]}], ";"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"DefineTensorShortcuts", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "F", ",", "dF", ",", "df", ",", "w"}], "}"}], 
+     ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "y", ",", "z", ",", "dP"}], "}"}], ",", "1"}], "}"}], 
+   ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"g", ",", "T"}], "}"}], ",", "2"}], "}"}]}], " ", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DeclareBaseIndices", "[", 
+  RowBox[{"{", 
+   RowBox[{"0", ",", "1", ",", "2", ",", "3"}], "}"}], "]"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"NDim", ",", "BaseIndices"}], "}"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"{", 
+    RowBox[{"4", ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "1", ",", "2", ",", "3"}], "}"}]}], "}"}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406559986790023*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["P=Tensor[\[Phi]]", "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox["\[Phi]",
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.4065599900534887`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dP", "[", "i_", "]"}], ":=", " ", 
+  RowBox[{"PartialD", "[", 
+   RowBox[{"P", ",", "i"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dP", "[", "i", "]"}], "//", "FullForm"}]}], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   TagBox[
+    StyleBox[
+     RowBox[{"Tensor", "[", 
+      RowBox[{"\\[Phi]", ",", 
+       RowBox[{"List", "[", "Void", "]"}], ",", 
+       RowBox[{"List", "[", 
+        RowBox[{"Dif", "[", "6", "]"}], "]"}]}], "]"}],
+     ShowSpecialCharacters->False,
+     ShowStringCharacters->True,
+     NumberMarks->True],
+    FullForm],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406559995754306*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+TensorCheck[expr_]:=
+Module[{number0,notensortensor,work},
+number0 = {
+Tensor[a_] \[RuleDelayed] NumberQ[a] Tensor[a]
+};
+notensortensor ={ Tensor[Tensor[a_]] \[Rule] Tensor[a]};
+work = expr/.notensortensor;
+work = work/.number0;
+work = work /. True \[Rule] 0;
+work = work /. False \[Rule] 1
+]
+(*****End ContantTensor*******************)
+
+ConstantTensorDif[expr_]:=
+Module[{constant0,number0,work},
+constant0 = {
+Tensor[a_,List[Void],List[Dif[k_]]] \[RuleDelayed] \
+MemberQ[Attributes[a],Constant] Tensor[a,List[Void],List[Dif[k]]] };
+number0 = {
+Tensor[a_,List[Void],List[Dif[k_]]] \[RuleDelayed] NumberQ[a] \
+Tensor[a,List[Void],List[Dif[k]]]
+};
+work = expr/.constant0;
+work = work/.number0;
+work = work /. True \[Rule] 0;
+work = work /. False \[Rule] 1
+]
+(*****End ContantTensorDif*******************)
+
+ExpandTensor[expr_]:=
+Module[{difSum,difProd,work},
+difSum =
+{ Tensor[Plus[a_,b_],List[Void],List[Dif[k_]]] \[Rule]  
+  Plus[ 
+  Tensor[a, List[Void],List[Dif[k]]],         
+  Tensor[b, List[Void],List[Dif[k]]] ]};
+difProd =
+{ Tensor[Times[a_,b_],List[Void],List[Dif[k_]]] \[Rule]
+  Plus[
+  Tensor[a,List[Void],List[Dif[k]]]Tensor[b],         
+  Tensor[a] Tensor[b, List[Void],List[Dif[k]]] 
+  ]};
+tensorPlus =
+{ Tensor[Plus[a_,b_]] \[Rule]
+  Plus[Tensor[a], Tensor[b] ]}; 
+  
+  work = expr//.difSum;
+  work = work//.difProd;
+  work = work//.tensorPlus;
+  work = work//ExpandAll;
+  work = work//TensorCheck
+ ] 
+ (******* End ExpandTensor[expr] ***) 
+ 
+(***TESTs****)
+expr = a PartialD[Tensor[s],j] b
+%//FullForm;
+ClearAttributes[s,Constant]
+MemberQ[ Attributes[s], Constant]
+expr//ConstantTensorDif
+%//FullForm;
+
+Times[-1,Tensor[Plus[Times[w,Tensor[dF]],Tensor[F]]],Tensor[g,List[i,Void],\
+List[Void,j]],Derivative[1][V][Tensor[F]]]
+%//ExpandTensor
+%//FullForm
+
+Print[\"----------------\"]
+(*********************)\
+\>", "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"a", " ", "b", " ", 
+    InterpretationBox[
+     SubsuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"NDSolve", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"0", "\[Equal]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"y", "[", "\[Eta]", "]"}], " ", 
+              RowBox[{
+               SuperscriptBox["vi", "\[Prime]",
+                MultilineFunction->None], "[", "\[Eta]", "]"}]}], "+", 
+             RowBox[{
+              RowBox[{"vi", "[", "\[Eta]", "]"}], " ", 
+              RowBox[{
+               SuperscriptBox["y", "\[Prime]",
+                MultilineFunction->None], "[", "\[Eta]", "]"}]}]}]}], ",", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"-", "0.001`"}], " ", 
+              RowBox[{"vi", "[", "\[Eta]", "]"}]}], "+", 
+             RowBox[{
+              SuperscriptBox["\[Delta]", "\[Prime]",
+               MultilineFunction->None], "[", "\[Eta]", "]"}]}], "\[Equal]", 
+            "0"}], ",", 
+           RowBox[{
+            RowBox[{"vi", "[", "1", "]"}], "\[Equal]", "0"}], ",", 
+           RowBox[{
+            RowBox[{"\[Delta]", "[", "1", "]"}], "\[Equal]", "0"}]}], "}"}], 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"vi", ",", "\[Delta]"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Eta]", ",", "1", ",", "7.271054851560786`*^15"}], 
+          "}"}]}], "]"}], ")"}], 
+      InterpretationBox[
+       InterpretationBox[
+        RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+        SequenceForm[",", $CellContext`j],
+        Editable->False],
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+       Editable->False], 
+      InterpretationBox[
+       TagBox[
+        StyleBox[
+         InterpretationBox[
+          RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+          SequenceForm[",", $CellContext`j],
+          Editable->False],
+         ShowContents->False],
+        StyleForm[#, ShowContents -> False]& ],
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]],
+       Editable->False]],
+     Subsuperscript[
+      NDSolve[{
+       0 == $CellContext`y[$CellContext`\[Eta]] 
+          Derivative[
+           1][$CellContext`vi][$CellContext`\[Eta]] + \
+$CellContext`vi[$CellContext`\[Eta]] 
+          Derivative[
+           1][$CellContext`y][$CellContext`\[Eta]], (-0.001) \
+$CellContext`vi[$CellContext`\[Eta]] + 
+         Derivative[1][$CellContext`\[Delta]][$CellContext`\[Eta]] == 
+        0, $CellContext`vi[1] == 0, $CellContext`\[Delta][1] == 
+        0}, {$CellContext`vi, $CellContext`\[Delta]}, {$CellContext`\[Eta], 1,
+         7.271054851560786*^15}], 
+      SequenceForm[
+       TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+      SequenceForm[
+       StyleForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+        False]]],
+     Editable->False]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560000423377*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox["False",
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560000632168*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Attributes", "::", "\<\"ssle\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"Symbol, string, or HoldPattern[symbol] expected at \
+position \\!\\(1\\) in \\!\\(Attributes[\\(\\(NDSolve[\\(\\(\\(\\({\\(\\(0 \
+\[Equal] \\(\\(\\(\\(\\(\\(y[\[Eta]]\\)\\)\\\\ \\(\\(\\(\\(\\*SuperscriptBox[\
+\\\"vi\\\", \\\"\[Prime]\\\", Rule[MultilineFunction, None]]\\)\\)[\[Eta]]\\)\
+\\)\\)\\) + \\(\\(\\(\\(vi[\[Eta]]\\)\\)\\\\ \\(\\(\\(\\(\\*SuperscriptBox[\\\
+\"y\\\", \\\"\[Prime]\\\", Rule[MultilineFunction, None]]\\)\\)[\[Eta]]\\)\\)\
+\\)\\)\\)\\)\\)\\), \\(\\(\\(\\(\\(\\(\\(\\(-0.001`\\)\\)\\\\ \
+\\(\\(vi[\[Eta]]\\)\\)\\)\\) + \
+\\(\\(\\(\\(\\*SuperscriptBox[\\\"\[Delta]\\\", \\\"\[Prime]\\\", \
+Rule[MultilineFunction, None]]\\)\\)[\[Eta]]\\)\\)\\)\\) \[Equal] 0\\)\\), \
+\\(\\(\\(\\(vi[1]\\)\\) \[Equal] 0\\)\\), \\(\\(\\(\\(\[Delta][1]\\)\\) \
+\[Equal] 0\\)\\)}\\)\\), \\(\\(\[LeftSkeleton] 1 \[RightSkeleton]\\)\\), \
+\\(\\({\\(\[LeftSkeleton] 1 \[RightSkeleton]\\)}\\)\\)\\)\\)]\\)\\)]\\). \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/ssle\\\", \
+ButtonNote -> \\\"Attributes::ssle\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.406560001202178*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"a", " ", "b", " ", 
+    InterpretationBox[
+     SubsuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"NDSolve", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"0", "\[Equal]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"y", "[", "\[Eta]", "]"}], " ", 
+              RowBox[{
+               SuperscriptBox["vi", "\[Prime]",
+                MultilineFunction->None], "[", "\[Eta]", "]"}]}], "+", 
+             RowBox[{
+              RowBox[{"vi", "[", "\[Eta]", "]"}], " ", 
+              RowBox[{
+               SuperscriptBox["y", "\[Prime]",
+                MultilineFunction->None], "[", "\[Eta]", "]"}]}]}]}], ",", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"-", "0.001`"}], " ", 
+              RowBox[{"vi", "[", "\[Eta]", "]"}]}], "+", 
+             RowBox[{
+              SuperscriptBox["\[Delta]", "\[Prime]",
+               MultilineFunction->None], "[", "\[Eta]", "]"}]}], "\[Equal]", 
+            "0"}], ",", 
+           RowBox[{
+            RowBox[{"vi", "[", "1", "]"}], "\[Equal]", "0"}], ",", 
+           RowBox[{
+            RowBox[{"\[Delta]", "[", "1", "]"}], "\[Equal]", "0"}]}], "}"}], 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"vi", ",", "\[Delta]"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Eta]", ",", "1", ",", "7.271054851560786`*^15"}], 
+          "}"}]}], "]"}], ")"}], 
+      InterpretationBox[
+       InterpretationBox[
+        RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+        SequenceForm[",", $CellContext`j],
+        Editable->False],
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+       Editable->False], 
+      InterpretationBox[
+       TagBox[
+        StyleBox[
+         InterpretationBox[
+          RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+          SequenceForm[",", $CellContext`j],
+          Editable->False],
+         ShowContents->False],
+        StyleForm[#, ShowContents -> False]& ],
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]],
+       Editable->False]],
+     Subsuperscript[
+      NDSolve[{
+       0 == $CellContext`y[$CellContext`\[Eta]] 
+          Derivative[
+           1][$CellContext`vi][$CellContext`\[Eta]] + \
+$CellContext`vi[$CellContext`\[Eta]] 
+          Derivative[
+           1][$CellContext`y][$CellContext`\[Eta]], (-0.001) \
+$CellContext`vi[$CellContext`\[Eta]] + 
+         Derivative[1][$CellContext`\[Delta]][$CellContext`\[Eta]] == 
+        0, $CellContext`vi[1] == 0, $CellContext`\[Delta][1] == 
+        0}, {$CellContext`vi, $CellContext`\[Delta]}, {$CellContext`\[Eta], 1,
+         7.271054851560786*^15}], 
+      SequenceForm[
+       TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+      SequenceForm[
+       StyleForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+        False]]],
+     Editable->False]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560001287554*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{"-", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}]}], " ", 
+    InterpretationBox[
+     SubsuperscriptBox["g", 
+      InterpretationBox[
+       RowBox[{
+        TagBox[
+         StyleBox["6",
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j],
+       Editable->False], 
+      InterpretationBox[
+       RowBox[{"6", "\[InvisibleSpace]", 
+        TagBox[
+         StyleBox["j",
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ]}],
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]],
+       Editable->False]],
+     Subsuperscript[$CellContext`g, 
+      SequenceForm[
+       StyleForm[6, ShowContents -> False], $CellContext`j], 
+      SequenceForm[6, 
+       StyleForm[$CellContext`j, ShowContents -> False]]],
+     Editable->False], " ", 
+    RowBox[{
+     SuperscriptBox["V", "\[Prime]",
+      MultilineFunction->None], "[", "F", "]"}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560001354796*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", "F"}], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{
+      SuperscriptBox["V", "\[Prime]",
+       MultilineFunction->None], "[", "F", "]"}]}], "-", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"w", " ", "dF"}], ")"}], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{
+      SuperscriptBox["V", "\[Prime]",
+       MultilineFunction->None], "[", "F", "]"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560001438047*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   TagBox[
+    StyleBox[
+     RowBox[{"Plus", "[", 
+      RowBox[{
+       RowBox[{"Times", "[", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"Tensor", "[", "F", "]"}], ",", 
+         RowBox[{"Tensor", "[", 
+          RowBox[{"g", ",", 
+           RowBox[{"List", "[", 
+            RowBox[{"6", ",", "Void"}], "]"}], ",", 
+           RowBox[{"List", "[", 
+            RowBox[{"Void", ",", "j"}], "]"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Derivative", "[", "1", "]"}], "[", "V", "]"}], "[", 
+          RowBox[{"Tensor", "[", "F", "]"}], "]"}]}], "]"}], ",", 
+       RowBox[{"Times", "[", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"Tensor", "[", 
+          RowBox[{"Times", "[", 
+           RowBox[{"w", ",", 
+            RowBox[{"Tensor", "[", "dF", "]"}]}], "]"}], "]"}], ",", 
+         RowBox[{"Tensor", "[", 
+          RowBox[{"g", ",", 
+           RowBox[{"List", "[", 
+            RowBox[{"6", ",", "Void"}], "]"}], ",", 
+           RowBox[{"List", "[", 
+            RowBox[{"Void", ",", "j"}], "]"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Derivative", "[", "1", "]"}], "[", "V", "]"}], "[", 
+          RowBox[{"Tensor", "[", "F", "]"}], "]"}]}], "]"}]}], "]"}],
+     ShowSpecialCharacters->False,
+     ShowStringCharacters->True,
+     NumberMarks->True],
+    FullForm],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560001579434*^9}],
+
+Cell[BoxData["\<\"----------------\"\>"], "Print",
+ CellChangeTimes->{3.4065600016375732`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+w
+SetAttributes[w,Constant]
+Clear[V,VV]\
+\>", "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox["w",
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.4065600133974867`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Tud", "[", 
+   RowBox[{"i_", ",", "k_"}], "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"guu", "[", 
+     RowBox[{"i", ",", "l"}], "]"}], " ", 
+    RowBox[{"dP", "[", "l", "]"}], " ", 
+    RowBox[{"dP", "[", "k", "]"}]}], "-", " ", 
+   RowBox[{
+    RowBox[{"gud", "[", 
+     RowBox[{"i", ",", "k"}], "]"}], " ", 
+    RowBox[{"(", " ", 
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       RowBox[{"guu", "[", 
+        RowBox[{"m", ",", "n"}], "]"}], " ", 
+       RowBox[{"dP", "[", "m", "]"}], " ", 
+       RowBox[{"dP", "[", "n", "]"}]}], " ", "+", " ", 
+      RowBox[{"VV", "[", "P", "]"}]}], " ", 
+     ")"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"VV", "[", "x_", "]"}], ":=", 
+  RowBox[{"Normal", "[", 
+   RowBox[{"Series", "[", 
+    RowBox[{
+     RowBox[{"V", "[", "x", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "P0", ",", "1"}], "}"}]}], "]"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Tud", "[", 
+  RowBox[{"i", ",", "j"}], "]"}]}], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["\[Phi]", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`\[Phi], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["\[Phi]", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`\[Phi], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        FractionBox["1", "2"], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["g", 
+          InterpretationBox[
+           RowBox[{
+            TagBox[
+             StyleBox["m",
+              ShowContents->False],
+             StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+            TagBox[
+             StyleBox["n",
+              ShowContents->False],
+             StyleForm[#, ShowContents -> False]& ]}],
+           SequenceForm[
+            StyleForm[$CellContext`m, ShowContents -> False], 
+            StyleForm[$CellContext`n, ShowContents -> False]],
+           Editable->False], 
+          InterpretationBox[
+           RowBox[{"m", "\[InvisibleSpace]", "n"}],
+           SequenceForm[$CellContext`m, $CellContext`n],
+           Editable->False]],
+         Subsuperscript[$CellContext`g, 
+          SequenceForm[
+           StyleForm[$CellContext`m, ShowContents -> False], 
+           StyleForm[$CellContext`n, ShowContents -> False]], 
+          SequenceForm[$CellContext`m, $CellContext`n]],
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Phi]", 
+          InterpretationBox[
+           InterpretationBox[
+            RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+            SequenceForm[",", $CellContext`m],
+            Editable->False],
+           SequenceForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+           Editable->False], 
+          InterpretationBox[
+           TagBox[
+            StyleBox[
+             InterpretationBox[
+              RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+              SequenceForm[",", $CellContext`m],
+              Editable->False],
+             ShowContents->False],
+            StyleForm[#, ShowContents -> False]& ],
+           SequenceForm[
+            StyleForm[
+             TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+             False]],
+           Editable->False]],
+         Subsuperscript[$CellContext`\[Phi], 
+          SequenceForm[
+           TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+          SequenceForm[
+           StyleForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+            False]]],
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Phi]", 
+          InterpretationBox[
+           InterpretationBox[
+            RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+            SequenceForm[",", $CellContext`n],
+            Editable->False],
+           SequenceForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+           Editable->False], 
+          InterpretationBox[
+           TagBox[
+            StyleBox[
+             InterpretationBox[
+              RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+              SequenceForm[",", $CellContext`n],
+              Editable->False],
+             ShowContents->False],
+            StyleForm[#, ShowContents -> False]& ],
+           SequenceForm[
+            StyleForm[
+             TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+             False]],
+           Editable->False]],
+         Subsuperscript[$CellContext`\[Phi], 
+          SequenceForm[
+           TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+          SequenceForm[
+           StyleForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+            False]]],
+         Editable->False]}], "+", 
+       RowBox[{"V", "[", "P0", "]"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "P0"}], "+", "\[Phi]"}], ")"}], " ", 
+        RowBox[{
+         SuperscriptBox["V", "\[Prime]",
+          MultilineFunction->None], "[", "P0", "]"}]}]}], ")"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560018832926*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Phi]", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"Tensor", "[", "F", "]"}], " ", "+", " ", 
+    RowBox[{"w", " ", 
+     RowBox[{"Tensor", "[", "dF", "]"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"P0", " ", "=", " ", 
+   RowBox[{"Tensor", "[", "F", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Tud", "[", 
+    RowBox[{"i", ",", "j"}], "]"}], "//", "Expand"}], "//", 
+  "Normal"}]}], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["m",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["n",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[$CellContext`m, ShowContents -> False], 
+         StyleForm[$CellContext`n, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"m", "\[InvisibleSpace]", "n"}],
+        SequenceForm[$CellContext`m, $CellContext`n],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[$CellContext`m, ShowContents -> False], 
+        StyleForm[$CellContext`n, ShowContents -> False]], 
+       SequenceForm[$CellContext`m, $CellContext`n]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+         SequenceForm[",", $CellContext`m],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+           SequenceForm[",", $CellContext`m],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+         SequenceForm[",", $CellContext`n],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+           SequenceForm[",", $CellContext`n],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{"V", "[", "F", "]"}]}], "+", 
+    RowBox[{"F", " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{
+      SuperscriptBox["V", "\[Prime]",
+       MultilineFunction->None], "[", "F", "]"}]}], "-", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{
+      SuperscriptBox["V", "\[Prime]",
+       MultilineFunction->None], "[", "F", "]"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560022431962*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"expr", " ", "=", " ", 
+   RowBox[{"Tud", "[", 
+    RowBox[{"i", ",", "j"}], "]"}]}], " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"%", "//", "ExpandTensor"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"%", "//", " ", "ConstantTensorDif"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"%", " ", "/.", " ", 
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{"Tensor", "[", "w", "]"}], "_"], " ", "\[Rule]", " ", "0"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"expr", " ", "=", " ", 
+  RowBox[{"%", " ", "//", "Normal"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  "\"\<\nEnergy-momentum tensor ((\!\(\*SubscriptBox[SuperscriptBox[\(T\), \
+\(i\)], \(\(j\)\(\\\ \)\)]\)) to first-order in (w) where \[Phi] = \
+\!\(\*SubscriptBox[\(\[Phi]\), \(0\)]\) + w \[Delta]\[Phi].  There is a \
+correspondence F = \[Phi] and dF = \[Delta]\[Phi]\n\>\"", 
+  "]"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`w 
+        TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        FractionBox["1", "2"], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["g", 
+          InterpretationBox[
+           RowBox[{
+            TagBox[
+             StyleBox["m",
+              ShowContents->False],
+             StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+            TagBox[
+             StyleBox["n",
+              ShowContents->False],
+             StyleForm[#, ShowContents -> False]& ]}],
+           SequenceForm[
+            StyleForm[$CellContext`m, ShowContents -> False], 
+            StyleForm[$CellContext`n, ShowContents -> False]],
+           Editable->False], 
+          InterpretationBox[
+           RowBox[{"m", "\[InvisibleSpace]", "n"}],
+           SequenceForm[$CellContext`m, $CellContext`n],
+           Editable->False]],
+         Subsuperscript[$CellContext`g, 
+          SequenceForm[
+           StyleForm[$CellContext`m, ShowContents -> False], 
+           StyleForm[$CellContext`n, ShowContents -> False]], 
+          SequenceForm[$CellContext`m, $CellContext`n]],
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+          InterpretationBox[
+           InterpretationBox[
+            RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+            SequenceForm[",", $CellContext`m],
+            Editable->False],
+           SequenceForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+           Editable->False], 
+          InterpretationBox[
+           TagBox[
+            StyleBox[
+             InterpretationBox[
+              RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+              SequenceForm[",", $CellContext`m],
+              Editable->False],
+             ShowContents->False],
+            StyleForm[#, ShowContents -> False]& ],
+           SequenceForm[
+            StyleForm[
+             TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+             False]],
+           Editable->False]],
+         Subsuperscript[$CellContext`w 
+           TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+          TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+          SequenceForm[
+           TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+          SequenceForm[
+           StyleForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+            False]]],
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}], 
+          InterpretationBox[
+           InterpretationBox[
+            RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+            SequenceForm[",", $CellContext`n],
+            Editable->False],
+           SequenceForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+           Editable->False], 
+          InterpretationBox[
+           TagBox[
+            StyleBox[
+             InterpretationBox[
+              RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+              SequenceForm[",", $CellContext`n],
+              Editable->False],
+             ShowContents->False],
+            StyleForm[#, ShowContents -> False]& ],
+           SequenceForm[
+            StyleForm[
+             TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+             False]],
+           Editable->False]],
+         Subsuperscript[$CellContext`w 
+           TensorCalculus3`Tensorial`Tensor[$CellContext`dF] + 
+          TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+          SequenceForm[
+           TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+          SequenceForm[
+           StyleForm[
+            TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+            False]]],
+         Editable->False]}], "+", 
+       RowBox[{"V", "[", "F", "]"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "F"}], "+", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"w", " ", "dF"}], "+", "F"}], ")"}]}], ")"}], " ", 
+        RowBox[{
+         SuperscriptBox["V", "\[Prime]",
+          MultilineFunction->None], "[", "F", "]"}]}]}], ")"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560024933629*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Attributes", "::", "\<\"ssle\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"Symbol, string, or HoldPattern[symbol] expected at \
+position \\!\\(1\\) in \\!\\(Attributes[dF]\\). \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/ssle\\\", ButtonNote -> \
+\\\"Attributes::ssle\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.4065600249784307`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Attributes", "::", "\<\"ssle\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"Symbol, string, or HoldPattern[symbol] expected at \
+position \\!\\(1\\) in \\!\\(Attributes[dF]\\). \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/ssle\\\", ButtonNote -> \
+\\\"Attributes::ssle\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.406560025063129*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Attributes", "::", "\<\"ssle\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"Symbol, string, or HoldPattern[symbol] expected at \
+position \\!\\(1\\) in \\!\\(Attributes[dF]\\). \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/ssle\\\", ButtonNote -> \
+\\\"Attributes::ssle\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.406560025113366*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"General", "::", "\<\"stop\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"Further output of \\!\\(Attributes :: \\\"ssle\\\"\\) will \
+be suppressed during this calculation. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
+ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.40656002520597*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{"w", " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["dF", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`dF], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False]}], "+", 
+    RowBox[{"w", " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["dF", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`dF], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "+", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "w", " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["m",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["n",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[$CellContext`m, ShowContents -> False], 
+         StyleForm[$CellContext`n, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"m", "\[InvisibleSpace]", "n"}],
+        SequenceForm[$CellContext`m, $CellContext`n],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[$CellContext`m, ShowContents -> False], 
+        StyleForm[$CellContext`n, ShowContents -> False]], 
+       SequenceForm[$CellContext`m, $CellContext`n]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["dF", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+         SequenceForm[",", $CellContext`n],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+           SequenceForm[",", $CellContext`n],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`dF], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+         SequenceForm[",", $CellContext`m],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+           SequenceForm[",", $CellContext`m],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "w", " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["m",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["n",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[$CellContext`m, ShowContents -> False], 
+         StyleForm[$CellContext`n, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"m", "\[InvisibleSpace]", "n"}],
+        SequenceForm[$CellContext`m, $CellContext`n],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[$CellContext`m, ShowContents -> False], 
+        StyleForm[$CellContext`n, ShowContents -> False]], 
+       SequenceForm[$CellContext`m, $CellContext`n]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["dF", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+         SequenceForm[",", $CellContext`m],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+           SequenceForm[",", $CellContext`m],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`dF], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+         SequenceForm[",", $CellContext`n],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+           SequenceForm[",", $CellContext`n],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["m",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["n",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[$CellContext`m, ShowContents -> False], 
+         StyleForm[$CellContext`n, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"m", "\[InvisibleSpace]", "n"}],
+        SequenceForm[$CellContext`m, $CellContext`n],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[$CellContext`m, ShowContents -> False], 
+        StyleForm[$CellContext`n, ShowContents -> False]], 
+       SequenceForm[$CellContext`m, $CellContext`n]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+         SequenceForm[",", $CellContext`m],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+           SequenceForm[",", $CellContext`m],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+         SequenceForm[",", $CellContext`n],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+           SequenceForm[",", $CellContext`n],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{"V", "[", "F", "]"}]}], "-", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"w", " ", "dF"}], ")"}], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{
+      SuperscriptBox["V", "\[Prime]",
+       MultilineFunction->None], "[", "F", "]"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.40656002532802*^9}],
+
+Cell[BoxData["\<\"\\nEnergy-momentum tensor \
+((\\!\\(\\*SubscriptBox[SuperscriptBox[\\(T\\), \\(i\\)], \\(\\(j\\)\\(\\\\ \
+\\)\\)]\\)) to first-order in (w) where \[Phi] = \\!\\(\\*SubscriptBox[\\(\
+\[Phi]\\), \\(0\\)]\\) + w \[Delta]\[Phi].  There is a correspondence F = \
+\[Phi] and dF = \[Delta]\[Phi]\\n\"\>"], "Print",
+ CellChangeTimes->{3.406560025393938*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+
+ss = expr//ExpandTensor;
+ss0 = ss/. w\[Rule]0;
+ss0 = ss0//ExpandTensor
+ss1 = ss-ss0/. w\[Rule]1;
+ss1//TensorCheck
+dF = \[Delta]\[Phi];
+%%//TeXForm
+Print[\"
+The first-order Energy-momentum tensor (Tij)
+The TEX form is erroneous.
+\"]\
+\>", "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["l",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], 
+         StyleForm[$CellContext`l, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", "l"}],
+        SequenceForm[6, $CellContext`l],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], 
+        StyleForm[$CellContext`l, ShowContents -> False]], 
+       SequenceForm[6, $CellContext`l]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+         SequenceForm[",", $CellContext`j],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "j"}],
+           SequenceForm[",", $CellContext`j],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`j]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`j], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+         SequenceForm[",", $CellContext`l],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "l"}],
+           SequenceForm[",", $CellContext`l],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`l]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`l], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["m",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["n",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[
+         StyleForm[$CellContext`m, ShowContents -> False], 
+         StyleForm[$CellContext`n, ShowContents -> False]],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"m", "\[InvisibleSpace]", "n"}],
+        SequenceForm[$CellContext`m, $CellContext`n],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[$CellContext`m, ShowContents -> False], 
+        StyleForm[$CellContext`n, ShowContents -> False]], 
+       SequenceForm[$CellContext`m, $CellContext`n]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+         SequenceForm[",", $CellContext`m],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "m"}],
+           SequenceForm[",", $CellContext`m],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`m]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`m], ShowContents -> 
+         False]]],
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       InterpretationBox[
+        InterpretationBox[
+         RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+         SequenceForm[",", $CellContext`n],
+         Editable->False],
+        SequenceForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n]],
+        Editable->False], 
+       InterpretationBox[
+        TagBox[
+         StyleBox[
+          InterpretationBox[
+           RowBox[{"\<\",\"\>", "\[InvisibleSpace]", "n"}],
+           SequenceForm[",", $CellContext`n],
+           Editable->False],
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ],
+        SequenceForm[
+         StyleForm[
+          TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+          False]],
+        Editable->False]],
+      Subsuperscript[
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F], 
+       SequenceForm[
+        TensorCalculus3`Tensorial`Dif[$CellContext`n]], 
+       SequenceForm[
+        StyleForm[
+         TensorCalculus3`Tensorial`Dif[$CellContext`n], ShowContents -> 
+         False]]],
+      Editable->False]}], "-", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["g", 
+       InterpretationBox[
+        RowBox[{
+         TagBox[
+          StyleBox["6",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+        SequenceForm[
+         StyleForm[6, ShowContents -> False], $CellContext`j],
+        Editable->False], 
+       InterpretationBox[
+        RowBox[{"6", "\[InvisibleSpace]", 
+         TagBox[
+          StyleBox["j",
+           ShowContents->False],
+          StyleForm[#, ShowContents -> False]& ]}],
+        SequenceForm[6, 
+         StyleForm[$CellContext`j, ShowContents -> False]],
+        Editable->False]],
+      Subsuperscript[$CellContext`g, 
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j], 
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]]],
+      Editable->False], " ", 
+     RowBox[{"V", "[", "F", "]"}]}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560029714383*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{"-", "dF"}], " ", 
+    InterpretationBox[
+     SubsuperscriptBox["g", 
+      InterpretationBox[
+       RowBox[{
+        TagBox[
+         StyleBox["6",
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ], "\[InvisibleSpace]", "j"}],
+       SequenceForm[
+        StyleForm[6, ShowContents -> False], $CellContext`j],
+       Editable->False], 
+      InterpretationBox[
+       RowBox[{"6", "\[InvisibleSpace]", 
+        TagBox[
+         StyleBox["j",
+          ShowContents->False],
+         StyleForm[#, ShowContents -> False]& ]}],
+       SequenceForm[6, 
+        StyleForm[$CellContext`j, ShowContents -> False]],
+       Editable->False]],
+     Subsuperscript[$CellContext`g, 
+      SequenceForm[
+       StyleForm[6, ShowContents -> False], $CellContext`j], 
+      SequenceForm[6, 
+       StyleForm[$CellContext`j, ShowContents -> False]]],
+     Editable->False], " ", 
+    RowBox[{
+     SuperscriptBox["V", "\[Prime]",
+      MultilineFunction->None], "[", "F", "]"}]}],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560029802413*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   InterpretationBox[
+    StyleBox[
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{"\\", "delta", " ", "\\", "phi"}]}], "  ", "g_", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"6", "j"}], "}"}], "^", 
+       RowBox[{"{", 
+        RowBox[{"6", "j"}], "}"}]}], " ", 
+      RowBox[{"V", "'"}], 
+      RowBox[{"(", "F", ")"}]}],
+     ShowStringCharacters->True,
+     NumberMarks->True],
+    TeXForm[-TensorCalculus3`Tensorial`Tensor[$CellContext`\[Delta]\[Phi]] 
+     TensorCalculus3`Tensorial`Tensor[$CellContext`g, {
+       6, TensorCalculus3`Tensorial`Void}, {
+       TensorCalculus3`Tensorial`Void, $CellContext`j}] 
+     Derivative[1][$CellContext`V][
+       TensorCalculus3`Tensorial`Tensor[$CellContext`F]]],
+    AutoDelete->True,
+    Editable->True],
+   FontFamily->"Courier",
+   FontSize->16],
+  StyleForm[#, FontSize -> 16, FontFamily -> "Courier"]& ]], "Output",
+ CellChangeTimes->{3.406560030413377*^9}],
+
+Cell[BoxData["\<\"\\nThe first-order Energy-momentum tensor (Tij)\\nThe TEX \
+form is erroneous.\\n\"\>"], "Print",
+ CellChangeTimes->{3.406560030496039*^9}]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{"ClearTensorShortcuts", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "F", ",", "dF", ",", "df"}], "}"}], ",", "0"}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "dP"}], "}"}], ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"g", ",", "T"}], "}"}], ",", "2"}], "}"}]}], " ", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Clear", "[", 
+  RowBox[{
+  "\[Phi]", ",", "\[Epsilon]", ",", "w", ",", "dF", ",", "V", ",", "VV"}], 
+  "]"}]}], "Input"]
+},
+WindowSize->{573, 726},
+WindowMargins->{{328, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+FrontEndVersion->"6.0 for Mac OS X x86 (32-bit) (April 20, 2007)",
+StyleDefinitions->"TensorialStyle.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[568, 21, 106, 2, 41, "Input"],
+Cell[677, 25, 850, 26, 110, "Input"],
+Cell[1530, 53, 630, 20, 76, "Input"],
+Cell[CellGroupData[{
+Cell[2185, 77, 85, 2, 41, "Input"],
+Cell[2273, 81, 317, 10, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2627, 96, 33, 0, 41, "Input"],
+Cell[2663, 98, 202, 6, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2902, 109, 233, 6, 59, "Input"],
+Cell[3138, 117, 518, 17, 40, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3693, 139, 1843, 70, 1007, "Input"],
+Cell[5539, 211, 3176, 87, 90, "Output"],
+Cell[8718, 300, 199, 6, 28, "Output"],
+Cell[8920, 308, 1274, 20, 62, "Message"],
+Cell[10197, 330, 3176, 87, 90, "Output"],
+Cell[13376, 419, 1294, 40, 39, "Output"],
+Cell[14673, 461, 2348, 70, 39, "Output"],
+Cell[17024, 533, 1589, 45, 132, "Output"],
+Cell[18616, 580, 94, 1, 20, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18747, 586, 64, 4, 69, "Input"],
+Cell[18814, 592, 197, 6, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19048, 603, 1049, 33, 113, "Input"],
+Cell[20100, 638, 8034, 227, 51, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28171, 870, 472, 14, 76, "Input"],
+Cell[28646, 886, 11319, 327, 113, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[40002, 1218, 951, 23, 223, "Input"],
+Cell[40956, 1243, 8937, 250, 126, "Output"],
+Cell[49896, 1495, 467, 9, 40, "Message"],
+Cell[50366, 1506, 465, 9, 40, "Message"],
+Cell[50834, 1517, 465, 9, 40, "Message"],
+Cell[51302, 1528, 457, 9, 41, "Message"],
+Cell[51762, 1539, 24341, 706, 126, "Output"],
+Cell[76106, 2247, 367, 5, 71, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76510, 2257, 257, 13, 195, "Input"],
+Cell[76770, 2272, 8507, 248, 50, "Output"],
+Cell[85280, 2522, 1213, 37, 39, "Output"],
+Cell[86496, 2561, 957, 28, 40, "Output"],
+Cell[87456, 2591, 157, 2, 66, "Print"]
+}, Open  ]],
+Cell[87628, 2596, 599, 20, 76, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
+

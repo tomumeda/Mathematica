@@ -1,0 +1,26 @@
+tmpH = H^2 -> (8*G*Pi*\[Rho])/3 - k/a[t]^2
+ 
+tmpH0 = H -> xPartialD[a, t]/a
+ 
+tmpds = ds^2 -> dt^2 - (d\[CapitalOmega]*r^2 + dr^2/(1 - k*r))*a[t]^2
+ 
+tmpg = Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+     MatrixForm[{{1, 0, 0, 0}, {0, a[t]^2/(1 - k*r), 0, 0}, 
+       {0, 0, r^2*a[t]^2, 0}, {0, 0, 0, r^2*a[t]^2*Sin[\[Theta]]^2}}]
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+g[a_] := GammaSlash[a]
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmpe = d[a^3*\[Rho]] == -(p*d[a^3])
+ 
+tmpT = Tensor[T, {\[Mu], \[Nu]}, {Void, Void}] -> 
+     -(\[Rho]*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}]) + 
+      (p + \[Rho])*Tensor[u, {\[Mu]}, {Void}]*Tensor[u, {\[Nu]}, {Void}]

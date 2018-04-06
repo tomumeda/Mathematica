@@ -1,0 +1,2391 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     98070,       2382]
+NotebookOptionsPosition[     59965,       1565]
+NotebookOutlinePosition[     95846,       2322]
+CellTagsIndexPosition[     95803,       2319]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["", "Subsubtitle",
+ CellChangeTimes->{{3.425218495030054*^9, 3.425218498385071*^9}, {
+   3.425218550170617*^9, 3.425218625232259*^9}, {3.425218664844544*^9, 
+   3.425218708506838*^9}, {3.425218824382082*^9, 3.425218831551461*^9}, 
+   3.4255053580002813`*^9, {3.4290265535140457`*^9, 3.4290265614823008`*^9}}],
+
+Cell[TextData[{
+ "Inflation also solves the flatness problem.  This is the question of why \
+the energy density today is so close to critical.\n  (a)    Suppose that ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[CapitalOmega]", "==", 
+    RowBox[{"8", 
+     RowBox[{
+      RowBox[{"\[Pi]G\[Rho]", "[", "t", "]"}], "/", 
+      RowBox[{"(", 
+       RowBox[{"3", 
+        SuperscriptBox["H", "2"]}], ")"}]}]}]}], TraditionalForm]]],
+ "  is equal to 0.3 today, where \[Rho] counts the energy density in matter \
+and radiation  (assume zero cosmological constant).   From Eq.1.2, plot \
+\[CapitalOmega]-1  as a function of the scale factor.    How close to one \
+would \[CapitalOmega]  have been back at the Planck epoch (assuming no \
+inflation took place so that the scale factor at the  Planck epoch was of \
+order ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox["10", 
+    RowBox[{"-", "32"}]], TraditionalForm]]],
+ "?  This fine-tuning of the initial conditions is the flatness problem.    \
+If not for the fine tuning, an open universe would be obviously open  (i.e.,  \
+\[CapitalOmega]-1 would be almost exactly zero) today.\n(b)    Now show that \
+inflation solve the flatness problem. Extrapolate \[CapitalOmega]-1 back to \
+the end of inflation, and then through 60 e-folds of inflation.\n"
+}], "Text",
+ CellChangeTimes->{{3.425991186652115*^9, 3.425991189909521*^9}, {
+   3.425991232209476*^9, 3.425991264273306*^9}, 3.429449104630166*^9, {
+   3.429449219705518*^9, 3.429449466446657*^9}, {3.429449573471566*^9, 
+   3.429449643417932*^9}, {3.429532565253357*^9, 3.429532566341154*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetDirectory", "[", 
+    RowBox[{"$HomeDirectory", "~~", "\"\</Mathematica/Dodelson\>\""}], "]"}], 
+   ";"}], "\n", 
+  RowBox[{"(*", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Get", "[", "\"\<Definition/LegendreFunctions\>\"", "]"}], "\n", 
+    "LegendreFunctions", "\[IndentingNewLine]", 
+    RowBox[{"Get", "[", "\"\<Definition/IntegrateSumFunctions\>\"", "]"}], 
+    "\n", "IntegrateSumFunctions"}], "\[IndentingNewLine]", "*)"}]}], "\n", 
+ RowBox[{"<<", "Dodelson`DodelsonDefine`"}], "\n", 
+ RowBox[{
+  RowBox[{"<<", "Dodelson`CommonParameters`"}], 
+  "\n"}], "\n", "RecombinationSubs", "\n", "equalitySubs", "\n", "ayetaSubs", \
+"\n", "EnergyDenSubs"}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.429026622534499*^9, {3.429026672962245*^9, 3.4290268173836412`*^9}, 
+   3.429036537066626*^9, 3.429452964118318*^9, {3.42945314908046*^9, 
+   3.429453184389615*^9}, {3.429453391737444*^9, 3.4294534014256907`*^9}, {
+   3.429455325651355*^9, 3.429455329671871*^9}, {3.429455505380825*^9, 
+   3.42945552984522*^9}, 3.429457061391986*^9, 3.429457929474498*^9}],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"SubscriptSymbols", "::", "\<\"list\"\>"}], 
+   RowBox[{
+   ":", " "}], "\<\"The subscript specification list given to \
+SubscriptSymbols must be a list of variables, or a list of subscripted \
+variables. They can't be mixed. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/list\\\", ButtonNote -> \
+\\\"Utilities`.`SubscriptSymbols`.`SubscriptSymbols::list\\\"]\\)\"\>"}], 
+  TraditionalForm]], "Message", "MSG",
+ CellChangeTimes->{{3.429458050243976*^9, 3.429458073404223*^9}, {
+  3.4294918768300667`*^9, 3.429491900607514*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subZrecomb\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["z", "Times"], "\[Rule]", "1000"}]}],
+   SequenceForm[
+   "subZrecomb", 
+    " :: ", $CellContext`z\[UnderBracket]Subscript\[UnderBracket]Times -> 
+    1000],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190065265*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subarecomb\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["a", "Times"], "\[Rule]", 
+     FractionBox["1", 
+      RowBox[{
+       SubscriptBox["z", "Times"], "+", "1"}]]}]}],
+   SequenceForm[
+   "subarecomb", 
+    " :: ", $CellContext`a\[UnderBracket]Subscript\[UnderBracket]Times -> (
+      1 + $CellContext`z\[UnderBracket]Subscript\[UnderBracket]Times)^(-1)],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190065487*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subyrecomb\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["y", "Times"], "\[Rule]", 
+     FractionBox[
+      SubscriptBox["a", "Times"], 
+      SubscriptBox["a", "eq"]]}]}],
+   SequenceForm[
+   "subyrecomb", 
+    " :: ", $CellContext`y\[UnderBracket]Subscript\[UnderBracket]Times -> \
+$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^(-1) $CellContext`a\
+\[UnderBracket]Subscript\[UnderBracket]Times],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900656466*^9}}],
+
+Cell[BoxData[
+ FormBox["\<\"Some definitions referencing 'equality' point : \"\>", 
+  TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900657854*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defkeq\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["k", "eq"], "\[Rule]", 
+     RowBox[{
+      SubscriptBox["a", "eq"], " ", 
+      RowBox[{"H", "(", 
+       SubscriptBox["a", "eq"], ")"}]}]}]}],
+   SequenceForm[
+   "defkeq", 
+    " :: ", $CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq -> \
+$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq \
+$CellContext`H[$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919006593933`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subkeq\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["k", "eq"], "\[Rule]", 
+     RowBox[{
+      SqrtBox["2"], " ", 
+      SqrtBox[
+       FractionBox[
+        RowBox[{
+         SubsuperscriptBox["H", "0", "2"], " ", 
+         SubscriptBox["\[CapitalOmega]", "m"]}], 
+        SubscriptBox["a", "eq"]]]}]}]}],
+   SequenceForm[
+   "subkeq", " :: ", $CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq -> 
+    2^Rational[
+       1, 2] ($CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^(-1) \
+$CellContext`H\[UnderBracket]Subscript\[UnderBracket]0^2 $CellContext`\
+\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]m)^Rational[1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190066116*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subH0\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["H", "0"], "\[Rule]", 
+     FractionBox[
+      SqrtBox[
+       FractionBox[
+        RowBox[{
+         SubscriptBox["a", "eq"], " ", 
+         SubsuperscriptBox["k", "eq", "2"]}], 
+        SubscriptBox["\[CapitalOmega]", "m"]]], 
+      SqrtBox["2"]]}]}],
+   SequenceForm[
+   "subH0", " :: ", $CellContext`H\[UnderBracket]Subscript\[UnderBracket]0 -> 
+    2^Rational[-1, 
+        2] ($CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq \
+$CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq^2/$CellContext`\
+\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]m)^Rational[1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900662821*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subkkeq\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"k", "\[Rule]", 
+     RowBox[{
+      SubscriptBox["k", "eq"], " ", 
+      SubscriptBox["kk", "eq"]}]}]}],
+   SequenceForm[
+   "subkkeq", 
+    " :: ", $CellContext`k -> $CellContext`k\[UnderBracket]Subscript\
+\[UnderBracket]eq Subscript[$CellContext`kk, $CellContext`eq]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919006642923`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subetat\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["\[Eta]", "\[Prime]",
+       MultilineFunction->None], "(", "t", ")"}], "\[Rule]", 
+     FractionBox["1", 
+      RowBox[{"a", "(", "\[Eta]", ")"}]]}]}],
+   SequenceForm[
+   "subetat", " :: ", 
+    Derivative[
+     1][$CellContext`\[Eta]][$CellContext`t] -> $CellContext`a[$CellContext`\
+\[Eta]]^(-1)],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900665846*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subyeta\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     RowBox[{"y", "(", "\[Eta]", ")"}], "\[Rule]", 
+     FractionBox[
+      RowBox[{"a", "(", "\[Eta]", ")"}], 
+      SubscriptBox["a", "eq"]]}]}],
+   SequenceForm[
+   "subyeta", 
+    " :: ", $CellContext`y[$CellContext`\[Eta]] -> $CellContext`a\
+\[UnderBracket]Subscript\[UnderBracket]eq^(-1) $CellContext`a[$CellContext`\
+\[Eta]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900667338*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subDyeta\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["y", "\[Prime]",
+       MultilineFunction->None], "(", "\[Eta]", ")"}], "\[Rule]", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["a", "\[Prime]",
+        MultilineFunction->None], "(", "\[Eta]", ")"}], 
+      SubscriptBox["a", "eq"]]}]}],
+   SequenceForm[
+   "subDyeta", " :: ", 
+    Derivative[
+     1][$CellContext`y][$CellContext`\[Eta]] -> \
+$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^(-1) 
+     Derivative[1][$CellContext`a][$CellContext`\[Eta]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900669065*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subHt\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"H", "\[Rule]", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["a", "\[Prime]",
+        MultilineFunction->None], "(", "t", ")"}], 
+      RowBox[{"a", "(", "t", ")"}]]}]}],
+   SequenceForm[
+   "subHt", " :: ", $CellContext`H -> $CellContext`a[$CellContext`t]^(-1) 
+     Derivative[1][$CellContext`a][$CellContext`t]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900682741*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defaeta\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"a", "(", "\[Eta]_", ")"}], ":=", 
+      RowBox[{
+       RowBox[{"y", "(", "\[Eta]", ")"}], " ", 
+       SubscriptBox["a", "eq"]}]}],
+     HoldForm]}],
+   SequenceForm["defaeta", " :: ", 
+    HoldForm[$CellContext`a[
+       Pattern[$CellContext`\[Eta], 
+        Blank[]]] := $CellContext`y[$CellContext`\[Eta]] 
+      Subscript[$CellContext`a, $CellContext`eq]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919006942453`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subHeta\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"H", "\[Rule]", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["a", "\[Prime]",
+        MultilineFunction->None], "(", "\[Eta]", ")"}], 
+      SuperscriptBox[
+       RowBox[{"a", "(", "\[Eta]", ")"}], "2"]]}]}],
+   SequenceForm[
+   "subHeta", 
+    " :: ", $CellContext`H -> $CellContext`a[$CellContext`\[Eta]]^(-2) 
+     Derivative[1][$CellContext`a][$CellContext`\[Eta]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900705606*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"deffnu\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      SubscriptBox["f", "\[Nu]"], ":=", 
+      FractionBox[
+       SubscriptBox["\[Rho]", "\[Nu]"], 
+       RowBox[{
+        SubscriptBox["\[Rho]", "\[Gamma]"], "+", 
+        SubscriptBox["\[Rho]", "\[Nu]"]}]]}],
+     HoldForm]}],
+   SequenceForm["deffnu", " :: ", 
+    HoldForm[
+    Subscript[$CellContext`f, $CellContext`\[Nu]] := 
+     Subscript[$CellContext`\[Rho], $CellContext`\[Nu]]/(
+      Subscript[$CellContext`\[Rho], $CellContext`\[Gamma]] + 
+      Subscript[$CellContext`\[Rho], $CellContext`\[Nu]])]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190071712*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRhoG\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Rho]", "\[Gamma]"], "(", "a_", ")"}], ":=", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["C", "\[Gamma]"], " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          FractionBox["1", "a"], ")"}], "4"], " ", 
+        SubscriptBox["\[Rho]", "cr"]}], 
+       SuperscriptBox["h", "2"]]}],
+     HoldForm]}],
+   SequenceForm["defRhoG", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Rho], $CellContext`\[Gamma]][
+       Pattern[$CellContext`a, 
+        Blank[]]] := (
+       Subscript[C, $CellContext`\[Gamma]] (1/$CellContext`a)^4 
+       Subscript[$CellContext`\[Rho], $CellContext`cr])/$CellContext`h^2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919007349873`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRhoRad\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Rho]", "r"], "(", "a_", ")"}], ":=", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "\[Gamma]"], "(", "a", ")"}], 
+       RowBox[{"1", "-", 
+        SubscriptBox["f", "\[Nu]"]}]]}],
+     HoldForm]}],
+   SequenceForm["defRhoRad", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Rho], $CellContext`r][
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Subscript[$CellContext`\[Rho], $CellContext`\[Gamma]][$CellContext`a]/(1 - 
+      Subscript[$CellContext`f, $CellContext`\[Nu]])]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919007502613`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRhoB\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Rho]", "b"], "(", "a_", ")"}], ":=", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[CapitalOmega]", "b"], " ", 
+        SubscriptBox["\[Rho]", "cr"]}], 
+       SuperscriptBox["a", "3"]]}],
+     HoldForm]}],
+   SequenceForm["defRhoB", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Rho], $CellContext`b][
+       Pattern[$CellContext`a, 
+        Blank[]]] := (Subscript[$CellContext`\[CapitalOmega], $CellContext`b] 
+       Subscript[$CellContext`\[Rho], $CellContext`cr])/$CellContext`a^3]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919007620583`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRhoM\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Rho]", "m"], "(", "a_", ")"}], ":=", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[CapitalOmega]", "m"], " ", 
+        SubscriptBox["\[Rho]", "cr"]}], 
+       SuperscriptBox["a", "3"]]}],
+     HoldForm]}],
+   SequenceForm["defRhoM", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Rho], $CellContext`m][
+       Pattern[$CellContext`a, 
+        Blank[]]] := (Subscript[$CellContext`\[CapitalOmega], $CellContext`m] 
+       Subscript[$CellContext`\[Rho], $CellContext`cr])/$CellContext`a^3]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900773634*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRhoDE\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Rho]", "de"], "(", "a_", ")"}], ":=", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[CapitalOmega]", "de"], " ", 
+        SubscriptBox["\[Rho]", "cr"]}], 
+       SuperscriptBox["a", "3"]]}],
+     HoldForm]}],
+   SequenceForm["defRhoDE", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Rho], $CellContext`de][
+       Pattern[$CellContext`a, 
+        Blank[]]] := (
+       Subscript[$CellContext`\[CapitalOmega], $CellContext`de] 
+       Subscript[$CellContext`\[Rho], $CellContext`cr])/$CellContext`a^3]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900784837*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defRho\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"\[Rho]", "(", "a_", ")"}], ":=", 
+      RowBox[{
+       RowBox[{
+        SubscriptBox["\[Rho]", "m"], "(", "a", ")"}], "+", 
+       RowBox[{
+        SubscriptBox["\[Rho]", "r"], "(", "a", ")"}]}]}],
+     HoldForm]}],
+   SequenceForm["defRho", " :: ", 
+    HoldForm[$CellContext`\[Rho][
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Subscript[$CellContext`\[Rho], $CellContext`m][$CellContext`a] + 
+      Subscript[$CellContext`\[Rho], $CellContext`r][$CellContext`a]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900795794*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defOmegaM\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      SubscriptBox["\[CapitalOmega]", "m"], ":=", 
+      RowBox[{
+       SubscriptBox["\[CapitalOmega]", "b"], "+", 
+       SubscriptBox["\[CapitalOmega]", "dm"]}]}],
+     HoldForm]}],
+   SequenceForm["defOmegaM", " :: ", 
+    HoldForm[
+    Subscript[$CellContext`\[CapitalOmega], $CellContext`m] := 
+     Subscript[$CellContext`\[CapitalOmega], $CellContext`b] + 
+      Subscript[$CellContext`\[CapitalOmega], $CellContext`dm]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900807143*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subRhoCR\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["\[Rho]", "cr"], "\[Rule]", 
+     FractionBox[
+      RowBox[{"3", " ", 
+       SubsuperscriptBox["H", "0", "2"]}], 
+      RowBox[{"8", " ", "G", " ", "\[Pi]"}]]}]}],
+   SequenceForm[
+   "subRhoCR", 
+    " :: ", $CellContext`\[Rho]\[UnderBracket]Subscript\[UnderBracket]cr -> 
+    Rational[3, 
+       8] $CellContext`G^(-1) $CellContext`H\[UnderBracket]Subscript\
+\[UnderBracket]0^2/Pi],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190081831*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defe255\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       FractionBox[
+        RowBox[{"\[PartialD]", 
+         RowBox[{
+          SubscriptBox["\[Rho]", "t"], "(", "t", ")"}]}], 
+        RowBox[{"\[PartialD]", "t"}],
+        MultilineFunction->None], "+", 
+       FractionBox[
+        RowBox[{"3", " ", 
+         FractionBox[
+          RowBox[{"\[PartialD]", 
+           RowBox[{
+            SubscriptBox["a", "t"], "(", "t", ")"}]}], 
+          RowBox[{"\[PartialD]", "t"}],
+          MultilineFunction->None], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            SubscriptBox["\[ScriptCapitalP]", "t"], "(", "t", ")"}], "+", 
+           RowBox[{
+            SubscriptBox["\[Rho]", "t"], "(", "t", ")"}]}], ")"}]}], 
+        RowBox[{
+         SubscriptBox["a", "t"], "(", "t", ")"}]]}], "\[LongEqual]", "0"}],
+     HoldForm]}],
+   SequenceForm["defe255", " :: ", 
+    HoldForm[D[
+        Subscript[$CellContext`\[Rho], $CellContext`t][$CellContext`t], \
+$CellContext`t] + D[
+         Subscript[$CellContext`a, $CellContext`t][$CellContext`t], \
+$CellContext`t] 
+       Subscript[$CellContext`a, $CellContext`t][$CellContext`t]^(-1) 
+       3 (Subscript[$CellContext`\[Rho], $CellContext`t][$CellContext`t] + 
+        Subscript[$CellContext`\[ScriptCapitalP], \
+$CellContext`t][$CellContext`t]) == 0]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900829886*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defe255a\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       FractionBox[
+        RowBox[{"\[PartialD]", 
+         RowBox[{
+          SubscriptBox["\[Rho]", "a"], "(", "a", ")"}]}], 
+        RowBox[{"\[PartialD]", "a"}],
+        MultilineFunction->None], "+", 
+       FractionBox[
+        RowBox[{"3", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            SubscriptBox["\[ScriptCapitalP]", "a"], "(", "a", ")"}], "+", 
+           RowBox[{
+            SubscriptBox["\[Rho]", "a"], "(", "a", ")"}]}], ")"}]}], "a"]}], 
+      "\[LongEqual]", "0"}],
+     HoldForm]}],
+   SequenceForm["defe255a", " :: ", 
+    HoldForm[D[
+        Subscript[$CellContext`\[Rho], $CellContext`a][$CellContext`a], \
+$CellContext`a] + 
+      1 $CellContext`a^(-1) 
+       3 (Subscript[$CellContext`\[Rho], $CellContext`a][$CellContext`a] + 
+        Subscript[$CellContext`\[ScriptCapitalP], \
+$CellContext`a][$CellContext`a]) == 0]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900842067*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subaeq\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["a", "eq"], "\[Rule]", 
+     RowBox[{"-", 
+      FractionBox[
+       SubscriptBox["C", "\[Gamma]"], 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          SubscriptBox["f", "\[Nu]"], "-", "1"}], ")"}], " ", 
+        SuperscriptBox["h", "2"], " ", 
+        SubscriptBox["\[CapitalOmega]", "m"]}]]}]}]}],
+   SequenceForm[
+   "subaeq", 
+    " :: ", $CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq -> -(-1 + \
+$CellContext`f\[UnderBracket]Subscript\[UnderBracket]\[Nu])^(-1) \
+$CellContext`h^(-2) $CellContext`\[CapitalOmega]\[UnderBracket]Subscript\
+\[UnderBracket]m^(-1) Subscript[C, $CellContext`\[Gamma]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900854291*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"subC\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["C", "\[Gamma]"], "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", 
+       SubscriptBox["a", "eq"]}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox["f", "\[Nu]"], "-", "1"}], ")"}], " ", 
+      SuperscriptBox["h", "2"], " ", 
+      SubscriptBox["\[CapitalOmega]", "m"]}]}]}],
+   SequenceForm[
+   "subC", " :: ", 
+    Subscript[
+     C, $CellContext`\[Gamma]] -> -$CellContext`a\[UnderBracket]Subscript\
+\[UnderBracket]eq (-1 + $CellContext`f\[UnderBracket]Subscript\[UnderBracket]\
+\[Nu]) $CellContext`h^2 $CellContext`\[CapitalOmega]\[UnderBracket]Subscript\
+\[UnderBracket]m],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190086666*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defHa\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"Ha", "(", "a_", ")"}], ":=", 
+      SqrtBox[
+       RowBox[{
+        FractionBox["1", "3"], " ", 
+        RowBox[{"(", 
+         RowBox[{"8", " ", "\[Pi]", " ", "G"}], ")"}], " ", 
+        RowBox[{"\[Rho]", "(", "a", ")"}]}]]}],
+     HoldForm]}],
+   SequenceForm["defHa", " :: ", 
+    HoldForm[$CellContext`Ha[
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Sqrt[1 3^(-1) (8 
+        Pi $CellContext`G) $CellContext`\[Rho][$CellContext`a]]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190087899*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defetade\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Eta]", "de"], "(", "a_", ")"}], ":=", 
+      RowBox[{
+       SubsuperscriptBox["\[Integral]", "0", "a"], 
+       RowBox[{
+        FractionBox["1", 
+         RowBox[{
+          SuperscriptBox["aa", "2"], " ", 
+          RowBox[{"Ha", "(", "aa", ")"}]}]], 
+        RowBox[{"\[DifferentialD]", "aa"}]}]}]}],
+     HoldForm]}],
+   SequenceForm["defetade", " :: ", 
+    HoldForm[Subscript[$CellContext`\[Eta], $CellContext`de][
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Integrate[
+      1/($CellContext`aa^2 $CellContext`Ha[$CellContext`aa]), \
+{$CellContext`aa, 0, $CellContext`a}]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900891814*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defe242\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"\[Chi]", "(", "a_", ")"}], ":=", 
+      RowBox[{
+       SubsuperscriptBox["\[Integral]", "a", "1"], 
+       RowBox[{
+        FractionBox["1", 
+         RowBox[{
+          SuperscriptBox["aa", "2"], " ", 
+          RowBox[{"Ha", "(", "aa", ")"}]}]], 
+        RowBox[{"\[DifferentialD]", "aa"}]}]}]}],
+     HoldForm]}],
+   SequenceForm["defe242", " :: ", 
+    HoldForm[$CellContext`\[Chi][
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Integrate[
+      1/($CellContext`aa^2 $CellContext`Ha[$CellContext`aa]), \
+{$CellContext`aa, $CellContext`a, 1}]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900904602*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"For backward consistency : \"\>", "\[InvisibleSpace]", 
+    "Null"}],
+   SequenceForm["For backward consistency : ", Null],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491900916852*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"\[Eta][a_]\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SqrtBox[
+         RowBox[{"a", "+", 
+          SubscriptBox["a", "eq"]}]], "-", 
+        SqrtBox[
+         SubscriptBox["a", "eq"]]}], ")"}]}], 
+     RowBox[{
+      SubscriptBox["H", "0"], " ", 
+      SqrtBox[
+       SubscriptBox["\[CapitalOmega]", "m"]]}]]}],
+   SequenceForm[
+   "\[Eta][a_]", " :: ", 
+    2 (-$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^
+       Rational[
+        1, 2] + ($CellContext`a + $CellContext`a\[UnderBracket]Subscript\
+\[UnderBracket]eq)^
+      Rational[1, 
+        2]) $CellContext`H\[UnderBracket]Subscript\[UnderBracket]0^(-1) \
+$CellContext`\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]m^
+     Rational[-1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491906279648*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"\\!\\(\\*SubscriptBox[\\\"\[Eta]\\\", \\\"*\\\"]\\)\"\>", 
+    "\[InvisibleSpace]", "\<\" :: \"\>", "\[InvisibleSpace]", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SqrtBox[
+         RowBox[{
+          SubscriptBox["a", "eq"], "+", 
+          SubscriptBox["a", "Times"]}]], "-", 
+        SqrtBox[
+         SubscriptBox["a", "eq"]]}], ")"}]}], 
+     RowBox[{
+      SubscriptBox["H", "0"], " ", 
+      SqrtBox[
+       SubscriptBox["\[CapitalOmega]", "m"]]}]]}],
+   SequenceForm[
+   "\!\(\*SubscriptBox[\"\[Eta]\", \"*\"]\)", " :: ", 
+    2 (-$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^
+       Rational[
+        1, 2] + ($CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq + \
+$CellContext`a\[UnderBracket]Subscript\[UnderBracket]Times)^
+      Rational[1, 
+        2]) $CellContext`H\[UnderBracket]Subscript\[UnderBracket]0^(-1) \
+$CellContext`\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]m^
+     Rational[-1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.4294919062997704`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"\\!\\(\\*SubscriptBox[\\\"\[Eta]\\\", \\\"y\\\"]\\)[y_]\"\>", 
+    "\[InvisibleSpace]", "\<\" :: \"\>", "\[InvisibleSpace]", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SqrtBox[
+         RowBox[{
+          RowBox[{"y", " ", 
+           SubscriptBox["a", "eq"]}], "+", 
+          SubscriptBox["a", "eq"]}]], "-", 
+        SqrtBox[
+         SubscriptBox["a", "eq"]]}], ")"}]}], 
+     RowBox[{
+      SubscriptBox["H", "0"], " ", 
+      SqrtBox[
+       SubscriptBox["\[CapitalOmega]", "m"]]}]]}],
+   SequenceForm[
+   "\!\(\*SubscriptBox[\"\[Eta]\", \"y\"]\)[y_]", " :: ", 
+    2 $CellContext`H\[UnderBracket]Subscript\[UnderBracket]0^(-1) \
+(-$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq^
+       Rational[
+        1, 2] + ($CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq + \
+$CellContext`a\[UnderBracket]Subscript\[UnderBracket]eq $CellContext`y)^
+      Rational[1, 
+        2]) $CellContext`\[CapitalOmega]\[UnderBracket]Subscript\
+\[UnderBracket]m^Rational[-1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491906331698*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"Jacobian \\!\\(\\*FractionBox[\\\"d\[Eta]\\\", \\\"dy\\\"]\\) \
+=> \"\>", "\[InvisibleSpace]", 
+    FractionBox[
+     SubscriptBox["a", "eq"], 
+     RowBox[{
+      SubscriptBox["H", "0"], " ", 
+      SqrtBox[
+       RowBox[{
+        SubscriptBox["a", "eq"], " ", 
+        RowBox[{"(", 
+         RowBox[{"y", "+", "1"}], ")"}]}]], " ", 
+      SqrtBox[
+       SubscriptBox["\[CapitalOmega]", "m"]]}]], 
+    "\[InvisibleSpace]", "\<\"\\nOr  -> \\!\\(\\*FractionBox[\\\"d\[Eta]\\\", \
+\\\"dy\\\"]\\) = \"\>", "\[InvisibleSpace]", 
+    FractionBox[
+     SqrtBox["2"], 
+     RowBox[{
+      SubscriptBox["k", "eq"], " ", 
+      SqrtBox[
+       RowBox[{"y", "+", "1"}]]}]]}],
+   SequenceForm[
+   "Jacobian \!\(\*FractionBox[\"d\[Eta]\", \"dy\"]\) => ", $CellContext`a\
+\[UnderBracket]Subscript\[UnderBracket]eq \
+$CellContext`H\[UnderBracket]Subscript\[UnderBracket]0^(-1) ($CellContext`a\
+\[UnderBracket]Subscript\[UnderBracket]eq (1 + $CellContext`y))^
+     Rational[-1, 
+       2] $CellContext`\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]\
+m^Rational[-1, 2], "\nOr  -> \!\(\*FractionBox[\"d\[Eta]\", \"dy\"]\) = ", 
+    2^Rational[
+      1, 2] $CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq^(-1) (
+      1 + $CellContext`y)^Rational[-1, 2]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.42949190638573*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"y[\[Eta]_]\"\>", "\[InvisibleSpace]", "\<\" :: \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{
+     FractionBox["1", "8"], " ", 
+     SubscriptBox["k", "eq"], " ", "\[Eta]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        SubscriptBox["k", "eq"], " ", "\[Eta]"}], "+", 
+       RowBox[{"4", " ", 
+        SqrtBox["2"]}]}], ")"}]}]}],
+   SequenceForm[
+   "y[\[Eta]_]", " :: ", 
+    Rational[1, 
+      8] $CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq \
+$CellContext`\[Eta] (
+     4 2^Rational[
+        1, 2] + $CellContext`k\[UnderBracket]Subscript\[UnderBracket]eq \
+$CellContext`\[Eta])],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491906419257*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"Useful relationships: From the definitions: \"\>", 
+    "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{"d\[Eta]", "\[LongEqual]", 
+      FractionBox["dt", "a"]}],
+     HoldForm], "\[InvisibleSpace]", "\<\"  and  \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{"H", "=", 
+      FractionBox[
+       FractionBox[
+        RowBox[{"\[PartialD]", 
+         RowBox[{"a", "(", "t", ")"}]}], 
+        RowBox[{"\[PartialD]", "t"}],
+        MultilineFunction->None], 
+       RowBox[{"a", "(", "t", ")"}]]}],
+     HoldForm], "\[InvisibleSpace]", "\<\" => \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"a", " ", "H"}], "\[LongEqual]", 
+      FractionBox[
+       RowBox[{"\[PartialD]", 
+        RowBox[{"a", "(", "t", ")"}]}], 
+       RowBox[{"\[PartialD]", "t"}],
+       MultilineFunction->None]}],
+     HoldForm], "\[InvisibleSpace]", "\<\" => \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{"dt", "\[LongEqual]", 
+      FractionBox["da", 
+       RowBox[{"a", " ", "H"}]]}],
+     HoldForm], "\[InvisibleSpace]", "\<\" => \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{"d\[Eta]", "\[LongEqual]", 
+      FractionBox["da", 
+       RowBox[{
+        SuperscriptBox["a", "2"], " ", "H"}]]}],
+     HoldForm]}],
+   SequenceForm["Useful relationships: From the definitions: ", 
+    HoldForm[$CellContext`d\[Eta] == $CellContext`dt/$CellContext`a], 
+    "  and  ", 
+    HoldForm[$CellContext`H = D[
+        $CellContext`a[$CellContext`t], \
+$CellContext`t]/$CellContext`a[$CellContext`t]], " => ", 
+    HoldForm[$CellContext`a $CellContext`H == D[
+       $CellContext`a[$CellContext`t], $CellContext`t]], " => ", 
+    HoldForm[$CellContext`dt == $CellContext`da/($CellContext`a \
+$CellContext`H)], " => ", 
+    HoldForm[$CellContext`d\[Eta] == $CellContext`da/($CellContext`a^2 \
+$CellContext`H)]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429455333394844*^9, {3.429455573793001*^9, 3.4294555903083773`*^9}, {
+   3.4294559326819687`*^9, 3.429455948811982*^9}, 3.429457078059566*^9, {
+   3.429458050657608*^9, 3.4294580734868526`*^9}, {3.4294918772774067`*^9, 
+   3.429491906454195*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Eqn.1.2, the Hubble parameter defined by the 00-energy-momentum tensor.  The \
+above \[CapitalOmega] relationship becomes:\
+\>", "Text",
+ CellChangeTimes->{{3.425505451366835*^9, 3.425505454717267*^9}, {
+  3.425990584401005*^9, 3.4259906046365767`*^9}, {3.425991297205326*^9, 
+  3.425991305487514*^9}, {3.425993306831654*^9, 3.425993400300078*^9}, {
+  3.425993889746512*^9, 3.4259939047545557`*^9}, {3.427026378292725*^9, 
+  3.427026429312755*^9}, {3.427026613745092*^9, 3.4270266685972567`*^9}, {
+  3.42945341232043*^9, 3.429453551482695*^9}, {3.429453638519503*^9, 
+  3.429453638938999*^9}, {3.429454224002486*^9, 3.4294542575203114`*^9}, {
+  3.429454467109951*^9, 3.4294544682649717`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"DefEqn12", ";"}], "\[IndentingNewLine]", 
+ RowBox[{"defe12a", ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"defe12a", "//", "ReleaseHold"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "=", 
+   RowBox[{
+    RowBox[{"\[CapitalOmega]", "[", "a", "]"}], "==", 
+    FractionBox[
+     RowBox[{"8", "\[Pi]", " ", "G", " ", 
+      RowBox[{"\[Rho]", "[", "a", "]"}]}], 
+     RowBox[{"3", 
+      SuperscriptBox[
+       RowBox[{"H", "[", "a", "]"}], "2"]}]]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"tmp0", "=", 
+  RowBox[{"Map", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"#", "-", "1"}], "&"}], ",", "tmp"}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.4294538697782917`*^9, 3.429453913399625*^9}, {
+   3.429453954088524*^9, 3.429454189216579*^9}, 3.4294542621932096`*^9, {
+   3.429454294341075*^9, 3.429454392292897*^9}, {3.429454424329858*^9, 
+   3.4294544249733257`*^9}, 3.4294544747461367`*^9, 3.429454787162736*^9, {
+   3.4294549977497263`*^9, 3.4294549991488037`*^9}, {3.429455634589563*^9, 
+   3.4294556359000387`*^9}, {3.429531868037591*^9, 3.429531920549103*^9}, 
+   3.42953215667829*^9}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defe12 :: \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"H", "(", "t_", ")"}], ":=", 
+      SqrtBox[
+       RowBox[{
+        FractionBox["1", "3"], " ", 
+        RowBox[{"(", 
+         RowBox[{"8", " ", "\[Pi]", " ", "G"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            SubscriptBox["\[Rho]", "cr"], "-", 
+            SubscriptBox["\[Rho]", "0"]}], 
+           SuperscriptBox[
+            RowBox[{"a", "(", "t", ")"}], "2"]], "+", 
+          RowBox[{"\[Rho]", "(", "t", ")"}]}], ")"}]}]]}],
+     HoldForm]}],
+   SequenceForm["defe12 :: ", 
+    HoldForm[$CellContext`H[
+       Pattern[$CellContext`t, 
+        Blank[]]] := 
+     Sqrt[(8 Pi $CellContext`G) 
+       3^(-1) ($CellContext`\[Rho][$CellContext`t] + (
+          Subscript[$CellContext`\[Rho], $CellContext`cr] - 
+          Subscript[$CellContext`\[Rho], 
+           0])/$CellContext`a[$CellContext`t]^2)]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429453568265085*^9, {3.429453896248375*^9, 3.4294539756163588`*^9}, 
+   3.429454191013432*^9, 3.4294542667910833`*^9, {3.4294543089728107`*^9, 
+   3.4294543932689037`*^9}, 3.4294544264675207`*^9, {3.429454500272633*^9, 
+   3.4294545418396807`*^9}, 3.429454788093012*^9, 3.429455002067087*^9, 
+   3.429455362964903*^9, 3.429455598796186*^9, 3.429455637944477*^9, 
+   3.4294559692248783`*^9, 3.429457292694529*^9, 3.4294580876169367`*^9, 
+   3.429491911046179*^9, {3.42953186941367*^9, 3.4295319266037617`*^9}, 
+   3.429532159727542*^9}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"defe12a :: \"\>", "\[InvisibleSpace]", 
+    TagBox[
+     RowBox[{
+      RowBox[{"H", "(", "a_", ")"}], ":=", 
+      SqrtBox[
+       RowBox[{
+        FractionBox["1", "3"], " ", 
+        RowBox[{"(", 
+         RowBox[{"8", " ", "\[Pi]", " ", "G"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          FractionBox[
+           RowBox[{
+            SubscriptBox["\[Rho]", "cr"], "-", 
+            SubscriptBox["\[Rho]", "0"]}], 
+           SuperscriptBox["a", "2"]], "+", 
+          RowBox[{"\[Rho]", "(", "a", ")"}]}], ")"}]}]]}],
+     HoldForm]}],
+   SequenceForm["defe12a :: ", 
+    HoldForm[$CellContext`H[
+       Pattern[$CellContext`a, 
+        Blank[]]] := 
+     Sqrt[(8 Pi $CellContext`G) 
+       3^(-1) ($CellContext`\[Rho][$CellContext`a] + (
+          Subscript[$CellContext`\[Rho], $CellContext`cr] - 
+          Subscript[$CellContext`\[Rho], 0])/$CellContext`a^2)]]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.429453568265085*^9, {3.429453896248375*^9, 3.4294539756163588`*^9}, 
+   3.429454191013432*^9, 3.4294542667910833`*^9, {3.4294543089728107`*^9, 
+   3.4294543932689037`*^9}, 3.4294544264675207`*^9, {3.429454500272633*^9, 
+   3.4294545418396807`*^9}, 3.429454788093012*^9, 3.429455002067087*^9, 
+   3.429455362964903*^9, 3.429455598796186*^9, 3.429455637944477*^9, 
+   3.4294559692248783`*^9, 3.429457292694529*^9, 3.4294580876169367`*^9, 
+   3.429491911046179*^9, {3.42953186941367*^9, 3.4295319266037617`*^9}, 
+   3.429532159730792*^9}],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[CapitalOmega]", "(", "a", ")"}], "-", "1"}], "\[LongEqual]", 
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "cr"], " ", 
+        SubscriptBox["\[CapitalOmega]", "m"]}], 
+       SuperscriptBox["a", "3"]], "+", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "cr"], " ", 
+        SubscriptBox["C", "\[Gamma]"]}], 
+       RowBox[{
+        SuperscriptBox["a", "4"], " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", 
+          SubscriptBox["f", "\[Nu]"]}], ")"}], " ", 
+        SuperscriptBox["h", "2"]}]]}], 
+     RowBox[{
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "cr"], " ", 
+        SubscriptBox["\[CapitalOmega]", "m"]}], 
+       SuperscriptBox["a", "3"]], "+", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "cr"], " ", 
+        SubscriptBox["C", "\[Gamma]"]}], 
+       RowBox[{
+        SuperscriptBox["a", "4"], " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", 
+          SubscriptBox["f", "\[Nu]"]}], ")"}], " ", 
+        SuperscriptBox["h", "2"]}]], "+", 
+      FractionBox[
+       RowBox[{
+        SubscriptBox["\[Rho]", "cr"], "-", 
+        SubscriptBox["\[Rho]", "0"]}], 
+       SuperscriptBox["a", "2"]]}]], "-", "1"}]}], TraditionalForm]], "Output",\
+
+ CellChangeTimes->{{3.429453896253797*^9, 3.429453975622548*^9}, 
+   3.429454191019002*^9, 3.429454266797295*^9, {3.429454308979206*^9, 
+   3.429454393278818*^9}, 3.429454426473997*^9, {3.42945450027951*^9, 
+   3.429454541844646*^9}, 3.4294547880983963`*^9, 3.429455002071941*^9, 
+   3.429455362970129*^9, 3.429455598832615*^9, 3.429455637949482*^9, 
+   3.429455969320607*^9, 3.4294572927809772`*^9, 3.42945808769458*^9, 
+   3.429491911140873*^9, {3.429531869418586*^9, 3.429531926609858*^9}, 
+   3.429532159733107*^9}]
+}, Open  ]],
+
+Cell["\<\
+What is value of parameters if \[CapitalOmega][a=1]=.3?\
+\>", "Text",
+ CellChangeTimes->{{3.429491934753634*^9, 3.42949197310655*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<The formula for a==1 : \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{
+     RowBox[{"tmp0", "/.", 
+      RowBox[{
+       RowBox[{"\[CapitalOmega]", "[", "a", "]"}], "->", ".3"}]}], "/.", 
+     RowBox[{"a", "->", "1"}]}]}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "=", 
+   RowBox[{"tmp", "//", "NumericalValues"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  RowBox[{
+  "\"\<In this case the value of \!\(\*SubscriptBox[\(\[Rho]\), \(0\)]\) is :\
+\>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"sub1", "=", 
+    RowBox[{
+     RowBox[{"Solve", "[", 
+      RowBox[{"tmp", ",", 
+       SubscriptBox["\[Rho]", "0"]}], "]"}], "[", 
+     RowBox[{"[", 
+      RowBox[{"1", ",", "1"}], "]"}], "]"}]}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "=", 
+   RowBox[{"tmp0", "//", "NumericalValues"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "=", 
+   RowBox[{"tmp", "/.", "sub1"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Simplify", "[", "#", "]"}], "&"}], ",", "tmp"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tmp", "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "==", 
+  RowBox[{"Series", "[", 
+   RowBox[{
+    RowBox[{"tmp", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "0", ",", "2"}], "}"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  "\"\<This series expansion shows that \[CapitalOmega][a->0] is very near 1 \
+no matter what the current value of \!\(\*SubscriptBox[\(\[CapitalOmega]\), \
+\(m\)]\).  The flatness problem, as I see it, is that this value of \
+\[CapitalOmega][a->0] is unreasonably close to 1.\>\"", "]"}]}], "Input",
+ CellChangeTimes->{{3.429492023558208*^9, 3.429492056424757*^9}, {
+   3.4294924440789433`*^9, 3.429492478948065*^9}, {3.429492520493462*^9, 
+   3.429492573389048*^9}, {3.4294928880106564`*^9, 3.429493017705512*^9}, {
+   3.42949308436948*^9, 3.4294931134031343`*^9}, {3.429493311303792*^9, 
+   3.42949331451215*^9}, {3.429493958342718*^9, 3.429494016007163*^9}, 
+   3.4295314355119267`*^9, {3.42953146993505*^9, 3.429531721408173*^9}, {
+   3.42953198186017*^9, 3.429532001020852*^9}, {3.42953203745054*^9, 
+   3.429532078014495*^9}, 3.429532115332382*^9, {3.429532163734693*^9, 
+   3.42953217986987*^9}, {3.429532232461224*^9, 3.429532349269096*^9}, {
+   3.429532405495467*^9, 3.429532437744274*^9}, {3.4295396762193947`*^9, 
+   3.429539689293027*^9}, {3.429539730310525*^9, 3.429539731460927*^9}, {
+   3.42954034304323*^9, 3.429540419473102*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"The formula for a==1 : \"\>", "\[InvisibleSpace]", 
+    RowBox[{
+     RowBox[{"-", "0.7`"}], "\[LongEqual]", 
+     RowBox[{
+      FractionBox[
+       RowBox[{
+        RowBox[{
+         SubscriptBox["\[Rho]", "cr"], " ", 
+         SubscriptBox["\[CapitalOmega]", "m"]}], "+", 
+        FractionBox[
+         RowBox[{
+          SubscriptBox["\[Rho]", "cr"], " ", 
+          SubscriptBox["C", "\[Gamma]"]}], 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "-", 
+            SubscriptBox["f", "\[Nu]"]}], ")"}], " ", 
+          SuperscriptBox["h", "2"]}]]}], 
+       RowBox[{
+        RowBox[{
+         SubscriptBox["\[CapitalOmega]", "m"], " ", 
+         SubscriptBox["\[Rho]", "cr"]}], "+", 
+        FractionBox[
+         RowBox[{
+          SubscriptBox["C", "\[Gamma]"], " ", 
+          SubscriptBox["\[Rho]", "cr"]}], 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "-", 
+            SubscriptBox["f", "\[Nu]"]}], ")"}], " ", 
+          SuperscriptBox["h", "2"]}]], "+", 
+        SubscriptBox["\[Rho]", "cr"], "-", 
+        SubscriptBox["\[Rho]", "0"]}]], "-", "1"}]}]}],
+   SequenceForm[
+   "The formula for a==1 : ", -0.7 == -1 + \
+($CellContext`\[Rho]\[UnderBracket]Subscript\[UnderBracket]cr $CellContext`\
+\[CapitalOmega]\[UnderBracket]Subscript\[UnderBracket]m + (
+          1 - $CellContext`f\[UnderBracket]Subscript\[UnderBracket]\[Nu])^(-1)\
+ $CellContext`h^(-2) $CellContext`\[Rho]\[UnderBracket]Subscript\
+\[UnderBracket]cr 
+        Subscript[
+         C, $CellContext`\[Gamma]])/($CellContext`\[Rho]\[UnderBracket]\
+Subscript\[UnderBracket]cr + $CellContext`\[Rho]\[UnderBracket]Subscript\
+\[UnderBracket]cr $CellContext`\[CapitalOmega]\[UnderBracket]Subscript\
+\[UnderBracket]m + (
+         1 - $CellContext`f\[UnderBracket]Subscript\[UnderBracket]\[Nu])^(-1) \
+$CellContext`h^(-2) \
+$CellContext`\[Rho]\[UnderBracket]Subscript\[UnderBracket]cr 
+       Subscript[C, $CellContext`\[Gamma]] - 
+      Subscript[$CellContext`\[Rho], 0])],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.42949401774992*^9, 3.429531437200164*^9, 3.429531471805963*^9, 
+   3.429531568832602*^9, {3.429531598926358*^9, 3.4295316167125463`*^9}, 
+   3.429531724846971*^9, 3.4295320189640512`*^9, 3.429532079384284*^9, 
+   3.429532116376244*^9, {3.429532165694324*^9, 3.429532181639204*^9}, {
+   3.429532237183817*^9, 3.429532243651449*^9}, 3.429532277652837*^9, {
+   3.429532323237082*^9, 3.429532351639637*^9}, {3.429532425925606*^9, 
+   3.42953244164655*^9}, 3.429539694749069*^9, 3.429539749171777*^9, 
+   3.4295404219469643`*^9}],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"In this case the value of \\!\\(\\*SubscriptBox[\\(\[Rho]\\), \
+\\(0\\)]\\) is :\"\>", "\[InvisibleSpace]", 
+    RowBox[{
+     SubscriptBox["\[Rho]", "0"], "\[Rule]", 
+     RowBox[{"3.357380929003901`*^-29", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "7.311375751825595`*^32"}], " ", 
+         SubscriptBox["\[CapitalOmega]", "m"], " ", 
+         SuperscriptBox["h", "2"]}], "+", 
+        RowBox[{"3.133446750782399`*^32", " ", 
+         SuperscriptBox["h", "2"]}], "-", "3.0342195243143215`*^28"}], 
+       ")"}]}]}]}],
+   SequenceForm[
+   "In this case the value of \!\(\*SubscriptBox[\(\[Rho]\), \(0\)]\) is :", 
+    Subscript[$CellContext`\[Rho], 0] -> 
+    3.357380929003901*^-29 (-3.0342195243143215`*^28 + 
+      3.133446750782399*^32 $CellContext`h^2 - 
+      7.311375751825595*^32 $CellContext`h^2 $CellContext`\[CapitalOmega]\
+\[UnderBracket]Subscript\[UnderBracket]m)],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.42949401774992*^9, 3.429531437200164*^9, 3.429531471805963*^9, 
+   3.429531568832602*^9, {3.429531598926358*^9, 3.4295316167125463`*^9}, 
+   3.429531724846971*^9, 3.4295320189640512`*^9, 3.429532079384284*^9, 
+   3.429532116376244*^9, {3.429532165694324*^9, 3.429532181639204*^9}, {
+   3.429532237183817*^9, 3.429532243651449*^9}, 3.429532277652837*^9, {
+   3.429532323237082*^9, 3.429532351639637*^9}, {3.429532425925606*^9, 
+   3.42953244164655*^9}, 3.429539694749069*^9, 3.429539749171777*^9, 
+   3.429540421950923*^9}],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[CapitalOmega]", "(", "a", ")"}], "-", "1"}], "\[LongEqual]", 
+   InterpretationBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "56224.92577597839`"}], " ", 
+         SubscriptBox["\[CapitalOmega]", "m"], " ", 
+         SuperscriptBox["h", "2"]}], "-", "2.3333333333333326`"}], ")"}], " ",
+       
+      SuperscriptBox["a", "2"]}], "+", 
+     InterpretationBox[
+      RowBox[{"O", "(", 
+       SuperscriptBox["a", "3"], ")"}],
+      SeriesData[$CellContext`a, 0, {}, 2, 3, 1],
+      Editable->False]}],
+    SeriesData[$CellContext`a, 
+     0, {-2.3333333333333326` - 
+      56224.92577597839 $CellContext`h^2 $CellContext`\[CapitalOmega]\
+\[UnderBracket]Subscript\[UnderBracket]m}, 2, 3, 1],
+    Editable->False]}], TraditionalForm]], "Output",
+ CellChangeTimes->{{3.4294920363399267`*^9, 3.429492057633589*^9}, {
+   3.42949245293008*^9, 3.42949248032437*^9}, {3.4294925233129807`*^9, 
+   3.429492558471509*^9}, {3.429492891864668*^9, 3.429492902292864*^9}, {
+   3.429492934264514*^9, 3.4294929764306707`*^9}, 3.429493019568427*^9, {
+   3.4294930941253433`*^9, 3.429493114544881*^9}, 3.429493316298993*^9, 
+   3.4294940176741037`*^9, 3.4295314370344048`*^9, 3.429531471621441*^9, 
+   3.429531568827674*^9, {3.4295315989215593`*^9, 3.429531616709484*^9}, 
+   3.429531724890697*^9, 3.429532018970398*^9, 3.429532079888468*^9, 
+   3.429532116378416*^9, {3.429532165725418*^9, 3.42953218166726*^9}, {
+   3.4295322372158957`*^9, 3.42953224365703*^9}, 3.429532277658681*^9, {
+   3.429532323244206*^9, 3.42953235164606*^9}, {3.429532425957201*^9, 
+   3.429532441651325*^9}, 3.4295396947805367`*^9, 3.4295397492032824`*^9, 
+   3.4295404219789658`*^9}],
+
+Cell[BoxData[
+ FormBox["\<\"This series expansion shows that \[CapitalOmega][a->0] is very \
+near 1 no matter what the current value of \\!\\(\\*SubscriptBox[\\(\
+\[CapitalOmega]\\), \\(m\\)]\\).  The flatness problem, as I see it, is that \
+this value of \[CapitalOmega][a->0] is unreasonably close to 1.\"\>", 
+  TraditionalForm]], "Print",
+ CellChangeTimes->{
+  3.42949401774992*^9, 3.429531437200164*^9, 3.429531471805963*^9, 
+   3.429531568832602*^9, {3.429531598926358*^9, 3.4295316167125463`*^9}, 
+   3.429531724846971*^9, 3.4295320189640512`*^9, 3.429532079384284*^9, 
+   3.429532116376244*^9, {3.429532165694324*^9, 3.429532181639204*^9}, {
+   3.429532237183817*^9, 3.429532243651449*^9}, 3.429532277652837*^9, {
+   3.429532323237082*^9, 3.429532351639637*^9}, {3.429532425925606*^9, 
+   3.42953244164655*^9}, 3.429539694749069*^9, 3.429539749171777*^9, 
+   3.4295404219824123`*^9}]
+}, Open  ]],
+
+Cell["\<\
+This in itself does not seem like a problem since it indicates the early \
+universe was flat regardless of what it is now.\
+\>", "Text",
+ CellChangeTimes->{{3.4295404443628473`*^9, 3.429540450909031*^9}, {
+  3.4295620155177383`*^9, 3.4295621373893957`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ResetDirectory", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.429026637332987*^9, 3.429026639112915*^9}}]
+}, Open  ]]
+},
+AutoGeneratedPackage->Automatic,
+WindowSize->{640, 656},
+WindowMargins->{{12, Automatic}, {Automatic, 0}},
+InputAliases->{"intt" -> RowBox[{"\[Integral]", 
+     RowBox[{"\[SelectionPlaceholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "dintt" -> 
+  RowBox[{
+     SubsuperscriptBox[
+     "\[Integral]", "\[SelectionPlaceholder]", "\[Placeholder]"], 
+     RowBox[{"\[Placeholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "sumt" -> RowBox[{
+     UnderoverscriptBox["\[Sum]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "prodt" -> RowBox[{
+     UnderoverscriptBox["\[Product]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "dt" -> RowBox[{
+     SubscriptBox["\[PartialD]", "\[Placeholder]"], " ", 
+     "\[SelectionPlaceholder]"}], "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[SelectionPlaceholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[SelectionPlaceholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[SelectionPlaceholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     TagBox["\[SelectionPlaceholder]", "NotationTemplateTag"], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       TagBox["\[SelectionPlaceholder]", "NotationTemplateTag"], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[SelectionPlaceholder]\"", "\[Rule]", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "pattwraper" -> 
+  TagBox["\[SelectionPlaceholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[SelectionPlaceholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^5 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^5 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^5 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^5 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^4 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^4 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^4 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^3 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^3 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^3 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^3 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^3 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^3 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private`^2 Utilities`Notation`Private`\[Placeholder]],
+      "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]], ",", "\[Placeholder]"}], 
+     "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private`^2 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]], 
+     "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]],
+        ",", "\[Placeholder]"}], "]"}], "addia" -> 
+  RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]], 
+     "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]],
+        ",", "\[Placeholder]"}], "]"}], "addia" -> 
+  RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[
+     Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]], 
+     "]"}], "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` Utilities`Notation`Private`\[Placeholder]],
+        ",", "\[Placeholder]"}], "]"}], "addia" -> 
+  RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[
+       Utilities`Notation`Private` 
+        Utilities`Notation`Private`\[Placeholder]]}], "]"}], "pattwraper" -> 
+  TagBox["\[Placeholder]", "NotationPatternTag"], "madeboxeswraper" -> 
+  TagBox["\[Placeholder]", "NotationMadeBoxesTag"], "notation" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]]}], 
+     "]"}], "pattwraper" -> TagBox["\[Placeholder]", "NotationPatternTag"], 
+  "madeboxeswraper" -> TagBox["\[Placeholder]", "NotationMadeBoxesTag"], 
+  "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]]}], 
+     "]"}], "pattwraper" -> TagBox["\[Placeholder]", "NotationPatternTag"], 
+  "madeboxeswraper" -> TagBox["\[Placeholder]", "NotationMadeBoxesTag"], 
+  "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]]}], 
+     "]"}], "pattwraper" -> TagBox["\[Placeholder]", "NotationPatternTag"], 
+  "madeboxeswraper" -> TagBox["\[Placeholder]", "NotationMadeBoxesTag"], 
+  "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation>" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "notation<" -> 
+  RowBox[{"Notation", "[", 
+     RowBox[{
+       TagBox["\[Placeholder]", "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TagBox["\[Placeholder]", "NotationTemplateTag"]}], "]"}], "symb" -> 
+  RowBox[{"Symbolize", "[", 
+     "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[Placeholder]\"", "->", 
+       "NotationTemplateTag"[Utilities`Notation`Private`\[Placeholder]]}], 
+     "]"}], "pattwraper" -> TagBox["\[Placeholder]", "NotationPatternTag"], 
+  "madeboxeswraper" -> TagBox["\[Placeholder]", "NotationMadeBoxesTag"]},
+StyleMenuListing->Automatic,
+FrontEndVersion->"6.0 for Mac OS X x86 (32-bit) (April 20, 2007)",
+StyleDefinitions->"TensorialStyle.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[590, 23, 313, 4, 39, "Subsubtitle"],
+Cell[906, 29, 1587, 31, 255, "Text"],
+Cell[CellGroupData[{
+Cell[2518, 64, 1129, 23, 316, "Input",
+ InitializationCell->True],
+Cell[3650, 89, 666, 13, 59, "Message"],
+Cell[4319, 104, 650, 16, 26, "Print"],
+Cell[4972, 122, 796, 19, 45, "Print"],
+Cell[5771, 143, 843, 20, 44, "Print"],
+Cell[6617, 165, 384, 7, 24, "Print"],
+Cell[7004, 174, 871, 21, 27, "Print"],
+Cell[7878, 197, 1080, 26, 63, "Print"],
+Cell[8961, 225, 1074, 26, 72, "Print"],
+Cell[10038, 253, 744, 18, 27, "Print"],
+Cell[10785, 273, 808, 21, 45, "Print"],
+Cell[11596, 296, 805, 20, 45, "Print"],
+Cell[12404, 318, 983, 25, 47, "Print"],
+Cell[13390, 345, 795, 19, 45, "Print"],
+Cell[14188, 366, 864, 22, 27, "Print"],
+Cell[15055, 390, 853, 21, 47, "Print"],
+Cell[15911, 413, 998, 25, 43, "Print"],
+Cell[16912, 440, 1143, 29, 54, "Print"],
+Cell[18058, 471, 1036, 26, 45, "Print"],
+Cell[19097, 499, 1028, 25, 44, "Print"],
+Cell[20128, 526, 1026, 25, 44, "Print"],
+Cell[21157, 553, 1040, 26, 44, "Print"],
+Cell[22200, 581, 981, 25, 24, "Print"],
+Cell[23184, 608, 917, 22, 26, "Print"],
+Cell[24104, 632, 876, 22, 47, "Print"],
+Cell[24983, 656, 1779, 46, 56, "Print"],
+Cell[26765, 704, 1380, 37, 44, "Print"],
+Cell[28148, 743, 1115, 27, 50, "Print"],
+Cell[29266, 772, 1077, 27, 29, "Print"],
+Cell[30346, 801, 951, 26, 50, "Print"],
+Cell[31300, 829, 1120, 30, 45, "Print"],
+Cell[32423, 861, 1062, 29, 45, "Print"],
+Cell[33488, 892, 504, 11, 24, "Print"],
+Cell[33995, 905, 1212, 33, 59, "Print"],
+Cell[35210, 940, 1362, 34, 59, "Print"],
+Cell[36575, 976, 1405, 35, 59, "Print"],
+Cell[37983, 1013, 1635, 40, 110, "Print"],
+Cell[39621, 1055, 993, 27, 43, "Print"],
+Cell[40617, 1084, 2199, 56, 95, "Print"]
+}, Open  ]],
+Cell[42831, 1143, 702, 11, 51, "Text"],
+Cell[CellGroupData[{
+Cell[43558, 1158, 1140, 27, 150, "Input"],
+Cell[44701, 1187, 1621, 40, 63, "Print"],
+Cell[46325, 1229, 1557, 38, 50, "Print"],
+Cell[47885, 1269, 1880, 52, 79, "Output"]
+}, Open  ]],
+Cell[49780, 1324, 144, 3, 31, "Text"],
+Cell[CellGroupData[{
+Cell[49949, 1331, 2704, 64, 309, "Input"],
+Cell[52656, 1397, 2642, 62, 75, "Print"],
+Cell[55301, 1461, 1575, 33, 48, "Print"],
+Cell[56879, 1496, 1763, 38, 33, "Output"],
+Cell[58645, 1536, 891, 14, 65, "Print"]
+}, Open  ]],
+Cell[59551, 1553, 267, 5, 51, "Text"],
+Cell[59821, 1560, 128, 2, 44, "Input"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,4016 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[    125141,       4015]
+NotebookOptionsPosition[     99914,       3281]
+NotebookOutlinePosition[    108218,       3484]
+CellTagsIndexPosition[    108014,       3475]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[{
+ "Some Advanced ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"]
+}], "Title",
+ CellMargins->0,
+ CellFrameMargins->{{60, 9}, {9, 12}},
+ FontColor->GrayLevel[1],
+ Background->GrayLevel[0]],
+
+Cell["\<\
+Jason Harris
+Wolfram Research\
+\>", "Text",
+ FontSize->36,
+ FontSlant->"Italic"],
+
+Cell[CellGroupData[{
+
+Cell["Introduction", "Section",
+ CellMargins->{{Inherited, Inherited}, {Inherited, 10}}],
+
+Cell[TextData[{
+ "This talk will focus on some of the more advanced aspects of ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " including performance considerations, parallel programming, compilation, \
+linking to external programs, touch on GPGPU programming, introduce \
+Manipulate, front end considerations like the box language and introduce the \
+Notation package, some physics examples, and touch on AI / ML."
+}], "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Parallel Programming", "Section"],
+
+Cell[TextData[{
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " 7 added built in ",
+ ButtonBox["parallel processing capabilities",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ParallelTools/tutorial/Overview"],
+ "."
+}], "Text"],
+
+Cell[BoxData["$ProcessorCount"], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ParallelEvaluate", "[", "$ProcessID", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"FactorInteger", "[", 
+  RowBox[{
+   SuperscriptBox["10", "20"], "+", "3"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Table", "[", 
+  RowBox[{
+   RowBox[{"ParallelSubmit", "[", 
+    RowBox[{
+     RowBox[{"{", "i", "}"}], ",", 
+     RowBox[{"FactorInteger", "[", "i", "]"}]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", 
+     RowBox[{
+      SuperscriptBox["10", "54"], "+", "50"}], ",", 
+     RowBox[{
+      SuperscriptBox["10", "54"], "+", "70"}]}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"WaitAll", " ", "@", " ", "%"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Table", "[", 
+  RowBox[{
+   RowBox[{"FactorInteger", "[", "i", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", 
+     RowBox[{
+      SuperscriptBox["10", "50"], "+", "3"}], ",", 
+     RowBox[{
+      SuperscriptBox["10", "50"], "+", "20"}]}], "}"}]}], "]"}]], "Input"],
+
+Cell["\<\
+AbsoluteTiming of the above and the ParallelTable and  Parallelize versions\
+\>", "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Product of 2 matrices 4 threads", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"a", "=", 
+   RowBox[{"RandomReal", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"1", ",", "10"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"4000", ",", "4000"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"b", "=", 
+   RowBox[{"RandomReal", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"1", ",", "10"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"4000", ",", "4000"}], "}"}]}], "]"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetSystemOptions", "[", 
+   RowBox[{"\"\<ParallelOptions\>\"", "->", 
+    RowBox[{"\"\<MKLThreadNumber\>\"", "\[Rule]", "4"}]}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"a", ".", "b"}], ";"}], "//", "Timing"}]}], "Input"],
+
+Cell["Setting the number of threads to 1 we have", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetSystemOptions", "[", 
+   RowBox[{"\"\<ParallelOptions\>\"", "->", 
+    RowBox[{"\"\<MKLThreadNumber\>\"", "\[Rule]", "1"}]}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"a", ".", "b"}], ";"}], "//", "Timing"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SystemOptions", "[", "]"}]], "Input"],
+
+Cell["Use absolute timing above", "SmallText"]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Central Moment Revisited", "Section"],
+
+Cell[TextData[{
+ "Let us look at the solution to the CentralMoment problem from your \
+homework. It was to create your own version of ",
+ StyleBox["CentralMoment", "MR"],
+ "[{{",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["x", "1"], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["y", "1"], TraditionalForm]]],
+ " ,\[Ellipsis]}, \[Ellipsis], {",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["x", "n"], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["y", "n"], TraditionalForm]]],
+ " ,\[Ellipsis]}}, {",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "x"], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "y"], TraditionalForm]]],
+ ", \[Ellipsis]}] which gives ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    FractionBox["1", "n"], 
+    RowBox[{
+     SubscriptBox["\[Sum]", "i"], 
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SubscriptBox["x", "i"], "-", 
+         OverscriptBox["x", "_"]}], ")"}], 
+       SubscriptBox["r", "x"]], " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SubscriptBox["y", "i"], "-", 
+         OverscriptBox["y", "_"]}], ")"}], 
+       SubscriptBox["r", "y"]], "\[CenterEllipsis]"}]}]}], TraditionalForm]], 
+  "InlineMath"],
+ ".  (You can use ",
+ StyleBox["Sum", "MR"],
+ " and ",
+ StyleBox["Product", "MR"],
+ " here) (or you could build things up with functions like ",
+ StyleBox["Inner", "MR"],
+ ", ",
+ StyleBox["Table", "MR"],
+ ", ",
+ StyleBox["Apply,", "MR"],
+ " etc."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Using Sums and Products", "Subsection"],
+
+Cell[TextData[{
+ "From the calling signature we can note that ",
+ StyleBox["data\[LeftDoubleBracket]i,1\[RightDoubleBracket]", "MR"],
+ " is ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["x", "i"], TraditionalForm]]],
+ ", ",
+ StyleBox["data\[LeftDoubleBracket]i,2\[RightDoubleBracket]", "MR"],
+ " is ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["y", "i"], TraditionalForm]]],
+ ", etc... So we can simply "
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentS", "[", 
+   RowBox[{"data_List", ",", "moments_List"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"n", ",", "w", ",", "means"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"n", "=", 
+      RowBox[{"Length", " ", "@", " ", "data"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"w", "=", 
+      RowBox[{"Length", " ", "@", " ", "moments"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"means", "=", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Plus", "@@", "data"}], ")"}], "/", "n"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      FractionBox["1", "n"], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"i", "=", "1"}], "n"], 
+       RowBox[{
+        UnderoverscriptBox["\[Product]", 
+         RowBox[{"j", "=", "1"}], "w"], 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"data", "\[LeftDoubleBracket]", 
+            RowBox[{"i", ",", "j"}], "\[RightDoubleBracket]"}], "-", 
+           RowBox[{
+           "means", "\[LeftDoubleBracket]", "j", "\[RightDoubleBracket]"}]}], 
+          ")"}], 
+         RowBox[{
+         "moments", "\[LeftDoubleBracket]", "j", 
+          "\[RightDoubleBracket]"}]]}]}]}]}]}], "\[IndentingNewLine]", 
+   "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Simple Verification", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"data", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["x", "1"], ",", 
+       SubscriptBox["y", "1"], ",", 
+       SubscriptBox["z", "1"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["x", "2"], ",", 
+       SubscriptBox["y", "2"], ",", 
+       SubscriptBox["z", "2"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["x", "3"], ",", 
+       SubscriptBox["y", "3"], ",", 
+       SubscriptBox["z", "3"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["x", "4"], ",", 
+       SubscriptBox["y", "4"], ",", 
+       SubscriptBox["z", "4"]}], "}"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"moments", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1", ",", "1"}], "}"}]}], ";"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentS", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "\[Equal]", "\[IndentingNewLine]", 
+  RowBox[{"CentralMoment", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Using Vector Operations", "Subsection"],
+
+Cell["Let us redo this example using vectorized functions.", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"moment", "[", 
+   RowBox[{"d_", ",", "r_", ",", "means_"}], "]"}], ":=", 
+  RowBox[{"Inner", "[", 
+   RowBox[{"Power", ",", 
+    RowBox[{"(", 
+     RowBox[{"d", "-", "means"}], ")"}], ",", "r", ",", "Times"}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"moment", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"x1", ",", "y1", ",", "z1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["r", "x"], ",", 
+     SubscriptBox["r", "y"], ",", 
+     SubscriptBox["r", "z"]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["\[Mu]", "x"], ",", 
+     SubscriptBox["\[Mu]", "y"], ",", 
+     SubscriptBox["\[Mu]", "z"]}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentV", "[", 
+   RowBox[{
+    RowBox[{"{", "a__", "}"}], ",", "r_"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"means", ",", "n"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"n", "=", " ", 
+      RowBox[{"Length", "[", 
+       RowBox[{"{", "a", "}"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"means", " ", "=", " ", 
+      RowBox[{
+       RowBox[{"Plus", "[", "a", "]"}], "/", "n"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "/", "n"}], ")"}], 
+      RowBox[{"(", 
+       RowBox[{"Plus", "@@", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"moment", "[", 
+            RowBox[{"#", ",", "r", ",", "means"}], "]"}], "&"}], ")"}], "/@", 
+         
+         RowBox[{"{", "a", "}"}]}]}], ")"}]}]}]}], "\[IndentingNewLine]", 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentV", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "==", 
+  RowBox[{"CentralMoment", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Using Parallel Map", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentPV", "[", 
+   RowBox[{
+    RowBox[{"{", "a__", "}"}], ",", "r_"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"means", ",", "n"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"n", "=", " ", 
+      RowBox[{"Length", "[", 
+       RowBox[{"{", "a", "}"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"means", " ", "=", " ", 
+      RowBox[{
+       RowBox[{"Plus", "[", "a", "]"}], "/", "n"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "/", "n"}], ")"}], 
+      RowBox[{"(", 
+       RowBox[{"Plus", "@@", 
+        RowBox[{"ParallelMap", "[", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"moment", "[", 
+             RowBox[{"#", ",", "r", ",", "means"}], "]"}], "&"}], ")"}], ",", 
+          
+          RowBox[{"{", "a", "}"}]}], "]"}]}], ")"}]}]}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentPV", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "==", 
+  RowBox[{"CentralMoment", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}]}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Speed Comparison", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", " ", "=", " ", 
+   RowBox[{"Array", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"2.345", 
+       FractionBox["#", "#2"]}], "&"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"10000", ",", "10"}], "}"}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"moments", " ", "=", " ", 
+   RowBox[{"Array", "[", 
+    RowBox[{
+     RowBox[{"5", "&"}], ",", 
+     RowBox[{"{", "10", "}"}]}], "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CentralMoment", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "//", "AbsoluteTiming"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentS", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "//", "AbsoluteTiming"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentV", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "//", "AbsoluteTiming"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyCentralMomentPV", "[", 
+   RowBox[{"data", ",", "moments"}], "]"}], "//", "AbsoluteTiming"}]], "Input"]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Compilation And Inter-operation", "Section"],
+
+Cell["You can compile numeric functions:", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"f", "=", 
+  RowBox[{"Function", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}], ",", 
+    SqrtBox[
+     RowBox[{"x", " ", "y"}]]}], "]"}]}], "\n", 
+ RowBox[{"cf", "=", 
+  RowBox[{"Compile", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}], ",", 
+    SqrtBox[
+     RowBox[{"x", " ", "y"}]]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ccf", "=", 
+  RowBox[{"Compile", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}], ",", 
+    SqrtBox[
+     RowBox[{"x", " ", "y"}]], ",", 
+    RowBox[{"CompilationTarget", "\[Rule]", "\"\<C\>\""}]}], 
+   "]"}]}]}], "Input",
+ CellID->74817170],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Do", "[", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{"1.4", ",", "7.6"}], "]"}], ",", 
+    RowBox[{"{", "1000000", "}"}]}], "]"}], "//", "AbsoluteTiming"}], "\n", 
+ RowBox[{
+  RowBox[{"Do", "[", 
+   RowBox[{
+    RowBox[{"cf", "[", 
+     RowBox[{"1.4", ",", "7.6"}], "]"}], ",", 
+    RowBox[{"{", "1000000", "}"}]}], "]"}], "//", "AbsoluteTiming"}], "\n", 
+ RowBox[{
+  RowBox[{"Do", "[", 
+   RowBox[{
+    RowBox[{"ccf", "[", 
+     RowBox[{"1.4", ",", "7.6"}], "]"}], ",", 
+    RowBox[{"{", "1000000", "}"}]}], "]"}], "//", 
+  "AbsoluteTiming"}]}], "Input",
+ CellID->565749860],
+
+Cell[BoxData[
+ RowBox[{"FullForm", " ", "@", " ", "cf"}]], "Input"],
+
+Cell["FullForm @ cf", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["A Bit More Complicated", "Section"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"fCCC", "=", 
+   RowBox[{"Compile", "[", " ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"x", ",", "_Real"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"n", ",", "_Integer"}], "}"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "\t", 
+     RowBox[{"Module", "[", " ", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"sum", ",", " ", "inc"}], "}"}], ",", 
+       RowBox[{
+        RowBox[{"sum", "=", "1.0"}], ";", 
+        RowBox[{"inc", "=", "1.0"}], ";", 
+        RowBox[{"Do", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"inc", "=", 
+            RowBox[{"inc", "*", 
+             RowBox[{"x", "/", "i"}]}]}], ";", 
+           RowBox[{"sum", "=", 
+            RowBox[{"sum", "+", "inc"}]}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "n"}], "}"}]}], "]"}], ";", "sum"}]}], "]"}], 
+     ",", 
+     RowBox[{"CompilationTarget", "\[Rule]", "\"\<C\>\""}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"fWVM", "=", 
+   RowBox[{"Compile", "[", " ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"x", ",", "_Real"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"n", ",", "_Integer"}], "}"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "\t", 
+     RowBox[{"Module", "[", " ", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"sum", ",", " ", "inc"}], "}"}], ",", 
+       RowBox[{
+        RowBox[{"sum", "=", "1.0"}], ";", 
+        RowBox[{"inc", "=", "1.0"}], ";", 
+        RowBox[{"Do", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"inc", "=", 
+            RowBox[{"inc", "*", 
+             RowBox[{"x", "/", "i"}]}]}], ";", 
+           RowBox[{"sum", "=", 
+            RowBox[{"sum", "+", "inc"}]}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "n"}], "}"}]}], "]"}], ";", "sum"}]}], "]"}]}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"fMMA", "=", 
+   RowBox[{"Function", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "n"}], "}"}], ",", "\[IndentingNewLine]", "\t", 
+     RowBox[{"Module", "[", " ", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"sum", ",", " ", "inc"}], "}"}], ",", 
+       RowBox[{
+        RowBox[{"sum", "=", "1.0"}], ";", 
+        RowBox[{"inc", "=", "1.0"}], ";", 
+        RowBox[{"Do", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"inc", "=", 
+            RowBox[{"inc", "*", 
+             RowBox[{"x", "/", "i"}]}]}], ";", 
+           RowBox[{"sum", "=", 
+            RowBox[{"sum", "+", "inc"}]}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "n"}], "}"}]}], "]"}], ";", "sum"}]}], "]"}]}], 
+    "]"}]}], ";"}]}], "Input",
+ CellID->235207683],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"fCCC", "[", 
+   RowBox[{"1.5", ",", " ", "5000000"}], "]"}], "//", 
+  "AbsoluteTiming"}], "\n", 
+ RowBox[{
+  RowBox[{"fWVM", "[", 
+   RowBox[{"1.5", ",", " ", "5000000"}], "]"}], "//", 
+  "AbsoluteTiming"}], "\n", 
+ RowBox[{
+  RowBox[{"fMMA", "[", 
+   RowBox[{"1.5", ",", " ", "5000000"}], "]"}], "//", 
+  "AbsoluteTiming"}]}], "Input"],
+
+Cell[TextData[{
+ "More details are in the ",
+ ButtonBox["C Code Generation User Guide",
+  BaseStyle->"Link",
+  ButtonData->"paclet:CCodeGenerator/tutorial/Overview"],
+ "."
+}], "Text"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Linking to External C Code Through ",
+ StyleBox["MathLink",
+  FontSlant->"Italic"]
+}], "Section"],
+
+Cell[TextData[{
+ "It is easy to create programs in C and C++ which can interoperate with ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ ". Moreover, you can use ",
+ StyleBox["JLink",
+  FontSlant->"Italic"],
+ " and ",
+ StyleBox[".NetLink",
+  FontSlant->"Italic"],
+ " for communication to their respective environments."
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"link", "=", 
+   RowBox[{
+   "Install", "[", 
+    "\"\</Users/jason/Desktop/Waterloo2015/MathLinkExample/addtwo\>\"", 
+    "]"}]}], ";"}]], "Input"],
+
+Cell["?? AddTwo", "SmallText"],
+
+Cell[BoxData[
+ RowBox[{"AddTwo", "[", 
+  RowBox[{"30", ",", "10"}], "]"}]], "Input"],
+
+Cell["\<\
+Go to the given directory and change the program addtwo.c and run \
+\[OpenCurlyDoubleQuote]make addtwo\[CloseCurlyDoubleQuote] again, the \
+reinstall the link\
+\>", "SmallText"],
+
+Cell["\<\
+Change the program AddTwo a bit, make, and reinstall the link ...\
+\>", "SmallText"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["SparseArrays", "Section"],
+
+Cell["\<\
+You can create sparse arrays by giving a list of patterns and assignments.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"arr", "=", " ", 
+  RowBox[{"SparseArray", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i_", ",", "i_"}], "}"}], "\[Rule]", "1"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"2", ",", "4"}], "}"}], "\[Rule]", "1"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"4", ",", "2"}], "}"}], "\[Rule]", "1"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"10", ",", "10"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", " ", "@", " ", "%"}]], "Input"],
+
+Cell["\<\
+Here we can create a random sparse tridiagonal matrix and see the timing \
+required to square it.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"sp", "[", "n_", "]"}], ":=", 
+  RowBox[{"SparseArray", "[", 
+   RowBox[{
+    RowBox[{"Flatten", " ", "@", " ", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"List", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"i", ",", "i"}], "}"}], "\[Rule]", 
+          RowBox[{"Random", "[", "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{"Max", "[", 
+             RowBox[{"1", ",", 
+              RowBox[{"i", "-", "1"}]}], "]"}]}], "}"}], "\[Rule]", 
+          RowBox[{"Random", "[", "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{"Min", "[", 
+             RowBox[{"n", ",", 
+              RowBox[{"i", "+", "1"}]}], "]"}]}], "}"}], "\[Rule]", 
+          RowBox[{"Random", "[", "]"}]}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"n", ",", "n"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"MatrixPlot", "[", 
+  RowBox[{"sp", "[", "30", "]"}], "]"}]], "Input"],
+
+Cell["\<\
+Sparse multiplication is much faster when the matrices are essential sparse.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Sparse Multiplication", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"trr", "=", 
+   RowBox[{"sp", "[", "1000", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"trr", ".", "trr"}], "//", "Timing"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"normTrr", "=", 
+   RowBox[{"Normal", "[", "trr", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"normTrr", ".", "normTrr"}], ";"}], "//", "Timing"}]}], "Input"],
+
+Cell["\<\
+As can be seen the sparse matrix is significantly faster. Interestingly, \
+doing a fully dense matrix in a sparse way is slower.\
+\>", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Dense Multiplication", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"arr", "=", 
+   RowBox[{"Array", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Random", "[", "]"}], "&"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1000", ",", "1000"}], "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"arr", ".", "arr"}], ";"}], "//", "Timing"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"sarr", " ", "=", " ", 
+  RowBox[{"SparseArray", "[", "arr", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"sarr", ".", "sarr"}], ";"}], "//", "Timing"}]}], "Input"],
+
+Cell["\<\
+So use sparsity wisely. If a matrix is truly sparse things might be up to two \
+orders of magnitude faster, but if the matrix is very dense it might be up to \
+an order of magnitude slower to use sparse matrices.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Nest", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Dot", "[", 
+      RowBox[{
+       RowBox[{"sp", "[", "50", "]"}], ",", " ", "#"}], "]"}], " ", "&"}], 
+    ",", " ", 
+    RowBox[{"sp", "[", "50", "]"}], ",", " ", "45"}], "]"}], " ", "//", " ", 
+  "MatrixPlot"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Nest", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Dot", "[", 
+      RowBox[{
+       RowBox[{"sp", "[", "50", "]"}], ",", " ", "#"}], "]"}], " ", "&"}], 
+    ",", " ", 
+    RowBox[{"sp", "[", "50", "]"}], ",", " ", "45"}], "]"}], " ", "//", " ", 
+  "MatrixPlot"}]], "Input"],
+
+Cell["\<\
+Note still that the tri-diagonal sparse array multiplied by the dense array \
+is faster than dense multiplied by dense...\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"trr", ".", "arr"}], ";"}], "//", "Timing"}]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["GPU Programming through CUDALink and OpenCLLink", "Section"],
+
+Cell[TextData[{
+ "An extremely brief demo of GPU computations. The following guides for more \
+details: ",
+ StyleBox[ButtonBox["OpenCLLink",
+  BaseStyle->"Link",
+  ButtonData->"paclet:OpenCLLink/tutorial/Overview"],
+  FontSlant->"Italic"],
+ ButtonBox[" User Guide",
+  BaseStyle->"Link",
+  ButtonData->"paclet:OpenCLLink/tutorial/Overview"],
+ " and ",
+ StyleBox[ButtonBox["CUDALink",
+  BaseStyle->"Link",
+  ButtonData->"paclet:CUDALink/tutorial/Overview"],
+  FontSlant->"Italic"],
+ ButtonBox[" User Guide",
+  BaseStyle->"Link",
+  ButtonData->"paclet:CUDALink/tutorial/Overview"]
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell["CUDALink", "Subsection"],
+
+Cell["\<\
+So brief as to be non-existent. On this laptop I can not get CUDALink to work \
+since the graphics card is not CUDA capable.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<CUDALink`\>\"", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"CUDAQ", "[", "]"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["OpenCL", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<OpenCLLink`\>\"", "]"}]], "Input",
+ CellID->332435791],
+
+Cell[TextData[{
+ "This checks if ",
+ StyleBox["OpenCLLink",
+  FontSlant->"Italic"],
+ " is supported. If it returns ",
+ Cell[BoxData[
+  ButtonBox["True",
+   BaseStyle->"Link",
+   ButtonData->"paclet:ref/True"]], "InlineFormula"],
+ ", as shown below, then ",
+ StyleBox["OpenCLLink",
+  FontSlant->"Italic"],
+ " will work."
+}], "Text",
+ CellID->179189584],
+
+Cell[BoxData[
+ RowBox[{"OpenCLQ", "[", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "src", "=", 
+   "\"\<__kernel void myKernel( __global mint * global0Id, __global mint * \
+global1Id, mint width, mint height) {\n    int xIndex = get_global_id(0);\n   \
+ int yIndex = get_global_id(1);\n    int index = xIndex + yIndex*width;\n\tif \
+(xIndex < width && yIndex < height) {\n\t   global0Id[index] = \
+get_local_id(0);\n       global1Id[index] = get_local_id(1);\n    }\n  \
+}\>\""}], ";"}]], "Input",
+ CellID->195947038],
+
+Cell[BoxData[
+ RowBox[{"fun", "=", 
+  RowBox[{"OpenCLFunctionLoad", "[", 
+   RowBox[{"src", ",", "\"\<myKernel\>\"", ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", "_Integer", "}"}], ",", 
+      RowBox[{"{", "_Integer", "}"}], ",", "_Integer", ",", "_Integer"}], 
+     "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"16", ",", "16"}], "}"}]}], "]"}]}]], "Input",
+ CellID->107996258],
+
+Cell["This sets the input parameters.", "Text",
+ CellID->729311091],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"width", "=", "64"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"height", "=", "64"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"global0Id", "=", 
+   RowBox[{"ConstantArray", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"width", ",", "height"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"global1Id", "=", 
+   RowBox[{"ConstantArray", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"width", ",", "height"}], "}"}]}], "]"}]}], ";"}]}], "Input",
+ CellID->722328877],
+
+Cell["This launches the function.", "Text",
+ CellID->532957039],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"res", "=", 
+   RowBox[{"fun", "[", 
+    RowBox[{"global0Id", ",", " ", "global1Id", ",", "width", ",", "height"}],
+     "]"}]}], ";"}]], "Input",
+ CellID->54786344],
+
+Cell["This visualizes the results.", "Text",
+ CellID->108263632],
+
+Cell[BoxData[
+ RowBox[{"ArrayPlot", "/@", "res"}]], "Input",
+ CellID->1939614691]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["StyleSheets", "Section"],
+
+Cell["\<\
+Instead of changing individual words with different styles, add styles to the \
+style sheet. Then if you ever need to, you can change a style in the style \
+sheet and all uses of the style will change uniformly in the notebook.\
+\>", "Text"],
+
+Cell["Add styles here. For non-bold and", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Option Inspector", "Section"],
+
+Cell["\<\
+You can use the option inspector to change settings at a deep level.\
+\>", "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell["Manipulate", "Title"],
+
+Cell[CellGroupData[{
+
+Cell["Compounding Interest", "Subsection"],
+
+Cell[TextData[{
+ "Let us start with the extremely simple example. Consider the value of a \
+quantity of money ",
+ Cell[BoxData[
+  FormBox["A", TraditionalForm]]],
+ " continually compounding under an interest rate ",
+ Cell[BoxData[
+  FormBox["r", TraditionalForm]]],
+ " for time ",
+ Cell[BoxData[
+  FormBox["t", TraditionalForm]]],
+ ", which is given by ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox[
+    RowBox[{"A", "(", 
+     RowBox[{"1", "+", "r"}], ")"}], "t"], TraditionalForm]]],
+ "."
+}], "Text",
+ CellChangeTimes->{3.45435665753382*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"A", "=", "300"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"r", "=", "0.09"}], ";"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"A", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"1", "+", "r"}], ")"}], "t"]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"t", ",", "0", ",", "7"}], "}"}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "600"}], "}"}]}]}], "]"}]], "Input"],
+
+Cell[TextData[{
+ "Example ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox[
+    RowBox[{"A", "(", 
+     RowBox[{"1", "+", "r"}], ")"}], "t"], TraditionalForm]]],
+ " with {A,0,200}, {r,0,0.3}"
+}], "SmallText"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Plot", "[", 
+    RowBox[{
+     RowBox[{"A", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "+", "r"}], ")"}], "t"]}], ",", 
+     RowBox[{"{", 
+      RowBox[{"t", ",", "0", ",", "7"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "300"}], "}"}]}]}], "]"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{"A", ",", "100", ",", "300"}], "}"}], ",", "\[IndentingNewLine]", 
+   
+   RowBox[{"{", 
+    RowBox[{"r", ",", "0", ",", ".3"}], "}"}]}], "]"}]], "SmallText"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Manipulate", "Subsection"],
+
+Cell["\<\
+Manipulate is an extremely powerful and versatile command which can add \
+instant interactivity. It has the form:\
+\>", "Text",
+ CellChangeTimes->{{3.454356654883688*^9, 3.4543566562064962`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"  ", 
+  RowBox[{"Manipulate", "[", 
+   RowBox[{
+    StyleBox["expr",
+     FontSlant->"Italic"], ",", " ", 
+    StyleBox["parameters",
+     FontSlant->"Italic"]}], "]"}]}]], "DisplayFormula"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"n", "!"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", " ", "1", ",", " ", "100", ",", " ", "1"}], "}"}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"Expand", "[", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"a", "+", 
+       RowBox[{"Sin", "[", "b", "]"}], "+", "c"}], ")"}], "n"], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "1", ",", "30", ",", "1"}], "}"}]}], "]"}]], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["3D Plot", "Subsection"],
+
+Cell[TextData[{
+ "Let us consider a 3D example. ",
+ ButtonBox["Plot3D",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/Plot3D"]
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"Im", "[", 
+      RowBox[{"ArcSin", "[", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"x", "+", 
+          RowBox[{"\[ImaginaryI]", " ", "y"}]}], ")"}], "p"], "]"}], "]"}], 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "2"}], ",", "2"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", 
+       RowBox[{"-", "2"}], ",", "2"}], "}"}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Yellow", ",", 
+        RowBox[{"Specularity", "[", 
+         RowBox[{"White", ",", "20"}], "]"}], ",", 
+        RowBox[{"Opacity", "[", "0.8", "]"}]}], "]"}]}], ",", 
+     RowBox[{"ExclusionsStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"None", ",", "Red"}], "}"}]}], ",", 
+     RowBox[{"PlotPoints", "\[Rule]", 
+      RowBox[{"ControlActive", "[", 
+       RowBox[{"5", ",", "Automatic"}], "]"}]}], ",", 
+     RowBox[{"PerformanceGoal", "\[Rule]", "\"\<Quality\>\""}]}], "]"}], ",", 
+   
+   RowBox[{"{", 
+    RowBox[{"p", ",", "1", ",", "6"}], "}"}]}], "]"}]], "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tracker", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"sol", "=", 
+       RowBox[{"NDSolve", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"x", "''"}], "[", "t", "]"}], "+", 
+             RowBox[{
+              RowBox[{"x", "[", "t", "]"}], "^", "3"}]}], "\[Equal]", 
+            RowBox[{"\[Alpha]", " ", 
+             RowBox[{"Sin", "[", 
+              RowBox[{
+               RowBox[{"\[Omega]", " ", "t"}], "+", "\[Beta]"}], "]"}]}]}], 
+           ",", 
+           RowBox[{
+            RowBox[{"x", "[", "0", "]"}], "\[Equal]", 
+            RowBox[{"pt", "[", 
+             RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"x", "'"}], "[", "0", "]"}], "\[Equal]", 
+            RowBox[{"pt", "[", 
+             RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}], ",", "x", ",", 
+         RowBox[{"{", 
+          RowBox[{"t", ",", "0", ",", "50"}], "}"}]}], "]"}]}], "}"}], ",", 
+     RowBox[{"ParametricPlot", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"x", "[", "t", "]"}], ",", 
+          RowBox[{
+           RowBox[{"x", "'"}], "[", "t", "]"}]}], "}"}], "/.", "sol"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t", ",", "0", ",", "t1"}], "}"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", "5"}]}], "]"}]}], "]"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{"\[Alpha]", ",", 
+     RowBox[{"-", "3"}], ",", "3"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Beta]", ",", 
+     RowBox[{"-", "\[Pi]"}], ",", "\[Pi]"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Omega]", ",", "1", ",", "5"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"t1", ",", "10", ",", "50"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"pt", ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", "Locator"}], "}"}]}], 
+  "]"}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Demonstrations", "Section"],
+
+Cell[TextData[{
+ "In 2007 we launched the ",
+ ButtonBox["demonstrations",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/"], None},
+  ButtonNote->"http://demonstrations.wolfram.com/"],
+ " project which now has around 10000 demonstrations on widely ranging \
+topics. (10263 demonstrations (as of yesterday.))"
+}], "Text"],
+
+Cell[TextData[{
+ ButtonBox["Riemann Summation",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/RiemannSums/"], None},
+  ButtonNote->"http://demonstrations.wolfram.com/RiemannSums/"],
+ "  (",
+ ButtonBox["local",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "RiemannSums.nbp", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ") (",
+ ButtonBox["source",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "RiemannSums-source.nb", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ")\n",
+ ButtonBox["Optical systems",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/DesigningOpticalSystems/"], None},
+  ButtonNote->"http://demonstrations.wolfram.com/DesigningOpticalSystems/"],
+ "  (",
+ ButtonBox["local",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "DesigningOpticalSystems.nbp", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ") (",
+ ButtonBox["source",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "DesigningOpticalSystems-source.nb",
+      CharacterEncoding -> "UTF-8"], None}],
+ ")\n",
+ ButtonBox["Gateshead Millennium Bridge",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/GatesheadMillenniumBridge/"], None},
+  ButtonNote->"http://demonstrations.wolfram.com/GatesheadMillenniumBridge/"],
+ "  (",
+ ButtonBox["local",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "GatesheadMillenniumBridge.nbp", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ") (",
+ ButtonBox["source",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, 
+     "GatesheadMillenniumBridge-source.nb", CharacterEncoding -> "UTF-8"], 
+    None}],
+ ")\n",
+ ButtonBox["Vibrations of C60",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/\
+NormalModeVibrationsOfBuckminsterfullereneC60/"], None},
+  ButtonNote->
+   "http://demonstrations.wolfram.com/\
+NormalModeVibrationsOfBuckminsterfullereneC60/"],
+ "  (",
+ ButtonBox["local",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, 
+     "NormalModeVibrationsOfBuckminsterfullereneC60.nbp", CharacterEncoding -> 
+     "UTF-8"], None}],
+ ") (",
+ ButtonBox["source",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, 
+     "NormalModeVibrationsOfBuckminsterfullereneC60-source.nb", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ")\n",
+ ButtonBox["Universal Joint",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://demonstrations.wolfram.com/UniversalJoint/"], None},
+  ButtonNote->"http://demonstrations.wolfram.com/UniversalJoint/"],
+ "  (",
+ ButtonBox["local",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "UniversalJoint.nbp", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ") (",
+ ButtonBox["source",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    FrontEnd`FileName[{"Demonstrations"}, "UniversalJoint-source.nb", 
+     CharacterEncoding -> "UTF-8"], None}],
+ ")"
+}], "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Internals: Everything is Boxes!", "Section"],
+
+Cell["\<\
+Select the cell bracket on the rhs and choose the menu option Cell > Show \
+Expression (\[CommandKey]\[ShiftKey]E)\
+\>", "Instruction"],
+
+Cell[RawData["\<\
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox[\"x\", \"3\"], \"+\", \"2\"}]], \"Input\"]\
+\>"], "Input"],
+
+Cell["Do the same for the following:", "Instruction"],
+
+Cell[RawData["\<\
+Cell[BoxData[
+ RowBox[{
+  SubsuperscriptBox[\"\\[Integral]\", \"0\", \"\\[Infinity]\"], 
+  RowBox[{
+   SuperscriptBox[\"\\[ExponentialE]\", 
+    RowBox[{\"-\", 
+     SuperscriptBox[\"x\", \"2\"]}]], 
+   RowBox[{\"\\[DifferentialD]\", \"x\"}]}]}]], \"Input\"]\
+\>"], "Input"],
+
+Cell[TextData[{
+ "Change something and convert back to ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " input."
+}], "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Visual form vs. Internal form", "Subsection"],
+
+Cell[TextData[{
+ "Evaluate the following then enter ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubsuperscriptBox["\[Integral]", "0", "\[Infinity]"], 
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       SuperscriptBox["x", "2"]}]], 
+     RowBox[{"\[DifferentialD]", "x"}]}]}], TraditionalForm]]],
+ " into the input field and observe the changing underlying expression as you \
+type."
+}], "Instruction"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"theboxes", " ", "=", " ", "\"\<\>\""}], ";", 
+  RowBox[{"InputField", "[", 
+   RowBox[{
+    RowBox[{"Dynamic", "@", "theboxes"}], ",", "Boxes", ",", 
+    RowBox[{"ContinuousAction", "\[Rule]", "True"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "@", 
+  RowBox[{"Style", "[", 
+   RowBox[{"theboxes", ",", 
+    RowBox[{"ShowStringCharacters", "\[Rule]", "True"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "@", 
+  RowBox[{"TreeForm", " ", "@", "theboxes"}]}]], "Input"],
+
+Cell[TextData[{
+ "Observe the automatic grouping and precedence as you type in ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"a", "+", 
+    RowBox[{"b", "*", "c"}]}], TraditionalForm]]]
+}], "Instruction"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Generators and Graphics Boxes", "Section"],
+
+Cell["All displayed graphics are actually boxes.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"Line", " ", "@", " ", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Random", "[", "]"}], ",", 
+          RowBox[{"Random", "[", "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Random", "[", "]"}], ",", 
+          RowBox[{"Random", "[", "]"}]}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"{", "7", "}"}]}], "]"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Small"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"pts", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", 
+       RowBox[{"-", "1"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "0"}], "}"}]}], "}"}]}], ";"}]], "Input",
+ CellID->826941582],
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"BezierCurve", "[", "pts", "]"}], ",", "Green", ",", 
+     RowBox[{"Line", "[", "pts", "]"}], ",", "Red", ",", 
+     RowBox[{"Point", "[", "pts", "]"}]}], "}"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", "Small"}]}], "]"}]], "Input",
+ CellID->234422992],
+
+Cell["Similarly all box control are also boxes:", "Text"],
+
+Cell[BoxData[
+ RowBox[{"3", "+", 
+  RowBox[{"Style", "[", 
+   RowBox[{"bob", ",", 
+    RowBox[{"FontSize", "->", "50"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Button", "[", 
+  RowBox[{"\"\<Hi There\>\"", ",", 
+   RowBox[{"Print", " ", "@", " ", "\"\<Hello\>\""}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Slider", "[", 
+  RowBox[{
+   RowBox[{"Dynamic", "[", "mn", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "100", ",", "1"}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", 
+  RowBox[{"Factor", "[", 
+   RowBox[{
+    SuperscriptBox["y", "mn"], "+", "1"}], "]"}], "]"}]], "Input"],
+
+Cell[TextData[{
+ "Its ",
+ StyleBox["all",
+  FontWeight->"Bold"],
+ " about boxes! ",
+ StyleBox["Everything",
+  FontWeight->"Bold"],
+ " is a Box."
+}], "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Notation Package", "Section"],
+
+Cell[BoxData[
+ RowBox[{"<<", "Notation`"}]], "Input"],
+
+Cell["Do RingPlus, RingTimes", "SmallText"],
+
+Cell["Do InfixNotation for RingPlus, RingTimes", "SmallText"]
+}, Open  ]],
+
+Cell["Notation for Up[a] and Down[a]", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Notation for MyD", "Section"],
+
+Cell[BoxData[
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   TemplateBox[{RowBox[{
+       SubscriptBox["\[GothicCapitalD]", "x_"], "f_"}]},
+    "NotationTemplateTag"], " ", "\[DoubleLongLeftRightArrow]", " ", 
+   TemplateBox[{RowBox[{"\[GothicCapitalD]", "[", 
+       RowBox[{"f_", ",", "x_"}], "]"}]},
+    "NotationTemplateTag"]}], "]"}]], "Input"],
+
+Cell["\<\
+The above rules function for n-arguments through the attributes of plus and \
+times.\
+\>", "Text"],
+
+Cell["Copy and paste the rules from above and transform", "SmallText"],
+
+Cell[BoxData[
+ RowBox[{
+  SubscriptBox["\[PartialD]", "x"], 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"y", " ", 
+     RowBox[{"Cos", "[", "x", "]"}]}], "+", 
+    RowBox[{
+     SuperscriptBox["x", "3"], " ", 
+     SuperscriptBox[
+      RowBox[{"Sin", "[", 
+       SuperscriptBox["x", "2"], "]"}], "4"]}], "+", 
+    SuperscriptBox["x", "3"], "+", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      RowBox[{"Sin", "[", "x", "]"}]}]]}], ")"}]}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["MakeExpression & MakeBoxes", "Section"],
+
+Cell["We need to be able to do computation with our boxes.", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Style", "[", 
+   RowBox[{"foo", ",", 
+    RowBox[{"FontSize", "\[Rule]", "20"}]}], "]"}], "+", 
+  RowBox[{"Style", "[", 
+   RowBox[{"foo", ",", 
+    RowBox[{"FontSize", "\[Rule]", "30"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+Our goal is to introduce new notations which can do computations.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Evaluation Model", "Subsection"],
+
+Cell[TextData[{
+ "Do ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SuperscriptBox["2", "3"], "+", "1"}], TraditionalForm]]],
+ " and it\[CloseCurlyQuote]s FullForm."
+}], "SmallText"],
+
+Cell[GraphicsData["PDF", "\<\
+9E14ARda;S<:9LCUl^G[Yo>Pd<C62S8P<21_HVX:?3`P;daUKVMdJ20d830PDR0_
+AVU/M6Eb82m6K65dIDAUHfmTIB0n?PYcM79UHFd:N=ZMVm^>7;LAQ^oi57fIG:SM
+?7BcnmJ6WH/0P@GY1HC9bU:`JdNkl^7aDlE3oCmWNUN;b0P`o9N/:]KDT=mdCKi<
+KjL_dgLo??WYlSCijNTb;E=8biAbV]kXRlNkjN>dc=]BoXGY/`aRoIMdnWOoT;Fo
+?;VHiS9SWd;8/iMGOWZH_<SiT7nTgTlnKG<><GQBoK[=DFNjh?</STbH`Y::OhVA
+E7n4fNmUZIWcNnSV^V<7kC8QB:Sg4/Bli6eOEUhOiU@gK7hL]24RZ3E`V<?^C[;S
+;RFaEkT<T//YaSWZk5aVklEhcNER^JaZcNDBXYNlVN[GMLhUW1aX_:c5K2QYE4Fg
+]^mUA[MBDU2/>?PcCE=X/D6E5?XijYhCZMk?NBTk9CmM6j>1JS738_IU_VV_YeV<
+9H^QE^dV5_IiUENaI37f/^ZZdba:=592=5EB947/L`XfF[Kb;/JJ@4UOW=Nmo;D]
+Uf:;OKWiPGJQV:1:m^CceK?GE>LmfoNSLdnAHC5R?mWjNKVUTRPo7cYK2oJHaJSH
+dT@5;AYC=4UBmKY;R7i=/hCPSmT76T^/^OcmdQAoY3W/IDHc8U]=eHR[WVb/JK:8
+X8[oHcidYi5D_lcQJ>M1Ln6P3H50AKQV4E/jbLIik]JF^h3IAgUELTMScEbLSoHQ
+kJYOHc]3=9hmG6U;;/O:FU;HEMgS/IOb<H^JRfJaIOEXja0Ke9;5X7_V^LNlJVKf
+eL63JD</Y29Z/hSMVFoJlFTF]i;5YABYeW2/Mdd^FOCe;H?ZJRi3>JX`ejmb`;@?
+]IP:EmZbUb<gUe`fEGJjcQ:dcSB;OUnkAO<=kD9a@[fGMf1NMOnNe;ejbG[8MSo@
+>29BNnaT4G/lbm5YA[=VE9:nUn?2bLK:ZKVGS2keoI^PJTJ3n:dIkJ[VBMm?bD:`
+/M>hmo;gBi_Q3kV?mc;3[?QmjeK<7k@;a@IEXY0C_FNaZi8UGKdMi0LJAN=8ALaV
+4O/bgjB=FGB06[ZfDkfeiG?1D0>EXLID1eZ9RPK]b3B^BOfD7[Q6L4>]AlJTI]0k
+0ZZ^3E`3UKT6Z]6:8clP68k8E<@>RmRinGK@GX<fZMkPOQo@aUA7J4=c:kS4BPUn
+jfQCFL;_@9]:77Xj0I2JTLPXIAZS3EA66e<MP8Gl068h6U<A<baR]fMiN@gJY7Jm
+NdHK1iG@1Z;2Bjcl48j:=Pd^O4NKBQiNSZ:n_859^FLjfT1S]87:J6=Z@I]^_k0<
+>oLD6AHSmY>]_`Y]D[_;Xj4=548KR1ELHT<5gm6V0DD4fUC/d4Af]6U`4W936a/?
+J0>Ed@HZXDeg`FS3PIQ:hL:RKNTT6jm2VmA^l8hf63?J@0F`a<H8TM6VdL@EfUC^
+B84]EX?YZ5i]a6P3UM46:Z6=NB28XERPD]B`J;/3fT1k3MZ/mMKNA[@aMD0Kc0G6
+Y4X7flYXDcUR^d:KBQa[HX_=X6OOYS7J@6FdPDYXHgh8HRPRZ1HkFk@mW^GX=FRc
+eQ/l7`?J@6FdPE[19EE:b8HfUBGb0KBYa;5]I6E[AR;iPlIX0iGA1RZQSOTQR44d
+Q3HD/eW4_X0fd5i2Vf>0VRC5O0/eJO>:89h1:6GO[QV0PFT3@T05K<0RX<Al^a5Z
+SP5WX[[;FnJEDCk0eai<La`;IR9ZF6BLh@bLiZn2S5`omOT5Phc^Y3kaPEZcN0Db
+0T];>L0I3:0a@T05K<0RX0Bn1jRa>1UZH]`:Pi0Hfhe2KQ`d3PPZ@SN3f?M9Q]`;
+B2>CjTg0B9?DAZe:@YZd;LXTVTEC9D]43SYR[=0aV<?F4iC0d`0e5QE3CHb[PTWV
+^I8DXRHM/GlM8cZ/9jhifKmTbcg3=@:ekEHP[TUZ@jn`PFgBNRRFB5A@dgJd>`34
+08gI0RY0Qb`J[I1_YQg4BK@SVe4hbCAG<[KNn8764D55k6CAb>H/Abo@S/`>=Om4
+>k8[S9gVLZm/@[?B]]o@3S@V35>9ALRR<D_ab[B3f8QfM<m1ZhPh:HId`e?@>1JX
+R9X/PWI>l_82kLRgQIE9AciGfcGYC3F?XG`2XJH]gi0>=><:Mb4E148FSEC8=i=>
+SK4[CS<I5DXb[iGchLH7=:HLDagR9X^PW:_L?4lh<OGV1A=>d_GU4lJ4TmIl@cRJ
+WoJNMF9`d9QdX892H16d0]nV^@_RW9QfXWcW4CPAjX>Z>K[fHm[0GYP9fX55k16n
+RGKLao?^E6D9jT^1M[P_AFaRGAXRVm[N8H6j@8@jeYN2>N/[>CPNne;7d942V40U
+e;6>53B>QM@J<Y4CMJAhkjNI^n8LkTDAJe0_bZR4nS?4==KK8Hfj@<@ieRn2AOBE
+h7_XBeVLg9Lb;85Xm49]:N8L2XQD2agPQ:iDmobj[YCMlmbE0We`E`ZLP[V5K:ci
+DdKD6BZLHfdSL1:jCO0dm:D/:^i;PE?@UbZLHah:ii3o<[KX/9iJDmfCPoK2la^k
+`kTe1MI0RhHhQnHBdeSCQcAZ3iWZd:^2ACBLh7]XF5VLe;1bX1:Xa3WVQcR78R:e
+adhFZF5eTZ=GL8kSQYDB1cN/@2E@RFV/m@>RhBHAIZ:M18]X>jWGXF5U/G73bZR4
+iQ;WV0OR7<CRB;FXHI4JE/HiccF/g0gWL;<:[06E>@NZdH]3/hXhQeY3a3WFA895
+=9_<]a^JEBE6JU@AUD0UcS4O81Z>Q^S7hXI5JUAMiNHdRb?WC=bT0V]`T`YDHRXc
+SCEmB:=V5G6>=I9PdAY>3[jiHHDh^F45:X4:YX4O40e7A:[53X_H>EQ`K5SimZ7N
+fb>am/127clob3OhXkmE/Oi8a4_YJe=JFl@2C=ZFmO9i[0<9k9S[hePMnD=`HLLR
+_fNbZ:<;NIBa:hnhO?l9@ihb[6@bGehg_cJoQ=F]>AgYm/Y?TWih=bgC^anV;k;K
+AOikhjLgJbT^BM7UHM[]nDhZSjJUZ=_3PUFOGDX0]O5AF]RC[5cfm_<MHM=L@]:G
+FCk__[kYOLVaT;ES4MJ5;oWKoIA3Kdg8L8]T@`K=][b2Ce_P99`Ql<_dKWX[^b^o
+_O[<Vld7T_L`OOmNHVYof^EoN^_^DD[]cCJmOiRnndU@BMJnocSmkO_OoY[n?[go
+coCSno83[mMIE4ZD=gecL^5M6GcgmO7gbmOO7nmPMOQ=F:U6e<@j5:5KQaYLNmF9
+d?=NZg0X@TEFnE_6@ZY2=mIPW[P2FofIP@cKNGCKUfR4@oAJP]n^^Q36/Y>aOQAj
+4NVO]Ki2e2ZX;a?:;PQM7:6NBGe5Y[Yc>^;2dc5GWXjUaV171lUZ[kU5hFTlHo3O
+:[gc>Q4/G_fjbFI_:nnOMhnog]foE7cW=^GLGJ@^Sk?Rno6_ockN?Cemo^gGUjY?
+3l[j]F2]ge0BEemJ=bdROCbPgbZfX@kZ^9E87J1j/38k<c[URCgVMQgh0QEjPHK1
+AQdg1fGPh1d;ec3^hZDZU18aS]HZ59965DXhZ`ofgF4EHj7G@gWIZZBl]_:a9JGb
+b62Y@g?HjS3^^L>m?WYE131;IJ@nm251PH?RVYJ4U@fnF8YA2:lVcigDCGVH_h[a
+fe[lemfOdg?ej0K3;aGTm:f2M=l/b7XYXgSZYHc2:YNDUUfoUE]1;T=5e_/DZoBR
+QLej;I]?Yf<^BVmUf0beVUbX:?_US5GJ4QoglJZJ[?La:RP=5JTgX5HN;TLMKBQ9
+G:JXhX<[lQP:dQeS?Aje7655Alfl_XAO[4UDSbjmXQbO^d?eK9AhDje7Mef?cmk<
+gc3koeo=@U:QT]@bd9BkO_MlG3EemDG`Zcf=dT`D:iNWITFbDPkc]GdSB4j^ABfP
+cCM1;j[]B_Qd]DQLgMJBXfSTN`kmTW`OPRXo/JCaYi/EkmcKIb]E_fM;IFRWEDj@
+LX36CKoZ5;=EZQ^?nR<DUIdL5;U<m:4ZnU^DG;jQVZ9?S=HBSJfKn[Z?cfHnBZX6
+ef<dZDI3d[YDjI<kFOY^NWkOJEdJ]NR[hl2KXmVZ=JP0dW<HSlYRN4HJSgbUO;YN
+iaiN>2>:Ghl:d6L074MJ8lI>[En_d?f5jDnYlWEKPlmBiL_;ga?/gGJKYGM]JM_X
+_KjbZ6NhoP2TYWOYKombm8;`LHi9cj=kZ<FIKnZW<`??egc<lUf?XQ[RS?>VCl^:
+<e?c<^m[jmEo`W[KImmEb/]jn;j[Za==_j[[9mjOGH?boMjmdEaN7C/ogceNkSko
+LOO_dm?/NI>^V5@f^S7ihalOkWool7GP_?ioCBUaOiUdZSZ9nScBnK2LQE`>dU_c
+?ogfn?3QjmO?_oibBP?ULJBDlS=9>;=h4[13S?[CS[2M7NKQc=S?7ajO>3KgmWm4
+>4bS2VE^I7=dLVEQK@YUKVA_HVX:=20`86mRJPXc<S<g2VE^I6mRJPXa830PKf9Z
+2S`l82mDNG1U82m@HFMU82m@HG9UKW@P>20`858P;e9ULfmeLV=ULb0c830PDR0_
+@fm^M6E^M7<P<R0`858P;deUI6UQ@Vmh2U/`830P=3Ld838c>BheGB0n?PYUKVA_
+HVX:<b0`86mRJPXl?20_D79_He=UM21K82m@A4HP;eAUN7@PGB0_@fm/Kg9CL65S
+IB0l?20_@g<a83DP<21B82m3Lc8P=b0`858P?Sh:;dI_KW@P?3`P;dHa;S0P=R0`
+858P?ShP;dEhM4MCM65dIB0l?20_Ag<b83TP<21B82m7LcPP<C0P<21B82m7Lc@P
+<C4P<21B2Rm7Lc<P<C8P<21B82m7LcHP<C<P<21B82m7Lc4P<C@P<21B82m7LcDP
+<CDP<21B82m7LcLP<CHP<21B83hn83hn2VE^I6mRJPXi830PKf9Z2S`l82mDNG1U
+82m5N7A7DgAQM6DP;f=Q830^<3LP?Sh:IFiTKf9Z2S4`830PKf9Z2S`l82mDNG1U
+82m5N7A7DgAQM6DP;f=Q834P?Sh:IFiTKf9Z2S4a830PKf9Z2S`l82mDNG1U82m5
+N7A7DgAQM6DP;f=Q830^<CLP?Sh:IFiTKf9Z2S4b830PKf9Z2S`l82mDNG1U82m5
+N7A7DgAQM6DP;f=Q830^<C4P?Sh:IFiTKf9Z2S4c830PKf9Z2S`l82mDNG1U82m5
+N7A7DgAQM6DP;f=Q830^<c@i>CTi>CTP?Sh:IFiTKf9Z2S4d830PKf9Z2S`l82mD
+NG1U82m5N7A7DgAQM6DP;f=Q830^<3D`<30`<30a83hn2VE^I6mRJPXa=B0`86mR
+JPXl?20_E7U`IB0_AGQdAe=dHGAU82mSHB0`;S8e83hn2VE^I6mRJPXa=R0`86mR
+JPXl?20_E7U`IB0_AGQdAe=dHGAU82mSHB0`;S@g83hn2VE^I6mRJPXa=b0`86mR
+JPXl?20_C6E^IgAX834h830PDR0_CR0a82m6JFadIG8P;dI/HGAUA6ESKfAU83hn
+2W=dLVEQK@YhfXeCCF/CDABmTeKLQ5Y4BnWZ;H/THO`0[A^9BIXV;C6V:IXRj3Qi
+JJJIc8a_9]64[[Ya8iZE^70S^7=CL>>R2aN5KQB54_d5PUD;OT2GhYVIV8b]GaON
+NfO^>oONLnmSR8KG5<_B@hbXKSPRGHRG;YLFfL7G5:8A2Q=<DFd[W/o?^MP`3Dkk
+K?L=BNji5GEceIif:U=?cRen6CXmnWj[^d=o]`=UKZ/hWf>I=ag;8I9Th2>eHR41
+W0@NDBgQnX_0<fEK[@<o91Xjg8]ekFRJ6eaX:T/;YLGb`ZaXNU3[_nkobmcIn>SK
+AJmWJNb5fQ3=g[DT_BAbn2g7oDRHET]XBeF77InJ>/>Rk8@/WfAaC8RcQ5Vg6PhG
+;6>X/@QCM9eiE9/9KW?Ai>DHeOG6cmh>HHFi/C2?Li8Xm87KZAjF[;:BW0Dn1OmH
+VBMC`6OQgjQXdaWP6=I6AD`_h3`6?m>LC=7gQmH=?COWnd=I`laM08j0ll1bcQN0
+l@jQ>gIc?]G;lgEIbNIaSX6C[IVc;VLL7:MM;Eh27XGoF[^Jb?UnjC^EB2M>6QWH
+3F8d@`X9ZV=G:4XF/4TEg6_PJICfF1aNSFbZPIl6O^MQaL/dR=0Y7l0^La^afek/
+3FZ0jdLSDhiF8o:Jo4Un;;nEMnB^o0SXHfNR<FUImnn^RZ^Jn^[NInAc:`obnBYH
+CiFOFDG5?jUdL6O/dAS7dVT9gWYo3WH_@X5:6e4=L=f<dF175J<cdNNeR;T:nNgL
+KZ0jkn/Le;k^iJmifYXN`lHN3fS`gl7_KQVg0kEPKjj/S`N[MXNOGMT:Kjk/VDgI
+Vfk2jjL=i_hI1Mo6k=MK`S;kK?kKRJ[1n[oT`Moj0g]0n9X:IFiTLgAbIF5]2VE^
+I6mRJPXa>20`86mRJPXf=C4:IFiTKf9Z2SDP<21_HVX:Fb0_BD=3@V5cIF@P<CLP
+<21B85d:IFiTKf9Z2S4i830PKf9Z2S`l82m<IFiWM6PP<S0P<21B82m>83<P;dIY
+K7AULR0_AVaQM6E4IF=_I6DP?Sh:LgAbIF5]2WSJOI9?B1AA7<No/bI2[4EY9U8`
+9oGPbZ05i/7HGOnVK<^joTF:MOK]k^S/k?AVMR_a449d2K@>7J:;5IfTHgS`d26@
+R10Dje92gBB3@?0B/_eVI]LMDG_`iWgVmoogN`lXKhcY^^XAPKAVlTQ?@1`M6aL[
+eU6>BWQ1:bHK^SlL7[2IK75TkGf1H9dK?T_Oo_gLeK;AZXloKjd<KldoJl3oEbFW
+Q8105J0jjO0ERbLMk[Gh[ZVKa1<FbjUHW5PWK^;AB93h1O6IY8/WGAaWQTblA7aM
+eSW5lDB9Ng=bdXZi@baYLDDSnBGR][PQYhW9eo?HVXECY]T?M5`6bSjEI><6/?@6
+^5QOTSGF0QM6P>GFTV`gH/m7Z5Tc4Zd]]TS`1X3b[Gan]ajXN0[/?lWWokk<ioMO
+DHi_`7]Ec_9LHDJ2l1U`n[1GM@oC65MTdKZ_<<lT59FiAWZlf^WGRDOeAHYd4S/c
+/ELK/4Sg<78Jj7l8??l1=;`5Z]h1hDXPNPfN1bQ^Tmfcl`@cnWf^95>Vf299;J;?
+>UY5?kd@9PHcJCe[<RkfJG9cTaQCEM4f=DC>3<Ic;=j<]9X]mW^F]YMY@h=dd[`l
+2FId5ERHR/LjjFk@C;`NIieMe[/PGTPXgGgFQM3nT>3M@`h;iaFc;nZ`Yd=C@`<5
+QYH9gGARHTLg0i5RO2<gf5FDClE^Q>V/8gWkM:KO/ZTQglJIE7C4HB4jT`Z62[b2
+<JQPD:3AEh>827X@P0lj>398T4HQ2hFTc;KQa0JVSkED4GJaB?Y]l]VfONhPBmjF
+ec028L`e7D@@YJoBKfUCFYANBklFj[:=9LdL_jg8Jo=o::jE^ARgX2gDi<BG:JnO
+]2ZB94dOm6Bh:WEEUm0FjTZA[1c/DFS?eBEcIO9QdXhdKFO:fCZ3_WiG]Y>VAkJ[
+/b^eYEbKYiHW=[b[/hMVUCWB5C_Xj_1obLk]coh1[P/8N0YUKVAcM79UHFd:IFiT
+Kf9Z2S8`830PKf9Z2SLb=PYUKVA_HVX:=b0`86mRJPYK82m9@d=2HG=UI20a>B0`
+858PG@YUKVA_HVX:>20`86mRJPXl?20_E7U`IB0_D65WIG<P;deUI6UQ@Vmh85/`
+830P=S4b83Li<UdP;d=_MFid834P;d]YI7<PFb0a830PDR1M83hn2VE^I6mRJPXb
+<B0`86mRJPXl?20_E7U`IB0_@f5dHFa_Ib0_D65WIG<P>20`858P;eIULW=YKfhP
+;c4^=20n?PYUKVA_HVX:<S8P<21_HVX:?3`P;daUKVMdJ20b<b0`858P;daUKVMd
+J34P<C0h<3@P;dIYK7AULR0_AVaQM6E4IF=_I6DP?Sh:LgAbIF5]2WSJ_GX;N5=E
+]_oJncccJ9ZTJO=^TZI9VZI=GkBd]40/KFV15RP:;E9/PD9KH0B/aJ9`DD6P8Sj@
+Qn0hXR=?WHKBTB23Uf50M<K[JaCOSUka<Hjmc[dGWATQbGnMTe;1jifoggOWVic^
+_MMnI>neOW_]]MI>3a00D<=JH20dOfWK<Z8S>k3UADc?cnoYM]kcag7M0>A10:I[
+hK95B`lMoF88P<=^lN2R9Kd;Ich@Z@M8NQ;0j>aXKe]`gY=c2B1CnWi91cHT;nLN
+0O2`F<o/F=Ymblf_:EMR?@_[BiKL>;n]k]VYjk2>ld?Yd[IKUXTm2Z@md_NM?fUK
+fWiMkm9=F?lBjaW;K[bYVgk0O0?PeF:mJMV:mVG/WEHNjag8gnn`SH0TSb@A3knB
+iX3VhIKofhO:>@?/B0/WikPf238UoYe_:c0Y@HEL8EBH=79[<VQ11gY8@MX0ZI06
+AS216BcLBM1b9b2;F`/F=PlL0?6g<KdSUK7[hYmbId4KFa[oCjHL_gU<BS@f_P9>
+`Sf`6oZAYoe8Il5Lf0T_T2hhA^K089`SjA34OFHQ0U?PAA:?_`X;hNLh_Q]>`CHh
+S=aU`E;TH`Y/8Ikh:Zb7T9h7jn:?@BJD`Ue`0/Y`eRd`53l@?h:mSG0M78A3n?gO
+4CLmc:K4Oa4oSdQ<acWGHLn[lBWaOY@`1bYQ6[J^PfN9QgTWgX5bUR=g3l??H0ol
+6[hTMi31N4Nl9oi:o2?4fP@fV87?JS98?V;jfK_R3lNoR<L@RBc8aUEKHB/lS_?g
+hg<B]kbJ;2KMI2_IAT?d3S[8[^N</BSRh8N9n=C2SK0A4CP6Yn6oh6oT:fYR]4`g
+LbIN7?m_g9G9::DTBC_dh;<1WbdXdg72Tg`bPD`SZlV3I1_i?LfVem4V^Y;N@SmU
+6YPiC2ocNoHVMX3Kc>gTEK6_hlOSIn=_h1kJhGYH0F]@^U?`2Ub0K`V3LmV8QiBC
+BS8GWkET=ce6mY1SM1XiBEjQ1lTOb<OT:g:ALUA=DfV0M]>]m10mAEmR>YU]c4?<
+7iR_fG4LiOI`Wo0NhMgH_=RVf4_al_Q7lKnREX[P`YfYQ0Jh0MY@fVD`2_h5YGP:
+WgkL]M=`1Uj@Whn93HKP[hP243faT49BSdl3VDXFTTkb27T6WfMUG[jQ^15D@GGD
+B6ed1Ye7Um:em0fjU[4bfL`TISKCSlocc3WV8W>AiMPD=YFMb=K1IWHY^`^O_Nan
+MX1mVB_SaW4=g4a^;KN9flc<iekUc_5[n2gl0?lEofLQBiPRg2Q/a]ei0GGfeeNM
+6YIT8_N5l1>HCj[8?=R>^k67]44OJ]L2/Q5iG0IIlAIV3C>AiZ<f?0^gX[K^P]F`
+RIT3Nn9_<@OQCMBD9CSGF]S7EX:Mfh6kL`OTXaHU7PSi/oeI?ZlWdigQLS[BkCJ[
+aF`bYZDJD_@jKI9JYEB80/na32F@Dnf^JGF6_JeQe^^^[LfEj^hfK6RkXZ4ek<BV
+VZ_7Q9f]lS3WeB=3>7;QmdJ64R=38b>9eUT15KTicVZg<oa_EFiWQ<bNgXCd?EG^
+IVMhB:K[IOXnVDi2f^G2;cR[CAeEcS1YMEJ7JgXjnZYKZg2jHb796>GVB8HS12YY
+hS1<J5_MHL926U4M][R[Z/=VMiGLagRZfaJ4Yde_ZZjb^Uc=f8I=SDfhAVi>Yl@W
+g:eNh5i`Mb@4leXUZVe>DiQYJ`kCEVT^GB1/M5N5SJ/n<GeG_DaEKkjR<d`m=Fg]
+OCD8`MfeRFZ[E6_KS;G9<i`h;EgOg1@VjhNIT7S/ZTZ`fnj^UYYJ^iaQQK_BgM7G
+eH[P@V?CP2ETZGJgECF7HE[CP3UTUR^i>LM<JlYM:?fag6]b[i7:LYMYCJ;lk<i4
+nf/WEO:hdamR>KUa100R[NB^@ck3c_Wb8ViT]UC:fT^QKghY3/=?<d4a>i6O2F6:
+>/=h`YbW[RflM/IU=SZZ4/beMUD=:<`FBHKFbVHLgmZW7H?;h7R]fmWg=N0F^XNn
+_;ZUKKR5mfRo1XVD=WY4Ek3o<]dS0b<]Ig9gB?_KDceLMi^Z[fS0^PB=a7?H42jL
+?:g95GHfHd<40SVC8j2HeWBHT2g=4A9O7h4Znc7dJ/`=Lk4kAe:ecRYL7b^i>MR@
+kD8ZV>>/`HU[95eamSWkjQKd>F^L7JQ<[4L^/J>m[cT?4IcAQ3S1]KQRZ=Tj@[Hg
+=ho1NO:TNEQiW[iVW:5[N8H^N@JL88Z3lW<VXiSNJDgCVl9[ZjcQD5DckP:ZklUY
+CN6C^77=cCRZH8AC;5MgVXIi;TBN2k:A:4[<<P?W`2VJnoXB=KL[O;:_cmXWWK54
+?D;Pn`fQhHH8b1<PXQ6bMY[L]MK]//ZH^m`^I:]I`W@DZ_AUSHY0lMm7^>A:Q4LS
+]bDb`ZGo88C;OPc2HghD`^DoS705lU`^8CcfWhO`^:/@7_og4@iMRO0eb6e8A[Sb
+7hC`Q1n3L=F?@[SjQa6^@Ij[9H@Wo_<@[[d:hKZoSo2T:a6NS=a>TQ6NlPm2^?k7
+8=c`Xa2Nn/<8Cd>NYdX8CooW8Mah1L;b;F@?GScbl6k0h:eSG<S5lGTHV;127P=:
+S/eS66YAl48N0K>Xf>RJOj/Y46RhD54O[FS@OU=A[heF`?R:J8FD2_:;M2jM3m<N
+MT_Td[mc9kjM467[;ai9g7?`3/Ra^8hBk`=IL4NXM7KBK5dGkD[ZdZfR:ee2GE:]
+S]Y5Ac;[B4T7l8WYAZY:mhU/PKDc^L1]bEJTN[;Bc?k/2;WQR:]WhIF<e0mM68;a
+dO53n[:lJ1WAjL/:lROdQ_@V2bNJ?KaG<;41`UW408402@@2]mm>FUY8hNRBhU4n
+[m^U^h9TG4hYEQ=h8BeAnPTm_JKV9cMGgQ7k:GWZJ4?1_E=Fafkn3Ee9j=;@E7om
+l];icN]S7dBg<]?LXnnm[m0F:h_>kYY``j=S7=6;G<Z^jeONgIcW2iBd7]Qbdi>8
+Mcn6XD>8PgAgJ`QU2^T/Zf;B2@K6H[YB9JZYFTf1kjCU2X^64CePC]94R>Z8Jm/V
+FN9QPBnLAb7cH7`2O5W^P_`DEjY;=ia8?i]gJB/C^?@6Lm_5DmC1WAR<EAj<JOYa
+JOUF:o5a42/::0^I92hD`ec`RhU59Jn/E4G8;5ci_B]G?Rl]n_d5gOg<aD/_dUNS
+NFOUQOZS2j@e7/HmKi1UOBJdR^LlW4n/5IZ4UMa6IRLC`E3o<d6eUmW;DXk;4_f:
+oHZoDDkP195C<:mC`W6l:0X:B[<HaZ=71WV>lnRaRF<ED/I@PEN876FE;4>XD^35
+aOb]o>Ll`e^BR=:S0[<jjIb[Inj8YYPK]9nfV51Q4K8:_A4EaEPVKZP?1[SEfS<K
+PZH0ZigLN<^Z<eZa@TAeQQG;FlSbUY@R7G4YR8/8>_O3YnR;92GjDmXMRdISOc[5
+WHR>XRm6`iNfdXlnR/WWBI8iFlIE2CdQ`fQBbU>168V?C2A=:1jQ=49fQhajWQNX
+82;W8RlZ6JFBl29UY;iOLZa5;HSB::D2c2[eXjjNIENO^fP5KWmI@P76Eb39KPP6
+=Z`nPdbg4>BHj8YdKX9o3on9OW[R3m7TInTHk/C5fNcNKbN`CeblGUJ2Q2knECjC
+1VP;5GNZ>oFmjUEj]]K@I>P`[3:`PYR^dfZEA9</jHIBY;aNcBX<QP;FTYJ/@1E9
+CO/1iHcZ4=b4KVYADK0P;@Gi;BV^@SaA?1hb=lQWcEEHD]a?]ignlkT?HXEWVKFg
+E=hDjbJKkm[7WGSonBOSdJg//C6>6;?R?XWGe_PKk3OL9i27MjeHJ:hofNOfNT/d
+aJj9gWWNEIZEVH[5XTUSm=1VCHOVH0JSe8c9b<a@<Zc=M9LQ;bmP6f=Pf341ACiE
+JTAMIXHS:cmOIo8HjdA?UZG@hM7EPBO?G53hZ:][F1Pd:/>f1HG@jl[:Y8AR3LUf
+AS/TBAV<5[D/Uhe=OEI@i`2ANZTgel=k;5hV1`:@6i@;;Q]]Scg54@1[ZRU0c2JB
+b`I0hE<5R4M5PTP;O/cBmCK/C;=9MPXoFVdP@;@E<RWWT^Fj7GLHCE?A/<W:8ejO
+]gQDIU4QVnY6dYg1YaZ<J@hRVboFkOAiAa>B;XbJonfb>@>CYcafmSOC=a?maLo8
+Q>?91MNo4mhe^obEUkI=gackjImRok5k=d?[bC^[6ai`SW_dUZ92Cfi>lIbSclGn
+l7G?n9/NW;NTd9VOUe6nj?B5ecKOoAn/B[;[SO7gi5]j<YA31K`O:/g>9dZ]bZZf
+nHYZ]If:;Ze@9^[E2/IJ:6@Zk5Ze_Ca0PokbXnFd_33KXmL:W6ScIAQ]4M8GLQ_]
+3/5W3jZX_EQE8EADf0b2?g]oYVFLeFnKU>`[=HlMmb^b0ea`S6b7ZkKYO?Ad`R8>
+B@o^T;@m;GQ<PT?18LTUh66G=bZ[I7AZ1Q2cQi@T^l2DKWE1V]?P8Zh<64eMH;4K
+GBCEQIVd1l?`9f1_bIAQ7d/d99W`0Ym:BZA=@<cAGKS7TJ92a5aW`46hQ8Jh<gaN
+WeCPoYB<CR6J5@dg=6mgMA@^WEL`P`b>BeGO^NZNLYMb?oNGadodg6cdZ==efCWN
+U^`daNRGK]]fhYTMOBo?cZWKNgnZSMLTfO8FTBERSRUgcX`YfC>NfeeK^c>j`iK1
+<>_EO:DkE=_ebhgKOYi2cT]WYCcn4O<:f`0F/<:nD=hn<mUYfRlN=36CA=e^0l<H
+N;]5B;8KE5K1JSEZOG[2n:S>HUOjS6JK?D:48jhEZhOAUNg=D5WId0Rj/_;;D8k2
+Z<2SCUEj@I>RmA:m;UT[V;760N<RQ;:<:Rg92lUjc1@VgT]H`[/Tob_1:P6Kb0<b
+]Y1VM0N916EZ0/4R2CYJ[8DRPIkkf=R_GK7VbDWi6amHMZNi?og?aeokU^QO]k4=
+hCOWgkUojJ=kg]^dlXdcY>QCHR5S><BP=?h><lBM@]mSQiFQ`]6JRIYIVWg/0B_W
+4@ddfJh5dFhGDYCDKUAa`IBPeZoCFa`ZWlFLk]SPFU5iYOSAlnSeQRCQMFFjQ1II
+C3J54PPaZE0f6fIPYUi@FTD_2TR6=DH_2B8[29l:aSBSI9F;9K6PN9Bnj9/7mZcN
+/gOEaP>TKdKnf:LN6ooTSDMRggke0KWQlcMOn=e_G_T]7CdZOC:eOc]^fo`VT__]
+5f@FW[OJn3^/1LnK3C;1@mBQgQgR@iIm3XKCd6C>T:[A9jLJ@^Z@@OAKb6CEdlaI
+lQace_ZFn;KRW><]mnO6cmfZ/kZcNSY7i5bIbK_Bk9UU_22T^N`f@FU?DgV47KIm
+]Z>f=ff/9bgIHn?<B[FPdoRBkCk>h//<2SjcfN]kgKFgIMSRWiM]i>_A<_A2TU=2
+kFPIdA?90`aM3/MZ`<eb34Li`[6l`j_Cj[DYFX>FiMFN36^V5iaPmi9d^l8XN46E
+Z_6B98gKh/8V3S?AQ7ZEY<D<0YO?YJ`lfH7/fm5;`o8FBHDTZnM:9m8aUA@8cbF?
+J>]@RDS2>:;o7CaGFZ;GG_Z:^fo7?MOV6`h;D`/JNjmYO3kf1C7m>g6X/RHmMM]n
+S[SIRH^_VkiTdV>?WfTYVEQnOg2JCD_LQ2NDE<Jl=mOLLJB?_9N8KLO6bYW?LDlL
+T0]1>1ZZ;c7DRGF:9[5I/E5m`;[OO/2g=g3<ZPZ9C5Z6Gg=JVH5VS^GmM[=BKeLV
+1hEPT;<a`KAP[Ynci:/e_ZAaGYo=W9MoQB9N62ZCON_i[gGOfKWa@c:l2Gacg5VF
+M9D^dj?e^]>mG/RbH:ICJEb@[54WNN`IG^:cn_4lZ_D^P>m>hFGk9VUXLI4>HeiG
+Q]MG=>aTI0^F:B48gY7CRFJ?d=_V5QG_[EPFNn6Y;cE7TgaSkg`ii6E:MZknAN`R
+4IhQECooUfM[?5]_>cDe9oHZFcW>?F73YL8GNmkIoDB][n:1VNlgC_/;/I<T4Xc]
+>CU``jiOW^RO_hhVkRC[<7P/7kjCU8A/`RL/1Y<lXe@HSAK4gbl`dWGTX6]NiG1H
+M3YJLKZQ^[gZDcTPZTO[Q56KFeNDjUig53m/m/Ecg8TGiKQg4fISiKWmXECL?2F7
+Tn:L`9QIkXXY<I@IWS0afJK1@NU68ln1o?4NMR9hHGfXG1053Im/58dJHk9?m>5A
+ZCG?E2eBZMdNYLG^=R/YJoBhk4Ik4Rl0KkEiV1AU5ZjYla/RQ0aHo6Q`B@Q]BM23
+Vf?fIDE8dY4[n3R__C1d8C[<S;421J`OTV<?bJU9A`/`h4]5CbBi7n=U;nCF9Lb>
+A?R6ZGD3XE7=bmLfi6AF?=KnET?flLGeG@lM]ORG;M`gb>K]W9XiMWaVcL`I3enk
+9CZJO[ihfYJmdO_YlJF5Tami>O[ll;h`@jSWI_@/Ld<5AoVc?6Ei0nlcm?3M0VM@
+Dh=9JnM@C9=:JA4/5U3k5AHK2I[lIS1KdLGcEdTVVhkQN`cZ<XIG926@5<>VGR6:
+;n5S=@A[I=fQ:@LkcTo;>F[?Ga?bCb[=]@jBOLSog<JOcGX/>Ydn?ZmR@E9JIO7b
+c^S;b2c^M7WlKMJ5oU0]ocO/_U3ACW6kmZ6d9mSmhUk]PKB8n;ch9_^9iXl6mARA
+]i/4]Ef_<P]VLb[e9E^/2UnZfF:=40EjaIK_g4;mMahaLOc0b7YE:@ZdD3[Z9H8A
+:Bh9:JE1k@FRaDa<@bO8J7Q_`PTVSQjdI>Z;QoL8ciHN[AG5F2CQn3iLWcoUVBNf
+Kgol74Vo5?_;nk5;A?lIgdfBmfjOnn2UPD?WVGMRGlH^a::aGi309@a<@Y;_jhUM
+agY@M0eT@7LXih2hcdRcA:M=Yn7]ZD8b[k7KE1TJjS=I<YE1KM3UcdPf^c<g^4jd
+S6a=HVmTlJB=6CKQ]S@[L1H_j`D[2/JUHDK<6Rl`AWkHkdVf12E:G:MULh5VQ0c[
+YejWUN`aQTDj=ge^WjOVVN?E7/aS`OjBd?Fg?Qdkf[f[]c6oO;3gmjn]WG?hn89M
+]lgJbacNDYME4O/Sb_SHmQ^:dn^Rk`nOHoX0WT4MC0eiOH`gJC@cTFDeXYIZ53Z5
+fRM:JZQCRYHD8_Uf<>]C8Z@JeFo=5NXW7NojlJNSYbDSV_SM02j[GYXaEHY7Y8>c
+jE3ZcaMc9[_FZ]gh01jEHbFk:O</@o]GA7M:ij8boRKc=3/IKGlN2HK^;EG/i;K[
+7c;/C=fIcFMUNW`U[Q[Ga<b9_YVI/g`;<aMiNmFmBKfJ7WMgI[NWfk/gOGm>2X<^
+Sl]UPbUPBKDJKJKDG4<`:eWE:GXm9AkZbDQB/X4Ddg<fNh[0fX>k0ZXl@J7ADP7b
+G7TFQbW=i3>>bo8:_Ra;PLKQdhh3Gm2LGc0`hZOAQ2ClAiTFZLC]D@Z:4cLJ:F:F
+C4[R:S>5i59_:UiQG1Z72aAN`DG`5^?2F`aBMSffF@dV5g4VIkS0UJ594We:5o5j
+54ZleKR0mf>F[[>iY9^<JoPV8cTJ>D/XoK3RBnMLMS=GGVET>bKlck/<:XkGAkhB
+?EGk5n`Ljk_YgTgGM;mkk;lFCj07>NnhQaIfEVLe[3aEfOWf1enM5LQA<VefoZaI
+eeMWHXBCTEegnliOKIWM<KI`HT>X9]^LH/o;ZGk`gUONOYCn3GG96?n::[SIJ1dJ
+OiTDE9kDT0PI7o:`JFE6Q]LXMAHde`cQoI2ZBDeV70aU;ZFIcII;[TG3DG:dYNbd
+7>`Tc7BNI:BS5D?Jj7WINJ0OdQV<gmd;_<DH1aK]Oo[@8FmZ@E:j`C71]fKfoOMc
+/f=_K8eFUjJX2=fR46mOA<m/UOgQf_S7c0MhWZGoi/l=SHTHWSM@AHYX<:NH3EWl
+B^I=@A21dbR1Ce9bJ;]<P/V4XGM@jEN[;1KRUiQmkK;Q7HUYAn:8lAEU^/]fUb@H
+A@L_1J^SnLAi;MIiB:TUoliOEGT63e;gZ4EK?iVA:og452e[7=FjOoI?ZNKRZhn<
+cKkfXLI=m2f;M3jUbn4GK1jP_`h5:lTI@V4AM=0>IQ6oPMg8kH?mE9`8]KBJWLCM
+aFkRc[;?Lf9MeTeIdRlOJ6XGBNMdLV=_9;i/40=69a/QMaiUV:EjBRR7M2RMiiOZ
+LBF>IaU2><[`3?0LZaBUcNZWca0YRUQgQ?CcIW?31E=mm<<?XfIiOjBOP=2CjXLm
+Z50O36PKc]L;RB8`NGY_b4?mNXIQ`JoWNNikTn>mYYn3knH]:l>oklg<2MX0oQGT
+Bj5Ybo8D1BW2f?4mTTh2If9;C/I^I_<^kF@j;[j:2150<KPmB:V9<kAV8W]@PM]?
+JX@je@JVCeb_o2dmcC`W_20nYga1YEXXM8W]bTiESm0[mRQkEN^5?YEB6T/W<R_Q
+5XjIUIFFQLN<;BOUk;gTGYIG/8AADHKSeAc`XU;524X=RR5`o6jAHDl[ZN:d2/Q^
+]CU9`]cLX1dAjW^R6FGIl5H]8JCV41^1AhCDJQFg@A_0?mb^@HEB8BXSi>i@RQj_
+P0;?L]90GU282ZDX]F_d;5h<eBRfo5DRo@2g@K_j]8VCOX8CEf_?b<B6eM[C8bf8
+Hl_biL/ab;OB8Z^4Y@[QO?>UEgokf[^3/AN>_o?khk7O8JB3c9A;aiR95emUaUkj
+3@8j[8LO8HUU2WkEZ21^o2?YOocVKno6MY3NCf?Oa6;WBBnK5m]0N[WXaNRki87H
+CjP74[nCbYm5a/bR6i8[_PIMhZFLOnghcjm6BUF/W?M`WlQ_iEan<`Q;gQoc0fiY
+K?W59^G[on>M8B]g5_K@<]ciVK03Dcok<OASnC2f?bcE<KFb=d4S2e2>IBVVFTaS
+bEUHQfTCOa3FHEe:DWl??@RKL6`UcVW4nUZTECRGGRYa_E7hA>0B2I;m94J_IIah
+>YN`Kg6?lI?hFoQM@YZ`@_Q2W2<nY[Q3lIXbAgU:]DaeWlbe5AIS3;D4A;A4FWaV
+00ROR`N1UG/UkBG3KbiY0AYWCf^lYSI@fkjTYkfkLgkKb9]>46n7mQmlUlTZgj4l
+T0Enm:05N=4XPBZXTMncV@ACH:[lYTlS[W/Mc8AId0C=<1^^Sd1M80;S<AES2PB^
+<L5J/QO^`o@X9PHjbMg@RfTCYXL`/B?D0Dc7b=d3[1QjQ_B2QD`:ZES7]@Jc`jAD
+>Ek3<7G`4LOKYXn?4c<T`DO4?904RV^Di57b<eP03_84g[aG8GMII=LAoa97:gHM
+P6FHeV9Ri9b@0`?YQHiWB@ihF8;OlD8jBiifO5J@joRT84;9P>>D;l9RlN]d[8FB
+7BO]ScSneKk8lBbV@hV^Poj8m9d3mRF>[NTA/V_0lH1dFAQ`g9lXK[KSEimf;?E_
+Mb`XT?^WK8o@@`>><^bO6E8iBTYMSV;kNDNN;b8B[>OJYcRb2ok=TFVGQcUaDTm8
+ik3I]c[6H5Nj_MXg1]=aLY3/QVbbNl0cbO4<TRS^TCYojOH8^OE8KEJ19d9FQDYZ
+/kKkJgdNoaB7aeoSlb4mlgUQWG2mL8e@:0B4;0431l4Z64BmZ1DeXUYDRZ8XA<RC
+0n<Mo75b2<HS;8N>R;b8m_`Gf<PN9do9SDlM5EVARR0J8_4?1bDM`j_BXD6]A27a
+=2mCO8@lMBCAm5C8`DXD:gMXZICCa36TA:BXAV5bChB7mFTmhdgSmN=dICEEoe_F
+NUDNn=lo9V8?KillXbUld=hL;YB8^;eiY3?`oo]dghaINjG/i8kd;>]J:;n^hJi^
+am@J_[^W`aAN>loY?=beK?QM56o[_?TMD]WF7UkVKZl:MkV[W8Mk5_i0md:Y^lMM
+MAPFEUoKM7QQZ;eZX2OD8knYLVANiHZFZmKJ=;;FR/XOV:aBVVb5]=JlUQoXKY6j
+idU[]DQ[]DQ[c@_=TmNBi:c^W55iDcMZYk>jLk8cW3DSG3MmMU?HfMIL5B5kYOn;
+gPco3h>lTST:IFiTLgAbIF5]2VE^I6mRJPXb<b0`86mRJPXg<cH`2VE^I6mRJPXb
+=20`86mRJPXl?20_E7U`IB0_AVm^M4AULf=bJG1dKg8P;d5cHfE^M20g=c0P;d=Q
+L4QUJFMXM20g<SLP;dAULf=UKW@P;C8c<20_AVaQIg<:<c8P;dI_KWA2@Vmh85/P
+;C4i=B0]=3@d834d=3HP<C8`=b1M82m6KfidCV5]IB0_DUY@DT58:dQUK7IUM6US
+HB0_BGAQK6US@FiWK6D:<20_DgAUKEHP<20_CF5hEfUTM6PP<CD`<20_F4QUJFMX
+M20e<c4P;dI_KWA6JFaU<R0b<R0`858P?Sh:IFiTKf9Z2S8e830PKf9Z2U/P<SLh
+83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b
+83Lb<R0g<S8P=c8b83Lb<PXg<S8P=c8b83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b
+83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b2SHf=b0g<S8P=c8b
+83Hf=b0f<C4P=c8b83Lb<R0g<S8P=c8b83Hf=b0g<S8P=c8b83Lb<R0g<S8P=SHg
+83Lb<R0g<S8:=SHg83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b83Lb<R0g<S8P=c8b
+83Lb<R0g<S8P=c8b83Lb<R0e=CHP=c8b83D`<0Xe=CHP=CDf83Lb<R0e=CHP=c8b
+838b<R0g<S8P=c8b838b<R0h<c<P=CDf83De=R0e=CHP=c8b83<c<b0e<30P<SLh
+2SDe=R0e<30P=c8b83D`<21M2VE^I6mRJPXf830PKf9Z2S`l82mDNG1U82m6Kfid
+82mCMF9dNG1U82mDLWEUE7U`IB0_@V5cIDI_KW@P;e9JD591B2]8IFafIGAYHf4P
+;dI_KWA4IG=SLVU`M6mb2S8d830PDR0_EfUTM6Qc838e830PDR0_AVUbLgA3J65b
+83<b82m<HG=d@fQQLR0a<S0P;dE^HfmTJFiW82m=HF=BKfeQKTE^HfmTJFiW2Shn
+2VE^I6mRJPXb=R0`86mRJPXl?20_@g9UHGAYKfi4HGAU82Q4>S8`<3Da<30d<S4e
+>3De;C0e9c0`9bTP;de_I4AQM6DP:4@j<S0`=C4`<3@b<CDh=CD]<3DW<30W:@X_
+D79_I7ESIG8P:4eQHb1?Db1H834`;S@^<R1AMF5bM7XPD4A6@fm^M6EhM2TP?Sh:
+IFiTKf9Z2WQbIFH:<20b=`X`<30`<30`<30`830`<30`86hP2S0`<30`<3<c=C<P
+<30`<30PKR0:<30`<30`<30b<R0`<30`<21^80X`<30`<30c=3Di830`<30`86hP
+2S0`<30`<3<c<c<P<30`<30PKR0:<30`<30`=3Pb=B0`<30`<21^80X`<30`<34c
+>C@f830`<30`86hP2S0`<30`<3Df>3PP<30`<30PKR0:<30`<30`=CLb=20`<30`
+<21^80X`<30`<30c=SP`830`<30`86hP2S0`<30`<3<g<SLP<30`<30PKR0:<30`
+<30`<cLg<R0`<30`<21^80X`<30`<30c>38`830`<30`86hP2S0`<30`<3<h=SPP
+<30`<30PKR0:<30`<30`<cTb<R0`<30`<21^80X`<30`<30c>CLg830`<30`86hP
+2S0`<30`<3@`<SDP<30`<30PKR0:<30`<30`=30g<b0`<30`<21^80X`<30`<30d
+>30e830`<30`86hP2S0`<30`<3@h=S4P<30`<30PKR0:<30`<30`=CHf>20`<30`
+<21^80X`<30`<30e>30g830`<30`86hP2S0`<30`<3Dh=c4P<30`<30PKR0:<30`
+<30a<c<b<R0`<30`<21^80X`<30`<34c<c@c830`<30`86hP2S0`<30`<C<e=c0P
+<30`<30PKR0:<30`<30a=34b<20`<30`<21^80YdLV5YK6Eb2S`l82mCJGYU838g
+82mBKfmd838a830PDR0_BFiVKb0b=R0`858P;dU485/P?3@h=CIQ<cMT=S0iI3ER
+>CDh>CPd<fDeHSHg>6AU>CQQ?PXl=3Pe=V4c=f@f<3UT=F8i=CPi>3@cICER=SLh
+I6Di>64n85dP?Sh:LgAQLWAhLVEV2S4d<SHc2RDUADm62P\>"], "Graphics",
+ ImageSize->{474., 239.5},
+ ImageMargins->{{87, 0}, {0, 0}}],
+
+Cell["\<\
+Parsing \t\[LongLeftRightArrow] \tMakeExpression
+Formatting \t\[LongLeftRightArrow] \tMakeBoxes\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  SubscriptBox["\[PartialD]", "y"], 
+  RowBox[{"Sin", "[", "y", "]"}]}]], "Input"],
+
+Cell["\<\
+Exercise: Open the help browser and look at the MakeExpression and MakeBoxes \
+documentation.\
+\>", "Instruction"],
+
+Cell[BoxData[
+ RowBox[{"?", "MakeBoxes"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"?", "MakeExpression"}]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Example Vectors", "Subsection"],
+
+Cell["\<\
+Consider a new notation for \[OpenCurlyDoubleQuote]Vectors\
+\[CloseCurlyDoubleQuote] by underscripting by \[OpenCurlyQuote]~\
+\[CloseCurlyQuote] and having \[OpenCurlyDoubleQuote]FullForm\
+\[CloseCurlyDoubleQuote] MyVector.\
+\>", "Text"],
+
+Cell[BoxData[
+ UnderscriptBox["t", "~"]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"MyVector", "[", "t", "]"}]], "Input"],
+
+Cell[TextData[{
+ "Typically in MakeExpression we transform to another MakeExpression of \
+something ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " actually can make."
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MakeExpression", "[", 
+   RowBox[{
+    RowBox[{"UnderscriptBox", "[", 
+     RowBox[{"t_", ",", "\"\<~\>\""}], "]"}], ",", "StandardForm"}], "]"}], ":=",
+   "\[IndentingNewLine]", 
+  RowBox[{"MakeExpression", "[", 
+   RowBox[{
+    RowBox[{"RowBox", "[", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<MyVector\>\"", ",", "\"\<[\>\"", ",", "t", ",", "\"\<]\>\""}], 
+      "}"}], "]"}], ",", "StandardForm"}], "]"}]}]], "Input"],
+
+Cell["\<\
+In MakeBoxes we transform from expressions to boxes and we need to further \
+call MakeBoxes on any subparts.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MakeBoxes", "[", 
+   RowBox[{
+    RowBox[{"MyVector", "[", "t_", "]"}], ",", "StandardForm"}], "]"}], ":=", 
+  RowBox[{"UnderscriptBox", "[", 
+   RowBox[{
+    RowBox[{"MakeBoxes", "[", 
+     RowBox[{"t", ",", "StandardForm"}], "]"}], ",", "\"\<~\>\""}], 
+   "]"}]}]], "Input"],
+
+Cell["We can then define rules using this new notation.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"MyVector", "/:", 
+  RowBox[{
+   UnderscriptBox["t_", "~"], "+", 
+   UnderscriptBox["y_", "~"]}], ":=", 
+  UnderscriptBox[
+   RowBox[{"t", "+", "y"}], "~"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  UnderscriptBox["r", "~"], "+", 
+  UnderscriptBox["t", "~"]}]], "Input"],
+
+Cell["\<\
+Maybe this notation is not the best since it\[CloseCurlyQuote]s visually \
+ambiguous.\
+\>", "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["ConvertTo uses MakeBoxes and MakeExpression", "Subsection"],
+
+Cell[TextData[{
+ StyleBox["Trick",
+  FontWeight->"Bold",
+  FontColor->RGBColor[0.5, 0, 0.5]],
+ ": You can use the menu Cell > Convert To > StandardForm (\[CommandKey]\
+\[ShiftKey]N) to format an expression in 2D. To enter tricky notations you \
+can enter the full form of a notation and then convert the cell to \
+StandardForm."
+}], "Text"],
+
+Cell["\<\
+Exercise: Enter x^2 +y^2 + MyVector[t] in a new cell and convert it to \
+StandardForm.\
+\>", "Instruction"],
+
+Cell["Conversions only work with syntactically valid structures.", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Evaluation In MakeBoxes and MakeExpression", "Subsection"],
+
+Cell["\<\
+You have to be very careful that we don\[CloseCurlyQuote]t let evaluation \
+occur as a side effect of our transformations. (Mostly in MakeBoxes)\
+\>", "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["TemplateBoxes", "Section"],
+
+Cell["\<\
+TemplateBoxes are fantastic things, which generally get their display from \
+the style sheet, thus allowing you to have small box structures which are \
+highly flexible, and which you can uniformly change within a document or \
+environment.\
+\>", "Text"],
+
+Cell["Do Binomial -> BesselJ", "SmallText"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TemplateBox", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<a\>\"", ",", "\"\<b\>\""}], "}"}], ",", 
+    "\"\<Binomial\>\""}], "]"}], "//", "RawBoxes"}]], "Input",
+ CellID->1515571900],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TemplateBox", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<a\>\"", ",", "\"\<b\>\""}], "}"}], ",", 
+    "\"\<LegendreP\>\""}], "]"}], "//", "RawBoxes"}]], "Input",
+ CellID->1877915803],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TemplateBox", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<a\>\"", ",", "\"\<b\>\""}], "}"}], ",", "\"\<BesselJ\>\""}],
+    "]"}], "//", "RawBoxes"}]], "Input",
+ CellID->1456912576],
+
+Cell[TextData[{
+ "TemplateBoxes get their appearance from the ",
+ StyleBox["DisplayFunction", "MR"],
+ " which is a pure function working on the box arguments to yield a valid box \
+structure."
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{"c", "+", " ", 
+  RowBox[{"RawBoxes", " ", "@", " ", 
+   RowBox[{"TemplateBox", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<a\>\"", ",", "\"\<b\>\""}], "}"}], ",", 
+     "\"\<MyCommutator\>\"", ",", 
+     RowBox[{"DisplayFunction", ":>", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"RowBox", "[", 
+         RowBox[{"{", 
+          RowBox[{"\"\<[\>\"", ",", 
+           RowBox[{"RowBox", "[", 
+            RowBox[{"{", 
+             RowBox[{"#1", ",", "\"\<,\>\"", ",", "#2"}], "}"}], "]"}], ",", 
+           "\"\<]\>\""}], "}"}], "]"}], "&"}], ")"}]}]}], "]"}]}]}]], "Input",
+ CellID->1546329116],
+
+Cell[TextData[{
+ "Since version 8, almost all Special function notations in ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " are now done through TemplateBoxes."
+}], "Text"],
+
+Cell["Look at the style of WeierstrassP in the style sheet.", "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Commutator Example", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TemplateBox", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<a\>\"", ",", "\"\<b\>\""}], "}"}], ",", 
+    "\"\<Commutator\>\""}], "]"}], "//", "RawBoxes"}]], "Input"],
+
+Cell[BoxData[
+ TemplateBox[{"a","b"},
+  "Commutator"]], "Output",
+ CellChangeTimes->{3.653310984337894*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MakeBoxes", "[", 
+   RowBox[{
+    RowBox[{"Commutator", "[", 
+     RowBox[{"a_", ",", "b_"}], "]"}], ",", "StandardForm"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"TemplateBox", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"MakeBoxes", "[", 
+       RowBox[{"a", ",", "StandardForm"}], "]"}], ",", 
+      RowBox[{"MakeBoxes", "[", 
+       RowBox[{"b", ",", "StandardForm"}], "]"}]}], "}"}], ",", 
+    "\"\<Commutator\>\""}], "]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ TemplateBox[{"a","b"},
+  "Commutator"]], "Input"],
+
+Cell[BoxData[
+ TemplateBox[{"a","b"},
+  "Commutator"]], "Output",
+ CellChangeTimes->{3.653311021876696*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Commutator", "[", 
+   RowBox[{"a", ",", "b"}], "]"}],
+  ShowSpecialCharacters->False,
+  ShowStringCharacters->True,
+  NumberMarks->True]], "Input"],
+
+Cell[BoxData[
+ TemplateBox[{"a","b"},
+  "Commutator"]], "Output",
+ CellChangeTimes->{3.653311024081922*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"p","b"},
+   "Commutator"], "+", 
+  TemplateBox[{"b","p"},
+   "Commutator"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"b","p"},
+   "Commutator"], "+", 
+  TemplateBox[{"p","b"},
+   "Commutator"]}]], "Output",
+ CellChangeTimes->{3.6533110270845747`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"p","b"},
+   "Commutator"], "\[Equal]", "1"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"p","b"},
+   "Commutator"], "\[Equal]", "1"}]], "Output",
+ CellChangeTimes->{3.653311034981625*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{"%", ",", 
+   TemplateBox[{"b","p"},
+    "Commutator"]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.65331103858391*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   TemplateBox[{SuperscriptBox["a_", "n_Integer"],"b_"},
+    "Commutator"], "/;", 
+   RowBox[{"n", ">", "0"}]}], ":=", 
+  RowBox[{"n", " ", "a", 
+   TemplateBox[{SuperscriptBox["a", 
+      RowBox[{"n", "-", "1"}]],"b"},
+    "Commutator"]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   TemplateBox[{"a_","b_"},
+    "Commutator"], "/;", 
+   RowBox[{"!", 
+    RowBox[{"OrderedQ", "[", 
+     RowBox[{"{", 
+      RowBox[{"a", ",", "b"}], "}"}], "]"}]}]}], ":=", 
+  RowBox[{"-", 
+   TemplateBox[{"b","a"},
+    "Commutator"]}]}]], "Input"],
+
+Cell["Create a Commutator style on the style sheet.", "SmallText"],
+
+Cell["Comment on the default rule for interpretation.", "SmallText"],
+
+Cell["\<\
+MakeBoxes[Commutator[a_, b_], StandardForm] :=
+ TemplateBox[{MakeBoxes[a, StandardForm], MakeBoxes[b, StandardForm]}, \
+\"Commutator\"]\
+\>", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Trivial Commutator Calculations", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CommutatorExpand", "=", 
+  RowBox[{
+   TemplateBox[{"a_","b_"},
+    "Commutator"], "\[Rule]", 
+   RowBox[{
+    RowBox[{"a", "\[CenterDot]", "b"}], "-", 
+    RowBox[{"b", "\[CenterDot]", "a"}]}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{"a_","b_"},
+   "Commutator"], "\[Rule]", 
+  RowBox[{
+   RowBox[{"a", "\[CenterDot]", "b"}], "-", 
+   RowBox[{"b", "\[CenterDot]", "a"}]}]}]], "Output",
+ CellChangeTimes->{3.653311057904708*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "*", 
+    TemplateBox[{SuperscriptBox["a", "2"],"b"},
+     "Commutator"]}], "+", "1"}], "/.", "CommutatorExpand"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"1", "+", 
+  RowBox[{"2", " ", "a", " ", "f", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"a", "\[CenterDot]", "b"}], "-", 
+     RowBox[{"b", "\[CenterDot]", "a"}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.6533110695535383`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Notation Package Revisited", "Subsection"],
+
+Cell["\<\
+Now that we know the rule we need to create through MakeBoxes, we can see \
+that the Notation package is just a notation statement compiler!\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"Needs", "[", "\"\<Notation`\>\"", "]"}], "\n", 
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   RowBox[{
+    TemplateBox[{TemplateBox[{"a_", "b_"}, "Commutator"]},
+     "NotationTemplateTag"], " ", "\[DoubleLongLeftRightArrow]", " ", 
+    TemplateBox[{RowBox[{"Commutator", "[", 
+        RowBox[{"a_", ",", "b_"}], "]"}]},
+     "NotationTemplateTag"]}], ",", 
+   RowBox[{"Action", "\[Rule]", "PrintNotationRules"}]}], "]"}]}], "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Normal Ordering of ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["a", "i"], TraditionalForm]]],
+ " ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox[
+    SuperscriptBox["a", "\[Dagger]"], "j"], TraditionalForm]]]
+}], "Section"],
+
+Cell["\<\
+Here is a stand alone solution. Note I would also use TemplateBoxes in the \
+notations but I won\[CloseCurlyQuote]t complicate things.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Notations", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Notation`\>\"", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"InfixNotation", "[", 
+   RowBox[{
+    TemplateBox[{"\[CenterDot]"},
+     "NotationTemplateTag"], ",", "NonCommutativeTimes"}], "]"}], 
+  ";"}]], "Input"],
+
+Cell["Notations for the creation and annihilation operators", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   TemplateBox[{SubscriptBox["a", "m_"]},
+    "NotationTemplateTag"], " ", "\[DoubleLongLeftRightArrow]", " ", 
+   TemplateBox[{RowBox[{"AnnihilationOp", "[", "m_", "]"}]},
+    "NotationTemplateTag"]}], "]"}], "\n", 
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   TemplateBox[{SubscriptBox[
+      SuperscriptBox["a", "\[Dagger]"], "m_"]},
+    "NotationTemplateTag"], " ", "\[DoubleLongLeftRightArrow]", " ", 
+   TemplateBox[{RowBox[{"CreationOp", "[", "m_", "]"}]},
+    "NotationTemplateTag"]}], "]"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["NonCommutativeTimes", "Subsection"],
+
+Cell["Implement flattening manually instead of using attributes", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"EmptyQ", "[", "a__", "]"}], ":=", "False"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"EmptyQ", "[", "]"}], " ", ":=", " ", "True"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "l___", "\[CenterDot]", "b_NonCommutativeTimes", "\[CenterDot]", "r___"}], ":=", 
+  RowBox[{"l", "\[CenterDot]", 
+   RowBox[{"(", 
+    RowBox[{"Sequence", "@@", "b"}], ")"}], "\[CenterDot]", "r"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"l___", "\[CenterDot]", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"c_", "?", "ConstQ"}], " ", "a_"}], ")"}], "\[CenterDot]", 
+   "r___"}], ":=", 
+  RowBox[{"c", " ", 
+   RowBox[{"l", "\[CenterDot]", "a", "\[CenterDot]", "r"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"l___", "\[CenterDot]", 
+   RowBox[{"(", 
+    RowBox[{"a_", "+", "b_"}], ")"}], "\[CenterDot]", "r___"}], ":=", " ", 
+  RowBox[{
+   RowBox[{"l", "\[CenterDot]", "a", "\[CenterDot]", "r"}], " ", "+", 
+   RowBox[{
+   "l", "\[CenterDot]", "b", "\[CenterDot]", "r"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"l___", "\[CenterDot]", 
+   RowBox[{"c_", "?", "ConstQ"}], "\[CenterDot]", "r___"}], ":=", 
+  RowBox[{
+   RowBox[{"c", " ", 
+    RowBox[{"(", 
+     RowBox[{"l", "\[CenterDot]", "r"}], ")"}]}], " ", "/;", " ", 
+   RowBox[{"!", 
+    RowBox[{"EmptyQ", "[", 
+     RowBox[{"l", ",", "r"}], "]"}]}]}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"NonCommutativeTimes", "[", "a_", "]"}], ":=", "a"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["ConstQ", "Subsection"],
+
+Cell[TextData[{
+ "Rules for ",
+ StyleBox["ConstQ", "MR"]
+}], "Text",
+ CellTags->"index00195"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ConstQ", "[", "args_Times", "]"}], ":=", 
+  RowBox[{"And", " ", "@@", " ", 
+   RowBox[{"ConstQ", " ", "/@", " ", 
+    RowBox[{"List", " ", "@@", " ", "args"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", "args_Plus", "]"}], ":=", 
+  RowBox[{"And", " ", "@@", " ", 
+   RowBox[{"ConstQ", " ", "/@", " ", 
+    RowBox[{"List", " ", "@@", " ", "args"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", 
+   SuperscriptBox["c_", "n_"], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"ConstQ", "[", "c", "]"}], "\[And]", 
+   RowBox[{"ConstQ", "[", "n", "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", 
+   RowBox[{"_", "?", "NumberQ"}], "]"}], ":=", "True"}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", 
+   SubscriptBox["\[Delta]", "__"], "]"}], ":=", "True"}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", "_", "]"}], ":=", "False"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["NormalOrder", "Subsection"],
+
+Cell[TextData[{
+ "NormalOrder distributes over ",
+ StyleBox["Plus", "MR"],
+ " and ",
+ StyleBox["Times", "MR"]
+}], "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"NormalOrder", "[", "a__Plus", "]"}], ":=", 
+   RowBox[{"NormalOrder", " ", "/@", " ", "a"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"NormalOrder", "[", "a__Times", "]"}], ":=", 
+   RowBox[{"NormalOrder", " ", "/@", " ", "a"}]}], ";"}]}], "Input"],
+
+Cell["Implement the ordering relations.", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"NormalOrder", "[", 
+   RowBox[{"l___", "\[CenterDot]", 
+    SubscriptBox["a", "i_"], "\[CenterDot]", 
+    SubscriptBox["a", "j_"], "\[CenterDot]", "r___"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"-", 
+    RowBox[{"NormalOrder", "[", 
+     RowBox[{"l", "\[CenterDot]", 
+      SubscriptBox["a", "j"], "\[CenterDot]", 
+      SubscriptBox["a", "i"], "\[CenterDot]", "r"}], "]"}]}], " ", "/;", 
+   "\[InvisibleSpace]", 
+   RowBox[{"\[Not]", 
+    RowBox[{"OrderedQ", "[", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "j"}], "}"}], "]"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"NormalOrder", "[", 
+   RowBox[{"l___", "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "i_"], "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "j_"], "\[CenterDot]", "r___"}], "]"}],
+   ":=", 
+  RowBox[{
+   RowBox[{"-", 
+    RowBox[{"NormalOrder", "[", 
+     RowBox[{"l", "\[CenterDot]", 
+      SubscriptBox[
+       SuperscriptBox["a", "\[Dagger]"], "j"], "\[CenterDot]", 
+      SubscriptBox[
+       SuperscriptBox["a", "\[Dagger]"], "i"], "\[CenterDot]", "r"}], "]"}]}],
+    "/;", "\[InvisibleSpace]", 
+   RowBox[{"\[Not]", 
+    RowBox[{"OrderedQ", "[", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "j"}], "}"}], "]"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"NormalOrder", "[", 
+   RowBox[{"l___", "\[CenterDot]", 
+    SubscriptBox["a", "i_"], "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "j_"], "\[CenterDot]", "r___"}], "]"}],
+   ":=", 
+  RowBox[{"NormalOrder", "[", 
+   RowBox[{"l", "\[CenterDot]", 
+    RowBox[{"(", 
+     RowBox[{
+      SubscriptBox["\[Delta]", 
+       RowBox[{"i", ",", "j"}]], "-", 
+      RowBox[{
+       SubscriptBox[
+        SuperscriptBox["a", "\[Dagger]"], "j"], "\[CenterDot]", 
+       SubscriptBox["a", "i"]}]}], ")"}], "\[CenterDot]", "r"}], 
+   "]"}]}]}], "Input"],
+
+Cell[TextData[{
+ "Note essentially we are using \[OpenCurlyDoubleQuote]bubble sort\
+\[CloseCurlyDoubleQuote] to sort things so our sorting will be on average ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"O", "(", 
+    SuperscriptBox["n", "2"], ")"}], TraditionalForm]]],
+ ". Which is of course terrible.... But for smaller problems this is still \
+fine."
+}], "Text"],
+
+Cell["\<\
+Implement the fall through case when NormalOrder cannot further reduce any \
+orderings.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"NormalOrder", "[", "any_", "]"}], ":=", "any"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    SubscriptBox["a", "m"], "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "i"]}], "//", "NormalOrder"}], "//", 
+  "Expand"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SubscriptBox["a", "m"], "\[CenterDot]", 
+   SubscriptBox[
+    SuperscriptBox["a", "\[Dagger]"], "i"], "\[CenterDot]", 
+   SubscriptBox[
+    SuperscriptBox["a", "\[Dagger]"], "j"]}], "//", "NormalOrder"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    SubscriptBox["a", "m"], "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "i"], "\[CenterDot]", 
+    SubscriptBox["a", "l"], "\[CenterDot]", 
+    SubscriptBox[
+     SuperscriptBox["a", "\[Dagger]"], "j"], "\[CenterDot]", 
+    SubscriptBox["a", "k"]}], "//", "NormalOrder"}], "//", 
+  "Expand"}]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Angular Momentum Example", "Section"],
+
+Cell[BoxData[
+ RowBox[{"Quit", "[", "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Set-up Notations", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Notation`\>\"", "]"}]], "Input"],
+
+Cell["Here we present the notations for these structures.", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   TemplateBox[{TemplateBox[{"\[ScriptCapitalH]_"}, "Operator"]},
+    "NotationTemplateTag"], "\[DoubleLongLeftRightArrow]", 
+   TemplateBox[{RowBox[{"Operator", "[", "\[ScriptCapitalH]_", "]"}]},
+    "NotationTemplateTag"]}], "]"}], "\n", 
+ RowBox[{"AddInputAlias", "[", 
+  RowBox[{
+   TemplateBox[{TemplateBox[{"\[SelectionPlaceholder]"}, "Operator"]},
+    "NotationTemplateTag"], ",", "\"\<operator\>\""}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Notation", "[", 
+  RowBox[{
+   TemplateBox[{
+    TemplateBox[{"\[Lambda]_", "\[ScriptCapitalH]_"}, "EigenLabel"]},
+    "NotationTemplateTag"], "\[DoubleLongLeftRightArrow]", 
+   TemplateBox[{RowBox[{"EigenLabel", "[", 
+       RowBox[{"\[Lambda]_", ",", 
+         TemplateBox[{"\[ScriptCapitalH]_"}, "Operator"]}], "]"}]},
+    "NotationTemplateTag"]}], "]"}], "\n", 
+ RowBox[{
+  RowBox[{"InfixNotation", "[", 
+   RowBox[{
+    TemplateBox[{"\[CenterDot]"},
+     "NotationTemplateTag"], ",", "NonCommutativeTimes"}], "]"}], 
+  ";"}]}], "Input",
+ CellTags->"index00190"],
+
+Cell["Raising and Lowering Operators", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Symbolize", "[", 
+   TemplateBox[{SubscriptBox["J", "+"]},
+    "NotationTemplateTag"], "]"}], ";", 
+  RowBox[{"Symbolize", "[", 
+   TemplateBox[{SubscriptBox["J", "-"]},
+    "NotationTemplateTag"], "]"}], ";", 
+  RowBox[{"Symbolize", "[", 
+   TemplateBox[{SubscriptBox["J", "z"]},
+    "NotationTemplateTag"], "]"}]}]], "Input",
+ CellTags->"index00193"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Set-up NonCommutativeTimes and ConstQ", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"NonCommutativeTimes", "@", "a_"}], ":=", "a"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SetAttributes", "[", 
+   RowBox[{"NonCommutativeTimes", ",", 
+    RowBox[{"{", 
+     RowBox[{"Flat", ",", "OneIdentity"}], "}"}]}], "]"}], ";"}]}], "Input",
+ CellTags->"index00190"],
+
+Cell[TextData[{
+ "Some rules for ",
+ StyleBox["NonCommutativeTimes", "MR"]
+}], "Text",
+ CellTags->"index00194"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"l___", "\[CenterDot]", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"c_", "?", "ConstQ"}], " ", "a_"}], ")"}], "\[CenterDot]", 
+   "r___"}], ":=", 
+  RowBox[{"c", " ", 
+   RowBox[{"l", "\[CenterDot]", "a", "\[CenterDot]", "r"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"l___", "\[CenterDot]", 
+   RowBox[{"(", 
+    RowBox[{"a_", "+", "b_"}], ")"}], "\[CenterDot]", "r___"}], ":=", " ", 
+  RowBox[{
+   RowBox[{"l", "\[CenterDot]", "a", "\[CenterDot]", "r"}], " ", "+", 
+   RowBox[{"l", "\[CenterDot]", "b", "\[CenterDot]", "r"}]}]}]}], "Input"],
+
+Cell[TextData[{
+ "Rules for ",
+ StyleBox["ConstQ", "MR"]
+}], "Text",
+ CellTags->"index00195"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ConstQ", "[", "args_Times", "]"}], ":=", 
+  RowBox[{"And", " ", "@@", " ", 
+   RowBox[{"ConstQ", " ", "/@", " ", 
+    RowBox[{"List", " ", "@@", " ", "args"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", "args_Plus", "]"}], ":=", 
+  RowBox[{"And", " ", "@@", " ", 
+   RowBox[{"ConstQ", " ", "/@", " ", 
+    RowBox[{"List", " ", "@@", " ", "args"}]}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", 
+   SuperscriptBox["c_", "n_"], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"ConstQ", "[", "c", "]"}], "\[And]", 
+   RowBox[{"ConstQ", "[", "n", "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", 
+   RowBox[{"_", "?", "NumberQ"}], "]"}], ":=", "True"}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", "_Symbol", "]"}], ":=", "True"}], "\n", 
+ RowBox[{
+  RowBox[{"ConstQ", "[", "_", "]"}], ":=", "False"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Raising and Lowering Operators", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   TemplateBox[{SubscriptBox["J", "z"]},
+    "Operator"], "\[CenterDot]", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j_", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m_", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}], ":=", 
+  RowBox[{"m", " ", "\[HBar]", " ", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   TemplateBox[{SubscriptBox["J", "+"]},
+    "Operator"], "\[CenterDot]", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j_", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m_", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}], ":=", 
+  RowBox[{"\[HBar]", " ", 
+   SqrtBox[
+    RowBox[{
+     RowBox[{"j", " ", 
+      RowBox[{"(", 
+       RowBox[{"j", "+", "1"}], ")"}]}], "-", 
+     RowBox[{"m", " ", 
+      RowBox[{"(", 
+       RowBox[{"m", "+", "1"}], ")"}]}]}]], " ", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{
+         RowBox[{"m", "+", "1"}], 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   TemplateBox[{SubscriptBox["J", "-"]},
+    "Operator"], "\[CenterDot]", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j_", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m_", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}], ":=", 
+  RowBox[{"\[HBar]", " ", 
+   SqrtBox[
+    RowBox[{
+     RowBox[{"j", " ", 
+      RowBox[{"(", 
+       RowBox[{"j", "+", "1"}], ")"}]}], "-", 
+     RowBox[{"m", " ", 
+      RowBox[{"(", 
+       RowBox[{"m", "-", "1"}], ")"}]}]}]], " ", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{
+         RowBox[{"m", "-", "1"}], 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}]}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{SubscriptBox["J", "+"]},
+   "Operator"], "\[CenterDot]", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"5", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"3", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"3", " ", 
+  SqrtBox["2"], " ", "\[HBar]", " ", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"5", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"4", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Output",
+ CellChangeTimes->{3.653311570383333*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculations", "Subsection"],
+
+Cell["Raising an eigen state:", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   RowBox[{
+    TemplateBox[{SubscriptBox["J", "+"]},
+     "Operator"], "\[CenterDot]", 
+    TemplateBox[{SubscriptBox["J", "+"]},
+     "Operator"]}], "2"], "\[CenterDot]", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"4", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", "2"], " ", 
+  SqrtBox[
+   RowBox[{
+    RowBox[{"-", "30"}], "+", 
+    RowBox[{"j", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", "j"}], ")"}]}]}]], " ", 
+  SqrtBox[
+   RowBox[{
+    RowBox[{"-", "20"}], "+", 
+    RowBox[{"j", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", "j"}], ")"}]}]}]], " ", 
+  SuperscriptBox["\[HBar]", "2"], " ", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"6", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Output",
+ CellChangeTimes->{3.653311448385001*^9, 3.653311583892647*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "In the theory of Angular Momentum, ",
+ Cell[BoxData[
+  OverscriptBox[
+   SuperscriptBox["J", "2"], "^"]]],
+ " has eigenvalue ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"j", " ", 
+    RowBox[{"(", 
+     RowBox[{"j", "+", "1"}], ")"}], " ", 
+    SuperscriptBox["\[HBar]", "2"]}], TraditionalForm]]],
+ "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     FractionBox["1", "2"], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        TemplateBox[{SubscriptBox["J", "+"]},
+         "Operator"], "\[CenterDot]", 
+        TemplateBox[{SubscriptBox["J", "-"]},
+         "Operator"]}], "+", 
+       RowBox[{
+        TemplateBox[{SubscriptBox["J", "-"]},
+         "Operator"], "\[CenterDot]", 
+        TemplateBox[{SubscriptBox["J", "+"]},
+         "Operator"]}]}], ")"}]}], "+", 
+    RowBox[{
+     TemplateBox[{SubscriptBox["J", "z"]},
+      "Operator"], "\[CenterDot]", 
+     TemplateBox[{SubscriptBox["J", "z"]},
+      "Operator"]}]}], ")"}], "\[CenterDot]", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"m", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SuperscriptBox["m", "2"], " ", 
+   SuperscriptBox["\[HBar]", "2"], " ", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}], "+", 
+  RowBox[{
+   FractionBox["1", "2"], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"j", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "j"}], ")"}]}], "-", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"-", "1"}], "+", "m"}], ")"}], " ", "m"}]}], ")"}], " ", 
+      SuperscriptBox["\[HBar]", "2"], " ", 
+      TemplateBox[{RowBox[{
+          TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+          TemplateBox[{"m", 
+            SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+       "Ket"]}], "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"j", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "j"}], ")"}]}], "-", 
+        RowBox[{"m", " ", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "m"}], ")"}]}]}], ")"}], " ", 
+      SuperscriptBox["\[HBar]", "2"], " ", 
+      TemplateBox[{RowBox[{
+          TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+          TemplateBox[{"m", 
+            SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+       "Ket"]}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.653311601908997*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Simplify", " ", "@", " ", "%"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"j", " ", 
+  RowBox[{"(", 
+   RowBox[{"1", "+", "j"}], ")"}], " ", 
+  SuperscriptBox["\[HBar]", "2"], " ", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"j", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"m", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Output",
+ CellChangeTimes->{3.653311613391396*^9}]
+}, Open  ]],
+
+Cell["\<\
+Using an orthogonality relationship its easy to calculate matrix elements\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j1_", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m1_", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Bra"], "\[CenterDot]", 
+   TemplateBox[{RowBox[{
+       TemplateBox[{"j2_", "J"}, "EigenLabel"], ",", 
+       TemplateBox[{"m2_", 
+         SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+    "Ket"]}], ":=", 
+  RowBox[{
+   SubscriptBox["\[Delta]", 
+    RowBox[{"j1", ",", "j2"}]], " ", 
+   SubscriptBox["\[Delta]", 
+    RowBox[{"m1", ",", "m2"}]]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  TemplateBox[{RowBox[{
+      TemplateBox[{"k", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"n", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Bra"], "\[CenterDot]", 
+  TemplateBox[{SubscriptBox["J", "+"]},
+   "Operator"], "\[CenterDot]", 
+  TemplateBox[{SubscriptBox["J", "z"]},
+   "Operator"], "\[CenterDot]", 
+  RowBox[{"(", 
+   RowBox[{
+    TemplateBox[{SubscriptBox["J", "-"]},
+     "Operator"], "+", 
+    TemplateBox[{SubscriptBox["J", "+"]},
+     "Operator"]}], ")"}], "\[CenterDot]", 
+  TemplateBox[{RowBox[{
+      TemplateBox[{"3", "J"}, "EigenLabel"], ",", 
+      TemplateBox[{"0", 
+        SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+   "Ket"]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"-", "12"}], " ", 
+   SuperscriptBox["\[HBar]", "3"], " ", 
+   SubscriptBox["\[Delta]", 
+    RowBox[{"k", ",", "3"}]], " ", 
+   SubscriptBox["\[Delta]", 
+    RowBox[{"n", ",", "0"}]]}], "+", 
+  RowBox[{"2", " ", 
+   SqrtBox["30"], " ", 
+   SuperscriptBox["\[HBar]", "3"], " ", 
+   SubscriptBox["\[Delta]", 
+    RowBox[{"k", ",", "3"}]], " ", 
+   SubscriptBox["\[Delta]", 
+    RowBox[{"n", ",", "2"}]]}]}]], "Output",
+ CellChangeTimes->{3.6533116242058907`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"InputForm", "[", 
+  RowBox[{"HoldForm", "[", 
+   RowBox[{
+    TemplateBox[{RowBox[{
+        TemplateBox[{"k", "J"}, "EigenLabel"], ",", 
+        TemplateBox[{"n", 
+          SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+     "Bra"], "\[CenterDot]", 
+    TemplateBox[{SubscriptBox["J", "+"]},
+     "Operator"], "\[CenterDot]", 
+    TemplateBox[{SubscriptBox["J", "z"]},
+     "Operator"], "\[CenterDot]", 
+    RowBox[{"(", 
+     RowBox[{
+      TemplateBox[{SubscriptBox["J", "-"]},
+       "Operator"], "+", 
+      TemplateBox[{SubscriptBox["J", "+"]},
+       "Operator"]}], ")"}], "\[CenterDot]", 
+    TemplateBox[{RowBox[{
+        TemplateBox[{"3", "J"}, "EigenLabel"], ",", 
+        TemplateBox[{"0", 
+          SubscriptBox["J", "z"]}, "EigenLabel"]}]},
+     "Ket"]}], "]"}], "]"}]], "Input"],
+
+Cell["\<\
+HoldForm[NonCommutativeTimes[
+  Bra[EigenLabel[k, Operator[J]], 
+   EigenLabel[n, Operator[
+     J\[UnderBracket]Subscript\[UnderBracket]z]]], 
+  Operator[J\[UnderBracket]Subscript\[UnderBracket]Plus], 
+  Operator[J\[UnderBracket]Subscript\[UnderBracket]z], 
+  Operator[J\[UnderBracket]Subscript\[UnderBracket]Dash] + 
+   Operator[J\[UnderBracket]Subscript\[UnderBracket]Plus], 
+  Ket[EigenLabel[3, Operator[J]], 
+   EigenLabel[0, Operator[
+     J\[UnderBracket]Subscript\[UnderBracket]z]]]]]\
+\>", "Output",
+ CellChangeTimes->{3.6533116291735353`*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Summary:", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["You can execute things in parallel", "Item"],
+
+Cell["You can compile Code to the WVM, or to a C target", "Item"],
+
+Cell["You can link to external C libraries", "Item"],
+
+Cell["Everything internally in the Front End is a box", "Item"],
+
+Cell["Most advanced typesetting is done through TemplateBoxes", "Item"],
+
+Cell["Having a nice notation can greatly enhance readability", "Item"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+AutoGeneratedPackage->None,
+ScreenStyleEnvironment->"SlideShow",
+WindowSize->{1440, 851},
+WindowMargins->{{Automatic, 420}, {984, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+ShowSelection->True,
+InputAliases->{"intt" -> RowBox[{"\[Integral]", 
+     RowBox[{"\[SelectionPlaceholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "dintt" -> RowBox[{
+     SubsuperscriptBox[
+     "\[Integral]", "\[SelectionPlaceholder]", "\[Placeholder]"], 
+     RowBox[{"\[Placeholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "sumt" -> RowBox[{
+     UnderoverscriptBox["\[Sum]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "prodt" -> RowBox[{
+     UnderoverscriptBox["\[Product]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "dt" -> RowBox[{
+     SubscriptBox["\[PartialD]", "\[Placeholder]"], " ", 
+     "\[SelectionPlaceholder]"}], "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "notation>" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "notation<" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "symb" -> RowBox[{"Symbolize", "[", 
+     TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[SelectionPlaceholder]\"", "\[Rule]", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "pattwraper" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "NotationPatternTag"], 
+  "madeboxeswraper" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "NotationMadeBoxesTag"], "ket" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Ket"], "bra" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Bra"], "operator" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Operator"]},
+Magnification:>1.5 Inherited,
+FrontEndVersion->"10.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 6, \
+2015)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]], 
+   Cell[
+    StyleData[StyleDefinitions -> "PhysicsStyles.nb"]], 
+   Cell[
+    StyleData[
+    All, "SlideShow", StyleDefinitions -> StyleData[All, "Presentation"]], 
+    PageWidth -> WindowWidth, DockedCells -> 
+    FEPrivate`FrontEndResource["FEExpressions", "SlideshowToolbar"], 
+    ScrollingOptions -> {
+     "PagewiseDisplay" -> True, "VerticalScrollRange" -> Fit}, 
+    ShowCellBracket -> True, MenuSortingValue -> 1300], 
+   Cell[
+    CellGroupData[{
+      Cell["Local Changes", "Subtitle"], 
+      Cell[
+       StyleData["Commutator"], 
+       TemplateBoxOptions -> {DisplayFunction -> (SubscriptBox[
+           RowBox[{"[", 
+             RowBox[{#, ",", #2}], "]"}], "-"]& ), SyntaxForm -> "symbol", 
+         Tooltip -> Automatic}], 
+      Cell[
+       CellGroupData[{
+         Cell[
+          StyleData["SmallText"], CellMargins -> {{60, 10}, {7, 7}}, 
+          LineSpacing -> {1, 3}, CounterIncrements -> "SmallText", FontSize -> 
+          8, FontColor -> GrayLevel[0.7]], 
+         Cell[
+          StyleData["SmallText", "SlideShow"], 
+          CellMargins -> {{60, 10}, {7, 7}}, LineSpacing -> {1, 3}, 
+          CounterIncrements -> "SmallText", FontSize -> 10, FontColor -> 
+          GrayLevel[0.7]]}, Closed]], 
+      Cell[
+       CellGroupData[{
+         Cell["Styles for Title and Section Cells", "Section"], 
+         Cell[
+          CellGroupData[{
+            Cell["Section", "Subsection"], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Section"], CellFrame -> {{0, 0}, {0, 0}}, 
+                FontSlant -> "Plain"], 
+               Cell[
+                StyleData["Section", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}]}, Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsection"], CellDingbat -> None], 
+               Cell[
+                StyleData["Subsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsubsection"], CellDingbat -> None, FontWeight -> 
+                "Plain", FontColor -> GrayLevel[0.8]], 
+               Cell[
+                StyleData["Subsubsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsubsubsection"], CellDingbat -> None, 
+                FontWeight -> "Plain", FontColor -> GrayLevel[0.8]], 
+               Cell[
+                StyleData["Subsubsubsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]]}, Open]]}, Open]]}, Open]]}, Visible -> False, 
+  FrontEndVersion -> 
+  "10.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 6, 2015)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "SlideShowHeader"->{
+  Cell[1317, 51, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[4140, 163, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[13361, 502, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[18380, 682, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[19564, 734, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[24150, 906, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[27810, 1047, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[28456, 1075, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[35122, 1314, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[38824, 1435, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[41026, 1523, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[43435, 1618, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[44895, 1677, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[66590, 2054, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[68706, 2137, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[69721, 2175, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[77013, 2470, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[85113, 2757, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[99347, 3257, 64, 1, 1, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"]},
+ "index00195"->{
+  Cell[80136, 2582, 93, 4, 72, "Text",
+   CellTags->"index00195"],
+  Cell[88125, 2859, 93, 4, 72, "Text",
+   CellTags->"index00195"]},
+ "index00190"->{
+  Cell[85513, 2776, 1073, 27, 392, "Input",
+   CellTags->"index00190"],
+  Cell[87124, 2825, 312, 9, 163, "Input",
+   CellTags->"index00190"]},
+ "index00193"->{
+  Cell[86638, 2807, 387, 11, 98, "Input",
+   CellTags->"index00193"]},
+ "index00194"->{
+  Cell[87439, 2836, 111, 4, 72, "Text",
+   CellTags->"index00194"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"SlideShowHeader", 105822, 3417},
+ {"index00195", 107522, 3456},
+ {"index00190", 107674, 3461},
+ {"index00193", 107834, 3466},
+ {"index00194", 107922, 3469}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[422, 15, 204, 8, 156, "Title"],
+Cell[629, 25, 90, 5, 160, "Text"],
+Cell[CellGroupData[{
+Cell[744, 34, 88, 1, 103, "Section"],
+Cell[835, 37, 433, 8, 265, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1317, 51, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[1406, 56, 39, 0, 124, "Section"],
+Cell[1448, 58, 229, 8, 71, "Text"],
+Cell[1680, 68, 41, 0, 71, "Input"],
+Cell[1724, 70, 78, 1, 71, "Input"],
+Cell[1805, 73, 116, 3, 82, "Input"],
+Cell[1924, 78, 390, 12, 141, "Input"],
+Cell[2317, 92, 65, 1, 71, "Input"],
+Cell[2385, 95, 294, 9, 82, "Input"],
+Cell[2682, 106, 104, 2, 39, "SmallText"],
+Cell[CellGroupData[{
+Cell[2811, 112, 53, 0, 94, "Subsection"],
+Cell[2867, 114, 492, 17, 346, "Input"],
+Cell[3362, 133, 270, 7, 346, "Input"],
+Cell[3635, 142, 58, 0, 231, "Text"],
+Cell[3696, 144, 270, 7, 346, "Input"],
+Cell[3969, 153, 61, 1, 216, "Input"],
+Cell[4033, 156, 46, 0, 175, "SmallText"]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4140, 163, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[4229, 168, 43, 0, 124, "Section"],
+Cell[4275, 170, 1535, 60, 285, "Text"],
+Cell[CellGroupData[{
+Cell[5835, 234, 45, 0, 94, "Subsection"],
+Cell[5883, 236, 415, 14, 123, "Text"],
+Cell[6301, 252, 1373, 39, 494, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7711, 296, 41, 0, 94, "Subsection"],
+Cell[7755, 298, 873, 29, 162, "Input"],
+Cell[8631, 329, 228, 5, 117, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8896, 339, 45, 0, 94, "Subsection"],
+Cell[8944, 341, 68, 0, 71, "Text"],
+Cell[9015, 343, 267, 8, 118, "Input"],
+Cell[9285, 353, 434, 14, 74, "Input"],
+Cell[9722, 369, 968, 30, 298, "Input"],
+Cell[10693, 401, 199, 5, 117, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10929, 411, 40, 0, 94, "Subsection"],
+Cell[10972, 413, 1019, 31, 343, "Input"],
+Cell[11994, 446, 200, 5, 117, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12231, 456, 38, 0, 94, "Subsection"],
+Cell[12272, 458, 270, 9, 852, "Input"],
+Cell[12545, 469, 189, 6, 535, "Input"],
+Cell[12737, 477, 136, 3, 535, "Input"],
+Cell[12876, 482, 139, 3, 535, "Input"],
+Cell[13018, 487, 139, 3, 535, "Input"],
+Cell[13160, 492, 140, 3, 535, "Input"]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13361, 502, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[13450, 507, 50, 0, 124, "Section"],
+Cell[13503, 509, 50, 0, 71, "Text"],
+Cell[13556, 511, 673, 24, 252, "Input",
+ CellID->74817170],
+Cell[14232, 537, 617, 20, 162, "Input",
+ CellID->565749860],
+Cell[14852, 559, 67, 1, 71, "Input"],
+Cell[14922, 562, 34, 0, 39, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14993, 567, 41, 0, 124, "Section"],
+Cell[15037, 569, 2733, 85, 1192, "Input",
+ CellID->235207683],
+Cell[17773, 656, 372, 12, 243, "Input"],
+Cell[18148, 670, 183, 6, 106, "Text"]
+}, Closed]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18380, 682, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[18469, 687, 115, 4, 124, "Section"],
+Cell[18587, 693, 336, 11, 168, "Text"],
+Cell[18926, 706, 182, 6, 162, "Input"],
+Cell[19111, 714, 30, 0, 39, "SmallText"],
+Cell[19144, 716, 84, 2, 71, "Input"],
+Cell[19231, 720, 187, 4, 39, "SmallText"],
+Cell[19421, 726, 94, 2, 39, "SmallText"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19564, 734, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[19653, 739, 31, 0, 124, "Section"],
+Cell[19687, 741, 98, 2, 71, "Text"],
+Cell[19788, 745, 504, 16, 118, "Input"],
+Cell[20295, 763, 68, 1, 71, "Input"],
+Cell[20366, 766, 121, 3, 120, "Text"],
+Cell[20490, 771, 1061, 31, 163, "Input"],
+Cell[21554, 804, 93, 2, 71, "Input"],
+Cell[21650, 808, 100, 2, 71, "Text"],
+Cell[CellGroupData[{
+Cell[21775, 814, 43, 0, 94, "Subsection"],
+Cell[21821, 816, 187, 5, 117, "Input"],
+Cell[22011, 823, 204, 6, 117, "Input"],
+Cell[22218, 831, 152, 3, 120, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22407, 839, 42, 0, 94, "Subsection"],
+Cell[22452, 841, 326, 11, 117, "Input"],
+Cell[22781, 854, 191, 5, 117, "Input"],
+Cell[22975, 861, 236, 4, 168, "Text"],
+Cell[23214, 867, 310, 10, 71, "Input"],
+Cell[23527, 879, 310, 10, 71, "Input"],
+Cell[23840, 891, 145, 3, 120, "Text"],
+Cell[23988, 896, 101, 3, 71, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24150, 906, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[24239, 911, 66, 0, 209, "Section"],
+Cell[24308, 913, 589, 18, 120, "Text"],
+Cell[CellGroupData[{
+Cell[24922, 935, 30, 0, 94, "Subsection"],
+Cell[24955, 937, 148, 3, 120, "Text"],
+Cell[25106, 942, 74, 1, 71, "Input"],
+Cell[25183, 945, 53, 1, 71, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25273, 951, 28, 0, 94, "Subsection"],
+Cell[25304, 953, 96, 2, 216, "Input",
+ CellID->332435791],
+Cell[25403, 957, 351, 14, 243, "Text",
+ CellID->179189584],
+Cell[25757, 973, 55, 1, 216, "Input"],
+Cell[25815, 976, 471, 10, 1359, "Input",
+ CellID->195947038],
+Cell[26289, 988, 389, 11, 1122, "Input",
+ CellID->107996258],
+Cell[26681, 1001, 67, 1, 1167, "Text",
+ CellID->729311091],
+Cell[26751, 1004, 579, 18, 3037, "Input",
+ CellID->722328877],
+Cell[27333, 1024, 63, 1, 1167, "Text",
+ CellID->532957039],
+Cell[27399, 1027, 199, 6, 1093, "Input",
+ CellID->54786344],
+Cell[27601, 1035, 64, 1, 1167, "Text",
+ CellID->108263632],
+Cell[27668, 1038, 81, 2, 1093, "Input",
+ CellID->1939614691]
+}, Closed]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27810, 1047, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[27899, 1052, 30, 0, 124, "Section"],
+Cell[27932, 1054, 251, 4, 168, "Text"],
+Cell[28186, 1060, 54, 0, 39, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28277, 1065, 35, 0, 124, "Section"],
+Cell[28315, 1067, 92, 2, 71, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28456, 1075, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[28523, 1078, 27, 0, 215, "Title"],
+Cell[CellGroupData[{
+Cell[28575, 1082, 42, 0, 94, "Subsection"],
+Cell[28620, 1084, 544, 19, 168129, "Text"],
+Cell[29167, 1105, 142, 4, 114502, "Input"],
+Cell[29312, 1111, 338, 11, 80482, "Input"],
+Cell[29653, 1124, 206, 8, 43606, "SmallText"],
+Cell[29862, 1134, 633, 19, 131491, "SmallText"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[30532, 1158, 32, 0, 71, "Subsection"],
+Cell[30567, 1160, 205, 4, 118005, "Text"],
+Cell[30775, 1166, 214, 7, 53655, "DisplayFormula"],
+Cell[30992, 1175, 199, 6, 69345, "Input"],
+Cell[31194, 1183, 314, 9, 69345, "Input"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[31545, 1197, 29, 0, 71, "Subsection"],
+Cell[31577, 1199, 139, 5, 71, "Text"],
+Cell[31719, 1206, 1219, 34, 67, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32975, 1245, 29, 0, 94, "Subsection"],
+Cell[33007, 1247, 2066, 61, 342, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[35122, 1314, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[35211, 1319, 33, 0, 124, "Section"],
+Cell[35247, 1321, 358, 9, 168, "Text"],
+Cell[35608, 1332, 3167, 97, 265, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[38824, 1435, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[38913, 1440, 50, 0, 124, "Section"],
+Cell[38966, 1442, 145, 3, 36, "Instruction"],
+Cell[39114, 1447, 117, 4, 72, "Input"],
+Cell[39234, 1453, 53, 0, 36, "Instruction"],
+Cell[39290, 1455, 292, 9, 175, "Input"],
+Cell[39585, 1466, 134, 5, 39, "SmallText"],
+Cell[CellGroupData[{
+Cell[39744, 1475, 51, 0, 94, "Subsection"],
+Cell[39798, 1477, 431, 13, 57, "Instruction"],
+Cell[40232, 1492, 258, 6, 117, "Input"],
+Cell[40493, 1500, 171, 4, 71, "Input"],
+Cell[40667, 1506, 97, 2, 71, "Input"],
+Cell[40767, 1510, 198, 6, 36, "Instruction"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[41026, 1523, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[41115, 1528, 48, 0, 124, "Section"],
+Cell[41166, 1530, 58, 0, 71, "Text"],
+Cell[41227, 1532, 571, 17, 162, "Input"],
+Cell[41801, 1551, 393, 14, 71, "Input",
+ CellID->826941582],
+Cell[42197, 1567, 347, 9, 117, "Input",
+ CellID->234422992],
+Cell[42547, 1578, 57, 0, 71, "Text"],
+Cell[42607, 1580, 141, 4, 71, "Input"],
+Cell[42751, 1586, 147, 3, 71, "Input"],
+Cell[42901, 1591, 179, 5, 71, "Input"],
+Cell[43083, 1598, 144, 4, 71, "Input"],
+Cell[43230, 1604, 156, 8, 71, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[43435, 1618, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[43524, 1623, 35, 0, 124, "Section"],
+Cell[43562, 1625, 53, 1, 71, "Input"],
+Cell[43618, 1628, 43, 0, 39, "SmallText"],
+Cell[43664, 1630, 61, 0, 39, "SmallText"]
+}, Open  ]],
+Cell[43740, 1633, 49, 0, 124, "Section"],
+Cell[CellGroupData[{
+Cell[43814, 1637, 35, 0, 92, "Section"],
+Cell[43852, 1639, 343, 8, 98, "Input"],
+Cell[44198, 1649, 108, 3, 120, "Text"],
+Cell[44309, 1654, 70, 0, 39, "SmallText"],
+Cell[44382, 1656, 464, 15, 85, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44895, 1677, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[44984, 1682, 45, 0, 124, "Section"],
+Cell[45032, 1684, 68, 0, 71, "Text"],
+Cell[45103, 1686, 243, 7, 71, "Input"],
+Cell[45349, 1695, 89, 2, 71, "Text"],
+Cell[CellGroupData[{
+Cell[45463, 1701, 38, 0, 94, "Subsection"],
+Cell[45504, 1703, 180, 7, 44, "SmallText"],
+Cell[45687, 1712, 20369, 314, 372, "Graphics"],
+Cell[66059, 2028, 119, 3, 120, "Text"],
+Cell[66181, 2033, 106, 3, 74, "Input"],
+Cell[66290, 2038, 124, 3, 36, "Instruction"],
+Cell[66417, 2043, 52, 1, 71, "Input"],
+Cell[66472, 2046, 57, 1, 71, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[66590, 2054, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[66679, 2059, 37, 0, 94, "Subsection"],
+Cell[66719, 2061, 247, 5, 120, "Text"],
+Cell[66969, 2068, 50, 1, 75, "Input"],
+Cell[67022, 2071, 61, 1, 71, "Input"],
+Cell[67086, 2074, 186, 6, 120, "Text"],
+Cell[67275, 2082, 459, 13, 163, "Input"],
+Cell[67737, 2097, 132, 3, 120, "Text"],
+Cell[67872, 2102, 311, 9, 118, "Input"],
+Cell[68186, 2113, 65, 0, 71, "Text"],
+Cell[68254, 2115, 191, 6, 83, "Input"],
+Cell[68448, 2123, 97, 3, 75, "Input"],
+Cell[68548, 2128, 109, 3, 71, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[68706, 2137, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[68795, 2142, 65, 0, 94, "Subsection"],
+Cell[68863, 2144, 340, 8, 168, "Text"],
+Cell[69206, 2154, 117, 3, 36, "Instruction"],
+Cell[69326, 2159, 74, 0, 71, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69437, 2164, 64, 0, 94, "Subsection"],
+Cell[69504, 2166, 168, 3, 120, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69721, 2175, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[69810, 2180, 32, 0, 124, "Section"],
+Cell[69845, 2182, 264, 5, 217, "Text"],
+Cell[70112, 2189, 43, 0, 39, "SmallText"],
+Cell[70158, 2191, 227, 7, 71, "Input",
+ CellID->1515571900],
+Cell[70388, 2200, 228, 7, 71, "Input",
+ CellID->1877915803],
+Cell[70619, 2209, 225, 7, 71, "Input",
+ CellID->1456912576],
+Cell[70847, 2218, 204, 5, 121, "Text"],
+Cell[71054, 2225, 641, 18, 162, "Input",
+ CellID->1546329116],
+Cell[71698, 2245, 179, 5, 120, "Text"],
+Cell[71880, 2252, 74, 0, 39, "SmallText"],
+Cell[CellGroupData[{
+Cell[71979, 2256, 40, 0, 94, "Subsection"],
+Cell[CellGroupData[{
+Cell[72044, 2260, 208, 6, 71, "Input"],
+Cell[72255, 2268, 107, 3, 71, "Output"]
+}, Open  ]],
+Cell[72377, 2274, 507, 15, 163, "Input"],
+Cell[CellGroupData[{
+Cell[72909, 2293, 64, 2, 71, "Input"],
+Cell[72976, 2297, 107, 3, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[73120, 2305, 183, 6, 71, "Input"],
+Cell[73306, 2313, 107, 3, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[73450, 2321, 127, 5, 71, "Input"],
+Cell[73580, 2328, 172, 6, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[73789, 2339, 95, 3, 71, "Input"],
+Cell[73887, 2344, 138, 4, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74062, 2353, 122, 4, 71, "Input"],
+Cell[74187, 2359, 86, 2, 71, "Output"]
+}, Open  ]],
+Cell[74288, 2364, 287, 9, 83, "Input"],
+Cell[74578, 2375, 285, 11, 72, "Input"],
+Cell[74866, 2388, 66, 0, 39, "SmallText"],
+Cell[74935, 2390, 68, 0, 39, "SmallText"],
+Cell[75006, 2392, 164, 4, 62, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[75207, 2401, 53, 0, 94, "Subsection"],
+Cell[CellGroupData[{
+Cell[75285, 2405, 232, 7, 72, "Input"],
+Cell[75520, 2414, 232, 7, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[75789, 2426, 176, 5, 82, "Input"],
+Cell[75968, 2433, 260, 7, 71, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76277, 2446, 48, 0, 94, "Subsection"],
+Cell[76328, 2448, 164, 3, 120, "Text"],
+Cell[76495, 2453, 457, 10, 74, "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77013, 2470, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[77102, 2475, 239, 10, 132, "Section"],
+Cell[77344, 2487, 158, 3, 120, "Text"],
+Cell[CellGroupData[{
+Cell[77527, 2494, 31, 0, 94, "Subsection"],
+Cell[77561, 2496, 74, 1, 71, "Input"],
+Cell[77638, 2499, 188, 6, 98, "Input"],
+Cell[77829, 2507, 69, 0, 71, "Text"],
+Cell[77901, 2509, 560, 13, 176, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[78498, 2527, 41, 0, 94, "Subsection"],
+Cell[78542, 2529, 73, 0, 71, "Text"],
+Cell[78618, 2531, 183, 4, 118, "Input"],
+Cell[78804, 2537, 246, 6, 72, "Input"],
+Cell[79053, 2545, 915, 26, 164, "Input"],
+Cell[79971, 2573, 97, 2, 72, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[80105, 2580, 28, 0, 94, "Subsection"],
+Cell[80136, 2582, 93, 4, 72, "Text",
+ CellTags->"index00195"],
+Cell[80232, 2588, 867, 24, 305, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[81136, 2617, 33, 0, 94, "Subsection"],
+Cell[81172, 2619, 121, 5, 72, "Text"],
+Cell[81296, 2626, 323, 9, 118, "Input"],
+Cell[81622, 2637, 49, 0, 71, "Text"],
+Cell[81674, 2639, 1886, 55, 354, "Input"],
+Cell[83563, 2696, 361, 9, 176, "Text"],
+Cell[83927, 2707, 111, 3, 120, "Text"],
+Cell[84041, 2712, 93, 2, 72, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[84171, 2719, 30, 0, 94, "Subsection"],
+Cell[84204, 2721, 210, 7, 74, "Input"],
+Cell[84417, 2730, 252, 7, 77, "Input"],
+Cell[84672, 2739, 380, 11, 77, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[85113, 2757, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[85202, 2762, 43, 0, 124, "Section"],
+Cell[85248, 2764, 52, 1, 71, "Input"],
+Cell[CellGroupData[{
+Cell[85325, 2769, 38, 0, 94, "Subsection"],
+Cell[85366, 2771, 74, 1, 71, "Input"],
+Cell[85443, 2774, 67, 0, 71, "Text"],
+Cell[85513, 2776, 1073, 27, 392, "Input",
+ CellTags->"index00190"],
+Cell[86589, 2805, 46, 0, 71, "Text"],
+Cell[86638, 2807, 387, 11, 98, "Input",
+ CellTags->"index00193"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[87062, 2823, 59, 0, 94, "Subsection"],
+Cell[87124, 2825, 312, 9, 163, "Input",
+ CellTags->"index00190"],
+Cell[87439, 2836, 111, 4, 72, "Text",
+ CellTags->"index00194"],
+Cell[87553, 2842, 569, 15, 118, "Input"],
+Cell[88125, 2859, 93, 4, 72, "Text",
+ CellTags->"index00195"],
+Cell[88221, 2865, 842, 23, 302, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[89100, 2893, 52, 0, 94, "Subsection"],
+Cell[89155, 2895, 1945, 63, 441, "Input"],
+Cell[CellGroupData[{
+Cell[91125, 2962, 270, 8, 111, "Input"],
+Cell[91398, 2972, 288, 8, 87, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[91735, 2986, 34, 0, 94, "Subsection"],
+Cell[91772, 2988, 39, 0, 71, "Text"],
+Cell[CellGroupData[{
+Cell[91836, 2992, 386, 12, 160, "Input"],
+Cell[92225, 3006, 623, 21, 103, "Output"]
+}, Open  ]],
+Cell[92863, 3030, 329, 13, 78, "Text"],
+Cell[CellGroupData[{
+Cell[93217, 3047, 848, 27, 306, "Input"],
+Cell[94068, 3076, 1431, 45, 166, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[95536, 3126, 66, 1, 71, "Input"],
+Cell[95605, 3129, 347, 10, 84, "Output"]
+}, Open  ]],
+Cell[95967, 3142, 97, 2, 71, "Text"],
+Cell[96067, 3146, 555, 17, 84, "Input"],
+Cell[CellGroupData[{
+Cell[96647, 3167, 702, 21, 206, "Input"],
+Cell[97352, 3190, 506, 16, 81, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[97895, 3211, 814, 23, 285, "Input"],
+Cell[98712, 3236, 562, 13, 441, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[99347, 3257, 64, 1, 1, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[99436, 3262, 27, 0, 124, "Section"],
+Cell[CellGroupData[{
+Cell[99488, 3266, 50, 0, 64, "Item"],
+Cell[99541, 3268, 65, 0, 64, "Item"],
+Cell[99609, 3270, 52, 0, 64, "Item"],
+Cell[99664, 3272, 63, 0, 64, "Item"],
+Cell[99730, 3274, 71, 0, 64, "Item"],
+Cell[99804, 3276, 70, 0, 64, "Item"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

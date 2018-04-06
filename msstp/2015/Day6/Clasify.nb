@@ -1,0 +1,512 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     15148,        503]
+NotebookOptionsPosition[     10977,        378]
+NotebookOutlinePosition[     13164,        441]
+CellTagsIndexPosition[     13121,        438]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Digit Classification", "Chapter"],
+
+Cell["\<\
+Train a digit recognizer on some examples from the MNIST database of \
+handwritten digits:\
+\>", "ExampleText",
+ CellID->508527170],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"digitData", "=", 
+   RowBox[{"ExampleData", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<MachineLearning\>\"", ",", "\"\<MNIST\>\""}], "}"}], ",", 
+     "\"\<Data\>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"DumpSave", "[", 
+   RowBox[{"\"\<LocalDigitData.mx\>\"", ",", "digitData"}], "]"}], 
+  ";"}]}], "Input",
+ Evaluatable->False],
+
+Cell[BoxData[
+ RowBox[{"DumpGet", "[", "\"\<LocalDigitData.mx\>\"", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"RandomSample", "[", 
+  RowBox[{"digitData", ",", "50"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{
+    RowBox[{"RandomSample", "[", 
+     RowBox[{"digitData", ",", "200"}], "]"}], ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<LogisticRegression\>\""}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"rr", "=", 
+  RowBox[{"RandomSample", "[", 
+   RowBox[{"digitData", ",", "50"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Equal", "@@@", 
+  RowBox[{"Thread", "@", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"mc", "[", 
+      RowBox[{"First", "/@", "rr"}], "]"}], ",", 
+     RowBox[{"Last", "/@", "rr"}]}], "}"}]}]}]], "Input"],
+
+Cell["\<\
+Draw in the box to test a logistic classifier trained on the dataset\
+\>", "ExampleText",
+ CellID->1782628206],
+
+Cell["Use the classifier to recognize unseen digits:", "ExampleText",
+ CellID->322748221],
+
+Cell["Analyze probabilities of a misclassified example:", "ExampleText",
+ CellID->1277337216],
+
+Cell[BoxData[
+ RowBox[{"digit", "[", 
+  RowBox[{
+   GraphicsBox[
+    TagBox[
+     RasterBox[{{255, 255, 255, 255, 255, 255, 232, 173, 54, 80, 255, 255, 
+      255, 255}, {255, 255, 255, 255, 255, 251, 108, 1, 19, 198, 255, 255, 
+      255, 255}, {255, 255, 255, 255, 255, 148, 2, 20, 198, 255, 255, 255, 
+      255, 255}, {255, 255, 255, 255, 197, 18, 18, 202, 255, 255, 255, 255, 
+      255, 255}, {255, 255, 255, 247, 50, 2, 175, 255, 255, 255, 255, 255, 
+      255, 255}, {255, 255, 255, 40, 1, 101, 255, 255, 255, 255, 255, 255, 
+      255, 255}, {255, 255, 115, 8, 2, 184, 255, 255, 255, 255, 255, 255, 255,
+       255}, {255, 255, 1, 2, 125, 249, 255, 255, 255, 255, 255, 255, 255, 
+      255}, {248, 103, 1, 13, 219, 255, 255, 255, 255, 255, 255, 255, 255, 
+      255}, {215, 2, 1, 134, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
+      255}, {193, 1, 14, 225, 255, 255, 255, 255, 255, 255, 185, 61, 158, 
+      246}, {73, 2, 68, 255, 255, 255, 255, 255, 253, 137, 5, 2, 1, 141}, {21,
+       2, 157, 255, 255, 255, 255, 206, 88, 2, 2, 2, 72, 243}, {21, 2, 195, 
+      255, 255, 233, 140, 9, 2, 2, 2, 2, 172, 255}, {59, 2, 37, 142, 195, 74, 
+      2, 1, 2, 2, 55, 175, 255, 255}, {224, 37, 0, 1, 1, 1, 1, 0, 59, 187, 
+      255, 255, 255, 255}, {255, 240, 92, 2, 2, 13, 134, 216, 249, 255, 255, 
+      255, 255, 255}, {255, 255, 99, 2, 27, 212, 255, 255, 255, 255, 255, 255,
+       255, 255}, {255, 255, 1, 28, 212, 255, 255, 255, 255, 255, 255, 255, 
+      255, 255}, {255, 255, 1, 194, 255, 255, 255, 255, 255, 255, 255, 255, 
+      255, 255}}, {{0, 20}, {14, 0}}, {0, 255},
+      ColorFunction->GrayLevel],
+     BoxForm`ImageTag["Byte", ColorSpace -> Automatic, Interleaving -> None],
+     Selectable->False],
+    BaseStyle->"ImageGraphics",
+    ImageSizeRaw->{14, 20},
+    PlotRange->{{0, 14}, {0, 20}}], ",", " ", "\"\<TopProbabilities\>\""}], 
+  "]"}]], "Input",
+ CellID->746379814]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["MyExample", "Chapter"],
+
+Cell[BoxData[
+ RowBox[{"randomVector", ":=", 
+  RowBox[{"RandomReal", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"0", ",", 
+      RowBox[{"4", "\[Pi]"}]}], "}"}], ",", 
+    RowBox[{"{", "3", "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"funcs", "=", 
+   RowBox[{"{", 
+    RowBox[{"Cos", ",", "Sin", ",", "Tan"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"res", "[", "v_", "]"}], ":=", 
+  RowBox[{"Inner", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"#", "[", "#2", "]"}], "&"}], ",", "funcs", ",", "v", ",", 
+    "Times"}], "]"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"res", "[", 
+  RowBox[{"{", 
+   RowBox[{"a", ",", "b", ",", "c"}], "}"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ListPlot", " ", "@", " ", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"res", " ", "@", " ", "randomVector"}], ",", 
+    RowBox[{"{", "500", "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"part", "[", 
+   RowBox[{"a_", "/;", 
+    RowBox[{"a", ">", "0.5"}]}], "]"}], ":=", 
+  "\"\<P\>\""}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"part", "[", 
+   RowBox[{"a_", "/;", 
+    RowBox[{"a", "<", 
+     RowBox[{"-", "0.5"}]}]}], "]"}], ":=", 
+  "\"\<N\>\""}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"part", "[", "a_", "]"}], ":=", "\"\<M\>\""}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"part", " ", "@", " ", 
+  RowBox[{"res", " ", "@", " ", "%"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"data", "=", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"res", " ", "@", " ", "randomVector"}], ",", 
+    RowBox[{"{", "20", "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"part", "/@", "data"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"#", "\[Rule]", 
+      RowBox[{"part", " ", "@", 
+       RowBox[{"res", " ", "@", "#"}]}]}], "&"}], "/@", " ", 
+    RowBox[{"Table", "[", 
+     RowBox[{"randomVector", ",", 
+      RowBox[{"{", "500", "}"}]}], "]"}]}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", "data", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"vv", "=", "randomVector"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "[", "vv", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"part", " ", "@", " ", 
+  RowBox[{"res", " ", "@", " ", "vv"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "->", "\"\<SupportVectorMachine\>\""}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<RandomForest\>\""}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<LogisticRegression\>\""}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<NeuralNetwork\>\""}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<NearestNeighbors\>\""}]}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"data", ",", 
+    RowBox[{"Method", "\[Rule]", "\"\<NaiveBayes\>\""}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"mc", "=", 
+  RowBox[{"Classify", "[", "data", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"mc", "@", "#"}], " ", "\[Equal]", " ", 
+    RowBox[{"part", " ", "@", 
+     RowBox[{"res", " ", "@", "#"}]}]}], "&"}], "/@", 
+  RowBox[{"Table", "[", 
+   RowBox[{"randomVector", ",", 
+    RowBox[{"{", "2000", "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Count", "[", 
+  RowBox[{"%", ",", "False"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ListPlot", " ", "@", " ", "%"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Titanic", "Chapter"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataset", " ", "=", " ", 
+   RowBox[{"ExampleData", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<MachineLearning\>\"", ",", "\"\<Titanic\>\""}], "}"}], 
+     ",", "\"\<Data\>\""}], "]"}]}], ";"}]], "Input",
+ CellID->1373987882],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RandomSample", "[", 
+   RowBox[{"dataset", ",", " ", "10"}], "]"}], " ", "//", " ", 
+  "TableForm"}]], "Input",
+ CellID->1061782978],
+
+Cell[BoxData[
+ RowBox[{"c", "=", 
+  RowBox[{"Classify", "[", 
+   RowBox[{"dataset", ",", 
+    RowBox[{"Method", "\[Rule]", " ", "\"\<LogisticRegression\>\""}]}], 
+   "]"}]}]], "Input",
+ CellID->196561176],
+
+Cell["\<\
+Calculate the survival probability of a 10-year-old girl traveling in third \
+class:\
+\>", "ExampleText",
+ CellID->656416631],
+
+Cell[BoxData[
+ RowBox[{"c", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\"\<1st\>\"", ",", " ", "35", ",", " ", "\"\<female\>\""}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\"\<Probability\>\"", ",", "\"\<survived\>\""}], "}"}]}], 
+  "]"}]], "Input",
+ CellID->447144752],
+
+Cell[TextData[{
+ "Plot the survival probability as a function of age for some combinations of \
+",
+ Cell[BoxData["\"\<class\>\""], "InlineFormula"],
+ " and ",
+ Cell[BoxData["\"\<sex\>\""], "InlineFormula"],
+ ":"
+}], "ExampleText",
+ CellID->14822360],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"p", "[", 
+    RowBox[{"class_", ",", "age_", ",", "sex_"}], "]"}], ":=", 
+   RowBox[{"c", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"class", ",", "age", ",", "sex"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Probability\>\"", ",", "\"\<survived\>\""}], "}"}]}], 
+    "]"}]}], ";"}]], "Input",
+ CellID->53228102],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"p", "[", 
+      RowBox[{"\"\<1st\>\"", ",", "x", ",", "\"\<female\>\""}], "]"}], ",", 
+     RowBox[{"p", "[", 
+      RowBox[{"\"\<3rd\>\"", ",", "x", ",", "\"\<female\>\""}], "]"}], ",", 
+     RowBox[{"p", "[", 
+      RowBox[{"\"\<1st\>\"", ",", "x", ",", "\"\<male\>\""}], "]"}], ",", 
+     RowBox[{"p", "[", 
+      RowBox[{"\"\<3rd\>\"", ",", "x", ",", "\"\<male\>\""}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "0", ",", "100"}], "}"}], ",", 
+   RowBox[{"PlotLegends", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<female, 1st class\>\"", ",", " ", "\"\<female, 3rd class\>\"", ",", 
+      " ", "\"\<male, 1st class\>\"", ",", " ", "\"\<male, 3rd class\>\""}], 
+     "}"}]}], ",", " ", 
+   RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+   RowBox[{"FrameLabel", "\[Rule]", " ", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<Age (years)\>\"", ",", " ", "\"\<Survival probability\>\""}], 
+     "}"}]}]}], "]"}]], "Input",
+ CellID->20368045]
+}, Open  ]]
+},
+ScreenStyleEnvironment->"Presentation",
+WindowSize->{1440, 851},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowCellBracket->True,
+Magnification:>1.5 Inherited,
+FrontEndVersion->"10.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 29, \
+2015)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]], 
+   Cell[
+    CellGroupData[{
+      Cell["Styles for Title and Section Cells", "Section"], 
+      Cell[
+       CellGroupData[{
+         Cell["Section", "Subsection"], 
+         Cell[
+          CellGroupData[{
+            Cell[
+             StyleData["Section"], CellFrame -> {{0, 0}, {0, 0}}, FontSlant -> 
+             "Plain"], 
+            Cell[
+             StyleData["Section", "SlideShow"], 
+             CellFrame -> {{0, 0}, {0, 0}}]}, Closed]], 
+         Cell[
+          CellGroupData[{
+            Cell[
+             StyleData["Subsection"], CellDingbat -> None], 
+            Cell[
+             StyleData["Subsection", "SlideShow"], 
+             CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, Closed]], 
+         Cell[
+          CellGroupData[{
+            Cell[
+             StyleData["Subsubsection"], CellDingbat -> None, FontWeight -> 
+             "Plain", FontColor -> GrayLevel[0.8]], 
+            Cell[
+             StyleData["Subsubsection", "SlideShow"], 
+             CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, Closed]], 
+         Cell[
+          CellGroupData[{
+            Cell[
+             StyleData["Subsubsubsection"], CellDingbat -> None, FontWeight -> 
+             "Plain", FontColor -> GrayLevel[0.8]], 
+            Cell[
+             StyleData["Subsubsubsection", "SlideShow"], 
+             CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, Closed]]}, 
+        Open]]}, Open]]}, WindowSize -> {808, 751}, 
+  WindowMargins -> {{116, Automatic}, {Automatic, 44}}, Visible -> False, 
+  FrontEndVersion -> 
+  "10.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 29, 2015)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 39, 0, 121, "Chapter"],
+Cell[622, 24, 141, 4, 31, "ExampleText",
+ CellID->508527170],
+Cell[766, 30, 388, 12, 162, "Input",
+ Evaluatable->False],
+Cell[1157, 44, 84, 1, 101, "Input"],
+Cell[1244, 47, 97, 2, 101, "Input"],
+Cell[1344, 51, 251, 7, 117, "Input"],
+Cell[1598, 60, 122, 3, 101, "Input"],
+Cell[1723, 65, 228, 7, 101, "Input"],
+Cell[1954, 74, 120, 3, 31, "ExampleText",
+ CellID->1782628206],
+Cell[2077, 79, 89, 1, 31, "ExampleText",
+ CellID->322748221],
+Cell[2169, 82, 93, 1, 31, "ExampleText",
+ CellID->1277337216],
+Cell[2265, 85, 1896, 32, 73, "Input",
+ CellID->746379814]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4198, 122, 28, 0, 121, "Chapter"],
+Cell[4229, 124, 224, 7, 71, "Input"],
+Cell[4456, 133, 364, 12, 118, "Input"],
+Cell[4823, 147, 113, 3, 71, "Input"],
+Cell[4939, 152, 197, 5, 71, "Input"],
+Cell[5139, 159, 405, 13, 164, "Input"],
+Cell[5547, 174, 97, 2, 71, "Input"],
+Cell[5647, 178, 182, 5, 71, "Input"],
+Cell[5832, 185, 56, 1, 71, "Input"],
+Cell[5891, 188, 322, 10, 71, "Input"],
+Cell[6216, 200, 88, 2, 71, "Input"],
+Cell[6307, 204, 61, 1, 71, "Input"],
+Cell[6371, 207, 56, 1, 71, "Input"],
+Cell[6430, 210, 98, 2, 71, "Input"],
+Cell[6531, 214, 174, 5, 71, "Input"],
+Cell[6708, 221, 167, 4, 71, "Input"],
+Cell[6878, 227, 177, 5, 71, "Input"],
+Cell[7058, 234, 172, 5, 71, "Input"],
+Cell[7233, 241, 175, 5, 71, "Input"],
+Cell[7411, 248, 165, 4, 71, "Input"],
+Cell[7579, 254, 88, 2, 71, "Input"],
+Cell[7670, 258, 296, 9, 71, "Input"],
+Cell[7969, 269, 85, 2, 71, "Input"],
+Cell[8057, 273, 66, 1, 71, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8160, 279, 26, 0, 121, "Chapter"],
+Cell[8189, 281, 274, 8, 117, "Input",
+ CellID->1373987882],
+Cell[8466, 291, 167, 5, 71, "Input",
+ CellID->1061782978],
+Cell[8636, 298, 204, 6, 71, "Input",
+ CellID->196561176],
+Cell[8843, 306, 135, 4, 31, "ExampleText",
+ CellID->656416631],
+Cell[8981, 312, 280, 9, 71, "Input",
+ CellID->447144752],
+Cell[9264, 323, 249, 8, 32, "ExampleText",
+ CellID->14822360],
+Cell[9516, 333, 378, 12, 118, "Input",
+ CellID->53228102],
+Cell[9897, 347, 1064, 28, 342, "Input",
+ CellID->20368045]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

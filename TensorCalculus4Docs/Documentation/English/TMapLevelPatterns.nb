@@ -1,0 +1,1492 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     52259,       1392]*)
+(*NotebookOutlinePosition[     53283,       1428]*)
+(*  CellTagsIndexPosition[     53207,       1422]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["MapLevelPatterns", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        RowBox[{
+          StyleBox["MapLevelPatterns",
+            "MR"], 
+          StyleBox["[",
+            "MR"], 
+          StyleBox[\(function, {topposition, {pattern}}\),
+            "TI"], 
+          StyleBox["]",
+            "MR"]}], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["expr",
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " will map the function onto the selected level positions that match the \
+pattern in an expression."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+ The pattern is used to determine a set of levelpositions at topposition. The \
+function is applied to them as a group and they are replaced with a single \
+new expression. Other level parts are left unchanged.\
+\>", "MathCaption"],
+
+Cell["\<\
+MapLevelPatterns will often be a more convenient form of MapLevelParts.\
+\>", "MathCaption"],
+
+Cell["\<\
+ MapLevelPatterns is useful when you wish to apply SimplifyTensorSum to just \
+a selected set of terms in a sum. It is easier and more controlled to \
+simplify such sums when you are not dealing with disparate terms. It is also \
+useful in applying MetricSimplify or KroneckerAbsorb to a selected set of \
+factors in a term.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["SimplifyTensorSum",
+    ButtonData:>{"SimplifyTensorSum"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["TensorSimplify",
+    ButtonData:>{"TensorSimplify"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["UpDownSwap",
+    ButtonData:>{"UpDownSwap"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["IndexChange",
+    ButtonData:>{"IndexChange"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SymmetrizeSlots",
+    ButtonData:>{"SymmetrizeSlots"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["MetricSimplify",
+    ButtonData:>{"MetricSimplify"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["MapLevelParts",
+    ButtonData:>{"MapLevelParts"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{\[Lambda], \[Kappa], x}, 1}, {g, 2}]\)], "Input",\
+
+  CellLabel->"In[2]:="],
+
+Cell[TextData[{
+  "The following is an example of using ",
+  Cell[BoxData[
+      \(MapLevelPatterns\)]],
+  ". This is the same example as in ",
+  Cell[BoxData[
+      \(MapLevelParts\)]],
+  "."
+}], "Text"],
+
+Cell["\<\
+For smooth functions the order of partial differentiation does not matter. It \
+does matter for covariant differentiation. In general order independence is \
+not true for covariant differentiation. For example, for a contravariant \
+vector field...\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Print["\<Covariant differentiation is not commutative\>"]\), "\
+\[IndentingNewLine]", 
+    \(CovariantD[\[Lambda]u[a], {b, c}] \[NotEqual] 
+      CovariantD[\[Lambda]u[a], {c, b}]\), "\[IndentingNewLine]", 
+    \(Print["\<Expand, rearrange and use symmetry on \[CapitalGamma]\>"]\), "\
+\[IndentingNewLine]", 
+    \(\(ExpandCovariantD[{x, \[Delta], g, \[CapitalGamma]}, {d, 
+            e}] /@ %%;\)\), "\[IndentingNewLine]", 
+    \(\(\(# - Part[%, 2] &\) /@ % // ExpandAll;\)\), "\[IndentingNewLine]", 
+    \(% // SymmetrizeSlots[\[CapitalGamma], 3, 
+        Symmetric[2, 3]]\), "\[IndentingNewLine]", 
+    \(Print["\<Use MapLevelPatterns to simplify the terms containing \
+\[Lambda] derivatives and factor\>"]\), "\[IndentingNewLine]", 
+    \(%% // 
+      MapLevelPatterns[
+        SimplifyTensorSum, \ {1, {a_. \ \(PartialD[_]\)[\[Lambda]u[_], 
+                xu[_]]}}]\), "\[IndentingNewLine]", 
+    \(MapAt[Factor, %, 1]\)}], "Input",
+  CellLabel->"In[3]:="],
+
+Cell[BoxData[
+    \("Covariant differentiation is not commutative"\)], "Print",
+  CellLabel->"From In[3]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubscriptBox[
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a"],
+            Tensor[ \[Lambda], {a}, {Void}],
+            Editable->False], \(\(;\)\(b  c\)\)],
+        CovariantD[ 
+          Tensor[ \[Lambda], {a}, {Void}], {b, c}],
+        Editable->False], "\[NotEqual]", 
+      InterpretationBox[
+        SubscriptBox[
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a"],
+            Tensor[ \[Lambda], {a}, {Void}],
+            Editable->False], \(\(;\)\(c  b\)\)],
+        CovariantD[ 
+          Tensor[ \[Lambda], {a}, {Void}], {c, b}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[4]="],
+
+Cell[BoxData[
+    \("Expand, rearrange and use symmetry on \[CapitalGamma]"\)], "Print",
+  CellLabel->"From In[3]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, b, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, c, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["b",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["c",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "c"],
+                  Tensor[ x, {c}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}], 
+              Tensor[ x, {c}, {Void}]],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["c",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "b"],
+                  Tensor[ x, {b}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}], 
+              Tensor[ x, {b}, {Void}]],
+            Editable->False]}], "-", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {b}, {Void}], 
+            Tensor[ x, {c}, {Void}]}],
+          Editable->False], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {c}, {Void}], 
+            Tensor[ x, {b}, {Void}]}],
+          Editable->False], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[Lambda]", 
+                    TagBox[
+                      StyleBox["d",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "d"],
+                  Tensor[ \[Lambda], {d}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "b"],
+                  Tensor[ x, {b}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[Lambda], {d}, {Void}], 
+              Tensor[ x, {b}, {Void}]],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[Lambda]", 
+                    TagBox[
+                      StyleBox["d",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "d"],
+                  Tensor[ \[Lambda], {d}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["c",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "c"],
+                  Tensor[ x, {c}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[Lambda], {d}, {Void}], 
+              Tensor[ x, {c}, {Void}]],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[Lambda]", 
+                    TagBox[
+                      StyleBox["e",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "e"],
+                  Tensor[ \[Lambda], {e}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "b"],
+                  Tensor[ x, {b}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[Lambda], {e}, {Void}], 
+              Tensor[ x, {b}, {Void}]],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[Lambda]", 
+                    TagBox[
+                      StyleBox["e",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "e"],
+                  Tensor[ \[Lambda], {e}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["c",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "c"],
+                  Tensor[ x, {c}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[Lambda], {e}, {Void}], 
+              Tensor[ x, {c}, {Void}]],
+            Editable->False]}]}], "\[NotEqual]", "0"}]], "Output",
+  CellLabel->"Out[8]="],
+
+Cell[BoxData[
+    \("Use MapLevelPatterns to simplify the terms containing \[Lambda] \
+derivatives and factor"\)], "Print",
+  CellLabel->"From In[3]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, b, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, c, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["b",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["c",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "c"],
+                  Tensor[ x, {c}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}], 
+              Tensor[ x, {c}, {Void}]],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["c",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "b"],
+                  Tensor[ x, {b}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}], 
+              Tensor[ x, {b}, {Void}]],
+            Editable->False]}], "-", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {b}, {Void}], 
+            Tensor[ x, {c}, {Void}]}],
+          Editable->False], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {c}, {Void}], 
+            Tensor[ x, {b}, {Void}]}],
+          Editable->False]}], "\[NotEqual]", "0"}]], "Output",
+  CellLabel->"Out[10]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, b, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "b", "e"}], 
+              RowBox[{"a", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, e}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["e",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+              RowBox[{"e", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["d",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {e, Void, Void}, {Void, c, d}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["b",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["c",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "c"],
+                  Tensor[ x, {c}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}], 
+              Tensor[ x, {c}, {Void}]],
+            Editable->False]}], "-", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d"],
+            Tensor[ \[Lambda], {d}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[CapitalGamma]", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+                    
+                    RowBox[{"a", 
+                      TagBox[
+                        StyleBox["c",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["d",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}]],
+                  Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "b"],
+                  Tensor[ x, {b}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, c, d}], 
+              Tensor[ x, {b}, {Void}]],
+            Editable->False]}], "-", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {b}, {Void}], 
+            Tensor[ x, {c}, {Void}]}],
+          Editable->False], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["\[Lambda]", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ \[Lambda], {a}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Lambda], {a}, {Void}], {
+            Tensor[ x, {c}, {Void}], 
+            Tensor[ x, {b}, {Void}]}],
+          Editable->False]}], "\[NotEqual]", "0"}]], "Output",
+  CellLabel->"Out[11]="]
+}, Open  ]],
+
+Cell["In general the term in brackets will not be zero.", "Text"],
+
+Cell[TextData[{
+  "Sometimes when using ",
+  Cell[BoxData[
+      \(MetricSimplify\)]],
+  ", or ",
+  Cell[BoxData[
+      \(KroneckerAbsorb\)]],
+  ", it is ambiguous as to which factors are to be operated on. In the \
+following the index on the ",
+  Cell[BoxData[
+      \(\[Kappa]\)]],
+  " vector is lowered."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(gdd[a, b] \[Kappa]u[a] \[Lambda]u[b]\), "\[IndentingNewLine]", 
+    \(% // MetricSimplify[g]\)}], "Input",
+  CellLabel->"In[12]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["g", \(a  b\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ g, {Void, Void}, {a, b}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Kappa]", 
+          TagBox[
+            StyleBox["a",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "a"],
+        Tensor[ \[Kappa], {a}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Lambda]", 
+          TagBox[
+            StyleBox["b",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "b"],
+        Tensor[ \[Lambda], {b}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[12]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["\[Kappa]", "b", 
+          TagBox[
+            StyleBox["b",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ \[Kappa], {Void}, {b}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Lambda]", 
+          TagBox[
+            StyleBox["b",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "b"],
+        Tensor[ \[Lambda], {b}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "If we wish to lower the ",
+  Cell[BoxData[
+      \(\[Lambda]\)]],
+  " index instead, we could pick out the relevant factors..."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(gdd[a, b] \[Kappa]u[a] \[Lambda]u[b]\), "\[IndentingNewLine]", 
+    \(% // MapLevelPatterns[
+        MetricSimplify[g], {{\ gdd[_, _] | \[Lambda]u[_]}}]\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["g", \(a  b\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ g, {Void, Void}, {a, b}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Kappa]", 
+          TagBox[
+            StyleBox["a",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "a"],
+        Tensor[ \[Kappa], {a}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Lambda]", 
+          TagBox[
+            StyleBox["b",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "b"],
+        Tensor[ \[Lambda], {b}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[14]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["\[Kappa]", 
+          TagBox[
+            StyleBox["a",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "a"],
+        Tensor[ \[Kappa], {a}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Lambda]", "a", 
+          TagBox[
+            StyleBox["a",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ \[Lambda], {Void}, {a}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[15]="]
+}, Open  ]],
+
+Cell["\<\
+If there are no matches in the topposition a warning message is issued and \
+the expression is returned unchanged. In this case topposition referred to \
+the wrong term. (TraditionalForm changes the display order of terms.) In \
+other cases the pattern may have been specified incorrectly.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(3 + gdd[a, b] \[Kappa]u[a] \[Lambda]u[b] // 
+      TraditionalForm\), "\[IndentingNewLine]", 
+    \(% // MapLevelPatterns[
+        MetricSimplify[g], {1, {\ gdd[_, _] | \[Lambda]u[_]}}]\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    FormBox[
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["g", \(a  b\), 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ g, {Void, Void}, {a, b}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Kappa]", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a"],
+            Tensor[ \[Kappa], {a}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Lambda]", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b"],
+            Tensor[ \[Lambda], {b}, {Void}],
+            Editable->False]}], "+", "3"}], TraditionalForm]], "Output",
+  CellLabel->"Out[16]//TraditionalForm="],
+
+Cell[BoxData[
+    RowBox[{\(MapLevelPatterns::"nomatch"\), \(\(:\)\(\ \)\), "\<\"There were \
+no matches for \\!\\(\\*InterpretationBox[\\(g\\_\\(__\\)\\%\\(\\*StyleBox[\\\
+\"_\\\", Rule[ShowContents, False]]\\*StyleBox[\\\"_\\\", Rule[ShowContents, \
+False]]\\)\\), Tensor[g, List[Void, Void], List[Blank[], Blank[]]], \
+Rule[Editable, False]] | \
+\\*InterpretationBox[\\(\[Lambda]\\_\\(\\*StyleBox[\\\"_\\\", \
+Rule[ShowContents, False]]\\)\\%\\(_\\)\\), Tensor[\\\\[Lambda], \
+List[Blank[]], List[Void]], Rule[Editable, False]]\\) in \\!\\(3\\)\"\>"}]], \
+"Message",
+  CellLabel->"From In[16]:="],
+
+Cell[BoxData[
+    RowBox[{"3", "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["g", \(a  b\), 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ g, {Void, Void}, {a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[Kappa]", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ \[Kappa], {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[Lambda]", 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "b"],
+          Tensor[ \[Lambda], {b}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[17]="]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{670, 627},
+WindowMargins->{{0, Automatic}, {Automatic, 1}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 63, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1842, 56, 586, 22, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 53036, 1413}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 63, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1842, 56, 586, 22, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2431, 80, 241, 4, 58, "MathCaption"],
+Cell[2675, 86, 102, 2, 41, "MathCaption"],
+Cell[2780, 90, 355, 6, 75, "MathCaption"],
+Cell[3138, 98, 782, 30, 58, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[3945, 132, 34, 0, 39, "ExampleSection"],
+Cell[3982, 134, 96, 2, 29, "Input"],
+Cell[4081, 138, 119, 3, 29, "Input"],
+Cell[4203, 143, 204, 8, 25, "Text"],
+Cell[4410, 153, 272, 5, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[4707, 162, 984, 19, 209, "Input"],
+Cell[5694, 183, 108, 2, 23, "Print"],
+Cell[5805, 187, 1019, 28, 29, "Output"],
+Cell[6827, 217, 117, 2, 23, "Print"],
+Cell[6947, 221, 17058, 419, 92, "Output"],
+Cell[24008, 642, 152, 3, 23, "Print"],
+Cell[24163, 647, 10051, 247, 49, "Output"],
+Cell[34217, 896, 10051, 247, 49, "Output"]
+}, Open  ]],
+Cell[44283, 1146, 65, 0, 25, "Text"],
+Cell[44351, 1148, 319, 12, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[44695, 1164, 152, 3, 49, "Input"],
+Cell[44850, 1169, 1060, 31, 28, "Output"],
+Cell[45913, 1202, 612, 18, 27, "Output"]
+}, Open  ]],
+Cell[46540, 1223, 158, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[46723, 1232, 212, 4, 49, "Input"],
+Cell[46938, 1238, 1060, 31, 28, "Output"],
+Cell[48001, 1271, 612, 18, 27, "Output"]
+}, Open  ]],
+Cell[48628, 1292, 313, 5, 59, "Text"],
+
+Cell[CellGroupData[{
+Cell[48966, 1301, 245, 5, 49, "Input"],
+Cell[49214, 1308, 1255, 33, 44, "Output"],
+Cell[50472, 1343, 599, 10, 22, "Message"],
+Cell[51074, 1355, 1145, 32, 28, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

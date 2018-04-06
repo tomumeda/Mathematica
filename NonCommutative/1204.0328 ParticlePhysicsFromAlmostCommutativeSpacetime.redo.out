@@ -1,0 +1,1848 @@
+$ = {"$", "$0", "$00", "$0a", "$1", "$1a", "$1b", "$1c", "$1t", "$2", "$2a", 
+     "$2c", "$2m", "$2t", "$2td", "$3", "$31", "$a", "$A", "$A1", "$aa", 
+     "$aa$", "$Am", "$arg", "$Arg", "$argn", "$a$", "$b", "$bb", "$bb$", 
+     "$b$", "$c", "$cc", "$cc$", "$combineProduct", "$connection", "$const", 
+     "$d", "$d0", "$d1", "$D1", "$d1$", "$d2", "$d2$", "$DA", "$def", 
+     "$defall", "$deltas", "$dif", "$dummy", "$dummy$", "$d$", "$e", 
+     "$e216B", "$e219", "$e35", "$e$", "$f", "$F", "$g", "$G", 
+     "$generalForm", "$gh", "$gh0", "$gh1", "$h", "$h1", "$head", 
+     "$hermitian", "$h$", "$i", "$ii", "$ii$", "$in", "$ind", "$index", 
+     "$ind$", "$in$", "$i$", "$j", "$J", "$JF", "$Jg", "$JJ", "$JJ1", 
+     "$keys", "$L", "$low", "$L$", "$match", "$matches", "$n", "$npat", 
+     "$npat$", "$ns", "$n$", "$O", "$p", "$p30", "$pass", "$pass1", "$pass4", 
+     "$pat", "$Pattern", "$Pattern$", "$pat$", "$ph", "$placeholder", 
+     "$placeholder$", "$pn", "$pos", "$previous", "$ps", "$pvar", "$pvar1", 
+     "$p$", "$r", "$range", "$rhead", "$right", "$rp", "$rule", "$rules", 
+     "$s", "$S", "$s0", "$s0x", "$s1", "$s34", "$sa", "$sAt", "$scc", "$sD", 
+     "$sDA", "$sdg", "$sF1", "$sg", "$sgeneral", "$sh", "$slashD", "$sNO", 
+     "$SpinorsPath", "$ss", "$su", "$SU", "$swap", "$symmetries", "$s$", 
+     "$t", "$t1", "$t219", "$t32", "$t33", "$t34", "$targetForm", 
+     "$tensorsymbol", "$tensorsymbol$", "$test", "$tmp", "$t$", "$u", "$u0", 
+     "$u1", "$u1$", "$u2", "$u2$", "$u$", "$var", "$var$", "$with", 
+     "$without", "$x", "$X", "$XX", "$X$", "$y", "$\[Alpha]", "$\[Beta]", 
+     "$\[Sigma]", "$$", "$$a", "$$b", "$$c", "$$d", "$$i", "$$m", "$$n", 
+     "$$t", "$$ten", "$$t$", "$$XX", "$$XXX"}
+ 
+$0 = Tr[g[t*Subscript[Style[D, Italic], A]^2]] -> 
+     xSum[t^((k - n)/2)*Inactive[Integrate][s^((k - n)/2)*h[s], s]*
+       Subscript[a, k][Subscript[Style[D, Italic], A]^2], {k >= 0}]
+ 
+Attributes[Subscript] = {NHoldRest}
+ 
+Subscript[B, x_] := T[B, "d", {x}]
+ 
+Subscript["\[Del]"^S, n_] := T["\[Del]"^S, "d", {n}]
+ 
+T[A_, uds_String][index0__] := Module[{tmp, ud = Characters[uds], 
+      index = {index0}}, If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T[A_, up_List, down_List] := Module[{tmp, u = up /. Null -> Void, 
+      d = down /. Null -> Void, return}, 
+     If[up == {} && down == {}, Return[Tensor[A, up, down]]]; 
+      If[up == {}, u = Table[Void, {Length[d]}]]; 
+      If[down == {}, d = Table[Void, {Length[u]}]]; 
+      If[Length[d] == Length[u] &&  !Inner[(#1 =!= Void && #2 =!= Void) || 
+            (#1 === Void && #2 === Void) & , u, d, Or], Tensor[A, u, d], 
+       Style[Tensor[A, up, down], FontColor -> Red]]]
+ 
+T[A_, uds_String, index_List] := Module[{tmp, ud = Characters[uds]}, 
+     If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T /: T::usage = "T[A_,uds_String][index0__] produces any Tensor where \
+uds_String specifies up/down position of index_, \
+e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
+\(i\)]\)\!\(\*SubscriptBox[\()\), \(jk\)]\))"
+ 
+$00 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[ScriptCapitalA] + \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . 
+       J . \[ScriptCapitalA] . ConjugateTranspose[J]
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+ 
+$0a = U . Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      ConjugateTranspose[U] -> U . \[ScriptCapitalA] . 
+       ConjugateTranspose[U] + U . \[ScriptCapitalD] . 
+       ConjugateTranspose[U] + U . J . \[ScriptCapitalA] . 
+        ConjugateTranspose[J] . ConjugateTranspose[U]*
+       Derivative[1][\[CurlyEpsilon]]
+ 
+$1 = u . J . u . ConjugateTranspose[J] . \[ScriptCapitalA] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . ConjugateTranspose[J] . \[ScriptCapitalD] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . \[ScriptCapitalA] . ConjugateTranspose[u] . 
+       ConjugateTranspose[J] . ConjugateTranspose[u]*
+      Derivative[1][\[CurlyEpsilon]]
+ 
+$1a = \[ScriptCapitalD] + u . CommutatorM[\[ScriptCapitalD], 
+       ConjugateTranspose[u]] + u . J . u . CommutatorM[\[ScriptCapitalD], 
+        ConjugateTranspose[u]] . ConjugateTranspose[J] . 
+       ConjugateTranspose[u]/Derivative[1][\[CurlyEpsilon]]
+ 
+$1b = u . \[ScriptCapitalA] . ConjugateTranspose[u]
+ 
+$1c = J . u . \[ScriptCapitalA] . ConjugateTranspose[u] . 
+      ConjugateTranspose[J]*Derivative[1][\[CurlyEpsilon]]
+ 
+$2 = a . CommutatorM[Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        Subscript[\[ScriptCapitalD], F], b] -> 
+     Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+      a . CommutatorM[Subscript[\[ScriptCapitalD], F], b]
+ 
+$2a = a . CommutatorM[Subscript[\[ScriptCapitalD], F], b] -> \[Phi]
+ 
+$3 = {Subscript[u, 1]} == {Subscript[\[Lambda], Subscript[u, 1]] . 
+       Subscript[\[Lambda], Subscript[u, 2]]^"-1" . Subscript[u, 2] . g}
+ 
+$31 = {Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+       Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      -Q + \[CapitalDelta]^"E", 
+     Q -> -(s \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]])/
+        4 - I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+           {5}] \[CircleTimes] Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}] . 
+          \[CapitalPhi] + (I/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+       Subscript[1, N] \[CircleTimes] \[CapitalPhi] . \[CapitalPhi]}
+ 
+$A = {\[ScriptCapitalA] -> a . CommutatorM[slash[\[ScriptCapitalD]], b], 
+     a | Element[b, (C^"\[Infinity]")[M]], slash[\[ScriptCapitalD]] -> 
+      (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*tuDDown["\[Del]"^S][_, \[Mu]]}
+ 
+$A1 = \[ScriptCapitalA] -> Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       \[Phi] + Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}]
+ 
+Attributes[$aa$] = {Temporary}
+ 
+$Am = I*Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}] -> 
+     a . tuDDown["\[Del]"^S][b, \[Mu]]
+ 
+Attributes[$a$] = {Temporary}
+ 
+Attributes[$bb$] = {Temporary}
+ 
+Attributes[$b$] = {Temporary}
+ 
+$cc = {ConjugateTranspose[cc] -> cc, Conjugate[cc] -> cc, cc . cc -> 1, 
+     cc . (a_) :> Conjugate[a] . cc}
+ 
+cc[a_] := Conjugate[a]
+ 
+Attributes[$cc$] = {Temporary}
+ 
+$combineProduct = {((a_) \[CircleTimes] (b_)) . ((c_) \[CircleTimes] (d_)) :> 
+      a . c \[CircleTimes] b . d + c \[CircleTimes] 
+        tuCircleTimesInnerTerm[T["\[Del]"^S, "d", {_}]][a[d]], 
+     (a_) . Subscript[1, n_] -> a, Subscript[1, n_] . (a_) -> a, 
+     Tensor["\[Del]"^S, {Void}, {n_}][a_] -> tuDDown["\[PartialD]"][a, n], 
+     tuDDown["\[PartialD]"][Subscript[1, n_], a_] -> 0, 
+     (a_) \[CircleTimes] (tt:Tensor[\[Gamma], _, _]) . (b_) -> 
+      a . tt \[CircleTimes] b}
+ 
+tuCircleTimesInnerTerm[difOp_][exp_] := Block[{$h, $h1, $dif, $ = exp}, 
+     $h = Head[exp]; xPrint[$h]; If[FreeQ[$h, difOp], $ = 0; , 
+       If[ !FreeQ[$h, dotOps], xPrint["$XX ", $h]; 
+          $dif = tuExtractPattern[difOp][$h][[1]]; xPrint[exp]; 
+          $ = $dif[exp[[1]]]; xPrint[$h, Length[$h]]; $h1 = Head[$h]; 
+          If[tuMemberQ[$h1, dotOps], $h = $h1 @@ DeleteCases[List @@ $h, 
+               difOp]; $ = $h1 @@ {$h, $}]; ]; ]; $]
+ 
+tuCircleTimesInnerTerm /: tuCircleTimesInnerTerm::usage = "tuCircleTimesInner\
+Term[difOp_][exp_] computes the inner terms produced when merging CircleTimes \
+operator expressions, esp_, e.g., \
+(a\[CircleTimes]b).(c\[CircleTimes]d)\[Rule](a.c)\[CircleTimes](b.d)+(a.tuCir\
+cleTimesInnerTerm[c[b],\[Del]])\[CircleTimes](d).  Assumes dotOps variable \
+separators.  *2Mar2016*"
+ 
+$h = \[ScriptCapitalH] -> {{Subscript[\[ScriptCapitalH], 1, 1], 
+       Subscript[\[ScriptCapitalH], 1, 2]}, 
+      {Subscript[\[ScriptCapitalH], 2, 1], Subscript[\[ScriptCapitalH], 2, 
+        2]}}
+ 
+dotOps := Dot | xDot | CenterDot | Inactive[Dot]
+ 
+Attributes[xDot] = {Flat, OneIdentity}
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+tuExtractPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{pos}, pos = Position[exp, pattern, {0, maxlevel}]; 
+      Extract[exp, pos]]
+ 
+tuExtractPattern /: tuExtractPattern::usage = "tuExtractPattern[pattern_,maxl\
+evel_:Infinity][exp_] extracts a List of items in exp_ that match pattern_ to \
+maxlevel_. *3Feb2014* "
+ 
+tuMemberQ[variable_, patterns_] := 
+    Or @@ (MemberQ[Flatten[{variable}], #1] & ) /@ Flatten[{patterns}]
+ 
+tuMemberQ /: tuMemberQ::usage = "tuMemberQ[variable_,patterns_List] True if \
+variable_ matches any in patterns_List. *16May2015*"
+ 
+$connection = ("\[Del]"^S)[S[]]
+ 
+$d = {Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][a_] -> 
+      ad[Tensor["\[Del]"^"E", {Void}, {\[Mu]}]][a], 
+     ad[aa_][bb_] -> aa . bb - bb . aa}
+ 
+$D1 = Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]] -> 
+     (-I)*Subscript[1, N] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+         Tensor[B, {Void}, {\[Mu]}]] + Subscript[1, N] \[CircleTimes] 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}][\[CapitalPhi]]
+ 
+Attributes[$d1$] = {Temporary}
+ 
+Attributes[$d2$] = {Temporary}
+ 
+$DA = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . J . 
+       Subscript[\[ScriptCapitalA], f] . ConjugateTranspose[J] + 
+      Subscript[\[ScriptCapitalA], f]
+ 
+$def = {ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], F]], 
+      {CommutatorM[a, b^"0"] -> 0, b^"0" -> Subscript[J, F] . 
+         ConjugateTranspose[b] . ConjugateTranspose[Subscript[J, F]]}], 
+     ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], F]], 
+      {CommutatorM[CommutatorM[Subscript[\[ScriptCapitalD], F], a], b^"0"] -> 
+        0, b^"0" -> Subscript[J, F] . ConjugateTranspose[b] . 
+         ConjugateTranspose[Subscript[J, F]]}]}
+ 
+$defall = {Tensor[\[Gamma], {Void}, {5}] -> Tensor[\[Gamma], {1}, {Void}]*
+       Tensor[\[Gamma], {2}, {Void}]*Tensor[\[Gamma], {3}, {Void}]*
+       Tensor[\[Gamma], {4}, {Void}], Tensor[\[Gamma], {Void}, {5}] . 
+       Tensor[\[Gamma], {Void}, {5}] -> 1, 
+     ConjugateTranspose[Tensor[\[Gamma], {Void}, {5}]] -> 
+      Tensor[\[Gamma], {Void}, {5}], 
+     CommutatorP[Tensor[\[Gamma], {Void}, {5}], Tensor[\[Gamma], {\[Mu]}, 
+        {Void}]] -> 0, Tensor[\[Gamma], {Void}, {5}][(L^2)[M, S]] -> 
+      SuperPlus[(L^2)[M, S]] \[CirclePlus] SuperMinus[(L^2)[M, S]], 
+     \[ScriptCapitalD] -> slash[\[ScriptCapitalD]] \[CircleTimes] 
+        Subscript[1, N] + Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        Subscript[\[ScriptCapitalD], F], 
+     (slash[\[ScriptCapitalD]] \[CircleTimes] Subscript[1, N]) . b -> 
+      slash[\[ScriptCapitalD]] \[CircleTimes] b + 
+       b . (slash[\[ScriptCapitalD]] \[CircleTimes] Subscript[1, N]), 
+     slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b), 
+     Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi] - 
+       I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^"E", {Void}, 
+          {\[Mu]}], Tensor["\[Del]"^"E", {Void}, {\[Mu]_}] -> 
+      I*Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Tensor["\[Del]"^"E", {Void}, {\[Mu]}][S \[CircleTimes] "E"], 
+     Element[\[CapitalPhi], \[CapitalGamma][Endo["E"]][
+       Style["Higg's field", RGBColor[0, 2/3, 0], Larger]]], 
+     Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][a_] -> 
+      ad[Tensor["\[Del]"^"E", {Void}, {\[Mu]}]][a], 
+     ad[aa_][bb_] -> aa . bb - bb . aa, 
+     Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]] -> 
+      (-I)*Subscript[1, N] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+          Tensor[B, {Void}, {\[Mu]}]] + Subscript[1, N] \[CircleTimes] 
+        Tensor["\[Del]"^S, {Void}, {\[Mu]}][\[CapitalPhi]], 
+     Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] -> 
+      I*CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]] - 
+       tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+       tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]], 
+     (\[CapitalOmega]^"E")[X, Y] -> Tensor["\[Del]"^"E", {Void}, {X}] . 
+        Tensor["\[Del]"^"E", {Void}, {Y}] - Tensor["\[Del]"^"E", {Void}, 
+         {Y}] . Tensor["\[Del]"^"E", {Void}, {X}] - Tensor["\[Del]"^"E", 
+        {Void}, {CommutatorM[X, Y]}], {X, Y} -> "vector fields", 
+     (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+      (Tensor["\[Del]"^S, {Void}, {\[Mu]}] . Tensor["\[Del]"^S, {Void}, 
+           {\[Nu]}] - Tensor["\[Del]"^S, {Void}, {\[Nu]}] . 
+          Tensor["\[Del]"^S, {Void}, {\[Mu]}]) \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+       Subscript[1, N] \[CircleTimes] (-Tensor[B, {Void}, {\[Mu]}] . 
+           Tensor[B, {Void}, {\[Nu]}] + Tensor[B, {Void}, {\[Nu]}] . 
+          Tensor[B, {Void}, {\[Mu]}]) + I*Subscript[1, N] \[CircleTimes] 
+         Tensor["\[Del]"^S, {Void}, {\[Mu]}][Tensor[B, {Void}, {\[Nu]}]] - 
+       I*Subscript[1, N] \[CircleTimes] Tensor["\[Del]"^S, {Void}, {\[Nu]}][
+          Tensor[B, {Void}, {\[Mu]}]], (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+      Subscript[1, N] \[CircleTimes] (I*Tensor[F, {Void, Void}, 
+          {\[Mu], \[Nu]}]) + (\[CapitalOmega]^S)[\[Mu], \[Nu]] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     (\[CapitalOmega]^S)[\[Mu], \[Nu]] -> 
+      Tensor["\[Del]"^S, {Void}, {\[Mu]}] . Tensor["\[Del]"^S, {Void}, 
+         {\[Nu]}] - Tensor["\[Del]"^S, {Void}, {\[Nu]}] . 
+        Tensor["\[Del]"^S, {Void}, {\[Mu]}], 
+     slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] -> 
+      s/4 + \[CapitalDelta]^S, (\[CapitalDelta]^S)[Style["Laplacian of spin \
+connection \!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)", RGBColor[0, 2/3, 0], 
+       Larger], s[Style["scalar curvature of M", RGBColor[0, 2/3, 0], 
+        Larger]]], Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {Void}, 
+        {5}] -> Subscript[1, N], (tt:Tensor[\[Gamma], {\[Mu]_}, {Void}]) . 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]_}] :> I*slash[\[ScriptCapitalD]], 
+     Subscript[1, n_] . (a_) -> a, (a_) . Subscript[1, n_] -> a, 
+     Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] + Tensor[\[Gamma], {\[Nu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Mu]}, {Void}])/2, 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]] -> 
+      I*(-(Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+            {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}]) - 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+           {Void}] \[CircleTimes] tuDDown["\[PartialD]"][Tensor[B, {Void}, 
+           {\[Mu]}], \[Nu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]])}
+ 
+Attributes[$dummy$] = {Temporary}
+ 
+Attributes[$d$] = {Temporary}
+ 
+$e216B = {Tensor[B, {Void}, {\[Mu]}] -> 
+      -Derivative[1][\[CurlyEpsilon]] . J . Tensor[\[ScriptCapitalA], {Void}, 
+          {\[Mu]}] . ConjugateTranspose[J] + Tensor[\[ScriptCapitalA], 
+        {Void}, {\[Mu]}], Element[Tensor[B, {Void}, {\[Mu]}], 
+      \[CapitalGamma][Endo["E"]]]}
+ 
+$e219 = Element[Subscript[\[ScriptCapitalA], \[Mu]], 
+     (C^"\[Infinity]")[M, I*\[GothicG][F]]]
+ 
+$e35 = \[CapitalDelta]^"E" -> \[CapitalDelta]^S \[CircleTimes] 
+       Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+      Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+       (Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . 
+         Tensor[B, {Void}, {\[Nu]}]) - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+        (Subscript[1, N] \[CircleTimes] tuDDown["\[PartialD]"][
+          Tensor[B, {Void}, {\[Nu]}], \[Mu]]) - 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+        (Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+         Tensor[B, {Void}, {\[Nu]}]) + 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+         {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] . 
+        (Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Rho]}])
+ 
+Attributes[$e$] = {Temporary}
+ 
+$F = Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] -> 
+     I*CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]] - 
+      tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]]
+ 
+$g = g[v] -> Inactive[Integrate][h[s]/E^(s*v), s]
+ 
+$G = {\[ScriptCapitalG][F] \[TildeEqual] 
+       Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]} -> 
+     {Equivalent[u, u . h]}
+ 
+$gh = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{SuperPlus[\[ScriptCapitalH]], 0}, {0, SuperMinus[\[ScriptCapitalH]]}}
+ 
+$gh0 = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{Subscript[\[ScriptCapitalH], 1, 1], 0}, 
+      {0, Subscript[\[ScriptCapitalH], 2, 2]}}
+ 
+$gh1 = Subscript[\[Gamma], F] . {{a_, b_}, {c_, d_}} -> {{a, 0}, {0, d}}
+ 
+$hermitian = {Subscript[\[ScriptCapitalA], \[Mu]]}
+ 
+Attributes[$h$] = {Temporary}
+ 
+$i = invSDG[{n, h}]
+ 
+Attributes[$ii$] = {Temporary}
+ 
+Attributes[$ind$] = {Temporary}
+ 
+Attributes[$in$] = {Temporary}
+ 
+Attributes[$i$] = {Temporary}
+ 
+$j = Subscript[J, F] -> {{Subscript[\[ScriptJ], 1, 1], 
+       Subscript[\[ScriptJ], 1, 2]}, {Subscript[\[ScriptJ], 2, 1], 
+       Subscript[\[ScriptJ], 2, 2]}}
+ 
+$J = Subscript[J, F][Subscript[\[ScriptCapitalH], F]] \[SuchThat] 
+     {Subscript[J, F] . Subscript[J, F] -> \[CurlyEpsilon], 
+      Subscript[J, F] . Subscript[\[ScriptCapitalD], F] -> 
+       Derivative[1][\[CurlyEpsilon]] . Subscript[\[ScriptCapitalD], F] . 
+        Subscript[J, F], Subscript[J, F] . Subscript[\[Gamma], F] -> 
+       Derivative[2][\[CurlyEpsilon]] . Subscript[\[Gamma], F] . 
+        Subscript[J, F]}
+ 
+$JF = {Subscript[J, F] -> U . cc, U . ConjugateTranspose[U] -> 
+      Subscript[1, N], Element[U, U[\[ScriptCapitalH]^"\[PlusMinus]"]], 
+     cc -> Conjugate}
+ 
+$Jg = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 
+      -Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] - 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 1], 
+     Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 
+      -Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 2] - 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2]}
+ 
+$JJ = {Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 1, 
+          1]] + Subscript[\[ScriptJ], 1, 2] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 2]] -> Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 1, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> 0, Subscript[\[ScriptJ], 2, 1] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 1]] + Subscript[\[ScriptJ], 2, 2] . 
+        SuperDagger[Subscript[\[ScriptJ], 1, 2]] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 2, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> Subscript[1, SuperMinus[N]]}
+ 
+$JJ1 = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 1] -> 
+      Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 2] -> 
+      Subscript[1, SuperMinus[N]]}
+ 
+$L = {slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] -> 
+      s/4 + \[CapitalDelta]^S, (\[CapitalDelta]^S)[Style["Laplacian of spin \
+connection \!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)", RGBColor[0, 2/3, 0], 
+       Larger], s[Style["scalar curvature of M", RGBColor[0, 2/3, 0], 
+        Larger]]]}
+ 
+Attributes[$L$] = {Temporary}
+ 
+$n = {5, 11}
+ 
+Attributes[$npat$] = {Temporary}
+ 
+$ns = {}
+ 
+Attributes[$n$] = {Temporary}
+ 
+$O = {(\[CapitalOmega]^"E")[X, Y] -> Tensor["\[Del]"^"E", {Void}, {X}] . 
+        Tensor["\[Del]"^"E", {Void}, {Y}] - Tensor["\[Del]"^"E", {Void}, 
+         {Y}] . Tensor["\[Del]"^"E", {Void}, {X}] - Tensor["\[Del]"^"E", 
+        {Void}, {CommutatorM[X, Y]}], {X, Y} -> "vector fields"}
+ 
+$p[1] = (s/4 + \[CapitalDelta]^S) \[CircleTimes] 
+     Subscript[1, Subscript[\[ScriptCapitalH], F]]
+ 
+$p[2] = (-I)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+        Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+     I*Tensor["\[Del]"^S, {Void}, {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, 
+         {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+         {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}]
+ 
+$p[3] = Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+       {5}] \[CircleTimes] (-\[CapitalPhi] . Tensor[B, {Void}, {\[Mu]}] + 
+      Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi])
+ 
+$p[4] = (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]])/2 + 
+     (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+       CommutatorP[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$p[5] = (-I)*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+        \[Mu]] + Subscript[1, N] \[CircleTimes] \[CapitalPhi] . \[CapitalPhi]
+ 
+$p30 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 - 
+      I*CommutatorM[Tensor[\[Gamma], {\[Mu]}, {Void}], Tensor[\[Gamma], 
+          {\[Nu]}, {Void}]] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        \[CapitalPhi]] - (I/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$pass = slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] \[CircleTimes] 
+      Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+     slash[\[ScriptCapitalD]] . Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+      \[CapitalPhi] + slash[\[ScriptCapitalD]] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] Tensor[B, {Void}, {\[Nu]}] + 
+     Tensor[\[Gamma], {Void}, {5}] . slash[\[ScriptCapitalD]] \[CircleTimes] 
+      \[CapitalPhi] - I*Tensor[\[Gamma], {Void}, {5}] . 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]] + 
+     Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, {\[Nu]}] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+       slash[\[ScriptCapitalD]] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+        {5}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . 
+       Tensor[B, {Void}, {\[Nu]}] - 
+     I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+        Tensor[B, {Void}, {\[Nu]}], \[Mu]] + Subscript[1, N] \[CircleTimes] 
+      \[CapitalPhi] . \[CapitalPhi]
+ 
+$pass1 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     (s/4 + \[CapitalDelta]^S) \[CircleTimes] Subscript[1, 
+        Subscript[\[ScriptCapitalH], F]] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] 
+       (-\[CapitalPhi] . Tensor[B, {Void}, {\[Mu]}] + 
+        Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi]) + 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+         Tensor[B, {Void}, {\[Nu]}]])/2 - 
+      I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        CommutatorP[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$pass4 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] - Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, 
+         {\[Mu]}] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+        Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] - 
+      ((3*I)/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] . Tensor[B, {Void}, {\[Nu]}])/2 - 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Nu]}] . Tensor[B, {Void}, {\[Mu]}])/2 - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]]
+ 
+Attributes[$Pattern$] = {Temporary}
+ 
+Attributes[$pat$] = {Temporary}
+ 
+$ph = {\[CurlyPhi][\[ScriptCapitalG][F] \[TildeEqual] 
+        Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]] -> 
+      Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]], 
+     \[CurlyPhi][{u}] -> {Subscript[\[Lambda], u]^"-1" . u}}
+ 
+Attributes[$placeholder$] = {Temporary}
+ 
+$pn = 5
+ 
+$previous = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Mu]}] \[CircleTimes] Tensor[B, {Void}, {\[Nu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] - Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, 
+         {\[Mu]}] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+        Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] - 
+      ((3*I)/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] - 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] . Tensor[B, {Void}, {\[Nu]}])/2 + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Nu]}] . Tensor[B, {Void}, {\[Mu]}])/2 - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]]
+ 
+Attributes[$p$] = {Temporary}
+ 
+$s = {(-I)*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]], 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+        {5}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+       \[CapitalPhi]]}
+ 
+$S = S -> Subscript[S, b] + Subscript[S, f] -> 
+      BraKet[J . OverTilde[\[Xi]], Subscript[\[ScriptCapitalD], 
+           \[ScriptCapitalA]] . OverTilde[\[Xi]]]/2 + 
+       Tr[f[Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]/\[CapitalLambda]]]
+ 
+$s0 = (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+         {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] . Tensor["\[Del]"^S, {Void}, {\[Nu]}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] . Tensor["\[Del]"^S, {Void}, {\[Nu]}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}]
+ 
+$s0x = {U -> u . J . u . ConjugateTranspose[J], 
+     a . J . ConjugateTranspose[b] . ConjugateTranspose[J] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . a -> 0, 
+     -J . u . ConjugateTranspose[J] . \[ScriptCapitalA] + 
+       \[ScriptCapitalA] . J . u . ConjugateTranspose[J] -> 0, 
+     -a . \[ScriptCapitalD] . J . ConjugateTranspose[b] . 
+         ConjugateTranspose[J] + J . ConjugateTranspose[b] . 
+        ConjugateTranspose[J] . a . \[ScriptCapitalD] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . 
+        \[ScriptCapitalD] . a + \[ScriptCapitalD] . a . J . 
+        ConjugateTranspose[b] . ConjugateTranspose[J] -> 0, 
+     J . \[ScriptCapitalD] -> \[ScriptCapitalD] . J*
+       Derivative[1][\[CurlyEpsilon]], (JJ_) . ConjugateTranspose[JJ_] :> 
+      1 /; MemberQ[{J, u}, JJ], ConjugateTranspose[JJ_] . (JJ_) :> 
+      1 /; MemberQ[{J, u}, JJ], \[CurlyEpsilon]^2 -> 1}
+ 
+$s1 = 0 -> Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+         {5}] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+        Tensor[B, {Void}, {\[Mu]}]] + 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+          {5}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, {5}] . 
+        Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]]
+ 
+$s34 = (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+     Subscript[1, N] \[CircleTimes] (I*Tensor[F, {Void, Void}, 
+         {\[Mu], \[Nu]}]) + (\[CapitalOmega]^S)[\[Mu], \[Nu]] \[CircleTimes] 
+       Subscript[1, Subscript[\[ScriptCapitalH], F]]
+ 
+$sa = \[ScriptCapitalA] -> u . \[ScriptCapitalA] . ConjugateTranspose[u]
+ 
+$sAt = Subscript[OverTilde[\[ScriptCapitalA]], J] -> 
+     {Element[a, \[ScriptCapitalA]], a . J -> J . ConjugateTranspose[a], 
+      a^"0" -> a}
+ 
+$scc = {((a_) \[CircleTimes] (b_)) . ((c_) \[CircleTimes] (d_)) :> 
+      a . c \[CircleTimes] b . d + If[ !FreeQ[a, "\[Del]"] && 
+          !FreeQ[d, B | \[CapitalPhi]], c \[CircleTimes] a[d], 0] + 
+       If[ !FreeQ[b, "\[Del]"] &&  !FreeQ[d, B | \[CapitalPhi]], 
+        a \[CircleTimes] b[d], 0], Subscript[1, N_] . (a_) -> a, 
+     (a_) . Subscript[1, N_] -> a, 
+     (a_) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]] - 
+       (b_) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]] -> 
+      (a - b) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Subscript[1, N_] \[CircleTimes] (a_) - Subscript[1, N_] \[CircleTimes] 
+        (b_) -> Subscript[1, N] \[CircleTimes] (a - b)}
+ 
+$sD = {slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b)}
+ 
+$sDA = {Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi] - 
+       I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^"E", {Void}, 
+          {\[Mu]}], Tensor["\[Del]"^"E", {Void}, {\[Mu]_}] -> 
+      I*Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Tensor["\[Del]"^"E", {Void}, {\[Mu]}][S \[CircleTimes] "E"], 
+     Element[\[CapitalPhi], \[CapitalGamma][Endo["E"]][
+       Style["Higg's field", RGBColor[0, 2/3, 0], Larger]]]}
+ 
+$sdg = {{"product", {n_, h_} \[CenterDot] {n1_, h1_} -> 
+       {n . \[Theta][h] . n1, h . h1}}, {"unit", {1, 1}}, 
+     {"inverse", invSDG[{n_, h_}] -> {\[Theta][h^"-1"] . n^"-1", h^"-1"}}}
+ 
+$sF1 = {Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]] -> 
+      I*(-(Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+            {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}]) - 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+           {Void}] \[CircleTimes] tuDDown["\[PartialD]"][Tensor[B, {Void}, 
+           {\[Mu]}], \[Nu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]])}
+ 
+$sg = Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, {Void}] + 
+      Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+        {Void}] -> 2*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}]
+ 
+$sgeneral := {T[\[Gamma], "d", {5}] -> Product[T[\[Gamma], "u", {\[Mu]}], 
+       {\[Mu], 4}], T[\[Gamma], "d", {5}] . T[\[Gamma], "d", {5}] -> 1, 
+     ConjugateTranspose[T[\[Gamma], "d", {5}]] -> T[\[Gamma], "d", {5}], 
+     T["\[Del]", "d", {_}][Subscript[1, n_]] -> 0, (a_) . Subscript[1, n_] -> 
+      a, Subscript[1, n_] . (a_) -> a}
+ 
+$sh = {Subscript[\[ScriptCapitalH], 1, 2] | Subscript[\[ScriptCapitalH], 2, 
+        1] -> 0}
+ 
+$slashD = {slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b)}
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+$ss = {Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {Void}, {5}] -> 
+      Subscript[1, N], (tt:Tensor[\[Gamma], {\[Mu]_}, {Void}]) . 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]_}] :> I*slash[\[ScriptCapitalD]], 
+     Subscript[1, n_] . (a_) -> a, (a_) . Subscript[1, n_] -> a, 
+     Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] + Tensor[\[Gamma], {\[Nu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Mu]}, {Void}])/2}
+ 
+$su = Equivalent[(su_) . (g_), su_] -> 
+     ForAll[g, Element[g, Subscript[SH, F]], 
+      su | Element[su . g, SU[Subscript[\[ScriptCapitalA], F]]]]
+ 
+$SU = {Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]]} -> 
+     {Equivalent[su, su . g]}
+ 
+$symmetries := {tt:T[g, "uu", {\[Mu]_, \[Nu]_}] :> 
+      tuIndexSwap[{\[Mu], \[Nu]}][tt] /; OrderedQ[{\[Nu], \[Mu]}], 
+     tt:T[F, "uu", {\[Mu]_, \[Nu]_}] :> -tuIndexSwap[{\[Mu], \[Nu]}][tt] /; 
+       OrderedQ[{\[Nu], \[Mu]}], CommutatorM[a_, b_] :> 
+      -CommutatorM[b, a] /; OrderedQ[{b, a}], CommutatorP[a_, b_] :> 
+      CommutatorP[b, a] /; OrderedQ[{b, a}], 
+     tt:T[\[Gamma], "u", {\[Mu]}] . T[\[Gamma], "d", {5}] -> Reverse[tt]}
+ 
+tuIndexSwap[indexPair_List][exp_] := Block[{tmp = exp, index1, index2, $ii, 
+      heads = DerivOps, subi, nestop, CX}, {index1, index2} = indexPair; 
+      subi[i_] := If[AtomQ[i], i /. index1 -> $ii /. index2 -> CX[index1] /. 
+         $ii -> CX[index2], (If[AtomQ[#1], #1 /. index1 -> $ii /. 
+             index2 -> CX[index1] /. $ii -> CX[index2], #1] & ) /@ i]; 
+      nestop[term_] := term /. (h:heads)[A_, i_] :> h[nestop[A], subi[i]]; 
+      tmp = tmp /. Tensor[A_, u_, d_] :> Tensor[A, subi[u], subi[d]]; 
+      tmp = nestop[tmp]; tmp //. CX[a_] -> a]
+ 
+tuIndexSwap /: tuIndexSwap::usage = "tuIndexSwap[indexPair_List][exp_] swap \
+indexPair in exp_. EG: IndexSwap[{i,j}][\!\(\*SubscriptBox[\(A\), \
+\(ikj\)]\)]->\!\(\*SubscriptBox[\(A\), \(jki\)]\)   *4Nov2014*"
+ 
+DerivOps := Flatten[DerivOpsD | DerivOpsU | tuDerivOps]
+ 
+DerivOpsD := Join[xPartialD | xCovariantD | xD[_], tuDerivOpsD]
+ 
+xPartialD[field_, var_] := tuPartialD[field, var]
+ 
+tuPartialD := tuDPartial
+ 
+tuPartialD /: tuPartialD::usage = "tuPartialD[field_,var_] displays the \
+PartialD[field,var] \[Rule] \!\(\*SubscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartial[a_, b_] := tuDDown["\[PartialD]"][a, b]
+ 
+tuDerivOpsD := tuDPartial | tuDCovariant | tuDs[_] | tuDDown[_]
+ 
+tuDCovariant[a_, b_] := tuDDown["\[Del]"][a, b]
+ 
+tuDs[s_][a_, b_] := tuDDown[s][a, b]
+ 
+DerivOpsU := Join[xPartialDu | xCovariantDu | xDu[_], tuDerivOpsU]
+ 
+xPartialDu[field_, var_] := tuPartialDu[field, var]
+ 
+tuPartialDu := tuDPartialu
+ 
+tuPartialDu /: tuPartialDu::usage = "tuPartialDu[field_,var_] displays the \
+PartialDu[field,var] \[Rule] \!\(\*SuperscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartialu[a_, b_] := tuDUp["\[PartialD]"][a, b]
+ 
+tuDerivOpsU := tuDPartialu | tuDCovariantu | tuDsu[_] | tuDUp[_]
+ 
+tuDCovariantu[a_, b_] := tuDUp["\[Del]"][a, b]
+ 
+tuDsu[s_][a_, b_] := tuDUp[s][a, b]
+ 
+tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
+ 
+tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]
+ 
+Attributes[$s$] = {Temporary}
+ 
+$t = Inactive[Integrate][h[s]/E^(s*v), s] -> g[v]
+ 
+$t219 = {{"(2.19)" -> Element[I*Subscript[\[ScriptCapitalA], \[Mu]][x], 
+         \[GothicG][F]] -> Mod[\[ScriptU][Subscript[\[ScriptCapitalA], F]], 
+         Subscript[\[ScriptH], F]], \[ScriptCapitalA][Style["Total algebra", 
+         RGBColor[0, 2/3, 0], Larger]] -> 
+       (C^"\[Infinity]")[M, Subscript[\[ScriptCapitalA], F]] -> 
+        xSum[section[i, \[CapitalGamma][Cross[M, Subscript[\[ScriptCapitalA], 
+             F]]]], {i}], \[Omega][Style["\[GothicG][F]-valued 1-form", 
+         RGBColor[0, 2/3, 0], Larger]] -> 
+       I*Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}] . 
+         difForm[Tensor[x, {\[Mu]}, {Void}]], 
+      P[Style["Principal bundle", RGBColor[0, 2/3, 0], Larger]] -> 
+       Cross[M, \[ScriptCapitalG][F]], "(2.22)" -> 
+       \[Omega][Style["connection form on P", RGBColor[0, 2/3, 0], Larger]], 
+      "group of gauge transform"[P] -> (C^"\[Infinity]")[M, 
+        \[ScriptCapitalG][F]], Implies["(2.12)", 
+       \[ScriptCapitalG][Cross[M, F]][Style["group of gauge transform", 
+          RGBColor[0, 2/3, 0], Larger]][P]], 
+      Implies["(2.11)", \[ScriptCapitalG][Cross[M, F]]] -> 
+       {U -> u . J . u . ConjugateTranspose[J], Element[u, 
+         U[\[ScriptCapitalA]]]}, Implies[
+       Implies[rep[Subscript[\[ScriptCapitalA], F][Subscript[
+           \[ScriptCapitalH], F]]], rep[\[ScriptCapitalG][F][
+          Subscript[\[ScriptCapitalH], F]]]], 
+       Cross[M, Subscript[\[ScriptCapitalH], F]] \[LeftRightArrow] 
+        "vector bundle of"[P -> Cross[M, \[ScriptCapitalG][F]]]]}}
+ 
+$t32 = {Tr[E^(-(H*t))] -> xSum[t^((k - n)/2)*Subscript[a, k][H], {k >= 0}], 
+     H -> "Laplacian"["E"], n -> dim[M], Subscript[a, k][H] -> 
+      tuIntegral[{{M}}, Sqrt[Det[g]]*Subscript[a, k][x, H]]}
+ 
+tuIntegral /: tuIntegral::usage = "tuIntegral[vars_List,integrand_] Integral \
+operator with list of variables vars_ \[Rule] {{v1},{v2}} and integrand_. "
+ 
+$t33 = {Subscript[a, 0][x, H] -> Subscript[Tr, Subscript["E", x]][
+        Subscript[1, N]]/(2^n*Pi^(n/2)), Subscript[a, 2][x, H] -> 
+      Subscript[Tr, Subscript["E", x]][F + (s*Subscript[1, N])/6]/
+       (2^n*Pi^(n/2)), Subscript[a, 4][x, H] -> 
+      (2^(-3 - n)*Subscript[Tr, Subscript["E", x]][180*F . F + 60*s . F + 
+          5*s . s - 2*Tensor[R, {Void, Void}, {\[Mu], \[Nu]}] . 
+            Tensor[R, {\[Mu], \[Nu]}, {Void, Void}] + 
+          2*Tensor[R, {Void, Void, Void, Void}, {\[Mu], \[Nu], \[Rho], 
+              \[Sigma]}] . Tensor[R, {\[Mu], \[Nu], \[Rho], \[Sigma]}, 
+             {Void, Void, Void, Void}] + 30*Tensor[\[CapitalOmega]^"E", 
+             {Void, Void}, {\[Mu], \[Nu]}] . Tensor[\[CapitalOmega]^"E", 
+             {\[Mu], \[Nu]}, {Void, Void}] - 60*\[CapitalDelta][F] - 
+          12*\[CapitalDelta][s]])/(45*Pi^(n/2)), H -> "\[Del]"^"E" - F, 
+     s -> "scalar curvature of \[Del]", \[CapitalDelta] -> 
+      "scalar Laplacian", Tensor[\[CapitalOmega]^"E", {Void, Void}, 
+       {\[Mu], \[Nu]}] -> 
+      "curvature of connnection \!\(\*SuperscriptBox[\(\[Del]\), \(E\)]\)"}
+ 
+$t34 = {Tr[f[Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]/
+         \[CapitalLambda]]] -> 
+      2*((\[CapitalLambda]^4*Subscript[f, 4]*Subscript[a, 0][
+            Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^2])/
+          \[CapitalGamma][2] + (\[CapitalLambda]^2*Subscript[f, 2]*
+           Subscript[a, 2][Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^
+             2])/\[CapitalGamma][1]) + f[0]*Subscript[a, 4][
+         Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^2], 
+     Subscript[f, j_] -> Inactive[Integrate][v^(-1 + j)*f[v], v]}
+ 
+Attributes[$tensorsymbol$] = {Temporary}
+ 
+Attributes[$t$] = {Temporary}
+ 
+Attributes[$u1$] = {Temporary}
+ 
+Attributes[$u2$] = {Temporary}
+ 
+Attributes[$u$] = {Temporary}
+ 
+Attributes[$var$] = {Temporary}
+ 
+Attributes[$X$] = {Temporary}
+ 
+Attributes[$$] = {Temporary}
+ 
+Attributes[$$t$] = {Temporary}
+$ = {"$", "$0", "$00", "$0a", "$1", "$1a", "$1b", "$1c", "$1t", "$2", "$2a", 
+     "$2c", "$2m", "$2t", "$2td", "$3", "$31", "$a", "$A", "$A1", "$aa", 
+     "$aa$", "$Am", "$arg", "$Arg", "$argn", "$a$", "$b", "$bb", "$bb$", 
+     "$b$", "$c", "$cc", "$cc$", "$combineProduct", "$connection", "$const", 
+     "$d", "$d0", "$d1", "$D1", "$d1$", "$d2", "$d2$", "$DA", "$def", 
+     "$defall", "$deltas", "$dif", "$dummy", "$dummy$", "$d$", "$e", 
+     "$e216B", "$e219", "$e35", "$e$", "$f", "$F", "$g", "$G", 
+     "$generalForm", "$gh", "$gh0", "$gh1", "$h", "$h1", "$head", 
+     "$hermitian", "$h$", "$i", "$ii", "$ii$", "$in", "$ind", "$index", 
+     "$ind$", "$in$", "$i$", "$j", "$J", "$JF", "$Jg", "$JJ", "$JJ1", 
+     "$keys", "$L", "$low", "$L$", "$match", "$matches", "$n", "$npat", 
+     "$npat$", "$ns", "$n$", "$O", "$p", "$p30", "$pass", "$pass1", "$pass4", 
+     "$pat", "$Pattern", "$Pattern$", "$pat$", "$ph", "$placeholder", 
+     "$placeholder$", "$pn", "$pos", "$previous", "$ps", "$pvar", "$pvar1", 
+     "$p$", "$r", "$range", "$rhead", "$right", "$rp", "$rule", "$rules", 
+     "$s", "$S", "$s0", "$s0x", "$s1", "$s34", "$sa", "$sAt", "$scc", "$sD", 
+     "$sDA", "$sdg", "$sF1", "$sg", "$sgeneral", "$sh", "$slashD", "$sNO", 
+     "$SpinorsPath", "$ss", "$su", "$SU", "$swap", "$symmetries", "$s$", 
+     "$t", "$t1", "$t219", "$t32", "$t33", "$t34", "$targetForm", 
+     "$tensorsymbol", "$tensorsymbol$", "$test", "$tmp", "$t$", "$u", "$u0", 
+     "$u1", "$u1$", "$u2", "$u2$", "$u$", "$var", "$var$", "$with", 
+     "$without", "$x", "$X", "$XX", "$X$", "$y", "$\[Alpha]", "$\[Beta]", 
+     "$\[Sigma]", "$$", "$$a", "$$b", "$$c", "$$d", "$$i", "$$m", "$$n", 
+     "$$t", "$$ten", "$$t$", "$$XX", "$$XXX"}
+ 
+$0 = Tr[g[t*Subscript[Style[D, Italic], A]^2]] -> 
+     xSum[t^((k - n)/2)*Inactive[Integrate][s^((k - n)/2)*h[s], s]*
+       Subscript[a, k][Subscript[Style[D, Italic], A]^2], {k >= 0}]
+ 
+Attributes[Subscript] = {NHoldRest}
+ 
+Subscript[B, x_] := T[B, "d", {x}]
+ 
+Subscript["\[Del]"^S, n_] := T["\[Del]"^S, "d", {n}]
+ 
+T[A_, uds_String][index0__] := Module[{tmp, ud = Characters[uds], 
+      index = {index0}}, If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T[A_, up_List, down_List] := Module[{tmp, u = up /. Null -> Void, 
+      d = down /. Null -> Void, return}, 
+     If[up == {} && down == {}, Return[Tensor[A, up, down]]]; 
+      If[up == {}, u = Table[Void, {Length[d]}]]; 
+      If[down == {}, d = Table[Void, {Length[u]}]]; 
+      If[Length[d] == Length[u] &&  !Inner[(#1 =!= Void && #2 =!= Void) || 
+            (#1 === Void && #2 === Void) & , u, d, Or], Tensor[A, u, d], 
+       Style[Tensor[A, up, down], FontColor -> Red]]]
+ 
+T[A_, uds_String, index_List] := Module[{tmp, ud = Characters[uds]}, 
+     If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T /: T::usage = "T[A_,uds_String][index0__] produces any Tensor where \
+uds_String specifies up/down position of index_, \
+e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
+\(i\)]\)\!\(\*SubscriptBox[\()\), \(jk\)]\))"
+ 
+$00 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[ScriptCapitalA] + \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . 
+       J . \[ScriptCapitalA] . ConjugateTranspose[J]
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+ 
+$0a = U . Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      ConjugateTranspose[U] -> U . \[ScriptCapitalA] . 
+       ConjugateTranspose[U] + U . \[ScriptCapitalD] . 
+       ConjugateTranspose[U] + U . J . \[ScriptCapitalA] . 
+        ConjugateTranspose[J] . ConjugateTranspose[U]*
+       Derivative[1][\[CurlyEpsilon]]
+ 
+$1 = u . J . u . ConjugateTranspose[J] . \[ScriptCapitalA] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . ConjugateTranspose[J] . \[ScriptCapitalD] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . \[ScriptCapitalA] . ConjugateTranspose[u] . 
+       ConjugateTranspose[J] . ConjugateTranspose[u]*
+      Derivative[1][\[CurlyEpsilon]]
+ 
+$1a = \[ScriptCapitalD] + u . CommutatorM[\[ScriptCapitalD], 
+       ConjugateTranspose[u]] + u . J . u . CommutatorM[\[ScriptCapitalD], 
+        ConjugateTranspose[u]] . ConjugateTranspose[J] . 
+       ConjugateTranspose[u]/Derivative[1][\[CurlyEpsilon]]
+ 
+$1b = u . \[ScriptCapitalA] . ConjugateTranspose[u]
+ 
+$1c = J . u . \[ScriptCapitalA] . ConjugateTranspose[u] . 
+      ConjugateTranspose[J]*Derivative[1][\[CurlyEpsilon]]
+ 
+$2 = a . CommutatorM[Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        Subscript[\[ScriptCapitalD], F], b] -> 
+     Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+      a . CommutatorM[Subscript[\[ScriptCapitalD], F], b]
+ 
+$2a = a . CommutatorM[Subscript[\[ScriptCapitalD], F], b] -> \[Phi]
+ 
+$3 = {Subscript[u, 1]} == {Subscript[\[Lambda], Subscript[u, 1]] . 
+       Subscript[\[Lambda], Subscript[u, 2]]^"-1" . Subscript[u, 2] . g}
+ 
+$31 = {Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+       Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      -Q + \[CapitalDelta]^"E", 
+     Q -> -(s \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]])/
+        4 - I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+           {5}] \[CircleTimes] Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}] . 
+          \[CapitalPhi] + (I/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+       Subscript[1, N] \[CircleTimes] \[CapitalPhi] . \[CapitalPhi]}
+ 
+$A = {\[ScriptCapitalA] -> a . CommutatorM[slash[\[ScriptCapitalD]], b], 
+     a | Element[b, (C^"\[Infinity]")[M]], slash[\[ScriptCapitalD]] -> 
+      (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*tuDDown["\[Del]"^S][_, \[Mu]]}
+ 
+$A1 = \[ScriptCapitalA] -> Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       \[Phi] + Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}]
+ 
+Attributes[$aa$] = {Temporary}
+ 
+$Am = I*Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}] -> 
+     a . tuDDown["\[Del]"^S][b, \[Mu]]
+ 
+Attributes[$a$] = {Temporary}
+ 
+Attributes[$bb$] = {Temporary}
+ 
+Attributes[$b$] = {Temporary}
+ 
+$cc = {ConjugateTranspose[cc] -> cc, Conjugate[cc] -> cc, cc . cc -> 1, 
+     cc . (a_) :> Conjugate[a] . cc}
+ 
+cc[a_] := Conjugate[a]
+ 
+Attributes[$cc$] = {Temporary}
+ 
+$combineProduct = {((a_) \[CircleTimes] (b_)) . ((c_) \[CircleTimes] (d_)) :> 
+      a . c \[CircleTimes] b . d + c \[CircleTimes] 
+        tuCircleTimesInnerTerm[T["\[Del]"^S, "d", {_}]][a[d]], 
+     (a_) . Subscript[1, n_] -> a, Subscript[1, n_] . (a_) -> a, 
+     Tensor["\[Del]"^S, {Void}, {n_}][a_] -> tuDDown["\[PartialD]"][a, n], 
+     tuDDown["\[PartialD]"][Subscript[1, n_], a_] -> 0, 
+     (a_) \[CircleTimes] (tt:Tensor[\[Gamma], _, _]) . (b_) -> 
+      a . tt \[CircleTimes] b}
+ 
+tuCircleTimesInnerTerm[difOp_][exp_] := Block[{$h, $h1, $dif, $ = exp}, 
+     $h = Head[exp]; xPrint[$h]; If[FreeQ[$h, difOp], $ = 0; , 
+       If[ !FreeQ[$h, dotOps], xPrint["$XX ", $h]; 
+          $dif = tuExtractPattern[difOp][$h][[1]]; xPrint[exp]; 
+          $ = $dif[exp[[1]]]; xPrint[$h, Length[$h]]; $h1 = Head[$h]; 
+          If[tuMemberQ[$h1, dotOps], $h = $h1 @@ DeleteCases[List @@ $h, 
+               difOp]; $ = $h1 @@ {$h, $}]; ]; ]; $]
+ 
+tuCircleTimesInnerTerm /: tuCircleTimesInnerTerm::usage = "tuCircleTimesInner\
+Term[difOp_][exp_] computes the inner terms produced when merging CircleTimes \
+operator expressions, esp_, e.g., \
+(a\[CircleTimes]b).(c\[CircleTimes]d)\[Rule](a.c)\[CircleTimes](b.d)+(a.tuCir\
+cleTimesInnerTerm[c[b],\[Del]])\[CircleTimes](d).  Assumes dotOps variable \
+separators.  *2Mar2016*"
+ 
+$h = \[ScriptCapitalH] -> {{Subscript[\[ScriptCapitalH], 1, 1], 
+       Subscript[\[ScriptCapitalH], 1, 2]}, 
+      {Subscript[\[ScriptCapitalH], 2, 1], Subscript[\[ScriptCapitalH], 2, 
+        2]}}
+ 
+dotOps := Dot | xDot | CenterDot | Inactive[Dot]
+ 
+Attributes[xDot] = {Flat, OneIdentity}
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+tuExtractPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{pos}, pos = Position[exp, pattern, {0, maxlevel}]; 
+      Extract[exp, pos]]
+ 
+tuExtractPattern /: tuExtractPattern::usage = "tuExtractPattern[pattern_,maxl\
+evel_:Infinity][exp_] extracts a List of items in exp_ that match pattern_ to \
+maxlevel_. *3Feb2014* "
+ 
+tuMemberQ[variable_, patterns_] := 
+    Or @@ (MemberQ[Flatten[{variable}], #1] & ) /@ Flatten[{patterns}]
+ 
+tuMemberQ /: tuMemberQ::usage = "tuMemberQ[variable_,patterns_List] True if \
+variable_ matches any in patterns_List. *16May2015*"
+ 
+$connection = ("\[Del]"^S)[S[]]
+ 
+$d = {Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][a_] -> 
+      ad[Tensor["\[Del]"^"E", {Void}, {\[Mu]}]][a], 
+     ad[aa_][bb_] -> aa . bb - bb . aa}
+ 
+$D1 = Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]] -> 
+     (-I)*Subscript[1, N] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+         Tensor[B, {Void}, {\[Mu]}]] + Subscript[1, N] \[CircleTimes] 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}][\[CapitalPhi]]
+ 
+Attributes[$d1$] = {Temporary}
+ 
+Attributes[$d2$] = {Temporary}
+ 
+$DA = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . J . 
+       Subscript[\[ScriptCapitalA], f] . ConjugateTranspose[J] + 
+      Subscript[\[ScriptCapitalA], f]
+ 
+$def = {ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], F]], 
+      {CommutatorM[a, b^"0"] -> 0, b^"0" -> Subscript[J, F] . 
+         ConjugateTranspose[b] . ConjugateTranspose[Subscript[J, F]]}], 
+     ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], F]], 
+      {CommutatorM[CommutatorM[Subscript[\[ScriptCapitalD], F], a], b^"0"] -> 
+        0, b^"0" -> Subscript[J, F] . ConjugateTranspose[b] . 
+         ConjugateTranspose[Subscript[J, F]]}]}
+ 
+$defall = {Tensor[\[Gamma], {Void}, {5}] -> Tensor[\[Gamma], {1}, {Void}]*
+       Tensor[\[Gamma], {2}, {Void}]*Tensor[\[Gamma], {3}, {Void}]*
+       Tensor[\[Gamma], {4}, {Void}], Tensor[\[Gamma], {Void}, {5}] . 
+       Tensor[\[Gamma], {Void}, {5}] -> 1, 
+     ConjugateTranspose[Tensor[\[Gamma], {Void}, {5}]] -> 
+      Tensor[\[Gamma], {Void}, {5}], 
+     CommutatorP[Tensor[\[Gamma], {Void}, {5}], Tensor[\[Gamma], {\[Mu]}, 
+        {Void}]] -> 0, Tensor[\[Gamma], {Void}, {5}][(L^2)[M, S]] -> 
+      SuperPlus[(L^2)[M, S]] \[CirclePlus] SuperMinus[(L^2)[M, S]], 
+     \[ScriptCapitalD] -> slash[\[ScriptCapitalD]] \[CircleTimes] 
+        Subscript[1, N] + Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        Subscript[\[ScriptCapitalD], F], 
+     (slash[\[ScriptCapitalD]] \[CircleTimes] Subscript[1, N]) . b -> 
+      slash[\[ScriptCapitalD]] \[CircleTimes] b + 
+       b . (slash[\[ScriptCapitalD]] \[CircleTimes] Subscript[1, N]), 
+     slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b), 
+     Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi] - 
+       I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^"E", {Void}, 
+          {\[Mu]}], Tensor["\[Del]"^"E", {Void}, {\[Mu]_}] -> 
+      I*Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Tensor["\[Del]"^"E", {Void}, {\[Mu]}][S \[CircleTimes] "E"], 
+     Element[\[CapitalPhi], \[CapitalGamma][Endo["E"]][
+       Style["Higg's field", RGBColor[0, 2/3, 0], Larger]]], 
+     Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][a_] -> 
+      ad[Tensor["\[Del]"^"E", {Void}, {\[Mu]}]][a], 
+     ad[aa_][bb_] -> aa . bb - bb . aa, 
+     Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]] -> 
+      (-I)*Subscript[1, N] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+          Tensor[B, {Void}, {\[Mu]}]] + Subscript[1, N] \[CircleTimes] 
+        Tensor["\[Del]"^S, {Void}, {\[Mu]}][\[CapitalPhi]], 
+     Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] -> 
+      I*CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]] - 
+       tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+       tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]], 
+     (\[CapitalOmega]^"E")[X, Y] -> Tensor["\[Del]"^"E", {Void}, {X}] . 
+        Tensor["\[Del]"^"E", {Void}, {Y}] - Tensor["\[Del]"^"E", {Void}, 
+         {Y}] . Tensor["\[Del]"^"E", {Void}, {X}] - Tensor["\[Del]"^"E", 
+        {Void}, {CommutatorM[X, Y]}], {X, Y} -> "vector fields", 
+     (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+      (Tensor["\[Del]"^S, {Void}, {\[Mu]}] . Tensor["\[Del]"^S, {Void}, 
+           {\[Nu]}] - Tensor["\[Del]"^S, {Void}, {\[Nu]}] . 
+          Tensor["\[Del]"^S, {Void}, {\[Mu]}]) \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+       Subscript[1, N] \[CircleTimes] (-Tensor[B, {Void}, {\[Mu]}] . 
+           Tensor[B, {Void}, {\[Nu]}] + Tensor[B, {Void}, {\[Nu]}] . 
+          Tensor[B, {Void}, {\[Mu]}]) + I*Subscript[1, N] \[CircleTimes] 
+         Tensor["\[Del]"^S, {Void}, {\[Mu]}][Tensor[B, {Void}, {\[Nu]}]] - 
+       I*Subscript[1, N] \[CircleTimes] Tensor["\[Del]"^S, {Void}, {\[Nu]}][
+          Tensor[B, {Void}, {\[Mu]}]], (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+      Subscript[1, N] \[CircleTimes] (I*Tensor[F, {Void, Void}, 
+          {\[Mu], \[Nu]}]) + (\[CapitalOmega]^S)[\[Mu], \[Nu]] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     (\[CapitalOmega]^S)[\[Mu], \[Nu]] -> 
+      Tensor["\[Del]"^S, {Void}, {\[Mu]}] . Tensor["\[Del]"^S, {Void}, 
+         {\[Nu]}] - Tensor["\[Del]"^S, {Void}, {\[Nu]}] . 
+        Tensor["\[Del]"^S, {Void}, {\[Mu]}], 
+     slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] -> 
+      s/4 + \[CapitalDelta]^S, (\[CapitalDelta]^S)[Style["Laplacian of spin \
+connection \!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)", RGBColor[0, 2/3, 0], 
+       Larger], s[Style["scalar curvature of M", RGBColor[0, 2/3, 0], 
+        Larger]]], Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {Void}, 
+        {5}] -> Subscript[1, N], (tt:Tensor[\[Gamma], {\[Mu]_}, {Void}]) . 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]_}] :> I*slash[\[ScriptCapitalD]], 
+     Subscript[1, n_] . (a_) -> a, (a_) . Subscript[1, n_] -> a, 
+     Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] + Tensor[\[Gamma], {\[Nu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Mu]}, {Void}])/2, 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]] -> 
+      I*(-(Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+            {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}]) - 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+           {Void}] \[CircleTimes] tuDDown["\[PartialD]"][Tensor[B, {Void}, 
+           {\[Mu]}], \[Nu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]])}
+ 
+Attributes[$dummy$] = {Temporary}
+ 
+Attributes[$d$] = {Temporary}
+ 
+$e216B = {Tensor[B, {Void}, {\[Mu]}] -> 
+      -Derivative[1][\[CurlyEpsilon]] . J . Tensor[\[ScriptCapitalA], {Void}, 
+          {\[Mu]}] . ConjugateTranspose[J] + Tensor[\[ScriptCapitalA], 
+        {Void}, {\[Mu]}], Element[Tensor[B, {Void}, {\[Mu]}], 
+      \[CapitalGamma][Endo["E"]]]}
+ 
+$e219 = Element[Subscript[\[ScriptCapitalA], \[Mu]], 
+     (C^"\[Infinity]")[M, I*\[GothicG][F]]]
+ 
+$e35 = \[CapitalDelta]^"E" -> \[CapitalDelta]^S \[CircleTimes] 
+       Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+      Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+       (Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . 
+         Tensor[B, {Void}, {\[Nu]}]) - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+        (Subscript[1, N] \[CircleTimes] tuDDown["\[PartialD]"][
+          Tensor[B, {Void}, {\[Nu]}], \[Mu]]) - 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . 
+        (Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+         Tensor[B, {Void}, {\[Nu]}]) + 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+         {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] . 
+        (Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Rho]}])
+ 
+Attributes[$e$] = {Temporary}
+ 
+$F = Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] -> 
+     I*CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]] - 
+      tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]]
+ 
+$g = g[v] -> Inactive[Integrate][h[s]/E^(s*v), s]
+ 
+$G = {\[ScriptCapitalG][F] \[TildeEqual] 
+       Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]} -> 
+     {Equivalent[u, u . h]}
+ 
+$gh = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{SuperPlus[\[ScriptCapitalH]], 0}, {0, SuperMinus[\[ScriptCapitalH]]}}
+ 
+$gh0 = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{Subscript[\[ScriptCapitalH], 1, 1], 0}, 
+      {0, Subscript[\[ScriptCapitalH], 2, 2]}}
+ 
+$gh1 = Subscript[\[Gamma], F] . {{a_, b_}, {c_, d_}} -> {{a, 0}, {0, d}}
+ 
+$hermitian = {Subscript[\[ScriptCapitalA], \[Mu]]}
+ 
+Attributes[$h$] = {Temporary}
+ 
+$i = invSDG[{n, h}]
+ 
+Attributes[$ii$] = {Temporary}
+ 
+Attributes[$ind$] = {Temporary}
+ 
+Attributes[$in$] = {Temporary}
+ 
+Attributes[$i$] = {Temporary}
+ 
+$j = Subscript[J, F] -> {{Subscript[\[ScriptJ], 1, 1], 
+       Subscript[\[ScriptJ], 1, 2]}, {Subscript[\[ScriptJ], 2, 1], 
+       Subscript[\[ScriptJ], 2, 2]}}
+ 
+$J = Subscript[J, F][Subscript[\[ScriptCapitalH], F]] \[SuchThat] 
+     {Subscript[J, F] . Subscript[J, F] -> \[CurlyEpsilon], 
+      Subscript[J, F] . Subscript[\[ScriptCapitalD], F] -> 
+       Derivative[1][\[CurlyEpsilon]] . Subscript[\[ScriptCapitalD], F] . 
+        Subscript[J, F], Subscript[J, F] . Subscript[\[Gamma], F] -> 
+       Derivative[2][\[CurlyEpsilon]] . Subscript[\[Gamma], F] . 
+        Subscript[J, F]}
+ 
+$JF = {Subscript[J, F] -> U . cc, U . ConjugateTranspose[U] -> 
+      Subscript[1, N], Element[U, U[\[ScriptCapitalH]^"\[PlusMinus]"]], 
+     cc -> Conjugate}
+ 
+$Jg = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 
+      -Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] - 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 1], 
+     Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 
+      -Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 2] - 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2]}
+ 
+$JJ = {Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 1, 
+          1]] + Subscript[\[ScriptJ], 1, 2] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 2]] -> Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 1, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> 0, Subscript[\[ScriptJ], 2, 1] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 1]] + Subscript[\[ScriptJ], 2, 2] . 
+        SuperDagger[Subscript[\[ScriptJ], 1, 2]] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 2, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> Subscript[1, SuperMinus[N]]}
+ 
+$JJ1 = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 1] -> 
+      Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 2] -> 
+      Subscript[1, SuperMinus[N]]}
+ 
+$L = {slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] -> 
+      s/4 + \[CapitalDelta]^S, (\[CapitalDelta]^S)[Style["Laplacian of spin \
+connection \!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)", RGBColor[0, 2/3, 0], 
+       Larger], s[Style["scalar curvature of M", RGBColor[0, 2/3, 0], 
+        Larger]]]}
+ 
+Attributes[$L$] = {Temporary}
+ 
+$n = {5, 11}
+ 
+Attributes[$npat$] = {Temporary}
+ 
+$ns = {}
+ 
+Attributes[$n$] = {Temporary}
+ 
+$O = {(\[CapitalOmega]^"E")[X, Y] -> Tensor["\[Del]"^"E", {Void}, {X}] . 
+        Tensor["\[Del]"^"E", {Void}, {Y}] - Tensor["\[Del]"^"E", {Void}, 
+         {Y}] . Tensor["\[Del]"^"E", {Void}, {X}] - Tensor["\[Del]"^"E", 
+        {Void}, {CommutatorM[X, Y]}], {X, Y} -> "vector fields"}
+ 
+$p[1] = (s/4 + \[CapitalDelta]^S) \[CircleTimes] 
+     Subscript[1, Subscript[\[ScriptCapitalH], F]]
+ 
+$p[2] = (-I)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+        Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+     I*Tensor["\[Del]"^S, {Void}, {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, 
+         {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+         {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}]
+ 
+$p[3] = Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+       {5}] \[CircleTimes] (-\[CapitalPhi] . Tensor[B, {Void}, {\[Mu]}] + 
+      Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi])
+ 
+$p[4] = (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]])/2 + 
+     (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+       CommutatorP[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$p[5] = (-I)*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+        \[Mu]] + Subscript[1, N] \[CircleTimes] \[CapitalPhi] . \[CapitalPhi]
+ 
+$p30 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 - 
+      I*CommutatorM[Tensor[\[Gamma], {\[Mu]}, {Void}], Tensor[\[Gamma], 
+          {\[Nu]}, {Void}]] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        \[CapitalPhi]] - (I/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        CommutatorM[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$pass = slash[\[ScriptCapitalD]] . slash[\[ScriptCapitalD]] \[CircleTimes] 
+      Subscript[1, Subscript[\[ScriptCapitalH], F]] + 
+     slash[\[ScriptCapitalD]] . Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+      \[CapitalPhi] + slash[\[ScriptCapitalD]] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] Tensor[B, {Void}, {\[Nu]}] + 
+     Tensor[\[Gamma], {Void}, {5}] . slash[\[ScriptCapitalD]] \[CircleTimes] 
+      \[CapitalPhi] - I*Tensor[\[Gamma], {Void}, {5}] . 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]] + 
+     Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, {\[Nu]}] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+       slash[\[ScriptCapitalD]] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+        {5}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+        {Void}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] . 
+       Tensor[B, {Void}, {\[Nu]}] - 
+     I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+        Tensor[B, {Void}, {\[Nu]}], \[Mu]] + Subscript[1, N] \[CircleTimes] 
+      \[CapitalPhi] . \[CapitalPhi]
+ 
+$pass1 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     (s/4 + \[CapitalDelta]^S) \[CircleTimes] Subscript[1, 
+        Subscript[\[ScriptCapitalH], F]] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] 
+       (-\[CapitalPhi] . Tensor[B, {Void}, {\[Mu]}] + 
+        Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi]) + 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+         Tensor[B, {Void}, {\[Nu]}]])/2 - 
+      I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Mu]1}] . Tensor[\[Gamma], {\[Mu]1}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        CommutatorP[Tensor[B, {Void}, {\[Mu]}], Tensor[B, {Void}, {\[Nu]}]])/2
+ 
+$pass4 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] - Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, 
+         {\[Mu]}] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+        Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] - 
+      ((3*I)/2)*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] . Tensor[B, {Void}, {\[Nu]}])/2 - 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Nu]}] . Tensor[B, {Void}, {\[Mu]}])/2 - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]]
+ 
+Attributes[$Pattern$] = {Temporary}
+ 
+Attributes[$pat$] = {Temporary}
+ 
+$ph = {\[CurlyPhi][\[ScriptCapitalG][F] \[TildeEqual] 
+        Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]] -> 
+      Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]], 
+     \[CurlyPhi][{u}] -> {Subscript[\[Lambda], u]^"-1" . u}}
+ 
+Attributes[$placeholder$] = {Temporary}
+ 
+$pn = 5
+ 
+$previous = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[CapitalDelta]^"E" + (s \[CircleTimes] Subscript[1, 
+         Subscript[\[ScriptCapitalH], F]])/4 + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+          {Void}, {\[Mu]}] \[CircleTimes] Tensor[B, {Void}, {\[Nu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor[\[CapitalGamma], 
+          {\[Rho], Void, Void}, {Void, \[Mu], \[Nu]}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Rho]}] - 
+      I*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], 
+         \[Mu]] - Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], 
+         {Void}, {5}] \[CircleTimes] \[CapitalPhi] . Tensor[B, {Void}, 
+         {\[Mu]}] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+        Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] . \[CapitalPhi] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] + 
+      (I/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Mu]}], \[Nu]] - 
+      ((3*I)/2)*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+          {Void}] \[CircleTimes] tuDDown["\[PartialD]"][
+         Tensor[B, {Void}, {\[Nu]}], \[Mu]] - 
+      I*Tensor["\[Del]"^S, {Void}, {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] . Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^S, {Void}, 
+          {\[Nu]}] . Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] + Subscript[1, N] \[CircleTimes] 
+       \[CapitalPhi] . \[CapitalPhi] - 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}] . Tensor[B, {Void}, {\[Nu]}])/2 + 
+      (Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Nu]}] . Tensor[B, {Void}, {\[Mu]}])/2 - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        Tensor[F, {Void, Void}, {\[Mu], \[Nu]}] - 
+      I*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Mu]}], \[Nu]] + 
+      (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] \[CircleTimes] 
+        tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]]
+ 
+Attributes[$p$] = {Temporary}
+ 
+$s = {(-I)*Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]], 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+        {5}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+       \[CapitalPhi]]}
+ 
+$S = S -> Subscript[S, b] + Subscript[S, f] -> 
+      BraKet[J . OverTilde[\[Xi]], Subscript[\[ScriptCapitalD], 
+           \[ScriptCapitalA]] . OverTilde[\[Xi]]]/2 + 
+       Tr[f[Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]/\[CapitalLambda]]]
+ 
+$s0 = (2*I)*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] . Tensor["\[Del]"^S, 
+         {Void}, {\[Nu]}] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] . Tensor["\[Del]"^S, {Void}, {\[Nu]}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}] - 
+     I*Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+         {Void}] . Tensor["\[Del]"^S, {Void}, {\[Nu]}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}]
+ 
+$s0x = {U -> u . J . u . ConjugateTranspose[J], 
+     a . J . ConjugateTranspose[b] . ConjugateTranspose[J] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . a -> 0, 
+     -J . u . ConjugateTranspose[J] . \[ScriptCapitalA] + 
+       \[ScriptCapitalA] . J . u . ConjugateTranspose[J] -> 0, 
+     -a . \[ScriptCapitalD] . J . ConjugateTranspose[b] . 
+         ConjugateTranspose[J] + J . ConjugateTranspose[b] . 
+        ConjugateTranspose[J] . a . \[ScriptCapitalD] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . 
+        \[ScriptCapitalD] . a + \[ScriptCapitalD] . a . J . 
+        ConjugateTranspose[b] . ConjugateTranspose[J] -> 0, 
+     J . \[ScriptCapitalD] -> \[ScriptCapitalD] . J*
+       Derivative[1][\[CurlyEpsilon]], (JJ_) . ConjugateTranspose[JJ_] :> 
+      1 /; MemberQ[{J, u}, JJ], ConjugateTranspose[JJ_] . (JJ_) :> 
+      1 /; MemberQ[{J, u}, JJ], \[CurlyEpsilon]^2 -> 1}
+ 
+$s1 = 0 -> Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+         {5}] \[CircleTimes] CommutatorM[\[CapitalPhi], 
+        Tensor[B, {Void}, {\[Mu]}]] + 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, 
+          {5}] \[CircleTimes] tuDDown["\[PartialD]"][\[CapitalPhi], \[Mu]] - 
+      I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {Void}, {5}] . 
+        Tensor[\[ScriptCapitalD], {Void}, {\[Mu]}][\[CapitalPhi]]
+ 
+$s34 = (\[CapitalOmega]^"E")[\[Mu], \[Nu]] -> 
+     Subscript[1, N] \[CircleTimes] (I*Tensor[F, {Void, Void}, 
+         {\[Mu], \[Nu]}]) + (\[CapitalOmega]^S)[\[Mu], \[Nu]] \[CircleTimes] 
+       Subscript[1, Subscript[\[ScriptCapitalH], F]]
+ 
+$sa = \[ScriptCapitalA] -> u . \[ScriptCapitalA] . ConjugateTranspose[u]
+ 
+$sAt = Subscript[OverTilde[\[ScriptCapitalA]], J] -> 
+     {Element[a, \[ScriptCapitalA]], a . J -> J . ConjugateTranspose[a], 
+      a^"0" -> a}
+ 
+$scc = {((a_) \[CircleTimes] (b_)) . ((c_) \[CircleTimes] (d_)) :> 
+      a . c \[CircleTimes] b . d + If[ !FreeQ[a, "\[Del]"] && 
+          !FreeQ[d, B | \[CapitalPhi]], c \[CircleTimes] a[d], 0] + 
+       If[ !FreeQ[b, "\[Del]"] &&  !FreeQ[d, B | \[CapitalPhi]], 
+        a \[CircleTimes] b[d], 0], Subscript[1, N_] . (a_) -> a, 
+     (a_) . Subscript[1, N_] -> a, 
+     (a_) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]] - 
+       (b_) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]] -> 
+      (a - b) \[CircleTimes] Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Subscript[1, N_] \[CircleTimes] (a_) - Subscript[1, N_] \[CircleTimes] 
+        (b_) -> Subscript[1, N] \[CircleTimes] (a - b)}
+ 
+$sD = {slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b)}
+ 
+$sDA = {Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi] - 
+       I*Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor["\[Del]"^"E", {Void}, 
+          {\[Mu]}], Tensor["\[Del]"^"E", {Void}, {\[Mu]_}] -> 
+      I*Subscript[1, N] \[CircleTimes] Tensor[B, {Void}, {\[Mu]}] + 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]}] \[CircleTimes] 
+        Subscript[1, Subscript[\[ScriptCapitalH], F]], 
+     Tensor["\[Del]"^"E", {Void}, {\[Mu]}][S \[CircleTimes] "E"], 
+     Element[\[CapitalPhi], \[CapitalGamma][Endo["E"]][
+       Style["Higg's field", RGBColor[0, 2/3, 0], Larger]]]}
+ 
+$sdg = {{"product", {n_, h_} \[CenterDot] {n1_, h1_} -> 
+       {n . \[Theta][h] . n1, h . h1}}, {"unit", {1, 1}}, 
+     {"inverse", invSDG[{n_, h_}] -> {\[Theta][h^"-1"] . n^"-1", h^"-1"}}}
+ 
+$sF1 = {Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+         {Void}] \[CircleTimes] CommutatorM[Tensor[B, {Void}, {\[Mu]}], 
+        Tensor[B, {Void}, {\[Nu]}]] -> 
+      I*(-(Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+            {Void}] \[CircleTimes] Tensor[F, {Void, Void}, {\[Mu], \[Nu]}]) - 
+        Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+           {Void}] \[CircleTimes] tuDDown["\[PartialD]"][Tensor[B, {Void}, 
+           {\[Mu]}], \[Nu]] + Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+          Tensor[\[Gamma], {\[Nu]}, {Void}] \[CircleTimes] 
+         tuDDown["\[PartialD]"][Tensor[B, {Void}, {\[Nu]}], \[Mu]])}
+ 
+$sg = Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, {Void}] + 
+      Tensor[\[Gamma], {\[Nu]}, {Void}] . Tensor[\[Gamma], {\[Mu]}, 
+        {Void}] -> 2*Tensor[g, {\[Mu], \[Nu]}, {Void, Void}]
+ 
+$sgeneral := {T[\[Gamma], "d", {5}] -> Product[T[\[Gamma], "u", {\[Mu]}], 
+       {\[Mu], 4}], T[\[Gamma], "d", {5}] . T[\[Gamma], "d", {5}] -> 1, 
+     ConjugateTranspose[T[\[Gamma], "d", {5}]] -> T[\[Gamma], "d", {5}], 
+     T["\[Del]", "d", {_}][Subscript[1, n_]] -> 0, (a_) . Subscript[1, n_] -> 
+      a, Subscript[1, n_] . (a_) -> a}
+ 
+$sh = {Subscript[\[ScriptCapitalH], 1, 2] | Subscript[\[ScriptCapitalH], 2, 
+        1] -> 0}
+ 
+$slashD = {slash[\[ScriptCapitalD]] -> (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*
+       tuDDown["\[Del]"^S][_, \[Mu]], 
+     (a_) . (((c_)*tuDDown["\[Del]"^S][_, \[Mu]]) \[CircleTimes] (b_)) -> 
+      c \[CircleTimes] a . tuDDown["\[Del]"^S][b, \[Mu]], 
+     ((-I)*(a_)) \[CircleTimes] (b_) -> a \[CircleTimes] ((-I)*b)}
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+$ss = {Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {Void}, {5}] -> 
+      Subscript[1, N], (tt:Tensor[\[Gamma], {\[Mu]_}, {Void}]) . 
+       Tensor["\[Del]"^S, {Void}, {\[Mu]_}] :> I*slash[\[ScriptCapitalD]], 
+     Subscript[1, n_] . (a_) -> a, (a_) . Subscript[1, n_] -> a, 
+     Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+      (Tensor[\[Gamma], {\[Mu]}, {Void}] . Tensor[\[Gamma], {\[Nu]}, 
+          {Void}] + Tensor[\[Gamma], {\[Nu]}, {Void}] . 
+         Tensor[\[Gamma], {\[Mu]}, {Void}])/2}
+ 
+$su = Equivalent[(su_) . (g_), su_] -> 
+     ForAll[g, Element[g, Subscript[SH, F]], 
+      su | Element[su . g, SU[Subscript[\[ScriptCapitalA], F]]]]
+ 
+$SU = {Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]]} -> 
+     {Equivalent[su, su . g]}
+ 
+$symmetries := {tt:T[g, "uu", {\[Mu]_, \[Nu]_}] :> 
+      tuIndexSwap[{\[Mu], \[Nu]}][tt] /; OrderedQ[{\[Nu], \[Mu]}], 
+     tt:T[F, "uu", {\[Mu]_, \[Nu]_}] :> -tuIndexSwap[{\[Mu], \[Nu]}][tt] /; 
+       OrderedQ[{\[Nu], \[Mu]}], CommutatorM[a_, b_] :> 
+      -CommutatorM[b, a] /; OrderedQ[{b, a}], CommutatorP[a_, b_] :> 
+      CommutatorP[b, a] /; OrderedQ[{b, a}], 
+     tt:T[\[Gamma], "u", {\[Mu]}] . T[\[Gamma], "d", {5}] -> Reverse[tt]}
+ 
+tuIndexSwap[indexPair_List][exp_] := Block[{tmp = exp, index1, index2, $ii, 
+      heads = DerivOps, subi, nestop, CX}, {index1, index2} = indexPair; 
+      subi[i_] := If[AtomQ[i], i /. index1 -> $ii /. index2 -> CX[index1] /. 
+         $ii -> CX[index2], (If[AtomQ[#1], #1 /. index1 -> $ii /. 
+             index2 -> CX[index1] /. $ii -> CX[index2], #1] & ) /@ i]; 
+      nestop[term_] := term /. (h:heads)[A_, i_] :> h[nestop[A], subi[i]]; 
+      tmp = tmp /. Tensor[A_, u_, d_] :> Tensor[A, subi[u], subi[d]]; 
+      tmp = nestop[tmp]; tmp //. CX[a_] -> a]
+ 
+tuIndexSwap /: tuIndexSwap::usage = "tuIndexSwap[indexPair_List][exp_] swap \
+indexPair in exp_. EG: IndexSwap[{i,j}][\!\(\*SubscriptBox[\(A\), \
+\(ikj\)]\)]->\!\(\*SubscriptBox[\(A\), \(jki\)]\)   *4Nov2014*"
+ 
+DerivOps := Flatten[DerivOpsD | DerivOpsU | tuDerivOps]
+ 
+DerivOpsD := Join[xPartialD | xCovariantD | xD[_], tuDerivOpsD]
+ 
+xPartialD[field_, var_] := tuPartialD[field, var]
+ 
+tuPartialD := tuDPartial
+ 
+tuPartialD /: tuPartialD::usage = "tuPartialD[field_,var_] displays the \
+PartialD[field,var] \[Rule] \!\(\*SubscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartial[a_, b_] := tuDDown["\[PartialD]"][a, b]
+ 
+tuDerivOpsD := tuDPartial | tuDCovariant | tuDs[_] | tuDDown[_]
+ 
+tuDCovariant[a_, b_] := tuDDown["\[Del]"][a, b]
+ 
+tuDs[s_][a_, b_] := tuDDown[s][a, b]
+ 
+DerivOpsU := Join[xPartialDu | xCovariantDu | xDu[_], tuDerivOpsU]
+ 
+xPartialDu[field_, var_] := tuPartialDu[field, var]
+ 
+tuPartialDu := tuDPartialu
+ 
+tuPartialDu /: tuPartialDu::usage = "tuPartialDu[field_,var_] displays the \
+PartialDu[field,var] \[Rule] \!\(\*SuperscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartialu[a_, b_] := tuDUp["\[PartialD]"][a, b]
+ 
+tuDerivOpsU := tuDPartialu | tuDCovariantu | tuDsu[_] | tuDUp[_]
+ 
+tuDCovariantu[a_, b_] := tuDUp["\[Del]"][a, b]
+ 
+tuDsu[s_][a_, b_] := tuDUp[s][a, b]
+ 
+tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
+ 
+tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]
+ 
+Attributes[$s$] = {Temporary}
+ 
+$t = Inactive[Integrate][h[s]/E^(s*v), s] -> g[v]
+ 
+$t219 = {{"(2.19)" -> Element[I*Subscript[\[ScriptCapitalA], \[Mu]][x], 
+         \[GothicG][F]] -> Mod[\[ScriptU][Subscript[\[ScriptCapitalA], F]], 
+         Subscript[\[ScriptH], F]], \[ScriptCapitalA][Style["Total algebra", 
+         RGBColor[0, 2/3, 0], Larger]] -> 
+       (C^"\[Infinity]")[M, Subscript[\[ScriptCapitalA], F]] -> 
+        xSum[section[i, \[CapitalGamma][Cross[M, Subscript[\[ScriptCapitalA], 
+             F]]]], {i}], \[Omega][Style["\[GothicG][F]-valued 1-form", 
+         RGBColor[0, 2/3, 0], Larger]] -> 
+       I*Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}] . 
+         difForm[Tensor[x, {\[Mu]}, {Void}]], 
+      P[Style["Principal bundle", RGBColor[0, 2/3, 0], Larger]] -> 
+       Cross[M, \[ScriptCapitalG][F]], "(2.22)" -> 
+       \[Omega][Style["connection form on P", RGBColor[0, 2/3, 0], Larger]], 
+      "group of gauge transform"[P] -> (C^"\[Infinity]")[M, 
+        \[ScriptCapitalG][F]], Implies["(2.12)", 
+       \[ScriptCapitalG][Cross[M, F]][Style["group of gauge transform", 
+          RGBColor[0, 2/3, 0], Larger]][P]], 
+      Implies["(2.11)", \[ScriptCapitalG][Cross[M, F]]] -> 
+       {U -> u . J . u . ConjugateTranspose[J], Element[u, 
+         U[\[ScriptCapitalA]]]}, Implies[
+       Implies[rep[Subscript[\[ScriptCapitalA], F][Subscript[
+           \[ScriptCapitalH], F]]], rep[\[ScriptCapitalG][F][
+          Subscript[\[ScriptCapitalH], F]]]], 
+       Cross[M, Subscript[\[ScriptCapitalH], F]] \[LeftRightArrow] 
+        "vector bundle of"[P -> Cross[M, \[ScriptCapitalG][F]]]]}}
+ 
+$t32 = {Tr[E^(-(H*t))] -> xSum[t^((k - n)/2)*Subscript[a, k][H], {k >= 0}], 
+     H -> "Laplacian"["E"], n -> dim[M], Subscript[a, k][H] -> 
+      tuIntegral[{{M}}, Sqrt[Det[g]]*Subscript[a, k][x, H]]}
+ 
+tuIntegral /: tuIntegral::usage = "tuIntegral[vars_List,integrand_] Integral \
+operator with list of variables vars_ \[Rule] {{v1},{v2}} and integrand_. "
+ 
+$t33 = {Subscript[a, 0][x, H] -> Subscript[Tr, Subscript["E", x]][
+        Subscript[1, N]]/(2^n*Pi^(n/2)), Subscript[a, 2][x, H] -> 
+      Subscript[Tr, Subscript["E", x]][F + (s*Subscript[1, N])/6]/
+       (2^n*Pi^(n/2)), Subscript[a, 4][x, H] -> 
+      (2^(-3 - n)*Subscript[Tr, Subscript["E", x]][180*F . F + 60*s . F + 
+          5*s . s - 2*Tensor[R, {Void, Void}, {\[Mu], \[Nu]}] . 
+            Tensor[R, {\[Mu], \[Nu]}, {Void, Void}] + 
+          2*Tensor[R, {Void, Void, Void, Void}, {\[Mu], \[Nu], \[Rho], 
+              \[Sigma]}] . Tensor[R, {\[Mu], \[Nu], \[Rho], \[Sigma]}, 
+             {Void, Void, Void, Void}] + 30*Tensor[\[CapitalOmega]^"E", 
+             {Void, Void}, {\[Mu], \[Nu]}] . Tensor[\[CapitalOmega]^"E", 
+             {\[Mu], \[Nu]}, {Void, Void}] - 60*\[CapitalDelta][F] - 
+          12*\[CapitalDelta][s]])/(45*Pi^(n/2)), H -> "\[Del]"^"E" - F, 
+     s -> "scalar curvature of \[Del]", \[CapitalDelta] -> 
+      "scalar Laplacian", Tensor[\[CapitalOmega]^"E", {Void, Void}, 
+       {\[Mu], \[Nu]}] -> 
+      "curvature of connnection \!\(\*SuperscriptBox[\(\[Del]\), \(E\)]\)"}
+ 
+$t34 = {Tr[f[Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]/
+         \[CapitalLambda]]] -> 
+      2*((\[CapitalLambda]^4*Subscript[f, 4]*Subscript[a, 0][
+            Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^2])/
+          \[CapitalGamma][2] + (\[CapitalLambda]^2*Subscript[f, 2]*
+           Subscript[a, 2][Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^
+             2])/\[CapitalGamma][1]) + f[0]*Subscript[a, 4][
+         Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]^2], 
+     Subscript[f, j_] -> Inactive[Integrate][v^(-1 + j)*f[v], v]}
+ 
+Attributes[$tensorsymbol$] = {Temporary}
+ 
+Attributes[$t$] = {Temporary}
+ 
+Attributes[$u1$] = {Temporary}
+ 
+Attributes[$u2$] = {Temporary}
+ 
+Attributes[$u$] = {Temporary}
+ 
+Attributes[$var$] = {Temporary}
+ 
+Attributes[$X$] = {Temporary}
+ 
+Attributes[$$] = {Temporary}
+ 
+Attributes[$$t$] = {Temporary}

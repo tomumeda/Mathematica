@@ -1,0 +1,733 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     22752,        638]*)
+(*NotebookOutlinePosition[     23756,        673]*)
+(*  CellTagsIndexPosition[     23681,        667]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["IndexParsingRules", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      \(IndexParsingRules\)]],
+  " is a supplemental list of rules that will be used in ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " to extract the dummy, up and down indices from a tensor term."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  " ",
+  Cell[BoxData[
+      \(IndexParsingRules\)]],
+  " is initially set to ",
+  Cell[BoxData[
+      \({}\)]],
+  " and should be reset to this value if any supplemental rules are to be \
+removed. Any new setting completely replaces the old setting."
+}], "MathCaption"],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \(IndexParsingRules\)]],
+  " is used internally by ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " to extract tensors whose indices are to be parsed from an expression. Its \
+purpose is to allow expressions or constructions whose form is not internally \
+recognized by Tensorial. Generally you will want to convert the expression to \
+a Tensor or a product of Tensors, which will then be correctly parsed."
+}], "MathCaption"],
+
+Cell["\<\
+If a symbol from a subsidiary package is used, then the full context name of \
+the symbol should be used in any rules.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["ParseTermIndices",
+    ButtonData:>{"ParseTermIndices"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["EinsteinSum",
+    ButtonData:>{"EinsteinSum"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["EinsteinArray",
+    ButtonData:>{"EinsteinArray"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ExtractFreeIndices",
+    ButtonData:>{"ExtractFreeIndices"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the old settings.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\n", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(oldparsingrules = IndexParsingRules;\)\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareBaseIndices[{1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor[{red, Red}];\)\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{e, f}, 1}, {{T}, 2}]\)], "Input",
+  CellLabel->"In[8]:="],
+
+Cell[TextData[{
+  "The following expression won't expand to a set of equations because ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " will not look inside the ",
+  Cell[BoxData[
+      \(f\)]],
+  " expression. It could not find the free index on the left hand side."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(f[ed[i]] \[Equal] Tdu[i, j] fd[j]\), "\[IndentingNewLine]", 
+    \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[9]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"f", "[", 
+        InterpretationBox[
+          SubsuperscriptBox["e", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ e, {Void}, {i}],
+          Editable->False], "]"}], "\[Equal]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["f", "j", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ f, {Void}, {j}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"i", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"}]],
+          Tensor[ T, {Void, j}, {i, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[9]="],
+
+Cell[BoxData[
+    \(FreeIndices::"notmatched" \(\(:\)\(\ \)\) 
+      "The free indices are not the same in all terms of the expression or \
+some terms have bad indices."\)], "Message",
+  CellLabel->"From In[9]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[10]="]
+}, Open  ]],
+
+Cell["\<\
+We can change Tensorial's behavior by adding a supplementary rule for parsing \
+term indices.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(\(IndexParsingRules = {f[t_Tensor] \[Rule] t};\)\)], "Input",
+  CellLabel->"In[11]:="],
+
+Cell["\<\
+Now, Tensorial will parse the f expression and expand the equations.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(f[ed[i]] \[Equal] Tdu[i, j] fd[j]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // TableForm\)}], "Input",
+  CellLabel->"In[12]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"f", "[", 
+        InterpretationBox[
+          SubsuperscriptBox["e", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ e, {Void}, {i}],
+          Editable->False], "]"}], "\[Equal]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["f", "j", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ f, {Void}, {j}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"i", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"}]],
+          Tensor[ T, {Void, j}, {i, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[12]="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              RowBox[{"f", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["e", "1", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ e, {Void}, {1}],
+                  Editable->False], "]"}], "\[Equal]", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["f", "j", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ f, {Void}, {j}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["T", 
+                    RowBox[{"1", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"}]],
+                  Tensor[ T, {Void, j}, {1, Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              RowBox[{"f", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["e", "2", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ e, {Void}, {2}],
+                  Editable->False], "]"}], "\[Equal]", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["f", "j", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ f, {Void}, {j}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["T", 
+                    RowBox[{"2", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"}]],
+                  Tensor[ T, {Void, j}, {2, Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              RowBox[{"f", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["e", "3", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ e, {Void}, {3}],
+                  Editable->False], "]"}], "\[Equal]", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["f", "j", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ f, {Void}, {j}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["T", 
+                    RowBox[{"3", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"}]],
+                  Tensor[ T, {Void, j}, {3, Void}],
+                  Editable->False]}]}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {
+        Equal[ 
+          f[ 
+            Tensor[ e, {Void}, {1}]], 
+          Times[ 
+            Tensor[ f, {Void}, {j}], 
+            Tensor[ T, {Void, j}, {1, Void}]]], 
+        Equal[ 
+          f[ 
+            Tensor[ e, {Void}, {2}]], 
+          Times[ 
+            Tensor[ f, {Void}, {j}], 
+            Tensor[ T, {Void, j}, {2, Void}]]], 
+        Equal[ 
+          f[ 
+            Tensor[ e, {Void}, {3}]], 
+          Times[ 
+            Tensor[ f, {Void}, {j}], 
+            Tensor[ T, {Void, j}, {3, Void}]]]}]]], "Output",
+  CellLabel->"Out[13]//TableForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \(AngleBracket\)]],
+  " is not normally recognized by ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " but we can add a rule to recognize it."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(IndexParsingRules = {};\)\), "\[IndentingNewLine]", 
+    \(term1 = \[LeftAngleBracket]eu[a], 
+        ed[b]\[RightAngleBracket]\), "\[IndentingNewLine]", 
+    \(% // ParseTermIndices\), "\[IndentingNewLine]", 
+    \(IndexParsingRules = \[LeftAngleBracket]t1_, 
+          t2_\[RightAngleBracket] \[Rule] t1\ t2\), "\[IndentingNewLine]", 
+    \(term1 // ParseTermIndices\), "\[IndentingNewLine]", 
+    \(\(term1 // EinsteinArray[]\) // MatrixForm\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{"\[LeftAngleBracket]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ e, {a}, {Void}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["e", "b", 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ e, {Void}, {b}],
+          Editable->False]}], "\[RightAngleBracket]"}]], "Output",
+  CellLabel->"Out[15]="],
+
+Cell[BoxData[
+    \({{}, {{}, {}}, {}}\)], "Output",
+  CellLabel->"Out[16]="],
+
+Cell[BoxData[
+    \(\[LeftAngleBracket]t1_, t2_\[RightAngleBracket] \[Rule] 
+      t1\ t2\)], "Output",
+  CellLabel->"Out[17]="],
+
+Cell[BoxData[
+    \({{}, {{a}, {b}}, {}}\)], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ e, {1}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "1", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {1}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ e, {1}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "2", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {2}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ e, {1}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "3", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {3}],
+                    Editable->False]}], "\[RightAngleBracket]"}]},
+            {
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ e, {2}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "1", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {1}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ e, {2}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "2", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {2}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ e, {2}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "3", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {3}],
+                    Editable->False]}], "\[RightAngleBracket]"}]},
+            {
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ e, {3}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "1", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {1}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ e, {3}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "2", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {2}],
+                    Editable->False]}], "\[RightAngleBracket]"}], 
+              RowBox[{"\[LeftAngleBracket]", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["e", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ e, {3}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["e", "3", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]],
+                    Tensor[ e, {Void}, {3}],
+                    Editable->False]}], "\[RightAngleBracket]"}]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[19]//MatrixForm="]
+}, Open  ]],
+
+Cell["Restore the initial settings...", "Text"],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{e, f}, 1}, {{T}, 2}]\)], "Input",
+  CellLabel->"In[20]:="],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(\(IndexParsingRules = oldparsingrules;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors, oldparsingrules, term1]\)}], "Input",
+  CellLabel->"In[21]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{669, 474},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 64, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1843, 56, 300, 9, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 23511, 658}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 64, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1843, 56, 300, 9, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2146, 67, 286, 9, 58, "MathCaption"],
+Cell[2435, 78, 468, 10, 92, "MathCaption"],
+Cell[2906, 90, 149, 3, 41, "MathCaption"],
+Cell[3058, 95, 476, 18, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[3559, 117, 34, 0, 39, "ExampleSection"],
+Cell[3596, 119, 96, 2, 29, "Input"],
+Cell[3695, 123, 38, 0, 25, "Text"],
+Cell[3736, 125, 401, 7, 129, "Input"],
+Cell[4140, 134, 101, 2, 29, "Input"],
+Cell[4244, 138, 283, 8, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[4552, 150, 146, 3, 49, "Input"],
+Cell[4701, 155, 1166, 34, 30, "Output"],
+Cell[5870, 191, 213, 4, 35, "Message"],
+Cell[6086, 197, 67, 2, 27, "Output"]
+}, Open  ]],
+Cell[6168, 202, 117, 3, 25, "Text"],
+Cell[6288, 207, 106, 2, 29, "Input"],
+Cell[6397, 211, 92, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[6514, 217, 164, 3, 49, "Input"],
+Cell[6681, 222, 1167, 34, 30, "Output"],
+Cell[7851, 258, 4951, 128, 93, "Output"]
+}, Open  ]],
+Cell[12817, 389, 196, 7, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[13038, 400, 506, 9, 129, "Input"],
+Cell[13547, 411, 678, 19, 27, "Output"],
+Cell[14228, 432, 77, 2, 27, "Output"],
+Cell[14308, 436, 128, 3, 27, "Output"],
+Cell[14439, 441, 79, 2, 27, "Output"],
+Cell[14521, 445, 7639, 174, 81, "Output"]
+}, Open  ]],
+Cell[22175, 622, 47, 0, 25, "Text"],
+Cell[22225, 624, 101, 2, 29, "Input"],
+Cell[22329, 628, 395, 6, 109, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

@@ -1,0 +1,149 @@
+tmpV = V -> \[Mu]^2*(SuperDagger[Tensor[H, {Void}, {1}]] . 
+         Tensor[H, {Void}, {1}] + SuperDagger[Tensor[H, {Void}, {2}]] . 
+         Tensor[H, {Void}, {2}]) + 
+      (g^2*(SuperDagger[Tensor[H, {Void}, {1}]] . (OverVector[\[Tau]]/2) . 
+           Tensor[H, {Void}, {1}] + SuperDagger[Tensor[H, {Void}, {2}]] . 
+           (OverVector[\[Tau]]/2) . Tensor[H, {Void}, {2}])^2)/2 + 
+      HC[Tensor[H, {Void}, {2}] \[SmallCircle] Tensor[H, {Void}, {1}]*
+        Tensor[m, {Void}, {3}]^2] + Tensor[H, {Void}, {2}] \[SmallCircle] 
+        Tensor[H, {Void}, {1}]*Tensor[m, {Void}, {3}]^2 + 
+      SuperDagger[Tensor[H, {Void}, {1}]] . Tensor[H, {Void}, {1}]*
+       Tensor[m, {Void}, {Tensor[H, {Void}, {1}]}]^2 + 
+      SuperDagger[Tensor[H, {Void}, {2}]] . Tensor[H, {Void}, {2}]*
+       Tensor[m, {Void}, {Tensor[H, {Void}, {2}]}]^2 + 
+      ((SuperDagger[Tensor[H, {Void}, {1}]] . (-1/2) . Tensor[H, {Void}, 
+            {1}] + SuperDagger[Tensor[H, {Void}, {2}]] . (1/2) . 
+           Tensor[H, {Void}, {2}])^2*Derivative[1][g]^2)/2
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+ 
+tmpV1 = V -> SuperDagger[Tensor[H, {Void}, {1}]] . Tensor[H, {Void}, {1}]*
+       Tensor[\[Mu], {Void}, {1}]^2 + SuperDagger[Tensor[H, {Void}, {2}]] . 
+        Tensor[H, {Void}, {2}]*Tensor[\[Mu], {Void}, {2}]^2 + 
+      (HC[Tensor[H, {Void}, {2}] \[SmallCircle] Tensor[H, {Void}, {1}]] + 
+        Tensor[H, {Void}, {2}] \[SmallCircle] Tensor[H, {Void}, {1}])*
+       Tensor[\[Mu], {Void}, {3}]^2
+ 
+tmpV2 = V -> (g^2*(SuperDagger[Tensor[H, {Void}, {1}]] . (OverVector[\[Tau]]/
+            2) . Tensor[H, {Void}, {1}] + SuperDagger[Tensor[H, {Void}, 
+             {2}]] . (OverVector[\[Tau]]/2) . Tensor[H, {Void}, {2}])^2)/2 + 
+      SuperDagger[Tensor[H, {Void}, {1}]] . Tensor[H, {Void}, {1}]*
+       Tensor[\[Mu], {Void}, {1}]^2 + SuperDagger[Tensor[H, {Void}, {2}]] . 
+        Tensor[H, {Void}, {2}]*Tensor[\[Mu], {Void}, {2}]^2 + 
+      (HC[Tensor[H, {Void}, {2}] \[SmallCircle] Tensor[H, {Void}, {1}]] + 
+        Tensor[H, {Void}, {2}] \[SmallCircle] Tensor[H, {Void}, {1}])*
+       Tensor[\[Mu], {Void}, {3}]^2 + 
+      ((SuperDagger[Tensor[H, {Void}, {1}]] . (-1/2) . Tensor[H, {Void}, 
+            {1}] + SuperDagger[Tensor[H, {Void}, {2}]] . (1/2) . 
+           Tensor[H, {Void}, {2}])^2*Derivative[1][g]^2)/2
+ 
+sub\[Mu] = {Tensor[\[Mu], {Void}, {1}]^2 -> 
+      \[Mu]^2 + Tensor[m, {Void}, {Tensor[H, {Void}, {1}]}]^2, 
+     Tensor[\[Mu], {Void}, {2}]^2 -> \[Mu]^2 + 
+       Tensor[m, {Void}, {Tensor[H, {Void}, {2}]}]^2, 
+     Tensor[\[Mu], {Void}, {3}]^2 -> Tensor[m, {Void}, {3}]^2}
+tmpVmin1 = Tensor[\[Mu], {Void}, {3}]^2/(Tensor[\[Mu], {Void}, {1}]^2 + 
+       Tensor[\[Mu], {Void}, {2}]^2) == 
+     (Tensor[v, {Void}, {1}]*Tensor[v, {Void}, {2}])/
+      (Tensor[v, {Void}, {1}]^2 + Tensor[v, {Void}, {2}]^2)
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmpVmin2 = 4*Tensor[v, {Void}, {1}]^2*Tensor[\[Mu], {Void}, {1}]^2 + 
+      Tensor[v, {Void}, {1}]^4*(g^2 + Derivative[1][g]^2) == 
+     4*Tensor[v, {Void}, {2}]^2*Tensor[\[Mu], {Void}, {2}]^2 + 
+      Tensor[v, {Void}, {2}]^4*(g^2 + Derivative[1][g]^2)
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+tmp\[Beta]\[Mu] = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) == 
+     Sin[2*\[Beta]]/2
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmp\[Beta]\[Mu]1 = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) <= 1/2
+ 
+tmp\[Beta]\[Mu]2 = Tensor[m, {Void}, {Z}]^2 -> 
+     (2*(Tensor[\[Mu], {Void}, {1}]^2 - Tan[\[Beta]]^2*
+         Tensor[\[Mu], {Void}, {2}]^2))/(-1 + Tan[\[Beta]]^2)
+tmp\[Beta]\[Mu] = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) == 
+     Sin[2*\[Beta]]/2
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmp\[Beta]\[Mu]1 = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) <= 1/2
+ 
+tmp\[Beta]\[Mu]2 = Tensor[m, {Void}, {Z}]^2 -> 
+     (2*(Tensor[\[Mu], {Void}, {1}]^2 - Tan[\[Beta]]^2*
+         Tensor[\[Mu], {Void}, {2}]^2))/(-1 + Tan[\[Beta]]^2)
+tmp\[Beta]\[Mu] = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) == 
+     Sin[2*\[Beta]]/2
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmp\[Beta]\[Mu]1 = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) <= 1/2
+ 
+tmp\[Beta]\[Mu]2 = Tensor[m, {Void}, {Z}]^2 -> 
+     (2*(Tensor[\[Mu], {Void}, {1}]^2 - Tan[\[Beta]]^2*
+         Tensor[\[Mu], {Void}, {2}]^2))/(-1 + Tan[\[Beta]]^2)
+tmp\[Beta]\[Mu] = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) == 
+     Sin[2*\[Beta]]/2
+ 
+Tensor /: Tensor::usage = "Tensor[A, upindices, downindices] represents a \
+tensor with the label A and the given up and down indices. The list of up and \
+down indices must be equal in length. Missing indices are indicated by Void. \
+Tensor[\[Phi]] represents a scalar tensor."
+ 
+Void /: Void::usage = 
+     "Void is used to indicate a blank slot in the up or down tensor \
+indices."
+ 
+tmp\[Beta]\[Mu]1 = Tensor[\[Mu], {Void}, {3}]^2/
+      (Tensor[\[Mu], {Void}, {1}]^2 + Tensor[\[Mu], {Void}, {2}]^2) <= 1/2
+ 
+tmp\[Beta]\[Mu]2 = Tensor[m, {Void}, {Z}]^2 -> 
+     (2*(Tensor[\[Mu], {Void}, {1}]^2 - Tan[\[Beta]]^2*
+         Tensor[\[Mu], {Void}, {2}]^2))/(-1 + Tan[\[Beta]]^2)

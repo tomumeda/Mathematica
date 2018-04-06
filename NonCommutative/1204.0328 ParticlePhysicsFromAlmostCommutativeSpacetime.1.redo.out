@@ -1,0 +1,587 @@
+$ = {"$", "$0", "$00", "$0a", "$1", "$1a", "$1b", "$1c", "$1t", "$2", "$2c", 
+     "$2m", "$2t", "$2td", "$3", "$a", "$A", "$aa", "$aa$", "$Am", "$Am0", 
+     "$arg", "$Arg", "$argn", "$a$", "$b", "$bb", "$bb$", "$b$", "$c", "$cc", 
+     "$cc$", "$connection", "$const", "$d", "$d0", "$d1", "$d1$", "$d2", 
+     "$d2$", "$DA", "$defall", "$deltas", "$dif", "$dummy", "$dummy$", "$d$", 
+     "$e", "$e219", "$e$", "$f", "$F", "$G", "$generalForm", "$gh", "$gh0", 
+     "$gh1", "$h", "$h1", "$head", "$hermitian", "$h$", "$i", "$iA", "$ii", 
+     "$ii$", "$in", "$ind", "$index", "$ind$", "$in$", "$i$", "$j", "$J", 
+     "$JF", "$Jg", "$JJ", "$JJ1", "$keys", "$L", "$low", "$L$", "$m", 
+     "$match", "$matches", "$n", "$npat", "$npat$", "$n$", "$O", "$p", 
+     "$pass", "$pat", "$Pattern", "$Pattern$", "$pat$", "$ph", 
+     "$placeholder", "$placeholder$", "$pos", "$ps", "$pvar", "$pvar1", 
+     "$p$", "$r", "$range", "$rhead", "$right", "$rp", "$rule", "$rules", 
+     "$s", "$S", "$s0", "$s0x", "$s1", "$sa", "$sAt", "$sdg", "$sh", "$sNO", 
+     "$SpinorsPath", "$ss", "$su", "$SU", "$swap", "$symmetries", "$s$", 
+     "$t", "$t1", "$t219", "$targetForm", "$tensorsymbol", "$tensorsymbol$", 
+     "$test", "$tmp", "$t$", "$u", "$u0", "$u1", "$u1$", "$u2", "$u2$", 
+     "$u$", "$var", "$var$", "$with", "$without", "$x", "$X", "$XX", "$X$", 
+     "$y", "$\[Alpha]", "$\[Beta]", "$\[Sigma]", "$$", "$$a", "$$b", "$$c", 
+     "$$d", "$$i", "$$m", "$$n", "$$t", "$$ten", "$$t$", "$$XX", "$$XXX"}
+ 
+$0 = BraKet[J . OverTilde[\[Xi]], Subscript[\[ScriptCapitalD], 
+       \[ScriptCapitalA]] . OverTilde[\[Xi]]]
+ 
+Attributes[Subscript] = {NHoldRest}
+ 
+Subscript[B, x_] := T[B, "d", {x}]
+ 
+Subscript["\[Del]"^S, n_] := T["\!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)", 
+     "d", {n}]
+ 
+T[A_, uds_String][index0__] := Module[{tmp, ud = Characters[uds], 
+      index = {index0}}, If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T[A_, up_List, down_List] := Module[{tmp, u = up /. Null -> Void, 
+      d = down /. Null -> Void, return}, 
+     If[up == {} && down == {}, Return[Tensor[A, up, down]]]; 
+      If[up == {}, u = Table[Void, {Length[d]}]]; 
+      If[down == {}, d = Table[Void, {Length[u]}]]; 
+      If[Length[d] == Length[u] &&  !Inner[(#1 =!= Void && #2 =!= Void) || 
+            (#1 === Void && #2 === Void) & , u, d, Or], Tensor[A, u, d], 
+       Style[Tensor[A, up, down], FontColor -> Red]]]
+ 
+T[A_, uds_String, index_List] := Module[{tmp, ud = Characters[uds]}, 
+     If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T /: T::usage = "T[A_,uds_String][index0__] produces any Tensor where \
+uds_String specifies up/down position of index_, \
+e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
+\(i\)]\)\!\(\*SubscriptBox[\()\), \(jk\)]\))"
+ 
+$00 = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] -> 
+     \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . J . 
+       Style[A, Italic] . ConjugateTranspose[J] + Style[A, Italic]
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+ 
+$0a = U . Subscript[\[ScriptCapitalD], \[ScriptCapitalA]] . 
+      ConjugateTranspose[U] -> U . \[ScriptCapitalD] . 
+       ConjugateTranspose[U] + U . Style[A, Italic] . ConjugateTranspose[U] + 
+      U . J . Style[A, Italic] . ConjugateTranspose[J] . 
+        ConjugateTranspose[U]*Derivative[1][\[CurlyEpsilon]]
+ 
+$1 = u . J . u . ConjugateTranspose[J] . \[ScriptCapitalD] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . ConjugateTranspose[J] . Style[A, Italic] . J . 
+      ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u] + 
+     u . J . u . Style[A, Italic] . ConjugateTranspose[u] . 
+       ConjugateTranspose[J] . ConjugateTranspose[u]*
+      Derivative[1][\[CurlyEpsilon]]
+ 
+$1a = u . J . u . ConjugateTranspose[J] . Style[A, Italic] . J . 
+     ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u]
+ 
+$1b = u . J . u . ConjugateTranspose[J] . \[ScriptCapitalD] . J . 
+     ConjugateTranspose[u] . ConjugateTranspose[J] . ConjugateTranspose[u]
+ 
+$1c = J . u . Style[A, Italic] . ConjugateTranspose[u] . 
+      ConjugateTranspose[J]*Derivative[1][\[CurlyEpsilon]]
+ 
+$2 = \[ScriptCapitalA] -> ConjugateTranspose[\[ScriptCapitalA]]
+ 
+$3 = {Subscript[u, 1]} == {Subscript[\[Lambda], Subscript[u, 1]] . 
+       Subscript[\[Lambda], Subscript[u, 2]]^"-1" . Subscript[u, 2] . g}
+ 
+$A = {Style[A, Italic] -> a . CommutatorM[slash[Style[D, Italic]], b], 
+     a | Element[b, (C^"\[Infinity]")[M]], Style[D, Italic] -> 
+      slash[Style[D, Italic]], slash[Style[D, Italic]] -> 
+      (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}]*tuDDown["\[Del]"][_, \[Mu]]}
+ 
+Attributes[$aa$] = {Temporary}
+ 
+$Am = I*Tensor[Style[A, Italic], {Void}, {\[Mu]}] -> 
+     a . tuDDown["\[Del]"][b, \[Mu]]
+ 
+$Am0 = Style[A, Italic] -> Tensor[\[Gamma], {\[Mu]}, {Void}]*
+      Tensor[Style[A, Italic], {Void}, {\[Mu]}]
+ 
+Attributes[$a$] = {Temporary}
+ 
+Attributes[$bb$] = {Temporary}
+ 
+Attributes[$b$] = {Temporary}
+ 
+$cc = {ConjugateTranspose[cc] -> cc, Conjugate[cc] -> cc, cc . cc -> 1, 
+     cc . (a_) :> Conjugate[a] . cc}
+ 
+cc[a_] := Conjugate[a]
+ 
+Attributes[$cc$] = {Temporary}
+ 
+$connection = "\!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)"[
+     Style["S[bundles]", RGBColor[0, 2/3, 0], Larger]]
+ 
+$d = slash[Style[D, Italic]] -> slash[Style[D, Italic]] \[CircleTimes] 
+       Subscript[1, F] + Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       Subscript[Style[D, Italic], F]
+ 
+Attributes[$d1$] = {Temporary}
+ 
+Attributes[$d2$] = {Temporary}
+ 
+$DA = Subscript[\[ScriptCapitalD], \[ScriptCapitalA]][
+      Style["fluctuated Dirac operator", RGBColor[0, 2/3, 0], Larger]] -> 
+     \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . J . 
+       Subscript[Style[A, Italic], f] . ConjugateTranspose[J] + 
+      Subscript[Style[A, Italic], f]
+ 
+$defall = {\[ScriptCapitalA] -> (C^"\[Infinity]")[M], 
+     \[ScriptCapitalH] -> (L^2)[M, S[Style["spinor", RGBColor[0, 2/3, 0], 
+         Larger]]], \[ScriptCapitalD] -> slash[Style[D, Italic]], 
+     (Element[f, \[ScriptCapitalA]])[Element[\[Psi], \[ScriptCapitalH]]] -> 
+      {f[x] . \[Psi][x], Element[x, M]}, slash[Style[D, Italic]][\[Psi]] -> 
+      (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}] . 
+        tuDDown["\!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)"][\[Psi], \[Mu]], 
+     Element[\[Psi], \[CapitalGamma][M, S][Style["spinor", 
+        RGBColor[0, 2/3, 0], Larger]]], 
+     tuDDown["\!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)"][f . \[Psi], 
+       \[Mu]] -> f . tuDDown["\!\(\*SuperscriptBox[\(\[Del]\), \(S\)]\)"][
+         \[Psi], \[Mu]] + \[Psi]*tuDDown["\[PartialD]"][f, \[Mu]], 
+     CommutatorM[slash[Style[D, Italic]], f] . \[Psi] -> 
+      (-I)*Tensor[\[Gamma], {\[Mu]}, {Void}] . tuDDown["\[PartialD]"][f, 
+         \[Mu]] . \[Psi], f[Style["scalar", RGBColor[0, 2/3, 0], Larger]], 
+     Tensor[\[Gamma], {Void}, {5}][Style["\!\(\*SubscriptBox[\(\
+\[DoubleStruckCapitalZ]\), \(2\)]\)-grading(chirality)", RGBColor[0, 2/3, 0], 
+        Larger]] -> Tensor[\[Gamma], {1}, {Void}]*Tensor[\[Gamma], {2}, 
+        {Void}]*Tensor[\[Gamma], {3}, {Void}]*Tensor[\[Gamma], {4}, {Void}], 
+     Tensor[\[Gamma], {Void}, {5}] . Tensor[\[Gamma], {Void}, {5}] -> 1, 
+     ConjugateTranspose[Tensor[\[Gamma], {Void}, {5}]] -> 
+      Tensor[\[Gamma], {Void}, {5}], 
+     CommutatorP[Tensor[\[Gamma], {Void}, {5}], Tensor[\[Gamma], {\[Mu]}, 
+        {Void}]] -> 0, Tensor[\[Gamma], {Void}, {5}][(L^2)[M, S]] -> 
+      SuperPlus[(L^2)[M, S]] \[CirclePlus] SuperMinus[(L^2)[M, S]], 
+     Subscript[J, M][Style["Charge conjugation", RGBColor[0, 2/3, 0], 
+       Larger]], Subscript[J, M] . Subscript[J, M] -> -1, 
+     CommutatorM[Subscript[J, M], slash[Style[D, Italic]]] -> 0, 
+     CommutatorM[Subscript[J, M], Tensor[\[Gamma], {Void}, {5}]] -> 0, 
+     CommutatorM[Subscript[J, M], a[Style[\[ScriptCapitalH], 
+         RGBColor[0, 2/3, 0], Larger]]] -> 0, 
+     CommutatorP[Subscript[J, M], Tensor[\[Gamma], {\[Mu]}, {Void}]] -> 0, 
+     Subscript[\[Gamma], F][Style["grading operator", RGBColor[0, 2/3, 0], 
+       Larger]], ConjugateTranspose[Subscript[\[Gamma], F]] -> 
+      Subscript[\[Gamma], F], Subscript[\[Gamma], F] . 
+       Subscript[\[Gamma], F] -> Subscript[1, F], 
+     Subscript[\[Gamma], F][Subscript[\[ScriptCapitalH], F]] -> 
+      SuperPlus[Subscript[\[ScriptCapitalH], F]] \[CirclePlus] 
+       SuperMinus[Subscript[\[ScriptCapitalH], F]], 
+     Subscript[\[Gamma], F][Element[\[Psi], Subscript[\[ScriptCapitalH], 
+         F]]] -> \[PlusMinus]\[Psi], CommutatorM[Subscript[\[Gamma], F], 
+       Element[a, Subscript[A, F]]] -> 0, 
+     CommutatorP[Subscript[\[Gamma], F], Subscript[Style[D, Italic], F]] -> 
+      0, Cross[M, F] -> {(C^"\[Infinity]")[M, Subscript[\[ScriptCapitalA], 
+         F]], (L^2)[M, S] \[CircleTimes] Subscript[\[ScriptCapitalH], F], 
+       \[ScriptCapitalD] -> slash[Style[D, Italic]] \[CircleTimes] 
+          Subscript[1, N] + Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+          Subscript[Style[D, Italic], F]}, 
+     Subscript[J, F][Subscript[\[ScriptCapitalH], F]] -> 
+      {Subscript[J, F] . Subscript[J, F] -> \[CurlyEpsilon], 
+       Subscript[J, F] . Subscript[Style[D, Italic], F] -> 
+        Derivative[1][\[CurlyEpsilon]] . Subscript[Style[D, Italic], F] . 
+         Subscript[J, F], Subscript[J, F] . Subscript[\[Gamma], F] -> 
+        Derivative[2][\[CurlyEpsilon]] . Subscript[\[Gamma], F] . 
+         Subscript[J, F]}, 
+     ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], F]], 
+       {CommutatorM[a, Superscript[b, o]] -> 0, Superscript[b, o] -> 
+         Subscript[J, F] . ConjugateTranspose[b] . ConjugateTranspose[
+           Subscript[J, F]]}][Style["Order-0 condition", RGBColor[0, 2/3, 0], 
+       Larger]], ForAll[{a, b}, a | Element[b, Subscript[\[ScriptCapitalA], 
+          F]], {CommutatorM[CommutatorM[Subscript[Style[D, Italic], F], a], 
+          Superscript[b, o]] -> 0, Superscript[b, o] -> 
+         Subscript[J, F] . ConjugateTranspose[b] . ConjugateTranspose[
+           Subscript[J, F]]}][Style["Order-1 condition", RGBColor[0, 2/3, 0], 
+       Larger]], Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+      {{SuperPlus[\[ScriptCapitalH]], 0}, 
+       {0, SuperMinus[\[ScriptCapitalH]]}}, 
+     Subscript[\[Gamma], F] . {{a_, b_}, {c_, d_}} -> {{a, 0}, {0, d}}, 
+     Subscript[J, F] -> U . cc, U . ConjugateTranspose[U] -> Subscript[1, N], 
+     Element[U, U[\[ScriptCapitalH]^"\[PlusMinus]"]], cc -> Conjugate, 
+     CommutatorP[Subscript[J, F], I] -> 0, ConjugateTranspose[cc] -> cc, 
+     Conjugate[cc] -> cc, cc . cc -> 1, cc . (a_) :> Conjugate[a] . cc, 
+     Subscript[OverTilde[\[ScriptCapitalA]], J] -> 
+      {Element[a, \[ScriptCapitalA]], a . J -> J . ConjugateTranspose[a], 
+       Superscript[a, o] -> a}, Ad[u][\[Xi]] -> 
+      u . \[Xi] . ConjugateTranspose[u] -> 
+       u . Superscript[ConjugateTranspose[u], o] . \[Xi], 
+     ad[A][\[Xi]] -> A . \[Xi] - \[Xi] . A -> (A - Superscript[A, o]) . 
+        \[Xi], Ad[u] -> u . Subscript[J, F] . u . ConjugateTranspose[
+        Subscript[J, F]], ad[A] -> A - Subscript[J, F] . 
+        ConjugateTranspose[A] . ConjugateTranspose[Subscript[J, F]], 
+     ad[B] -> B - Subscript[J, F] . B . ConjugateTranspose[Subscript[J, F]], 
+     B[Style["Hermitian", RGBColor[0, 2/3, 0], Larger]], 
+     Element[a, (C^"\[Infinity]")[M, Subscript[\[ScriptCapitalA], F]]], 
+     Subscript[\[Alpha], \[Phi]][a] -> a \[SmallCircle] \[Phi]^"-1", 
+     Subscript[\[Alpha], \[Phi]][a][x] -> a[(\[Phi]^"-1")[x]], 
+     Inn[\[ScriptCapitalA]] -> {Element[u, (C^"\[Infinity]")[M, 
+         U[Subscript[\[ScriptCapitalA], F]]]], Subscript[\[Alpha], u][a] -> 
+        u . a . ConjugateTranspose[u], Subscript[\[Alpha], u][a][x] -> 
+        u[x] . a[x] . ConjugateTranspose[u][x]}, 
+     Ker[\[Phi]] -> {ForAll[Element[a, \[ScriptCapitalA]], 
+        u . a . ct[u] -> a], \[Phi][U[\[ScriptCapitalA]]][
+         Style["surjective", RGBColor[0, 2/3, 0], Larger]] -> 
+        Inn[\[ScriptCapitalA]], \[Phi][u] -> Subscript[\[Alpha], u], 
+       Element[u, U[\[ScriptCapitalA]]]}, 
+     Subscript[\[CapitalOmega], \[ScriptCapitalD]]^"1" -> 
+      {xSum[Subscript[a, j] . CommutatorM[\[ScriptCapitalD], 
+          Subscript[b, j]], {j}], Subscript[a, j] | Element[Subscript[b, j], 
+         \[ScriptCapitalA]]}, Subscript[Style[A, Italic], f][
+       Style["inner fluctuations", RGBColor[0, 2/3, 0], Larger]] -> 
+      {Style[A, Italic], Element[Style[A, Italic], 
+        Subscript[\[CapitalOmega], \[ScriptCapitalD]]^"1"], 
+       ConjugateTranspose[Style[A, Italic]] -> Style[A, Italic]}, 
+     Subscript[\[ScriptCapitalD], \[ScriptCapitalA]][
+       Style["fluctuated Dirac operator", RGBColor[0, 2/3, 0], Larger]] -> 
+      \[ScriptCapitalD] + Derivative[1][\[CurlyEpsilon]] . J . 
+        Subscript[Style[A, Italic], f] . ConjugateTranspose[J] + 
+       Subscript[Style[A, Italic], f], slash[Style[D, Italic]] -> 
+      slash[Style[D, Italic]] \[CircleTimes] Subscript[1, F] + 
+       Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        Subscript[Style[D, Italic], F], Style[A, Italic] -> 
+      Subscript[a, M] . Subscript[b, M] . Tensor[\[Gamma], {Void}, 
+          {5}] \[CircleTimes] \[Phi] + 
+       Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+         Subscript[a, F] . Subscript[b, F]*Tensor[Subscript[Style[A, Italic], 
+          M], {Void}, {\[Mu]}], Style[A, Italic] -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[Phi] + 
+       Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] Subscript[1, F]*
+        Tensor[Subscript[Style[A, Italic], M], {Void}, {\[Mu]}], 
+     slash[Style[D, Italic]] \[CircleTimes] Subscript[1, F] + 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi] + 
+      Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}], Subscript[\[ScriptCapitalD], 
+       \[ScriptCapitalA]] -> slash[Style[D, Italic]] \[CircleTimes] 
+        Subscript[1, F] + Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+        \[CapitalPhi] + Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+        Tensor[B, {Void}, {\[Mu]}], 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       (Tensor[Subscript[Style[A, Italic], M], {Void}, {\[Mu]}] - 
+        Subscript[J, F] . Tensor[Subscript[Style[A, Italic], M], {Void}, 
+           {\[Mu]}] . ConjugateTranspose[Subscript[J, F]]*
+         Derivative[1][\[CurlyEpsilon]]) -> 
+      Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+       Tensor[B, {Void}, {\[Mu]}], 
+     Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+       (\[Phi] + Subscript[Style[D, Italic], F] + 
+        Subscript[J, F] . \[Phi] . ConjugateTranspose[Subscript[J, F]]*
+         Derivative[1][\[CurlyEpsilon]]) -> 
+      Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] \[CapitalPhi]}
+ 
+Attributes[Superscript] = {NHoldRest, ReadProtected}
+ 
+ct[a_] := ConjugateTranspose[a]
+ 
+Attributes[$dummy$] = {Temporary}
+ 
+Attributes[$d$] = {Temporary}
+ 
+$e219 = Element[Subscript[\[ScriptCapitalA], \[Mu]], 
+     (C^"\[Infinity]")[M, I*\[GothicG][F]]]
+ 
+Attributes[$e$] = {Temporary}
+ 
+$F = F -> {Subscript[\[ScriptCapitalA], F], Subscript[\[ScriptCapitalH], F], 
+      Subscript[Style[D, Italic], F], Subscript[\[Gamma], F], Subscript[J, F]}
+ 
+$G = {\[ScriptCapitalG][F] \[TildeEqual] 
+       Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]} -> 
+     {Equivalent[u, u . h]}
+ 
+$gh = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{SuperPlus[\[ScriptCapitalH]], 0}, {0, SuperMinus[\[ScriptCapitalH]]}}
+ 
+$gh0 = Subscript[\[Gamma], F] . \[ScriptCapitalH] -> 
+     {{Subscript[\[ScriptCapitalH], 1, 1], 0}, 
+      {0, Subscript[\[ScriptCapitalH], 2, 2]}}
+ 
+$gh1 = Subscript[\[Gamma], F] . {{a_, b_}, {c_, d_}} -> {{a, 0}, {0, d}}
+ 
+$h = \[ScriptCapitalH] -> {{Subscript[\[ScriptCapitalH], 1, 1], 
+       Subscript[\[ScriptCapitalH], 1, 2]}, 
+      {Subscript[\[ScriptCapitalH], 2, 1], Subscript[\[ScriptCapitalH], 2, 
+        2]}}
+ 
+$hermitian = {Subscript[\[ScriptCapitalA], \[Mu]]}
+ 
+Attributes[$h$] = {Temporary}
+ 
+$i = invSDG[{n, h}]
+ 
+$iA = Subscript[Style[A, Italic], f][Style["inner fluctuations", 
+       RGBColor[0, 2/3, 0], Larger]] -> {Style[A, Italic], 
+      Element[Style[A, Italic], Subscript[\[CapitalOmega], \[ScriptCapitalD]]^
+        "1"], ConjugateTranspose[Style[A, Italic]] -> Style[A, Italic]}
+ 
+Attributes[$ii$] = {Temporary}
+ 
+Attributes[$ind$] = {Temporary}
+ 
+Attributes[$in$] = {Temporary}
+ 
+Attributes[$i$] = {Temporary}
+ 
+$j = Subscript[J, F] -> {{Subscript[\[ScriptJ], 1, 1], 
+       Subscript[\[ScriptJ], 1, 2]}, {Subscript[\[ScriptJ], 2, 1], 
+       Subscript[\[ScriptJ], 2, 2]}}
+ 
+$J = Subscript[J, F][Subscript[\[ScriptCapitalH], F]] -> 
+     {Subscript[J, F] . Subscript[J, F] -> \[CurlyEpsilon], 
+      Subscript[J, F] . Subscript[Style[D, Italic], F] -> 
+       Derivative[1][\[CurlyEpsilon]] . Subscript[Style[D, Italic], F] . 
+        Subscript[J, F], Subscript[J, F] . Subscript[\[Gamma], F] -> 
+       Derivative[2][\[CurlyEpsilon]] . Subscript[\[Gamma], F] . 
+        Subscript[J, F]}
+ 
+$JF = {Subscript[J, F] -> U . cc, U . ConjugateTranspose[U] -> 
+      Subscript[1, N], Element[U, U[\[ScriptCapitalH]^"\[PlusMinus]"]], 
+     cc -> Conjugate, CommutatorP[Subscript[J, F], I] -> 0}
+ 
+$Jg = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 
+      -Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptCapitalH], 1, 1] - 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 1], 
+     Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2] -> 
+      -Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptCapitalH], 1, 2] - 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptCapitalH], 2, 2]}
+ 
+$JJ = {Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 1, 
+          1]] + Subscript[\[ScriptJ], 1, 2] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 2]] -> Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 1, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> 0, Subscript[\[ScriptJ], 2, 1] . SuperDagger[
+         Subscript[\[ScriptJ], 1, 1]] + Subscript[\[ScriptJ], 2, 2] . 
+        SuperDagger[Subscript[\[ScriptJ], 1, 2]] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . SuperDagger[Subscript[\[ScriptJ], 2, 1]] + 
+       Subscript[\[ScriptJ], 2, 2] . SuperDagger[Subscript[\[ScriptJ], 2, 
+          2]] -> Subscript[1, SuperMinus[N]]}
+ 
+$JJ1 = {Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 1] -> 
+      Subscript[1, SuperPlus[N]], 
+     Subscript[\[ScriptJ], 1, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 1, 2] . Subscript[\[ScriptJ], 2, 2] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 1] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 1] -> 0, 
+     Subscript[\[ScriptJ], 2, 1] . Subscript[\[ScriptJ], 1, 2] + 
+       Subscript[\[ScriptJ], 2, 2] . Subscript[\[ScriptJ], 2, 2] -> 
+      Subscript[1, SuperMinus[N]]}
+ 
+Attributes[$L$] = {Temporary}
+ 
+$n = {n, h}
+ 
+Attributes[$npat$] = {Temporary}
+ 
+Attributes[$n$] = {Temporary}
+ 
+$O = Subscript[\[CapitalOmega], \[ScriptCapitalD]]^"1" -> 
+     {xSum[Subscript[a, j] . CommutatorM[\[ScriptCapitalD], Subscript[b, j]], 
+       {j}], Subscript[a, j] | Element[Subscript[b, j], \[ScriptCapitalA]]}
+ 
+$pass = slash[Style[D, Italic]] \[CircleTimes] Subscript[1, F] + 
+     Tensor[\[Gamma], {Void}, {5}] \[CircleTimes] 
+      (\[Phi] + Subscript[Style[D, Italic], F] + 
+       Subscript[J, F] . \[Phi] . ConjugateTranspose[Subscript[J, F]]*
+        Derivative[1][\[CurlyEpsilon]]) + 
+     Tensor[\[Gamma], {\[Mu]}, {Void}] \[CircleTimes] 
+      (Tensor[Subscript[Style[A, Italic], M], {Void}, {\[Mu]}] - 
+       Subscript[J, F] . Tensor[Subscript[Style[A, Italic], M], {Void}, 
+          {\[Mu]}] . ConjugateTranspose[Subscript[J, F]]*
+        Derivative[1][\[CurlyEpsilon]])
+ 
+Attributes[$Pattern$] = {Temporary}
+ 
+Attributes[$pat$] = {Temporary}
+ 
+$ph = {\[CurlyPhi][\[ScriptCapitalG][F] \[TildeEqual] 
+        Mod[U[Subscript[\[ScriptCapitalA], F]], Subscript[H, F]]] -> 
+      Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]], 
+     \[CurlyPhi][{u}] -> {Subscript[\[Lambda], u]^"-1" . u}}
+ 
+Attributes[$placeholder$] = {Temporary}
+ 
+Attributes[$p$] = {Temporary}
+ 
+$s = {J . U -> U . J, ConjugateTranspose[u_] . (u_) -> 1, 
+     BraKet[U . (a_), U . (b_)] -> BraKet[a, b]}
+ 
+$S = S -> Subscript[S, b] + Subscript[S, f] -> 
+      BraKet[J . OverTilde[\[Xi]], Subscript[\[ScriptCapitalD], 
+           \[ScriptCapitalA]] . OverTilde[\[Xi]]]/2 + 
+       Tr[f[Subscript[\[ScriptCapitalD], \[ScriptCapitalA]]/\[CapitalLambda]]]
+ 
+$s0 = {U -> u . J . u . ConjugateTranspose[J], 
+     CommutatorM[a, Superscript[b, o]] -> 0, 
+     CommutatorM[Style[A, Italic], J . u . ConjugateTranspose[J]] -> 0, 
+     CommutatorM[CommutatorM[\[ScriptCapitalD], a], Superscript[b, o]] -> 0, 
+     J . \[ScriptCapitalD] -> Derivative[1][\[CurlyEpsilon]] . 
+       \[ScriptCapitalD] . J, Superscript[b, o] -> 
+      J . ConjugateTranspose[b] . ConjugateTranspose[J], 
+     (JJ_) . ConjugateTranspose[JJ_] :> 1 /; MemberQ[{J, u}, JJ], 
+     ConjugateTranspose[JJ_] . (JJ_) :> 1 /; MemberQ[{J, u}, JJ], 
+     \[CurlyEpsilon]^2 -> 1}
+ 
+$s0x = {U -> u . J . u . ConjugateTranspose[J], 
+     a . J . ConjugateTranspose[b] . ConjugateTranspose[J] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . a -> 0, 
+     -J . u . ConjugateTranspose[J] . Style[A, Italic] + 
+       Style[A, Italic] . J . u . ConjugateTranspose[J] -> 0, 
+     -a . \[ScriptCapitalD] . J . ConjugateTranspose[b] . 
+         ConjugateTranspose[J] + J . ConjugateTranspose[b] . 
+        ConjugateTranspose[J] . a . \[ScriptCapitalD] - 
+       J . ConjugateTranspose[b] . ConjugateTranspose[J] . 
+        \[ScriptCapitalD] . a + \[ScriptCapitalD] . a . J . 
+        ConjugateTranspose[b] . ConjugateTranspose[J] -> 0, 
+     J . \[ScriptCapitalD] -> \[ScriptCapitalD] . J*
+       Derivative[1][\[CurlyEpsilon]], (JJ_) . ConjugateTranspose[JJ_] :> 
+      1 /; MemberQ[{J, u}, JJ], ConjugateTranspose[JJ_] . (JJ_) :> 
+      1 /; MemberQ[{J, u}, JJ], \[CurlyEpsilon]^2 -> 1}
+ 
+$sa = Style[A, Italic] -> u . Style[A, Italic] . ConjugateTranspose[u]
+ 
+$sAt = Subscript[OverTilde[\[ScriptCapitalA]], J] -> 
+     {Element[a, \[ScriptCapitalA]], a . J -> J . ConjugateTranspose[a], 
+      Superscript[a, o] -> a}
+ 
+$sdg = {{n_, h_} \[CenterDot] {n1_, h1_} -> {n . \[Theta][h] . n1, h . h1}, 
+     Subscript[1, sdp] -> {Subscript[1, N], Subscript[1, H]}[
+       Style["unit", RGBColor[0, 2/3, 0], Larger]], 
+     invSDG[{n_, h_}][Style["inverse", RGBColor[0, 2/3, 0], Larger]] -> 
+      {\[Theta][h^"-1"] . n^"-1", h^"-1"}}
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+$sh = {Subscript[\[ScriptCapitalH], 1, 2] | Subscript[\[ScriptCapitalH], 2, 
+        1] -> 0}
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+$su = Equivalent[(su_) . (g_), su_] -> 
+     ForAll[g, Element[g, Subscript[SH, F]], 
+      su | Element[su . g, SU[Subscript[\[ScriptCapitalA], F]]]]
+ 
+$SU = {Mod[SU[Subscript[\[ScriptCapitalA], F]], Subscript[SH, F]]} -> 
+     {Equivalent[su, su . g]}
+ 
+$symmetries := {tt:T[g, "uu", {\[Mu]_, \[Nu]_}] :> 
+      tuIndexSwap[{\[Mu], \[Nu]}][tt] /; OrderedQ[{\[Nu], \[Mu]}], 
+     tt:T[F, "uu", {\[Mu]_, \[Nu]_}] :> -tuIndexSwap[{\[Mu], \[Nu]}][tt] /; 
+       OrderedQ[{\[Nu], \[Mu]}], CommutatorM[a_, b_] :> 
+      -CommutatorM[b, a] /; OrderedQ[{b, a}], CommutatorP[a_, b_] :> 
+      CommutatorP[b, a] /; OrderedQ[{b, a}], 
+     CommutatorP[T[\[Gamma], "d", {5}], T[\[Gamma], "u", {\[Mu]}]] -> 0, 
+     tt:T[\[Gamma], "u", {\[Mu]}] . T[\[Gamma], "d", {5}] :> -Reverse[tt]}
+ 
+tuIndexSwap[indexPair_List][exp_] := Block[{tmp = exp, index1, index2, $ii, 
+      heads = DerivOps, subi, nestop, CX}, {index1, index2} = indexPair; 
+      subi[i_] := If[AtomQ[i], i /. index1 -> $ii /. index2 -> CX[index1] /. 
+         $ii -> CX[index2], (If[AtomQ[#1], #1 /. index1 -> $ii /. 
+             index2 -> CX[index1] /. $ii -> CX[index2], #1] & ) /@ i]; 
+      nestop[term_] := term /. (h:heads)[A_, i_] :> h[nestop[A], subi[i]]; 
+      tmp = tmp /. Tensor[A_, u_, d_] :> Tensor[A, subi[u], subi[d]]; 
+      tmp = nestop[tmp]; tmp //. CX[a_] -> a]
+ 
+tuIndexSwap /: tuIndexSwap::usage = "tuIndexSwap[indexPair_List][exp_] swap \
+indexPair in exp_. EG: IndexSwap[{i,j}][\!\(\*SubscriptBox[\(A\), \
+\(ikj\)]\)]->\!\(\*SubscriptBox[\(A\), \(jki\)]\)   *4Nov2014*"
+ 
+DerivOps := Flatten[DerivOpsD | DerivOpsU | tuDerivOps]
+ 
+DerivOpsD := Join[xPartialD | xCovariantD | xD[_], tuDerivOpsD]
+ 
+xPartialD[field_, var_] := tuPartialD[field, var]
+ 
+tuPartialD := tuDPartial
+ 
+tuPartialD /: tuPartialD::usage = "tuPartialD[field_,var_] displays the \
+PartialD[field,var] \[Rule] \!\(\*SubscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartial[a_, b_] := tuDDown["\[PartialD]"][a, b]
+ 
+tuDerivOpsD := tuDPartial | tuDCovariant | tuDs[_] | tuDDown[_]
+ 
+tuDCovariant[a_, b_] := tuDDown["\[Del]"][a, b]
+ 
+tuDs[s_][a_, b_] := tuDDown[s][a, b]
+ 
+DerivOpsU := Join[xPartialDu | xCovariantDu | xDu[_], tuDerivOpsU]
+ 
+xPartialDu[field_, var_] := tuPartialDu[field, var]
+ 
+tuPartialDu := tuDPartialu
+ 
+tuPartialDu /: tuPartialDu::usage = "tuPartialDu[field_,var_] displays the \
+PartialDu[field,var] \[Rule] \!\(\*SuperscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartialu[a_, b_] := tuDUp["\[PartialD]"][a, b]
+ 
+tuDerivOpsU := tuDPartialu | tuDCovariantu | tuDsu[_] | tuDUp[_]
+ 
+tuDCovariantu[a_, b_] := tuDUp["\[Del]"][a, b]
+ 
+tuDsu[s_][a_, b_] := tuDUp[s][a, b]
+ 
+tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
+ 
+tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]
+ 
+Attributes[$s$] = {Temporary}
+ 
+$t219 = {{"(2.19)" -> {Element[I*Subscript[\[ScriptCapitalA], \[Mu]][x], 
+          \[GothicG][F]] -> Mod[\[ScriptU][Subscript[\[ScriptCapitalA], F]], 
+          Subscript[\[ScriptH], F]]}, 
+      \[ScriptCapitalA][Style["Total algebra", RGBColor[0, 2/3, 0], 
+         Larger]] -> (C^"\[Infinity]")[M, Subscript[\[ScriptCapitalA], F]] -> 
+        xSum[section[ii, \[CapitalGamma][Cross[M, Subscript[
+             \[ScriptCapitalA], F]]]], {ii}], 
+      {\[Omega] -> I*Tensor[\[ScriptCapitalA], {Void}, {\[Mu]}] . 
+          difForm[Tensor[x, {\[Mu]}, {Void}]], 
+       \[Omega][Style["\[GothicG][F]-valued 1-form", RGBColor[0, 2/3, 0], 
+         Larger]]}, P[Style["Principal bundle", RGBColor[0, 2/3, 0], 
+         Larger]] -> Cross[M, \[ScriptCapitalG][F]], 
+      "(2.22)" -> \[Omega][Style["connection form on P", RGBColor[0, 2/3, 0], 
+         Larger]], "group of gauge transform"[P] -> (C^"\[Infinity]")[M, 
+        \[ScriptCapitalG][F]], Implies["(2.12)", 
+       \[ScriptCapitalG][Cross[M, F]][Style["group of gauge transform", 
+          RGBColor[0, 2/3, 0], Larger]][P]], 
+      Implies["(2.11)", \[ScriptCapitalG][Cross[M, F]]] -> 
+       {U -> u . J . u . ConjugateTranspose[J], Element[u, 
+         U[\[ScriptCapitalA]]]}, Implies[
+       Implies[rep[Subscript[\[ScriptCapitalA], F][Subscript[
+           \[ScriptCapitalH], F]]], rep[\[ScriptCapitalG][F][
+          Subscript[\[ScriptCapitalH], F]]]], 
+       Cross[M, Subscript[\[ScriptCapitalH], F]] \[LeftRightArrow] 
+        "vector bundle of"[P -> Cross[M, \[ScriptCapitalG][F]]]]}}
+ 
+Attributes[$tensorsymbol$] = {Temporary}
+ 
+Attributes[$t$] = {Temporary}
+ 
+Attributes[$u1$] = {Temporary}
+ 
+Attributes[$u2$] = {Temporary}
+ 
+Attributes[$u$] = {Temporary}
+ 
+Attributes[$var$] = {Temporary}
+ 
+Attributes[$X$] = {Temporary}
+ 
+Attributes[$$] = {Temporary}
+ 
+Attributes[$$t$] = {Temporary}

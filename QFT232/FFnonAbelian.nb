@@ -1,0 +1,1619 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     64563,       1610]
+NotebookOptionsPosition[     64133,       1592]
+NotebookOutlinePosition[     64483,       1607]
+CellTagsIndexPosition[     64440,       1604]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{"<<", "\"\<Local`QFTToolKit`\>\""}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DotExpandMode", "[", "False", "]"}], ";"}], "\[IndentingNewLine]", 
+
+ RowBox[{
+  RowBox[{"Clear", "[", 
+   RowBox[{"nonAbelianF", ",", "FFna"}], "]"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Computes", " ", "non"}], "-", 
+    RowBox[{
+    "abelian", " ", "gauge", " ", "boson", " ", "energy", " ", "momentum", 
+     " ", "tensor", " ", 
+     RowBox[{"expressions", ".", " ", "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"F", ".", "F"}], " ", "lagrangian", " ", "term"}], ",", " ", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"F", ".", "F"}], " ", "in", " ", "terms", " ", "of", " ", 
+          RowBox[{"A", "'"}], 
+          RowBox[{"s", ".", "\[IndentingNewLine]", "Resets"}], " ", 
+          "BaseIndices", " ", "with", " ", 
+          RowBox[{"Length", "[", " ", 
+           RowBox[{"Flavor", "[", "gaugeG", "]"}], " ", "]"}]}], "->", 
+         "groupN"}]}], "\[IndentingNewLine]"}]}]}]}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"nonAbelianF", "[", "gaugeN_", "]"}], ":=", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "tmp", ",", "subF", ",", "subFA", ",", "subA", ",", "sF2", ",", "FA2", 
+        ",", "NgaugeR", ",", "list", ",", 
+        RowBox[{"DEBUG", "=", "0"}], ",", 
+        RowBox[{"mName", "=", "\"\<nonAbelianF\>\""}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"DefineTensorShortcuts", "[", "  ", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", "}"}], ",", "0"}], "}"}], ",", "   ", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", "}"}], ",", "1"}], "}"}], ",", "   ", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", "A", "}"}], ",", "2"}], "}"}], ",", "   ", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"F", ",", "f"}], "}"}], ",", "3"}], "}"}]}], "  ", "]"}], 
+       ";", "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{"CompleteBaseIndices", "/.", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"gaugeG", ",", "_"}], "}"}], "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"gaugeG", ",", 
+            RowBox[{"Range", "[", "gaugeN", "]"}]}], "}"}]}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"DeclareBaseIndices", "[", 
+        RowBox[{"Apply", "[", 
+         RowBox[{"Sequence", ",", "tmp"}], "]"}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"**", " ", "Define"}], " ", "gauge", " ", "field", " ", 
+         "A"}], " ", "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"IfDEBUG", "[", 
+        RowBox[{"mName", ",", 
+         RowBox[{"DEBUG", ">", "0"}], ",", 
+         RowBox[{"Aud", "[", 
+          RowBox[{
+           RowBox[{"gaugeG", "@", "2"}], ",", "\[Mu]"}], "]"}], ",", 
+         "\"\<Aud\>\""}], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"**", " ", "Define"}], " ", "field", " ", "strength", " ", 
+         "F"}], "  ", "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"subFA", "=", 
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Fudd", "[", 
+            RowBox[{
+             RowBox[{"gaugeG", "@", "c_"}], ",", "\[Mu]_", ",", "\[Nu]_"}], 
+            "]"}], "->", 
+           RowBox[{
+            RowBox[{"xPartialD", "[", 
+             RowBox[{
+              RowBox[{"Aud", "[", 
+               RowBox[{
+                RowBox[{"gaugeG", "@", "c"}], ",", "\[Nu]"}], "]"}], ",", 
+              "\[Mu]"}], "]"}], "-", 
+            RowBox[{"xPartialD", "[", 
+             RowBox[{
+              RowBox[{"Aud", "[", 
+               RowBox[{
+                RowBox[{"gaugeG", "@", "c"}], ",", "\[Mu]"}], "]"}], ",", 
+              "\[Nu]"}], "]"}], "+", 
+            RowBox[{"g", " ", 
+             RowBox[{"fuuu", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a"}], ",", 
+               RowBox[{"gaugeG", "@", "b"}], ",", 
+               RowBox[{"gaugeG", "@", "c"}]}], "]"}], 
+             RowBox[{"Aud", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a"}], ",", "\[Mu]"}], "]"}], 
+             RowBox[{"Aud", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "b"}], ",", "\[Nu]"}], "]"}]}]}]}], ",",
+           "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"Fuuu", "[", 
+            RowBox[{
+             RowBox[{"gaugeG", "@", "c_"}], ",", "\[Mu]_", ",", "\[Nu]_"}], 
+            "]"}], "->", 
+           RowBox[{
+            RowBox[{"xPartialDu", "[", 
+             RowBox[{
+              RowBox[{"Auu", "[", 
+               RowBox[{
+                RowBox[{"gaugeG", "@", "c"}], ",", "\[Nu]"}], "]"}], ",", 
+              "\[Mu]"}], "]"}], "-", 
+            RowBox[{"xPartialDu", "[", 
+             RowBox[{
+              RowBox[{"Auu", "[", 
+               RowBox[{
+                RowBox[{"gaugeG", "@", "c"}], ",", "\[Mu]"}], "]"}], ",", 
+              "\[Nu]"}], "]"}], "+", 
+            RowBox[{"g", " ", 
+             RowBox[{"fuuu", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a"}], ",", 
+               RowBox[{"gaugeG", "@", "b"}], ",", 
+               RowBox[{"gaugeG", "@", "c"}]}], "]"}], 
+             RowBox[{"Auu", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a"}], ",", "\[Mu]"}], "]"}], 
+             RowBox[{"Auu", "[", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "b"}], ",", "\[Nu]"}], "]"}]}]}]}]}], 
+         "\[IndentingNewLine]", "}"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"IfDEBUG", "[", 
+        RowBox[{"mName", ",", 
+         RowBox[{"DEBUG", ">", "0"}], ",", 
+         RowBox[{"{", "subFA", "}"}], ",", "\"\<subFA\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"**", " ", "Define"}], " ", "kinetic", " ", "term"}], "  ", 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"sF2", "=", 
+        RowBox[{
+         RowBox[{"FFna", "[", 
+          RowBox[{
+           RowBox[{"gaugeG", "@", "a_"}], ",", "\[Mu]_", ",", "\[Nu]_"}], 
+          "]"}], "->", 
+         RowBox[{
+          RowBox[{"-", 
+           FractionBox["1", "4"]}], 
+          RowBox[{
+           RowBox[{"Fudd", "[", 
+            RowBox[{
+             RowBox[{"gaugeG", "@", "a"}], ",", "\[Mu]", ",", "\[Nu]"}], 
+            "]"}], ".", 
+           RowBox[{"Fuuu", "[", 
+            RowBox[{
+             RowBox[{"gaugeG", "@", "a"}], ",", "\[Mu]", ",", "\[Nu]"}], 
+            "]"}]}]}]}]}], ";", " ", "\[IndentingNewLine]", 
+       RowBox[{"IfDEBUG", "[", 
+        RowBox[{"mName", ",", 
+         RowBox[{"DEBUG", ">", "0"}], ",", 
+         RowBox[{"{", "sF2", "}"}], ",", "\"\<sF2\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{
+         RowBox[{"FFna", "[", 
+          RowBox[{
+           RowBox[{"gaugeG", "@", "c"}], ",", "\[Mu]", ",", "\[Nu]"}], "]"}], 
+         "/.", 
+         RowBox[{"sNAFF", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{"tmp", "/.", 
+         RowBox[{"sNAFF", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"DotExpandMode", "[", "True", "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{
+         RowBox[{"tmp", "//.", "simpleDot"}], "//", "Expand"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"TensorSymmetry", "[", 
+         RowBox[{"f", ",", "3"}], "]"}], "=", 
+        RowBox[{"AntiSymmetric", "[", 
+         RowBox[{"1", ",", "2", ",", "3"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"list", "=", 
+        RowBox[{"Apply", "[", 
+         RowBox[{"List", ",", "tmp"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "2", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Swaps", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"a", ",", "b"}], "}"}]}], "}"}], "]"}], "[", 
+          RowBox[{"list", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], "]"}], "//", 
+         RowBox[{"SymmetrizeSlots", "[", "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "4", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Swaps", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"a", ",", "b"}], "}"}]}], "}"}], "]"}], "[", 
+          RowBox[{"list", "[", 
+           RowBox[{"[", "4", "]"}], "]"}], "]"}], "//", 
+         RowBox[{"SymmetrizeSlots", "[", "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "8", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Swaps", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"a", ",", "b"}], "}"}]}], "}"}], "]"}], "[", 
+          RowBox[{"list", "[", 
+           RowBox[{"[", "8", "]"}], "]"}], "]"}], "//", 
+         RowBox[{"SymmetrizeSlots", "[", "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "9", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Swaps", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"a", ",", "b"}], "}"}]}], "}"}], "]"}], "[", 
+          RowBox[{"list", "[", 
+           RowBox[{"[", "9", "]"}], "]"}], "]"}], "//", 
+         RowBox[{"SymmetrizeSlots", "[", "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"list", "=", 
+        RowBox[{"list", "//.", "simpleDot"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"list", "=", 
+        RowBox[{"Apply", "[", 
+         RowBox[{"Plus", ",", "list"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"list", "=", 
+        RowBox[{
+         RowBox[{"Apply", "[", 
+          RowBox[{"List", ",", "list"}], "]"}], "/.", "commuteDot"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "2", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{"list", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], "//", 
+         RowBox[{"SwapUpDownIndices", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"list", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"list", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], "/.", 
+          RowBox[{
+           RowBox[{"Dot", "[", 
+            RowBox[{"A_", ",", "B_"}], "]"}], "\[RuleDelayed]", 
+           RowBox[{"Dot", "[", 
+            RowBox[{
+             RowBox[{"A", "/.", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a_"}], "->", 
+               RowBox[{"gaugeG", "@", 
+                RowBox[{"a", "[", "1", "]"}]}]}]}], ",", 
+             RowBox[{"B", "/.", 
+              RowBox[{
+               RowBox[{"gaugeG", "@", "a_"}], "->", 
+               RowBox[{"gaugeG", "@", 
+                RowBox[{"a", "[", "2", "]"}]}]}]}]}], "]"}]}]}], "/.", 
+         RowBox[{
+          RowBox[{"gaugeG", "@", 
+           RowBox[{"c", "[", "_", "]"}]}], "->", 
+          RowBox[{"gaugeG", "@", "c"}]}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"list", "=", 
+        RowBox[{
+         RowBox[{"Apply", "[", 
+          RowBox[{"Plus", ",", "list"}], "]"}], "/.", 
+         RowBox[{"Dot", "\[Rule]", "Times"}]}]}], ";", "\[IndentingNewLine]", 
+       
+       RowBox[{"DotExpandMode", "[", "False", "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{"sF2", ",", "subFA", ",", "list"}], "}"}]}]}], 
+     "\[IndentingNewLine]", "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+  RowBox[{"(*", "TEST", "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Column", "[", "\[IndentingNewLine]", 
+  RowBox[{"sNAFF", "=", 
+   RowBox[{"nonAbelianF", "[", "3", "]"}]}], "\[IndentingNewLine]", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"tmp", "=", 
+  RowBox[{
+   RowBox[{"FFna", "[", 
+    RowBox[{
+     RowBox[{"gaugeG", "@", "c"}], ",", "\[Mu]", ",", "\[Nu]"}], "]"}], "/.", 
+   
+   RowBox[{"sNAFF", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"tmp", "=", 
+  RowBox[{"tmp", "/.", 
+   RowBox[{"sNAFF", "[", 
+    RowBox[{"[", "2", "]"}], "]"}]}]}]}], "Input",
+ CellChangeTimes->{{3.4825208600604143`*^9, 3.4825209698329477`*^9}, {
+   3.482521005163446*^9, 3.4825210356566963`*^9}, {3.4825210658992643`*^9, 
+   3.482521143473876*^9}, {3.482521201637315*^9, 3.482521228954805*^9}, {
+   3.4825216262356043`*^9, 3.482521626879343*^9}, {3.482859867051607*^9, 
+   3.482859875632681*^9}, {3.4828681484576397`*^9, 3.482868194294746*^9}, {
+   3.482868224310748*^9, 3.482868305217306*^9}, {3.482868348592287*^9, 
+   3.482868451543154*^9}, 3.482868583927309*^9, {3.4828695018872957`*^9, 
+   3.4828696212505617`*^9}, {3.4828697744031963`*^9, 
+   3.4828697747190027`*^9}, {3.4828825261067677`*^9, 
+   3.4828827094182787`*^9}, {3.482882766965884*^9, 3.4828828119342527`*^9}, {
+   3.482882878622485*^9, 3.482883042091044*^9}, {3.4828831980594997`*^9, 
+   3.4828832434065657`*^9}, {3.482883278634137*^9, 3.482883420847937*^9}, {
+   3.4828835284075193`*^9, 3.4828836001144447`*^9}, {3.482883655565041*^9, 
+   3.482883755240181*^9}, {3.482884014447617*^9, 3.4828840933265867`*^9}, 
+   3.482884139274208*^9, {3.482884174199945*^9, 3.482884303999608*^9}, {
+   3.482885379696751*^9, 3.482885446109702*^9}, {3.4828855016761007`*^9, 
+   3.482885584492545*^9}, {3.482885619685104*^9, 3.482885641873076*^9}, {
+   3.482885900007655*^9, 3.482885903940299*^9}, {3.482885989064844*^9, 
+   3.482886041351438*^9}, {3.482886085192244*^9, 3.482886096005815*^9}, {
+   3.4828861550876226`*^9, 3.48288617866362*^9}, {3.4828862794572363`*^9, 
+   3.482886327598277*^9}, {3.482886613768502*^9, 3.482886718056942*^9}, {
+   3.482886760820359*^9, 3.4828868226063213`*^9}, {3.482886864679528*^9, 
+   3.482886902388461*^9}, {3.482887039229824*^9, 3.482887177746187*^9}, {
+   3.482887214838276*^9, 3.482887278497444*^9}, {3.482887314701454*^9, 
+   3.4828873257132874`*^9}, 3.4828886399791822`*^9, {3.4828886736682243`*^9, 
+   3.482888702955072*^9}, {3.482888745672431*^9, 3.482888769706153*^9}, {
+   3.482888850158905*^9, 3.482888983061839*^9}, 3.4828890222057*^9, {
+   3.482889071133295*^9, 3.48288907129606*^9}, {3.482889264143334*^9, 
+   3.482889273167162*^9}, {3.482889316360723*^9, 3.4828893170819073`*^9}, {
+   3.482889401937113*^9, 3.482889428436949*^9}, {3.482889514161975*^9, 
+   3.48288951594575*^9}, {3.482889901051633*^9, 3.4828899112111263`*^9}, {
+   3.4828899540808773`*^9, 3.4828899550897837`*^9}, {3.482890040764842*^9, 
+   3.4828900980681543`*^9}, {3.482890135880331*^9, 3.482890136336714*^9}, {
+   3.482934458718067*^9, 3.4829344727932796`*^9}, {3.4829346057664948`*^9, 
+   3.482934633669158*^9}, {3.482934831327758*^9, 3.48293487288486*^9}, {
+   3.482935837574835*^9, 3.4829358436446533`*^9}, {3.4829362192922153`*^9, 
+   3.482936226953084*^9}, {3.482936311797421*^9, 3.4829363627026453`*^9}, {
+   3.482936418772524*^9, 3.482936456018301*^9}, {3.4829365883489428`*^9, 
+   3.482936622114327*^9}, {3.482936654095302*^9, 3.482936663319722*^9}, {
+   3.48293675843847*^9, 3.482937055129909*^9}, {3.482937099082551*^9, 
+   3.4829371328024387`*^9}, {3.482937202760049*^9, 3.482937219325142*^9}, {
+   3.4829387086316013`*^9, 3.482938808515121*^9}, {3.482938843198748*^9, 
+   3.482938846099177*^9}, {3.48293889138861*^9, 3.482938972277006*^9}, {
+   3.482942252647428*^9, 3.482942287598323*^9}, {3.482942917998328*^9, 
+   3.482942971475416*^9}, 3.48294354712812*^9, {3.482943870447706*^9, 
+   3.4829438803265963`*^9}, {3.482943919354752*^9, 3.48294392285415*^9}, {
+   3.482944020982012*^9, 3.482944030493026*^9}, {3.482947870103858*^9, 
+   3.482947876212644*^9}, {3.482973022548163*^9, 3.4829731383276052`*^9}, {
+   3.4829731906109667`*^9, 3.482973233134972*^9}, 3.4830660041288357`*^9, {
+   3.4834652625890703`*^9, 3.483465262761883*^9}, {3.4834653159435873`*^9, 
+   3.4834653253527527`*^9}, {3.4834653853193493`*^9, 3.483465437323742*^9}, {
+   3.4834655009984293`*^9, 3.4834656025390377`*^9}, {3.483465652592209*^9, 
+   3.48346569317902*^9}, 3.483465782647655*^9, {3.483465821782667*^9, 
+   3.483465837287299*^9}, 3.4834659879500713`*^9, 3.483466039606571*^9, {
+   3.48346610349553*^9, 3.483466137476734*^9}, {3.483466240936688*^9, 
+   3.483466245470783*^9}, {3.4834663165536337`*^9, 3.483466346254114*^9}, 
+   3.48346644340976*^9}],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     RowBox[{
+      RowBox[{"FFna", "[", 
+       RowBox[{
+        StyleBox["a_",
+         StripOnInput->False,
+         FontColor->RGBColor[0, 0, 1]], ",", "\[Mu]_", ",", "\[Nu]_"}], "]"}],
+       "\[Rule]", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox["1", "4"]}], " ", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["F", 
+          RowBox[{
+           StyleBox[
+            StyleBox["a",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]],
+            StripOnInput->False,
+            ShowContents->False], "\[Mu]", "\[Nu]"}], 
+          RowBox[{
+           StyleBox["a",
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["\[Mu]",
+            ShowContents->False], 
+           StyleBox["\[Nu]",
+            ShowContents->False]}]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+           $CellContext`gaugeG[$CellContext`a], 
+           TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu], $CellContext`\
+\[Nu]}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["F", 
+          StyleBox[
+           RowBox[{
+            StyleBox["a",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]], "\[Mu]", "\[Nu]"}],
+           StripOnInput->False,
+           ShowContents->False], 
+          RowBox[{
+           StyleBox["a",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Mu]", "\[Nu]"}]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+           $CellContext`gaugeG[$CellContext`a], $CellContext`\[Mu], \
+$CellContext`\[Nu]}, {
+          TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}]}]}]},
+    {
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["F", 
+          RowBox[{
+           StyleBox[
+            StyleBox["c_",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]],
+            StripOnInput->False,
+            ShowContents->False], "\[Mu]_", "\[Nu]_"}], 
+          RowBox[{
+           StyleBox["c_",
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["\[Mu]_",
+            ShowContents->False], 
+           StyleBox["\[Nu]_",
+            ShowContents->False]}]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+           $CellContext`gaugeG[
+            Pattern[$CellContext`c, 
+             Blank[]]], TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, 
+           Pattern[$CellContext`\[Mu], 
+            Blank[]], 
+           Pattern[$CellContext`\[Nu], 
+            Blank[]]}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], "\[Rule]", 
+        RowBox[{
+         RowBox[{"g", " ", 
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            RowBox[{
+             StyleBox[
+              StyleBox["a",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]],
+              StripOnInput->False,
+              ShowContents->False], "\[Mu]"}], 
+            RowBox[{
+             StyleBox["a",
+              FontColor->RGBColor[0, 0, 1]], 
+             StyleBox["\[Mu]",
+              ShowContents->False]}]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`a], 
+             TensorCalculus4V6`Tensorial`Void}, {
+            TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], " ", 
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            RowBox[{
+             StyleBox[
+              StyleBox["b",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]],
+              StripOnInput->False,
+              ShowContents->False], "\[Nu]"}], 
+            RowBox[{
+             StyleBox["b",
+              FontColor->RGBColor[0, 0, 1]], 
+             StyleBox["\[Nu]",
+              ShowContents->False]}]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`b], 
+             TensorCalculus4V6`Tensorial`Void}, {
+            TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], " ", 
+          InterpretationBox[
+           SubsuperscriptBox["f", 
+            StyleBox[
+             RowBox[{
+              StyleBox["a",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["b",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["c",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{"a", "b", "c"}],
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+             $CellContext`gaugeG[$CellContext`a], 
+             $CellContext`gaugeG[$CellContext`b], 
+             $CellContext`gaugeG[$CellContext`c]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], "-", 
+         InterpretationBox[
+          RowBox[{
+           SubscriptBox[
+            UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Nu]"], "[", 
+           InterpretationBox[
+            SubsuperscriptBox["A", 
+             RowBox[{
+              StyleBox[
+               StyleBox["c",
+                StripOnInput->False,
+                FontColor->RGBColor[0, 0, 1]],
+               StripOnInput->False,
+               ShowContents->False], "\[Mu]"}], 
+             RowBox[{
+              StyleBox["c",
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["\[Mu]",
+               ShowContents->False]}]],
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+              $CellContext`gaugeG[$CellContext`c], 
+              TensorCalculus4V6`Tensorial`Void}, {
+             TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "]"}],
+          $CellContext`xPartialD[
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`c], 
+             TensorCalculus4V6`Tensorial`Void}, {
+            TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}], \
+$CellContext`\[Nu]],
+          Editable->False,
+          SyntaxForm->Automatic], "+", 
+         InterpretationBox[
+          RowBox[{
+           SubscriptBox[
+            UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Mu]"], "[", 
+           InterpretationBox[
+            SubsuperscriptBox["A", 
+             RowBox[{
+              StyleBox[
+               StyleBox["c",
+                StripOnInput->False,
+                FontColor->RGBColor[0, 0, 1]],
+               StripOnInput->False,
+               ShowContents->False], "\[Nu]"}], 
+             RowBox[{
+              StyleBox["c",
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["\[Nu]",
+               ShowContents->False]}]],
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+              $CellContext`gaugeG[$CellContext`c], 
+              TensorCalculus4V6`Tensorial`Void}, {
+             TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "]"}],
+          $CellContext`xPartialD[
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`c], 
+             TensorCalculus4V6`Tensorial`Void}, {
+            TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}], \
+$CellContext`\[Mu]],
+          Editable->False,
+          SyntaxForm->Automatic]}]}], ",", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["F", 
+          StyleBox[
+           RowBox[{
+            StyleBox["c_",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]], "\[Mu]_", "\[Nu]_"}],
+           StripOnInput->False,
+           ShowContents->False], 
+          RowBox[{
+           StyleBox["c_",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Mu]_", "\[Nu]_"}]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+           $CellContext`gaugeG[
+            Pattern[$CellContext`c, 
+             Blank[]]], 
+           Pattern[$CellContext`\[Mu], 
+            Blank[]], 
+           Pattern[$CellContext`\[Nu], 
+            Blank[]]}, {
+          TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], "\[Rule]", 
+        RowBox[{
+         RowBox[{"g", " ", 
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            StyleBox[
+             RowBox[{
+              StyleBox["a",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+             StripOnInput->False,
+             ShowContents->False], 
+            RowBox[{
+             StyleBox["a",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`a], $CellContext`\[Mu]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], " ", 
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            StyleBox[
+             RowBox[{
+              StyleBox["b",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+             StripOnInput->False,
+             ShowContents->False], 
+            RowBox[{
+             StyleBox["b",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`b], $CellContext`\[Nu]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], " ", 
+          InterpretationBox[
+           SubsuperscriptBox["f", 
+            StyleBox[
+             RowBox[{
+              StyleBox["a",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["b",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], 
+              StyleBox["c",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{"a", "b", "c"}],
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+             $CellContext`gaugeG[$CellContext`a], 
+             $CellContext`gaugeG[$CellContext`b], 
+             $CellContext`gaugeG[$CellContext`c]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], "-", 
+         InterpretationBox[
+          RowBox[{
+           TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Nu]"},
+            "Superscript"], "[", 
+           InterpretationBox[
+            SubsuperscriptBox["A", 
+             StyleBox[
+              RowBox[{
+               StyleBox["c",
+                StripOnInput->False,
+                FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+              StripOnInput->False,
+              ShowContents->False], 
+             RowBox[{
+              StyleBox["c",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+              $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+             TensorCalculus4V6`Tensorial`Void, 
+              TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "]"}],
+          $CellContext`xPartialDu[
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Nu]],
+          Editable->False,
+          SyntaxForm->Automatic], "+", 
+         InterpretationBox[
+          RowBox[{
+           TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Mu]"},
+            "Superscript"], "[", 
+           InterpretationBox[
+            SubsuperscriptBox["A", 
+             StyleBox[
+              RowBox[{
+               StyleBox["c",
+                StripOnInput->False,
+                FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+              StripOnInput->False,
+              ShowContents->False], 
+             RowBox[{
+              StyleBox["c",
+               StripOnInput->False,
+               FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+              $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+             TensorCalculus4V6`Tensorial`Void, 
+              TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "]"}],
+          $CellContext`xPartialDu[
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+             $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Mu]],
+          Editable->False,
+          SyntaxForm->Automatic]}]}]}], "}"}]},
+    {
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox["1", "4"]}], " ", 
+       SuperscriptBox["g", "2"], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         RowBox[{
+          StyleBox[
+           StyleBox[
+            RowBox[{"a", "[", "1", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]],
+           StripOnInput->False,
+           ShowContents->False], "\[Mu]"}], 
+         RowBox[{
+          StyleBox[
+           RowBox[{"a", "[", "1", "]"}],
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["\[Mu]",
+           ShowContents->False]}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[
+           $CellContext`a[1]], TensorCalculus4V6`Tensorial`Void}, {
+         TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox[
+            RowBox[{"a", "[", "2", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox[
+           RowBox[{"a", "[", "2", "]"}],
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[
+           $CellContext`a[2]], $CellContext`\[Mu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         RowBox[{
+          StyleBox[
+           StyleBox[
+            RowBox[{"b", "[", "1", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]],
+           StripOnInput->False,
+           ShowContents->False], "\[Nu]"}], 
+         RowBox[{
+          StyleBox[
+           RowBox[{"b", "[", "1", "]"}],
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["\[Nu]",
+           ShowContents->False]}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[
+           $CellContext`b[1]], TensorCalculus4V6`Tensorial`Void}, {
+         TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox[
+            RowBox[{"b", "[", "2", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox[
+           RowBox[{"b", "[", "2", "]"}],
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[
+           $CellContext`b[2]], $CellContext`\[Nu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["f", 
+         StyleBox[
+          RowBox[{
+           StyleBox[
+            RowBox[{"a", "[", "1", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox[
+            RowBox[{"b", "[", "1", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]]}],
+          StripOnInput->False,
+          ShowContents->False], 
+         StyleBox[
+          RowBox[{
+           RowBox[{"a", "[", "1", "]"}], 
+           RowBox[{"b", "[", "1", "]"}], "c"}],
+          StripOnInput->False,
+          FontColor->RGBColor[0, 0, 1]]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+          $CellContext`gaugeG[
+           $CellContext`a[1]], 
+          $CellContext`gaugeG[
+           $CellContext`b[1]], 
+          $CellContext`gaugeG[$CellContext`c]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["f", 
+         StyleBox[
+          RowBox[{
+           StyleBox[
+            RowBox[{"a", "[", "2", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox[
+            RowBox[{"b", "[", "2", "]"}],
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]]}],
+          StripOnInput->False,
+          ShowContents->False], 
+         StyleBox[
+          RowBox[{
+           RowBox[{"a", "[", "2", "]"}], 
+           RowBox[{"b", "[", "2", "]"}], "c"}],
+          StripOnInput->False,
+          FontColor->RGBColor[0, 0, 1]]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+          $CellContext`gaugeG[
+           $CellContext`a[2]], 
+          $CellContext`gaugeG[
+           $CellContext`b[2]], 
+          $CellContext`gaugeG[$CellContext`c]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}], "-", 
+      RowBox[{"g", " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox["a",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox["a",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`a], $CellContext`\[Mu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox["b",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox["b",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`b], $CellContext`\[Nu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["f", 
+         StyleBox[
+          RowBox[{
+           StyleBox["a",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["b",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], 
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]]}],
+          StripOnInput->False,
+          ShowContents->False], 
+         StyleBox[
+          RowBox[{"a", "b", "c"}],
+          StripOnInput->False,
+          FontColor->RGBColor[0, 0, 1]]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+          $CellContext`gaugeG[$CellContext`a], 
+          $CellContext`gaugeG[$CellContext`b], 
+          $CellContext`gaugeG[$CellContext`c]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        RowBox[{
+         SubscriptBox[
+          UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Mu]"], "[", 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           RowBox[{
+            StyleBox[
+             StyleBox["c",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]],
+             StripOnInput->False,
+             ShowContents->False], "\[Nu]"}], 
+           RowBox[{
+            StyleBox["c",
+             FontColor->RGBColor[0, 0, 1]], 
+            StyleBox["\[Nu]",
+             ShowContents->False]}]],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+            $CellContext`gaugeG[$CellContext`c], 
+            TensorCalculus4V6`Tensorial`Void}, {
+           TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "]"}],
+        $CellContext`xPartialD[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+           $CellContext`gaugeG[$CellContext`c], 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}], \
+$CellContext`\[Mu]],
+        Editable->False,
+        SyntaxForm->Automatic]}], "-", 
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       InterpretationBox[
+        RowBox[{
+         SubscriptBox[
+          UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Nu]"], "[", 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           RowBox[{
+            StyleBox[
+             StyleBox["c",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]],
+             StripOnInput->False,
+             ShowContents->False], "\[Mu]"}], 
+           RowBox[{
+            StyleBox["c",
+             FontColor->RGBColor[0, 0, 1]], 
+            StyleBox["\[Mu]",
+             ShowContents->False]}]],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+            $CellContext`gaugeG[$CellContext`c], 
+            TensorCalculus4V6`Tensorial`Void}, {
+           TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "]"}],
+        $CellContext`xPartialD[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+           $CellContext`gaugeG[$CellContext`c], 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}], \
+$CellContext`\[Nu]],
+        Editable->False,
+        SyntaxForm->Automatic], " ", 
+       InterpretationBox[
+        RowBox[{
+         TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Nu]"},
+          "Superscript"], "[", 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           StyleBox[
+            RowBox[{
+             StyleBox["c",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+            StripOnInput->False,
+            ShowContents->False], 
+           RowBox[{
+            StyleBox["c",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+            $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "]"}],
+        $CellContext`xPartialDu[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+           $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+          TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Nu]],
+        Editable->False,
+        SyntaxForm->Automatic]}], "+", 
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       InterpretationBox[
+        RowBox[{
+         SubscriptBox[
+          UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Nu]"], "[", 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           RowBox[{
+            StyleBox[
+             StyleBox["c",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]],
+             StripOnInput->False,
+             ShowContents->False], "\[Mu]"}], 
+           RowBox[{
+            StyleBox["c",
+             FontColor->RGBColor[0, 0, 1]], 
+            StyleBox["\[Mu]",
+             ShowContents->False]}]],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+            $CellContext`gaugeG[$CellContext`c], 
+            TensorCalculus4V6`Tensorial`Void}, {
+           TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "]"}],
+        $CellContext`xPartialD[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+           $CellContext`gaugeG[$CellContext`c], 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}], \
+$CellContext`\[Nu]],
+        Editable->False,
+        SyntaxForm->Automatic], " ", 
+       InterpretationBox[
+        RowBox[{
+         TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Mu]"},
+          "Superscript"], "[", 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           StyleBox[
+            RowBox[{
+             StyleBox["c",
+              StripOnInput->False,
+              FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+            StripOnInput->False,
+            ShowContents->False], 
+           RowBox[{
+            StyleBox["c",
+             StripOnInput->False,
+             FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+            $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "]"}],
+        $CellContext`xPartialDu[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+           $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+          TensorCalculus4V6`Tensorial`Void, 
+           TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Mu]],
+        Editable->False,
+        SyntaxForm->Automatic]}]}]}
+   },
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Column"]], "Output",
+ CellChangeTimes->{
+  3.482521046619748*^9, 3.482859780542671*^9, 3.482859876933485*^9, 
+   3.482882658625114*^9, 3.4828827113632097`*^9, 3.4828837755121*^9, 
+   3.4828843395296183`*^9, 3.482885647361658*^9, 3.482885907984047*^9, 
+   3.482886123825392*^9, 3.482886300023156*^9, 3.48288633448142*^9, 
+   3.482886906631967*^9, 3.482887078502534*^9, 3.4828871796877832`*^9, 
+   3.4828872203837957`*^9, 3.482887288422378*^9, 3.482887329250661*^9, 
+   3.482888984830858*^9, 3.4828890279020443`*^9, 3.482889074701551*^9, 
+   3.482889350549684*^9, 3.482889521614255*^9, 3.482889875194724*^9, 
+   3.482889912760983*^9, 3.482889956421481*^9, 3.482890048578451*^9, 
+   3.482890100727023*^9, 3.482890137849524*^9, 3.482935846546302*^9, {
+   3.4829362307984*^9, 3.482936243802496*^9}, 3.482936336582745*^9, {
+   3.482936430334877*^9, 3.482936457907055*^9}, {3.482936599739595*^9, 
+   3.482936623880684*^9}, 3.4829366671357307`*^9, {3.482936784744334*^9, 
+   3.482936797555105*^9}, {3.4829368290693417`*^9, 3.4829368787503347`*^9}, {
+   3.4829369096552362`*^9, 3.4829370050986433`*^9}, {3.482937035975218*^9, 
+   3.482937059006228*^9}, {3.482937111390917*^9, 3.482937138613583*^9}, 
+   3.482937221978237*^9, 3.482938813747424*^9, 3.482942291649005*^9, 
+   3.482942948662125*^9, 3.482943550755083*^9, 3.48294388362321*^9, 
+   3.482943926423664*^9, 3.48294403400107*^9, 3.482947734509543*^9, 
+   3.482947880321857*^9, 3.4829730038619757`*^9, 3.482973150700295*^9, {
+   3.4829732167430267`*^9, 3.482973282172233*^9}, {3.482973398956959*^9, 
+   3.482973427281431*^9}, {3.482973588408136*^9, 3.482973614251313*^9}, 
+   3.4832002879568977`*^9, 3.483465607413063*^9, 3.483465697246841*^9, 
+   3.483465989957782*^9, {3.483466118131793*^9, 3.4834661390348587`*^9}, 
+   3.483466247440734*^9, 3.483466348390604*^9, 3.4834664460207033`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox["1", "4"]}], " ", 
+  RowBox[{
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     RowBox[{
+      StyleBox[
+       StyleBox["c",
+        StripOnInput->False,
+        FontColor->RGBColor[0, 0, 1]],
+       StripOnInput->False,
+       ShowContents->False], "\[Mu]", "\[Nu]"}], 
+     RowBox[{
+      StyleBox["c",
+       FontColor->RGBColor[0, 0, 1]], 
+      StyleBox["\[Mu]",
+       ShowContents->False], 
+      StyleBox["\[Nu]",
+       ShowContents->False]}]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+      $CellContext`gaugeG[$CellContext`c], TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {
+     TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu], \
+$CellContext`\[Nu]}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], ".", 
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     StyleBox[
+      RowBox[{
+       StyleBox["c",
+        StripOnInput->False,
+        FontColor->RGBColor[0, 0, 1]], "\[Mu]", "\[Nu]"}],
+      StripOnInput->False,
+      ShowContents->False], 
+     RowBox[{
+      StyleBox["c",
+       StripOnInput->False,
+       FontColor->RGBColor[0, 0, 1]], "\[Mu]", "\[Nu]"}]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+      $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu], $CellContext`\
+\[Nu]}, {TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False]}]}]], "Output",
+ CellChangeTimes->{
+  3.482521046619748*^9, 3.482859780542671*^9, 3.482859876933485*^9, 
+   3.482882658625114*^9, 3.4828827113632097`*^9, 3.4828837755121*^9, 
+   3.4828843395296183`*^9, 3.482885647361658*^9, 3.482885907984047*^9, 
+   3.482886123825392*^9, 3.482886300023156*^9, 3.48288633448142*^9, 
+   3.482886906631967*^9, 3.482887078502534*^9, 3.4828871796877832`*^9, 
+   3.4828872203837957`*^9, 3.482887288422378*^9, 3.482887329250661*^9, 
+   3.482888984830858*^9, 3.4828890279020443`*^9, 3.482889074701551*^9, 
+   3.482889350549684*^9, 3.482889521614255*^9, 3.482889875194724*^9, 
+   3.482889912760983*^9, 3.482889956421481*^9, 3.482890048578451*^9, 
+   3.482890100727023*^9, 3.482890137849524*^9, 3.482935846546302*^9, {
+   3.4829362307984*^9, 3.482936243802496*^9}, 3.482936336582745*^9, {
+   3.482936430334877*^9, 3.482936457907055*^9}, {3.482936599739595*^9, 
+   3.482936623880684*^9}, 3.4829366671357307`*^9, {3.482936784744334*^9, 
+   3.482936797555105*^9}, {3.4829368290693417`*^9, 3.4829368787503347`*^9}, {
+   3.4829369096552362`*^9, 3.4829370050986433`*^9}, {3.482937035975218*^9, 
+   3.482937059006228*^9}, {3.482937111390917*^9, 3.482937138613583*^9}, 
+   3.482937221978237*^9, 3.482938813747424*^9, 3.482942291649005*^9, 
+   3.482942948662125*^9, 3.482943550755083*^9, 3.48294388362321*^9, 
+   3.482943926423664*^9, 3.48294403400107*^9, 3.482947734509543*^9, 
+   3.482947880321857*^9, 3.4829730038619757`*^9, 3.482973150700295*^9, {
+   3.4829732167430267`*^9, 3.482973282172233*^9}, {3.482973398956959*^9, 
+   3.482973427281431*^9}, {3.482973588408136*^9, 3.482973614251313*^9}, 
+   3.4832002879568977`*^9, 3.483465607413063*^9, 3.483465697246841*^9, 
+   3.483465989957782*^9, {3.483466118131793*^9, 3.4834661390348587`*^9}, 
+   3.483466247440734*^9, 3.483466348390604*^9, 3.4834664460916977`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox["1", "4"]}], " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"g", " ", 
+      InterpretationBox[
+       SubsuperscriptBox["A", 
+        RowBox[{
+         StyleBox[
+          StyleBox["a",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]],
+          StripOnInput->False,
+          ShowContents->False], "\[Mu]"}], 
+        RowBox[{
+         StyleBox["a",
+          FontColor->RGBColor[0, 0, 1]], 
+         StyleBox["\[Mu]",
+          ShowContents->False]}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`a], 
+         TensorCalculus4V6`Tensorial`Void}, {
+        TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["A", 
+        RowBox[{
+         StyleBox[
+          StyleBox["b",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]],
+          StripOnInput->False,
+          ShowContents->False], "\[Nu]"}], 
+        RowBox[{
+         StyleBox["b",
+          FontColor->RGBColor[0, 0, 1]], 
+         StyleBox["\[Nu]",
+          ShowContents->False]}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`b], 
+         TensorCalculus4V6`Tensorial`Void}, {
+        TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["f", 
+        StyleBox[
+         RowBox[{
+          StyleBox["a",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["b",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["c",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]]}],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         RowBox[{"a", "b", "c"}],
+         StripOnInput->False,
+         FontColor->RGBColor[0, 0, 1]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+         $CellContext`gaugeG[$CellContext`a], 
+         $CellContext`gaugeG[$CellContext`b], 
+         $CellContext`gaugeG[$CellContext`c]}, {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "-", 
+     InterpretationBox[
+      RowBox[{
+       SubscriptBox[
+        UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Nu]"], "[", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         RowBox[{
+          StyleBox[
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]],
+           StripOnInput->False,
+           ShowContents->False], "\[Mu]"}], 
+         RowBox[{
+          StyleBox["c",
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["\[Mu]",
+           ShowContents->False]}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`c], 
+          TensorCalculus4V6`Tensorial`Void}, {
+         TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "]"}],
+      $CellContext`xPartialD[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`c], 
+         TensorCalculus4V6`Tensorial`Void}, {
+        TensorCalculus4V6`Tensorial`Void, $CellContext`\[Mu]}], $CellContext`\
+\[Nu]],
+      Editable->False,
+      SyntaxForm->Automatic], "+", 
+     InterpretationBox[
+      RowBox[{
+       SubscriptBox[
+        UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Mu]"], "[", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         RowBox[{
+          StyleBox[
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]],
+           StripOnInput->False,
+           ShowContents->False], "\[Nu]"}], 
+         RowBox[{
+          StyleBox["c",
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["\[Nu]",
+           ShowContents->False]}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`c], 
+          TensorCalculus4V6`Tensorial`Void}, {
+         TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "]"}],
+      $CellContext`xPartialD[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`c], 
+         TensorCalculus4V6`Tensorial`Void}, {
+        TensorCalculus4V6`Tensorial`Void, $CellContext`\[Nu]}], $CellContext`\
+\[Mu]],
+      Editable->False,
+      SyntaxForm->Automatic]}], ")"}], ".", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"g", " ", 
+      InterpretationBox[
+       SubsuperscriptBox["A", 
+        StyleBox[
+         RowBox[{
+          StyleBox["a",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+         StripOnInput->False,
+         ShowContents->False], 
+        RowBox[{
+         StyleBox["a",
+          StripOnInput->False,
+          FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`a], $CellContext`\[Mu]}, {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["A", 
+        StyleBox[
+         RowBox[{
+          StyleBox["b",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+         StripOnInput->False,
+         ShowContents->False], 
+        RowBox[{
+         StyleBox["b",
+          StripOnInput->False,
+          FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`b], $CellContext`\[Nu]}, {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["f", 
+        StyleBox[
+         RowBox[{
+          StyleBox["a",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["b",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], 
+          StyleBox["c",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]]}],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         RowBox[{"a", "b", "c"}],
+         StripOnInput->False,
+         FontColor->RGBColor[0, 0, 1]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`f, {
+         $CellContext`gaugeG[$CellContext`a], 
+         $CellContext`gaugeG[$CellContext`b], 
+         $CellContext`gaugeG[$CellContext`c]}, {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "-", 
+     InterpretationBox[
+      RowBox[{
+       TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Nu]"},
+        "Superscript"], "[", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Mu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox["c",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Mu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "]"}],
+      $CellContext`xPartialDu[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`c], $CellContext`\[Mu]}, {
+        TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Nu]],
+      Editable->False,
+      SyntaxForm->Automatic], "+", 
+     InterpretationBox[
+      RowBox[{
+       TemplateBox[{UnderscriptBox["\"\[PartialD]\"", "_"],"\[Mu]"},
+        "Superscript"], "[", 
+       InterpretationBox[
+        SubsuperscriptBox["A", 
+         StyleBox[
+          RowBox[{
+           StyleBox["c",
+            StripOnInput->False,
+            FontColor->RGBColor[0, 0, 1]], "\[Nu]"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{
+          StyleBox["c",
+           StripOnInput->False,
+           FontColor->RGBColor[0, 0, 1]], "\[Nu]"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+          $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "]"}],
+      $CellContext`xPartialDu[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {
+         $CellContext`gaugeG[$CellContext`c], $CellContext`\[Nu]}, {
+        TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}], $CellContext`\[Mu]],
+      Editable->False,
+      SyntaxForm->Automatic]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{
+  3.482521046619748*^9, 3.482859780542671*^9, 3.482859876933485*^9, 
+   3.482882658625114*^9, 3.4828827113632097`*^9, 3.4828837755121*^9, 
+   3.4828843395296183`*^9, 3.482885647361658*^9, 3.482885907984047*^9, 
+   3.482886123825392*^9, 3.482886300023156*^9, 3.48288633448142*^9, 
+   3.482886906631967*^9, 3.482887078502534*^9, 3.4828871796877832`*^9, 
+   3.4828872203837957`*^9, 3.482887288422378*^9, 3.482887329250661*^9, 
+   3.482888984830858*^9, 3.4828890279020443`*^9, 3.482889074701551*^9, 
+   3.482889350549684*^9, 3.482889521614255*^9, 3.482889875194724*^9, 
+   3.482889912760983*^9, 3.482889956421481*^9, 3.482890048578451*^9, 
+   3.482890100727023*^9, 3.482890137849524*^9, 3.482935846546302*^9, {
+   3.4829362307984*^9, 3.482936243802496*^9}, 3.482936336582745*^9, {
+   3.482936430334877*^9, 3.482936457907055*^9}, {3.482936599739595*^9, 
+   3.482936623880684*^9}, 3.4829366671357307`*^9, {3.482936784744334*^9, 
+   3.482936797555105*^9}, {3.4829368290693417`*^9, 3.4829368787503347`*^9}, {
+   3.4829369096552362`*^9, 3.4829370050986433`*^9}, {3.482937035975218*^9, 
+   3.482937059006228*^9}, {3.482937111390917*^9, 3.482937138613583*^9}, 
+   3.482937221978237*^9, 3.482938813747424*^9, 3.482942291649005*^9, 
+   3.482942948662125*^9, 3.482943550755083*^9, 3.48294388362321*^9, 
+   3.482943926423664*^9, 3.48294403400107*^9, 3.482947734509543*^9, 
+   3.482947880321857*^9, 3.4829730038619757`*^9, 3.482973150700295*^9, {
+   3.4829732167430267`*^9, 3.482973282172233*^9}, {3.482973398956959*^9, 
+   3.482973427281431*^9}, {3.482973588408136*^9, 3.482973614251313*^9}, 
+   3.4832002879568977`*^9, 3.483465607413063*^9, 3.483465697246841*^9, 
+   3.483465989957782*^9, {3.483466118131793*^9, 3.4834661390348587`*^9}, 
+   3.483466247440734*^9, 3.483466348390604*^9, 3.4834664461577787`*^9}]
+}, Open  ]]
+},
+WindowSize->{640, 656},
+WindowMargins->{{39, Automatic}, {Automatic, 0}},
+FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
+StyleDefinitions->"TensorialStyleSave.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 17419, 406, 1001, "Input"],
+Cell[17989, 430, 31218, 793, 138, "Output"],
+Cell[49210, 1225, 3381, 72, 43, "Output"],
+Cell[52594, 1299, 11523, 290, 43, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

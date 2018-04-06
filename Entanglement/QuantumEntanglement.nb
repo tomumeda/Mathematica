@@ -1,0 +1,2434 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     86757,       2426]
+NotebookOptionsPosition[     85468,       2377]
+NotebookOutlinePosition[     85836,       2393]
+CellTagsIndexPosition[     85793,       2390]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "Local`QFTToolKit2`"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.56864327369387*^9, 3.5686433185337973`*^9}, {
+   3.636124223447123*^9, 3.6361242241696672`*^9}, {3.640430449322165*^9, 
+   3.640430454418408*^9}, {3.6464973100744457`*^9, 3.646497314447693*^9}, {
+   3.6694279608619347`*^9, 3.6694280040414133`*^9}, 3.670117817981682*^9, {
+   3.671366579055991*^9, 3.6713666038803663`*^9}, {3.689772928097857*^9, 
+   3.689772930433343*^9}},
+ EmphasizeSyntaxErrors->True],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$defQE", "=", 
+   RowBox[{
+    RowBox[{"$def", "[", "\"\<QuantumEntanglement\>\"", "]"}], "=", 
+    RowBox[{"{", "}"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"accumQE", "=", 
+   RowBox[{"accum", "[", "\"\<QuantumEntanglement\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"selectQE", "=", 
+   RowBox[{"select", "[", "\"\<QuantumEntanglement\>\"", "]"}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6875371124310503`*^9, 3.6875372773931103`*^9}, {
+   3.6875373090642967`*^9, 3.687537350177436*^9}, 3.6875376034666367`*^9, {
+   3.68753765826827*^9, 3.68753773010957*^9}, {3.6875378267518377`*^9, 
+   3.687537978142562*^9}, {3.687538012021228*^9, 3.687538103905287*^9}, {
+   3.689207442689435*^9, 3.6892074746625967`*^9}, {3.6897728659404297`*^9, 
+   3.689772908124206*^9}, {3.691292057182053*^9, 3.6912920804848127`*^9}, {
+   3.69791366368858*^9, 3.697913691218089*^9}, {3.6987153453820353`*^9, 
+   3.698715355190918*^9}, {3.699634968125224*^9, 3.699635007160087*^9}, {
+   3.6998758302689247`*^9, 3.6998758479958467`*^9}, {3.70056910905589*^9, 
+   3.7005691513528643`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"expandDC", "[", 
+     RowBox[{
+      RowBox[{"sub_:", 
+       RowBox[{"{", "}"}]}], ",", 
+      RowBox[{"scalar_:", 
+       RowBox[{"{", "}"}]}], ",", 
+      RowBox[{"func_:", 
+       RowBox[{"{", "}"}]}]}], "]"}], ":=", 
+    RowBox[{"tuRepeat", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"sub", ",", 
+        RowBox[{"tuOpDistribute", "[", "dotOps", "]"}], ",", 
+        RowBox[{"tuOpSimplify", "[", 
+         RowBox[{"dotOps", ",", "scalar"}], "]"}], ",", 
+        RowBox[{"tuOpSimplify", "[", 
+         RowBox[{"CircleTimes", ",", "scalar"}], "]"}], ",", 
+        RowBox[{"tuOpDistribute", "[", "CircleTimes", "]"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"tuCircleTimesSimplify", ",", "func"}], "}"}]}], "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Clear", "[", "expandCom", "]"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"expandCom", "[", 
+       RowBox[{"subs_:", 
+        RowBox[{"{", "}"}]}], "]"}], "[", "exp_", "]"}], ":=", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"tmp", "=", "exp"}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"tmp", "=", 
+         RowBox[{
+          RowBox[{"tmp", "//.", "tuCommutatorExpand"}], "//", 
+          RowBox[{"expandDC", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"tmp", "=", 
+         RowBox[{
+          RowBox[{"tmp", "/.", "toxDot"}], "//.", 
+          RowBox[{"Flatten", "[", 
+           RowBox[{"{", "subs", "}"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
+        
+        RowBox[{"tmp", "=", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"tmp", "//", "tuMatrixOrderedMultiply"}], "//", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"#", "/.", "toDot"}], "&"}], ")"}]}], "//", 
+          RowBox[{"expandDC", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
+        "tmp"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"$sgeneral", ":=", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"T", "[", 
+        RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+         RowBox[{"{", "5", "}"}]}], "]"}], "\[Rule]", 
+       RowBox[{"Product", "[", 
+        RowBox[{
+         RowBox[{"T", "[", 
+          RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+           RowBox[{"{", "\[Mu]", "}"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]", ",", "4"}], "}"}]}], "]"}]}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"T", "[", 
+         RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+          RowBox[{"{", "5", "}"}]}], "]"}], ".", 
+        RowBox[{"T", "[", 
+         RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+          RowBox[{"{", "5", "}"}]}], "]"}]}], "\[Rule]", "1"}], ",", 
+      RowBox[{
+       RowBox[{"ConjugateTranspose", "[", 
+        RowBox[{"T", "[", 
+         RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+          RowBox[{"{", "5", "}"}]}], "]"}], "]"}], "->", 
+       RowBox[{"T", "[", 
+        RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+         RowBox[{"{", "5", "}"}]}], "]"}]}], ",", 
+      RowBox[{
+       RowBox[{"CommutatorP", "[", 
+        RowBox[{
+         RowBox[{"T", "[", 
+          RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+           RowBox[{"{", "5", "}"}]}], "]"}], ",", 
+         RowBox[{"T", "[", 
+          RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+           RowBox[{"{", "\[Mu]", "}"}]}], "]"}]}], "]"}], "\[Rule]", "0"}], 
+      ",", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"T", "[", 
+         RowBox[{"\"\<\[Del]\>\"", ",", "\"\<d\>\"", ",", 
+          RowBox[{"{", "_", "}"}]}], "]"}], "[", 
+        SubscriptBox["1", "n_"], "]"}], "\[Rule]", "0"}], ",", 
+      RowBox[{
+       RowBox[{"a_", " ", ".", " ", 
+        SubscriptBox["1", "n_"]}], "\[Rule]", "a"}], ",", 
+      RowBox[{
+       RowBox[{
+        SubscriptBox["1", "n_"], " ", ".", " ", "a_"}], "\[Rule]", "a"}]}], 
+     "}"}]}], "\[IndentingNewLine]", 
+   RowBox[{"$sgeneral", "//", "ColumnBar"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Clear", "[", "$symmetries", "]"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$symmetries", ":=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"tt", ":", 
+         RowBox[{"T", "[", 
+          RowBox[{"g", ",", "\"\<uu\>\"", ",", 
+           RowBox[{"{", 
+            RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+        "\[RuleDelayed]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"tuIndexSwap", "[", 
+           RowBox[{"{", 
+            RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}], "/;", 
+         RowBox[{"OrderedQ", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"tt", ":", 
+         RowBox[{"T", "[", 
+          RowBox[{"F", ",", "\"\<uu\>\"", ",", 
+           RowBox[{"{", 
+            RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+        "\[RuleDelayed]", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"tuIndexSwap", "[", 
+            RowBox[{"{", 
+             RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", 
+           "]"}]}], "/;", 
+         RowBox[{"OrderedQ", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"tt", ":", 
+         RowBox[{"T", "[", 
+          RowBox[{"F", ",", "\"\<dd\>\"", ",", 
+           RowBox[{"{", 
+            RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+        "\[RuleDelayed]", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"tuIndexSwap", "[", 
+            RowBox[{"{", 
+             RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", 
+           "]"}]}], "/;", 
+         RowBox[{"OrderedQ", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"CommutatorM", "[", 
+         RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"CommutatorM", "[", 
+           RowBox[{"b", ",", "a"}], "]"}]}], "/;", 
+         RowBox[{"OrderedQ", "[", 
+          RowBox[{"{", 
+           RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"CommutatorP", "[", 
+         RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
+        RowBox[{
+         RowBox[{"CommutatorP", "[", 
+          RowBox[{"b", ",", "a"}], "]"}], "/;", 
+         RowBox[{"OrderedQ", "[", 
+          RowBox[{"{", 
+           RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"tt", ":", 
+         RowBox[{
+          RowBox[{"T", "[", 
+           RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+            RowBox[{"{", "\[Mu]", "}"}]}], "]"}], " ", ".", " ", 
+          RowBox[{"T", "[", 
+           RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+            RowBox[{"{", "5", "}"}]}], "]"}]}]}], " ", ":>", 
+        RowBox[{"Reverse", "[", "tt", "]"}]}]}], "\[IndentingNewLine]", 
+      "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"$symmetries", "//", "ColumnBar"}], 
+   "\[IndentingNewLine]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6404304570785427`*^9, 3.6404304623998127`*^9}, {
+   3.640529512689515*^9, 3.640529517633898*^9}, {3.640605107079557*^9, 
+   3.640605137578652*^9}, {3.644059837388276*^9, 3.644059879166112*^9}, {
+   3.644059932056183*^9, 3.644059933425582*^9}, {3.644061210478726*^9, 
+   3.64406121251124*^9}, {3.669428051561451*^9, 3.669428135496799*^9}, {
+   3.669430181797778*^9, 3.66943018977645*^9}, {3.669472978698565*^9, 
+   3.6694730019644117`*^9}, 3.669493664658173*^9, {3.6695537068226213`*^9, 
+   3.669553712833424*^9}, 3.669739669562244*^9, {3.669739755274416*^9, 
+   3.669739758430641*^9}, {3.670111705809988*^9, 3.6701117210320063`*^9}, {
+   3.670242650831737*^9, 3.670242673915504*^9}, 3.670243062297974*^9, {
+   3.67024412467327*^9, 3.6702441296566887`*^9}, {3.670612571467114*^9, 
+   3.670612593682559*^9}, {3.6707624879712152`*^9, 3.670762492277117*^9}, {
+   3.67119759045965*^9, 3.6711975924173*^9}, {3.671366798222143*^9, 
+   3.6713668001491537`*^9}, {3.67136686070894*^9, 3.6713669943200293`*^9}, {
+   3.673610638563278*^9, 3.6736106887776318`*^9}, {3.673610792149109*^9, 
+   3.673610823162889*^9}, {3.6736108864973783`*^9, 3.67361089409048*^9}, 
+   3.67361093561063*^9, {3.673611745739005*^9, 3.673611755190402*^9}, {
+   3.679164270858122*^9, 3.6791642744814577`*^9}, {3.679164396444412*^9, 
+   3.6791644066019993`*^9}, {3.6791698448865232`*^9, 3.679169878059732*^9}, {
+   3.679773790679257*^9, 3.679773824270335*^9}, {3.681213200570828*^9, 
+   3.6812132396494493`*^9}, {3.681654446016843*^9, 3.681654453410269*^9}, {
+   3.681656185544754*^9, 3.681656229605723*^9}, {3.6820877612104397`*^9, 
+   3.6820877678698597`*^9}, {3.682689032490202*^9, 3.682689040954112*^9}, {
+   3.684169297020524*^9, 3.6841693473936987`*^9}, {3.6848575455172997`*^9, 
+   3.684857566122552*^9}, {3.6892076221494217`*^9, 3.689207626667377*^9}, {
+   3.68921283673352*^9, 3.6892128431637583`*^9}, {3.689336315865251*^9, 
+   3.689336353575262*^9}, {3.689772942030341*^9, 3.6897729500756607`*^9}, {
+   3.689775656862821*^9, 3.689775671006584*^9}, {3.6904740392611237`*^9, 
+   3.6904740636123466`*^9}, 3.691292093741396*^9, {3.692585766692383*^9, 
+   3.692585790082213*^9}, 3.692621237916707*^9, 3.6926425081910067`*^9, {
+   3.6939261550340767`*^9, 3.6939261578953247`*^9}, {3.696171766726697*^9, 
+   3.69617182588018*^9}, {3.697119579510499*^9, 3.697119580871941*^9}, 
+   3.6979136993356953`*^9, {3.69851587943631*^9, 3.698515888299553*^9}, 
+   3.698712131279449*^9, {3.6996371600376368`*^9, 3.699637172173771*^9}, {
+   3.700569163443385*^9, 3.7005691942170362`*^9}}],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Gamma]", "5", 
+        StyleBox["5",
+         StripOnInput->False,
+         ShowContents->False]],
+       $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], "\[Rule]", 
+      RowBox[{
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", 
+         StyleBox["1",
+          StripOnInput->False,
+          ShowContents->False], "1"],
+        $CellContext`Tensor[$CellContext`\[Gamma], {1}, {$CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", 
+         StyleBox["2",
+          StripOnInput->False,
+          ShowContents->False], "2"],
+        $CellContext`Tensor[$CellContext`\[Gamma], {2}, {$CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", 
+         StyleBox["3",
+          StripOnInput->False,
+          ShowContents->False], "3"],
+        $CellContext`Tensor[$CellContext`\[Gamma], {3}, {$CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], " ", 
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", 
+         StyleBox["4",
+          StripOnInput->False,
+          ShowContents->False], "4"],
+        $CellContext`Tensor[$CellContext`\[Gamma], {4}, {$CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}]}]},
+    {
+     RowBox[{
+      RowBox[{
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", "5", 
+         StyleBox["5",
+          StripOnInput->False,
+          ShowContents->False]],
+        $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], ".", 
+       InterpretationBox[
+        SubsuperscriptBox["\[Gamma]", "5", 
+         StyleBox["5",
+          StripOnInput->False,
+          ShowContents->False]],
+        $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}], "\[Rule]", "1"}]},
+    {
+     RowBox[{
+      InterpretationBox[
+       SuperscriptBox[
+        RowBox[{"(", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Gamma]", "5", 
+           StyleBox["5",
+            StripOnInput->False,
+            ShowContents->False]],
+          $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], ")"}], "\[Dagger]"],
+       ConjugateTranspose[
+        $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}]],
+       
+       Editable->False,
+       SyntaxForm->Automatic], "\[Rule]", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Gamma]", "5", 
+        StyleBox["5",
+         StripOnInput->False,
+         ShowContents->False]],
+       $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}]},
+    {
+     RowBox[{
+      InterpretationBox[
+       SubscriptBox[
+        RowBox[{"{", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Gamma]", "5", 
+           StyleBox["5",
+            StripOnInput->False,
+            ShowContents->False]],
+          $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], ",", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Gamma]", 
+           StyleBox["\[Mu]",
+            StripOnInput->False,
+            ShowContents->False], "\[Mu]"],
+          $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`\[Mu]}, \
+{$CellContext`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "}"}], "+"],
+       $CellContext`CommutatorP[
+        $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {
+         5}], 
+        $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`\[Mu]}, \
+{$CellContext`Void}]],
+       Editable->False,
+       SyntaxForm->Automatic], "\[Rule]", "0"}]},
+    {
+     RowBox[{
+      RowBox[{
+       InterpretationBox[
+        SubsuperscriptBox["\<\"\[Del]\"\>", "_", 
+         StyleBox["_",
+          StripOnInput->False,
+          ShowContents->False]],
+        $CellContext`Tensor["\[Del]", {$CellContext`Void}, {
+          Blank[]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "[", 
+       SubscriptBox["1", "n_"], "]"}], "\[Rule]", "0"}]},
+    {
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", "a_", ")"}], ".", 
+       SubscriptBox["1", "n_"]}], "\[Rule]", "a"}]},
+    {
+     RowBox[{
+      RowBox[{
+       SubscriptBox["1", "n_"], ".", 
+       RowBox[{"(", "a_", ")"}]}], "\[Rule]", "a"}]}
+   },
+   AutoDelete->False,
+   FrameStyle->Directive[
+     RGBColor[0.7, 0, 1, 1], 
+     Thickness[Tiny]],
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.700569245684269*^9}],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     RowBox[{
+      RowBox[{"tt", ":", 
+       InterpretationBox[
+        SubsuperscriptBox["g", 
+         StyleBox[
+          RowBox[{"\[Mu]_", "\[Nu]_"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{"\[Mu]_", "\[Nu]_"}]],
+        $CellContext`Tensor[$CellContext`g, {
+          Pattern[$CellContext`\[Mu], 
+           Blank[]], 
+          Pattern[$CellContext`\[Nu], 
+           Blank[]]}, {$CellContext`Void, $CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"tuIndexSwap", "[", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}]},
+    {
+     RowBox[{
+      RowBox[{"tt", ":", 
+       InterpretationBox[
+        SubsuperscriptBox["F", 
+         StyleBox[
+          RowBox[{"\[Mu]_", "\[Nu]_"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{"\[Mu]_", "\[Nu]_"}]],
+        $CellContext`Tensor[$CellContext`F, {
+          Pattern[$CellContext`\[Mu], 
+           Blank[]], 
+          Pattern[$CellContext`\[Nu], 
+           Blank[]]}, {$CellContext`Void, $CellContext`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{
+         RowBox[{"tuIndexSwap", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}]}], 
+       "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}]},
+    {
+     RowBox[{
+      RowBox[{"tt", ":", 
+       InterpretationBox[
+        SubsuperscriptBox["F", 
+         RowBox[{"\[Mu]_", "\[Nu]_"}], 
+         StyleBox[
+          RowBox[{"\[Mu]_", "\[Nu]_"}],
+          StripOnInput->False,
+          ShowContents->False]],
+        $CellContext`Tensor[$CellContext`F, {$CellContext`Void, \
+$CellContext`Void}, {
+          Pattern[$CellContext`\[Mu], 
+           Blank[]], 
+          Pattern[$CellContext`\[Nu], 
+           Blank[]]}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{
+         RowBox[{"tuIndexSwap", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}]}], 
+       "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}]},
+    {
+     RowBox[{
+      InterpretationBox[
+       SubscriptBox[
+        RowBox[{"[", "a_", ",", "b_", "]"}], "-"],
+       $CellContext`CommutatorM[
+        Pattern[$CellContext`a, 
+         Blank[]], 
+        Pattern[$CellContext`b, 
+         Blank[]]],
+       Editable->False,
+       SyntaxForm->Automatic], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        InterpretationBox[
+         SubscriptBox[
+          RowBox[{"[", "b", ",", "a", "]"}], "-"],
+         $CellContext`CommutatorM[$CellContext`b, $CellContext`a],
+         Editable->False,
+         SyntaxForm->Automatic]}], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}]},
+    {
+     RowBox[{
+      InterpretationBox[
+       SubscriptBox[
+        RowBox[{"{", "a_", ",", "b_", "}"}], "+"],
+       $CellContext`CommutatorP[
+        Pattern[$CellContext`a, 
+         Blank[]], 
+        Pattern[$CellContext`b, 
+         Blank[]]],
+       Editable->False,
+       SyntaxForm->Automatic], "\[RuleDelayed]", 
+      RowBox[{
+       InterpretationBox[
+        SubscriptBox[
+         RowBox[{"{", "b", ",", "a", "}"}], "+"],
+        $CellContext`CommutatorP[$CellContext`b, $CellContext`a],
+        Editable->False,
+        SyntaxForm->Automatic], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}]},
+    {
+     RowBox[{
+      RowBox[{"tt", ":", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Gamma]", 
+          StyleBox["\[Mu]",
+           StripOnInput->False,
+           ShowContents->False], "\[Mu]"],
+         $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`\[Mu]}, \
+{$CellContext`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Gamma]", "5", 
+          StyleBox["5",
+           StripOnInput->False,
+           ShowContents->False]],
+         $CellContext`Tensor[$CellContext`\[Gamma], {$CellContext`Void}, {5}],
+         
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}]}], "\[RuleDelayed]", 
+      RowBox[{"Reverse", "[", "tt", "]"}]}]}
+   },
+   AutoDelete->False,
+   FrameStyle->Directive[
+     RGBColor[0.7, 0, 1, 1], 
+     Thickness[Tiny]],
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.700569245689604*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{"\"\<Taken from: \>\"", ",", 
+   RowBox[{
+   "URL", "[", "\"\<https://en.wikipedia.org/wiki/Quantum_entanglement\>\"", 
+    "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.700576246643865*^9, 3.700576285325967*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Taken from: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{"URL", "[", 
+    TemplateBox[{"\"https://en.wikipedia.org/wiki/Quantum_entanglement\""},
+     "URLArgument"], "]"}]}],
+  SequenceForm[
+   Style["Taken from: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   URL["https://en.wikipedia.org/wiki/Quantum_entanglement"]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.700576286676798*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Entanglement versus Correlation", "Subsection",
+ CellChangeTimes->{{3.700569279312563*^9, 3.700569297833507*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{
+  "\"\<Entangled states are ones that cannot be represented by product of \
+states: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"\[ScriptCapitalH]", "\[Rule]", 
+    RowBox[{
+     SubscriptBox["\[ScriptCapitalH]", "A"], "\[CircleTimes]", 
+     SubscriptBox["\[ScriptCapitalH]", "B"]}]}], ",", 
+   "\"\< where measurement of \!\(\*SubscriptBox[\(\[ScriptCapitalH]\), \
+\(A\)]\) does not influence the measurement of \!\(\*SubscriptBox[\(\
+\[ScriptCapitalH]\), \(B\)]\).\>\"", ",", "\[IndentingNewLine]", "NL", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"\[ScriptCapitalH]", "\[Rule]", 
+        RowBox[{
+         SubscriptBox["\[ScriptCapitalH]", "A"], "\[CircleTimes]", 
+         SubscriptBox["\[ScriptCapitalH]", "B"]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Ket", "[", 
+            SubscriptBox["\[Psi]", "A"], "]"}], "[", 
+           RowBox[{"CG", "[", "\"\<basis A\>\"", "]"}], "]"}], 
+          "\[CircleTimes]", 
+          RowBox[{
+           RowBox[{"Ket", "[", 
+            SubscriptBox["\[Phi]", "B"], "]"}], "[", 
+           RowBox[{"CG", "[", "\"\<basis B\>\"", "]"}], "]"}]}], ")"}], "[", 
+        RowBox[{"CG", "[", "\"\<product states\>\"", "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Ket", "[", 
+         SubscriptBox["\[Psi]", "AB"], "]"}], "\[Rule]", 
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"T", "[", 
+            RowBox[{"c", ",", "\"\<dd\>\"", ",", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", "j"}], "}"}]}], "]"}], 
+           RowBox[{
+            RowBox[{"Ket", "[", 
+             SubscriptBox["i", "A"], "]"}], "\[CircleTimes]", 
+            RowBox[{"Ket", "[", 
+             SubscriptBox["j", "B"], "]"}]}]}], ",", "i", ",", "j"}], "]"}]}],
+        ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Ket", "[", 
+          SubscriptBox["\[Psi]", "AB"], "]"}], "[", 
+         RowBox[{"CG", "[", "\"\<entangled\>\"", "]"}], "]"}], "\[Implies]", 
+        RowBox[{"!", 
+         RowBox[{"xExists", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"T", "[", 
+              RowBox[{
+               SuperscriptBox["c", "A"], ",", "\"\<d\>\"", ",", 
+               RowBox[{"{", "i", "}"}]}], "]"}], ",", 
+             RowBox[{"T", "[", 
+              RowBox[{
+               SuperscriptBox["c", "B"], ",", "\"\<d\>\"", ",", 
+               RowBox[{"{", "j", "}"}]}], "]"}]}], "}"}], ",", 
+           RowBox[{
+            RowBox[{"T", "[", 
+             RowBox[{"c", ",", "\"\<dd\>\"", ",", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", "j"}], "}"}]}], "]"}], "->", 
+            RowBox[{
+             RowBox[{"T", "[", 
+              RowBox[{
+               SuperscriptBox["c", "A"], ",", "\"\<d\>\"", ",", 
+               RowBox[{"{", "i", "}"}]}], "]"}], 
+             RowBox[{"T", "[", 
+              RowBox[{
+               SuperscriptBox["c", "B"], ",", "\"\<d\>\"", ",", 
+               RowBox[{"{", "j", "}"}]}], "]"}]}]}], ",", 
+           RowBox[{
+            RowBox[{"Ket", "[", 
+             SubscriptBox["\[Psi]", "A"], "]"}], "\[Rule]", 
+            RowBox[{"Sum", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"T", "[", 
+                RowBox[{
+                 SuperscriptBox["c", "A"], ",", "\"\<d\>\"", ",", 
+                 RowBox[{"{", "i", "}"}]}], "]"}], 
+               RowBox[{"Ket", "[", 
+                SubscriptBox["i", "A"], "]"}]}], ",", "i"}], "]"}]}], ",", 
+           RowBox[{
+            RowBox[{"Ket", "[", 
+             SubscriptBox["\[Phi]", "B"], "]"}], "\[Rule]", 
+            RowBox[{"Sum", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"T", "[", 
+                RowBox[{
+                 SuperscriptBox["c", "B"], ",", "\"\<d\>\"", ",", 
+                 RowBox[{"{", "j", "}"}]}], "]"}], 
+               RowBox[{"Ket", "[", 
+                SubscriptBox["j", "B"], "]"}]}], ",", "j"}], "]"}]}]}], 
+          "]"}]}]}]}], "\[IndentingNewLine]", "}"}]}], ";", 
+    RowBox[{"$", "//", 
+     RowBox[{
+      RowBox[{"ColumnForms", "[", 
+       RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}], ",", "\[IndentingNewLine]",
+    "line", ",", "\[IndentingNewLine]", "NL", ",", 
+   "\"\<\[Bullet] E.g. impossible to attribute either state A|B to a pure \
+state 0|1 is an entangled state(composite) \>\"", ",", 
+   RowBox[{"$0", "=", 
+    RowBox[{"$", "=", 
+     RowBox[{
+      RowBox[{"Ket", "[", 
+       SubscriptBox["\[Psi]", "AB"], "]"}], "->", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Ket", "[", "0", "]"}], "\[CircleTimes]", 
+          RowBox[{"Ket", "[", "1", "]"}]}], "-", 
+         RowBox[{
+          RowBox[{"Ket", "[", "1", "]"}], "\[CircleTimes]", 
+          RowBox[{"Ket", "[", "0", "]"}]}]}], ")"}], "/", 
+       RowBox[{"Sqrt", "[", "2", "]"}]}]}]}]}], ",", "\"\< Here: \>\"", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$1", "=", 
+     RowBox[{"$", "//", "tuBraKetSwap"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"$", "=", 
+     RowBox[{"Thread", "[", 
+      RowBox[{
+       RowBox[{"Dot", "[", 
+        RowBox[{"$1", ",", "$"}], "]"}], ",", "Rule"}], "]"}]}]}], ",", 
+   "\[IndentingNewLine]", "Yield", ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{
+      RowBox[{"$", "//", 
+       RowBox[{"expandDC", "[", 
+        RowBox[{
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"{", "}"}]}], "]"}]}], "//", 
+      RowBox[{"tuCircleTimesGather", "[", "]"}]}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"$", "=", 
+     RowBox[{
+      RowBox[{"$", "//.", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Bra", "[", "a_", "]"}], " ", ".", " ", 
+           RowBox[{"Ket", "[", "b_", "]"}]}], ":>", 
+          RowBox[{"0", "/;", 
+           RowBox[{"a", "=!=", "b"}]}]}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Bra", "[", 
+            RowBox[{"a_", "?", "NumberQ"}], "]"}], ".", 
+           RowBox[{"Ket", "[", "a_", "]"}]}], ":>", "1"}]}], "}"}]}], "//", 
+      "tuCircleTimesSimplify"}]}]}], ",", 
+   RowBox[{"CG", "[", "\"\< entropy\[Rule]0\>\"", "]"}], ",", 
+   "\[IndentingNewLine]", "NL", ",", "\"\<Projecting out a subsystem: \>\"", 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"$", "=", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Bra", "[", "0", "]"}], "\[CircleTimes]", 
+         RowBox[{"Bra", "[", "1", "]"}]}], ")"}], " ", ".", "#"}], "&"}], "/@",
+      " ", "$0"}]}], ",", "\[IndentingNewLine]", "Yield", ",", 
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{
+      RowBox[{"$", "//", 
+       RowBox[{"expandDC", "[", 
+        RowBox[{
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"{", "}"}]}], "]"}]}], "//", 
+      RowBox[{"tuCircleTimesGather", "[", "]"}]}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"$", "=", 
+     RowBox[{
+      RowBox[{"$", "//.", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Bra", "[", 
+            RowBox[{"a_", "?", "NumberQ"}], "]"}], " ", ".", " ", 
+           RowBox[{"Ket", "[", 
+            RowBox[{"b_", "?", "NumberQ"}], "]"}]}], ":>", 
+          RowBox[{"0", "/;", 
+           RowBox[{"a", "=!=", "b"}]}]}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Bra", "[", 
+            RowBox[{"a_", "?", "NumberQ"}], "]"}], ".", 
+           RowBox[{"Ket", "[", "a_", "]"}]}], ":>", "1"}]}], "}"}]}], "//", 
+      "tuCircleTimesSimplify"}]}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"CG", "[", "\"\< entropy>0\>\"", "]"}], ",", "\[IndentingNewLine]",
+    "Imply", ",", 
+   "\"\<Entropy[subsystem]>Entropy[whole system]\[Implies]Entangled \
+state.\>\""}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.700569313985908*^9, 3.700569390256857*^9}, {
+   3.700571308290841*^9, 3.7005713971396027`*^9}, {3.700571648160981*^9, 
+   3.700571720108715*^9}, {3.7005717604858103`*^9, 3.70057203308237*^9}, {
+   3.700572101996717*^9, 3.700572148081029*^9}, {3.7005722298643436`*^9, 
+   3.700572380290118*^9}, {3.7005724108007603`*^9, 3.7005725369684362`*^9}, {
+   3.700572600602469*^9, 3.700572622005664*^9}, {3.700572734349235*^9, 
+   3.700572804798374*^9}, {3.7005728801344233`*^9, 3.7005730230885878`*^9}, {
+   3.700573063770719*^9, 3.700573067314803*^9}, {3.700573305432963*^9, 
+   3.700573309851306*^9}, {3.700573369061199*^9, 3.7005735446305304`*^9}, {
+   3.700573693221553*^9, 3.700573725651143*^9}, {3.700573756288315*^9, 
+   3.700573763804969*^9}, {3.700573817216135*^9, 3.7005739329744062`*^9}, {
+   3.70057397202542*^9, 3.700574052917718*^9}, {3.7005741089319983`*^9, 
+   3.700574253366839*^9}, 3.7005743071414347`*^9, {3.7005743535624933`*^9, 
+   3.7005745519596663`*^9}, {3.700574634815255*^9, 3.700574768303049*^9}, {
+   3.7005748381412563`*^9, 3.700575036031024*^9}, {3.700575067432963*^9, 
+   3.7005751234078903`*^9}, {3.700575183476173*^9, 3.700575239586506*^9}, {
+   3.700575966790856*^9, 3.700576004430148*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Entangled states are ones that cannot be represented by \
+product of states: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{"\[ScriptCapitalH]", "\[Rule]", 
+    RowBox[{
+     SubscriptBox["\[ScriptCapitalH]", "A"], "\[CircleTimes]", 
+     SubscriptBox["\[ScriptCapitalH]", "B"]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" where measurement of \\!\\(\\*SubscriptBox[\\(\
+\[ScriptCapitalH]\\), \\(A\\)]\\) does not influence the measurement of \
+\\!\\(\\*SubscriptBox[\\(\[ScriptCapitalH]\\), \\(B\\)]\\).\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   TagBox[GridBox[{
+      {
+       RowBox[{"\[ScriptCapitalH]", "\[Rule]", 
+        RowBox[{
+         SubscriptBox["\[ScriptCapitalH]", "A"], "\[CircleTimes]", 
+         SubscriptBox["\[ScriptCapitalH]", "B"]}]}]},
+      {
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           InterpretationBox[
+            RowBox[{
+             StyleBox["\[LeftBracketingBar]",
+              FontWeight->Bold], 
+             SubscriptBox["\[Psi]", "A"], 
+             StyleBox["\[RightAngleBracket]",
+              FontWeight->Bold]}],
+            Ket[
+             Subscript[$CellContext`\[Psi], $CellContext`A]],
+            Editable->False,
+            SyntaxForm->Automatic], "[", 
+           StyleBox["\<\"basis A\"\>",
+            StripOnInput->False,
+            LineColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FrontFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            BackFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            GraphicsColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FontSize->Larger,
+            FontColor->RGBColor[0, 
+              Rational[2, 3], 0]], "]"}], "\[CircleTimes]", 
+          RowBox[{
+           InterpretationBox[
+            RowBox[{
+             StyleBox["\[LeftBracketingBar]",
+              FontWeight->Bold], 
+             SubscriptBox["\[Phi]", "B"], 
+             StyleBox["\[RightAngleBracket]",
+              FontWeight->Bold]}],
+            Ket[
+             Subscript[$CellContext`\[Phi], $CellContext`B]],
+            Editable->False,
+            SyntaxForm->Automatic], "[", 
+           StyleBox["\<\"basis B\"\>",
+            StripOnInput->False,
+            LineColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FrontFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            BackFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            GraphicsColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FontSize->Larger,
+            FontColor->RGBColor[0, 
+              Rational[2, 3], 0]], "]"}]}], ")"}], "[", 
+        StyleBox["\<\"product states\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], 
+          SubscriptBox["\[Psi]", "AB"], 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[
+          Subscript[$CellContext`\[Psi], $CellContext`AB]],
+         Editable->False,
+         SyntaxForm->Automatic], "\[Rule]", 
+        RowBox[{
+         UnderscriptBox["\[Sum]", "i"], 
+         RowBox[{
+          UnderscriptBox["\[Sum]", "j"], 
+          RowBox[{
+           RowBox[{
+            InterpretationBox[
+             RowBox[{
+              StyleBox["\[LeftBracketingBar]",
+               FontWeight->Bold], 
+              SubscriptBox["i", "A"], 
+              StyleBox["\[RightAngleBracket]",
+               FontWeight->Bold]}],
+             Ket[
+              Subscript[$CellContext`i, $CellContext`A]],
+             Editable->False,
+             SyntaxForm->Automatic], "\[CircleTimes]", 
+            InterpretationBox[
+             RowBox[{
+              StyleBox["\[LeftBracketingBar]",
+               FontWeight->Bold], 
+              SubscriptBox["j", "B"], 
+              StyleBox["\[RightAngleBracket]",
+               FontWeight->Bold]}],
+             Ket[
+              Subscript[$CellContext`j, $CellContext`B]],
+             Editable->False,
+             SyntaxForm->Automatic]}], " ", 
+           InterpretationBox[
+            SubsuperscriptBox["c", 
+             RowBox[{"i", "j"}], 
+             StyleBox[
+              RowBox[{"i", "j"}],
+              StripOnInput->False,
+              ShowContents->False]],
+            $CellContext`Tensor[$CellContext`c, {$CellContext`Void, \
+$CellContext`Void}, {$CellContext`i, $CellContext`j}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}]}]}]}]},
+      {
+       RowBox[{
+        RowBox[{
+         InterpretationBox[
+          RowBox[{
+           StyleBox["\[LeftBracketingBar]",
+            FontWeight->Bold], 
+           SubscriptBox["\[Psi]", "AB"], 
+           StyleBox["\[RightAngleBracket]",
+            FontWeight->Bold]}],
+          Ket[
+           Subscript[$CellContext`\[Psi], $CellContext`AB]],
+          Editable->False,
+          SyntaxForm->Automatic], "[", 
+         StyleBox["\<\"entangled\"\>",
+          StripOnInput->False,
+          LineColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FrontFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          BackFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          GraphicsColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FontSize->Larger,
+          FontColor->RGBColor[0, 
+            Rational[2, 3], 0]], "]"}], "\[Implies]", 
+        RowBox[{"!", 
+         RowBox[{"xExists", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             InterpretationBox[
+              SubsuperscriptBox[
+               SuperscriptBox["c", "A"], "i", 
+               StyleBox["i",
+                StripOnInput->False,
+                ShowContents->False]],
+              $CellContext`Tensor[$CellContext`c^$CellContext`A, \
+{$CellContext`Void}, {$CellContext`i}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False], ",", 
+             InterpretationBox[
+              SubsuperscriptBox[
+               SuperscriptBox["c", "B"], "j", 
+               StyleBox["j",
+                StripOnInput->False,
+                ShowContents->False]],
+              $CellContext`Tensor[$CellContext`c^$CellContext`B, \
+{$CellContext`Void}, {$CellContext`j}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False]}], "}"}], ",", 
+           RowBox[{
+            InterpretationBox[
+             SubsuperscriptBox["c", 
+              RowBox[{"i", "j"}], 
+              StyleBox[
+               RowBox[{"i", "j"}],
+               StripOnInput->False,
+               ShowContents->False]],
+             $CellContext`Tensor[$CellContext`c, {$CellContext`Void, \
+$CellContext`Void}, {$CellContext`i, $CellContext`j}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False], "\[Rule]", 
+            RowBox[{
+             InterpretationBox[
+              SubsuperscriptBox[
+               SuperscriptBox["c", "A"], "i", 
+               StyleBox["i",
+                StripOnInput->False,
+                ShowContents->False]],
+              $CellContext`Tensor[$CellContext`c^$CellContext`A, \
+{$CellContext`Void}, {$CellContext`i}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False], " ", 
+             InterpretationBox[
+              SubsuperscriptBox[
+               SuperscriptBox["c", "B"], "j", 
+               StyleBox["j",
+                StripOnInput->False,
+                ShowContents->False]],
+              $CellContext`Tensor[$CellContext`c^$CellContext`B, \
+{$CellContext`Void}, {$CellContext`j}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False]}]}], ",", 
+           RowBox[{
+            InterpretationBox[
+             RowBox[{
+              StyleBox["\[LeftBracketingBar]",
+               FontWeight->Bold], 
+              SubscriptBox["\[Psi]", "A"], 
+              StyleBox["\[RightAngleBracket]",
+               FontWeight->Bold]}],
+             Ket[
+              Subscript[$CellContext`\[Psi], $CellContext`A]],
+             Editable->False,
+             SyntaxForm->Automatic], "\[Rule]", 
+            RowBox[{
+             UnderscriptBox["\[Sum]", "i"], 
+             RowBox[{
+              InterpretationBox[
+               RowBox[{
+                StyleBox["\[LeftBracketingBar]",
+                 FontWeight->Bold], 
+                SubscriptBox["i", "A"], 
+                StyleBox["\[RightAngleBracket]",
+                 FontWeight->Bold]}],
+               Ket[
+                Subscript[$CellContext`i, $CellContext`A]],
+               Editable->False,
+               SyntaxForm->Automatic], " ", 
+              InterpretationBox[
+               SubsuperscriptBox[
+                SuperscriptBox["c", "A"], "i", 
+                StyleBox["i",
+                 StripOnInput->False,
+                 ShowContents->False]],
+               $CellContext`Tensor[$CellContext`c^$CellContext`A, \
+{$CellContext`Void}, {$CellContext`i}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}]}]}], ",", 
+           RowBox[{
+            InterpretationBox[
+             RowBox[{
+              StyleBox["\[LeftBracketingBar]",
+               FontWeight->Bold], 
+              SubscriptBox["\[Phi]", "B"], 
+              StyleBox["\[RightAngleBracket]",
+               FontWeight->Bold]}],
+             Ket[
+              Subscript[$CellContext`\[Phi], $CellContext`B]],
+             Editable->False,
+             SyntaxForm->Automatic], "\[Rule]", 
+            RowBox[{
+             UnderscriptBox["\[Sum]", "j"], 
+             RowBox[{
+              InterpretationBox[
+               RowBox[{
+                StyleBox["\[LeftBracketingBar]",
+                 FontWeight->Bold], 
+                SubscriptBox["j", "B"], 
+                StyleBox["\[RightAngleBracket]",
+                 FontWeight->Bold]}],
+               Ket[
+                Subscript[$CellContext`j, $CellContext`B]],
+               Editable->False,
+               SyntaxForm->Automatic], " ", 
+              InterpretationBox[
+               SubsuperscriptBox[
+                SuperscriptBox["c", "B"], "j", 
+                StyleBox["j",
+                 StripOnInput->False,
+                 ShowContents->False]],
+               $CellContext`Tensor[$CellContext`c^$CellContext`B, \
+{$CellContext`Void}, {$CellContext`j}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}]}]}]}], "]"}]}]}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"\[Bullet] E.g. impossible to attribute either state A|B to a \
+pure state 0|1 is an entangled state(composite) \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     RowBox[{
+      StyleBox["\[LeftBracketingBar]",
+       FontWeight->Bold], 
+      SubscriptBox["\[Psi]", "AB"], 
+      StyleBox["\[RightAngleBracket]",
+       FontWeight->Bold]}],
+     Ket[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]],
+     Editable->False,
+     SyntaxForm->Automatic], "\[Rule]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftBracketingBar]",
+          FontWeight->Bold], "0", 
+         StyleBox["\[RightAngleBracket]",
+          FontWeight->Bold]}],
+        Ket[0],
+        Editable->False,
+        SyntaxForm->Automatic], "\[CircleTimes]", 
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftBracketingBar]",
+          FontWeight->Bold], "1", 
+         StyleBox["\[RightAngleBracket]",
+          FontWeight->Bold]}],
+        Ket[1],
+        Editable->False,
+        SyntaxForm->Automatic]}], "-", 
+      RowBox[{
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftBracketingBar]",
+          FontWeight->Bold], "1", 
+         StyleBox["\[RightAngleBracket]",
+          FontWeight->Bold]}],
+        Ket[1],
+        Editable->False,
+        SyntaxForm->Automatic], "\[CircleTimes]", 
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftBracketingBar]",
+          FontWeight->Bold], "0", 
+         StyleBox["\[RightAngleBracket]",
+          FontWeight->Bold]}],
+        Ket[0],
+        Editable->False,
+        SyntaxForm->Automatic]}]}], 
+     SqrtBox["2"]]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" Here: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      RowBox[{
+       StyleBox["\[LeftAngleBracket]",
+        FontWeight->Bold], 
+       SubscriptBox["\[Psi]", "AB"], 
+       StyleBox["\[RightBracketingBar]",
+        FontWeight->Bold]}],
+      Bra[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]],
+      Editable->False,
+      SyntaxForm->Automatic], ".", 
+     InterpretationBox[
+      RowBox[{
+       StyleBox["\[LeftBracketingBar]",
+        FontWeight->Bold], 
+       SubscriptBox["\[Psi]", "AB"], 
+       StyleBox["\[RightAngleBracket]",
+        FontWeight->Bold]}],
+      Ket[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]],
+      Editable->False,
+      SyntaxForm->Automatic]}], "\[Rule]", 
+    RowBox[{
+     FractionBox[
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftAngleBracket]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightBracketingBar]",
+           FontWeight->Bold]}],
+         Bra[0],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftAngleBracket]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightBracketingBar]",
+           FontWeight->Bold]}],
+         Bra[1],
+         Editable->False,
+         SyntaxForm->Automatic]}], "-", 
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftAngleBracket]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightBracketingBar]",
+           FontWeight->Bold]}],
+         Bra[1],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftAngleBracket]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightBracketingBar]",
+           FontWeight->Bold]}],
+         Bra[0],
+         Editable->False,
+         SyntaxForm->Automatic]}]}], 
+      SqrtBox["2"]], ".", 
+     FractionBox[
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[0],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[1],
+         Editable->False,
+         SyntaxForm->Automatic]}], "-", 
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[1],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[0],
+         Editable->False,
+         SyntaxForm->Automatic]}]}], 
+      SqrtBox["2"]]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[RightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontWeight->Bold,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      RowBox[{
+       StyleBox["\[LeftAngleBracket]",
+        FontWeight->Bold], 
+       SubscriptBox["\[Psi]", "AB"], 
+       StyleBox["\[RightBracketingBar]",
+        FontWeight->Bold]}],
+      Bra[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]],
+      Editable->False,
+      SyntaxForm->Automatic], ".", 
+     InterpretationBox[
+      RowBox[{
+       StyleBox["\[LeftBracketingBar]",
+        FontWeight->Bold], 
+       SubscriptBox["\[Psi]", "AB"], 
+       StyleBox["\[RightAngleBracket]",
+        FontWeight->Bold]}],
+      Ket[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]],
+      Editable->False,
+      SyntaxForm->Automatic]}], "\[Rule]", "1"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" entropy\[Rule]0\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    FrontFaceColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    BackFaceColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    GraphicsColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 
+      Rational[2, 3], 0]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"Projecting out a subsystem: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftAngleBracket]",
+          FontWeight->Bold], "0", 
+         StyleBox["\[RightBracketingBar]",
+          FontWeight->Bold]}],
+        Bra[0],
+        Editable->False,
+        SyntaxForm->Automatic], "\[CircleTimes]", 
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftAngleBracket]",
+          FontWeight->Bold], "1", 
+         StyleBox["\[RightBracketingBar]",
+          FontWeight->Bold]}],
+        Bra[1],
+        Editable->False,
+        SyntaxForm->Automatic]}], ")"}], ".", 
+     InterpretationBox[
+      RowBox[{
+       StyleBox["\[LeftBracketingBar]",
+        FontWeight->Bold], 
+       SubscriptBox["\[Psi]", "AB"], 
+       StyleBox["\[RightAngleBracket]",
+        FontWeight->Bold]}],
+      Ket[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]],
+      Editable->False,
+      SyntaxForm->Automatic]}], "\[Rule]", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftAngleBracket]",
+          FontWeight->Bold], "0", 
+         StyleBox["\[RightBracketingBar]",
+          FontWeight->Bold]}],
+        Bra[0],
+        Editable->False,
+        SyntaxForm->Automatic], "\[CircleTimes]", 
+       InterpretationBox[
+        RowBox[{
+         StyleBox["\[LeftAngleBracket]",
+          FontWeight->Bold], "1", 
+         StyleBox["\[RightBracketingBar]",
+          FontWeight->Bold]}],
+        Bra[1],
+        Editable->False,
+        SyntaxForm->Automatic]}], ")"}], ".", 
+     FractionBox[
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[0],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[1],
+         Editable->False,
+         SyntaxForm->Automatic]}], "-", 
+       RowBox[{
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "1", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[1],
+         Editable->False,
+         SyntaxForm->Automatic], "\[CircleTimes]", 
+        InterpretationBox[
+         RowBox[{
+          StyleBox["\[LeftBracketingBar]",
+           FontWeight->Bold], "0", 
+          StyleBox["\[RightAngleBracket]",
+           FontWeight->Bold]}],
+         Ket[0],
+         Editable->False,
+         SyntaxForm->Automatic]}]}], 
+      SqrtBox["2"]]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[RightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontWeight->Bold,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      InterpretationBox[
+       RowBox[{
+        StyleBox["\[LeftAngleBracket]",
+         FontWeight->Bold], "0", 
+        StyleBox["\[RightBracketingBar]",
+         FontWeight->Bold]}],
+       Bra[0],
+       Editable->False,
+       SyntaxForm->Automatic], ".", 
+      InterpretationBox[
+       RowBox[{
+        StyleBox["\[LeftBracketingBar]",
+         FontWeight->Bold], 
+        SubscriptBox["\[Psi]", "AB"], 
+        StyleBox["\[RightAngleBracket]",
+         FontWeight->Bold]}],
+       Ket[
+        Subscript[$CellContext`\[Psi], $CellContext`AB]],
+       Editable->False,
+       SyntaxForm->Automatic]}], "\[CircleTimes]", 
+     RowBox[{
+      InterpretationBox[
+       RowBox[{
+        StyleBox["\[LeftAngleBracket]",
+         FontWeight->Bold], "1", 
+        StyleBox["\[RightBracketingBar]",
+         FontWeight->Bold]}],
+       Bra[1],
+       Editable->False,
+       SyntaxForm->Automatic], ".", 
+      InterpretationBox[
+       RowBox[{
+        StyleBox["\[LeftBracketingBar]",
+         FontWeight->Bold], 
+        SubscriptBox["\[Psi]", "AB"], 
+        StyleBox["\[RightAngleBracket]",
+         FontWeight->Bold]}],
+       Ket[
+        Subscript[$CellContext`\[Psi], $CellContext`AB]],
+       Editable->False,
+       SyntaxForm->Automatic]}]}], "\[Rule]", 
+    FractionBox["1", 
+     SqrtBox["2"]]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" entropy>0\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    FrontFaceColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    BackFaceColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    GraphicsColor->RGBColor[0, 
+      Rational[2, 3], 0],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 
+      Rational[2, 3], 0]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[Implies] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontWeight->Bold,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"Entropy[subsystem]>Entropy[whole system]\[Implies]Entangled \
+state.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1]}],
+  SequenceForm[
+   Style["Entangled states are ones that cannot be represented by product of \
+states: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], $CellContext`\[ScriptCapitalH] -> 
+   CircleTimes[
+     Subscript[$CellContext`\[ScriptCapitalH], $CellContext`A], 
+     Subscript[$CellContext`\[ScriptCapitalH], $CellContext`B]], 
+   Style[" where measurement of \!\(\*SubscriptBox[\(\[ScriptCapitalH]\), \(A\
+\)]\) does not influence the measurement of \!\(\*SubscriptBox[\(\
+\[ScriptCapitalH]\), \(B\)]\).", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["\n", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Grid[{{$CellContext`\[ScriptCapitalH] -> CircleTimes[
+        Subscript[$CellContext`\[ScriptCapitalH], $CellContext`A], 
+        Subscript[$CellContext`\[ScriptCapitalH], $CellContext`B]]}, {
+      CircleTimes[
+       Ket[
+        Subscript[$CellContext`\[Psi], $CellContext`A]][
+        Style["basis A", 
+         RGBColor[0, 
+          Rational[2, 3], 0], Larger]], 
+       Ket[
+        Subscript[$CellContext`\[Phi], $CellContext`B]][
+        Style["basis B", 
+         RGBColor[0, 
+          Rational[2, 3], 0], Larger]]][
+       Style["product states", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {Ket[
+        Subscript[$CellContext`\[Psi], $CellContext`AB]] -> Sum[CircleTimes[
+          Ket[
+           Subscript[$CellContext`i, $CellContext`A]], 
+          Ket[
+           
+           Subscript[$CellContext`j, $CellContext`B]]] \
+$CellContext`Tensor[$CellContext`c, {$CellContext`Void, $CellContext`Void}, \
+{$CellContext`i, $CellContext`j}], $CellContext`i, $CellContext`j]}, {
+      Implies[
+       Ket[
+        Subscript[$CellContext`\[Psi], $CellContext`AB]][
+        Style["entangled", 
+         RGBColor[0, 
+          Rational[2, 3], 0], Larger]], 
+       Not[
+        $CellContext`xExists[{
+          $CellContext`Tensor[$CellContext`c^$CellContext`A, \
+{$CellContext`Void}, {$CellContext`i}], 
+          $CellContext`Tensor[$CellContext`c^$CellContext`B, \
+{$CellContext`Void}, {$CellContext`j}]}, $CellContext`Tensor[$CellContext`c, \
+{$CellContext`Void, $CellContext`Void}, {$CellContext`i, $CellContext`j}] -> \
+$CellContext`Tensor[$CellContext`c^$CellContext`A, {$CellContext`Void}, \
+{$CellContext`i}] $CellContext`Tensor[$CellContext`c^$CellContext`B, \
+{$CellContext`Void}, {$CellContext`j}], Ket[
+           Subscript[$CellContext`\[Psi], $CellContext`A]] -> Sum[Ket[
+             
+             Subscript[$CellContext`i, $CellContext`A]] \
+$CellContext`Tensor[$CellContext`c^$CellContext`A, {$CellContext`Void}, \
+{$CellContext`i}], $CellContext`i], Ket[
+           Subscript[$CellContext`\[Phi], $CellContext`B]] -> Sum[Ket[
+             
+             Subscript[$CellContext`j, $CellContext`B]] \
+$CellContext`Tensor[$CellContext`c^$CellContext`B, {$CellContext`Void}, \
+{$CellContext`j}], $CellContext`j]]]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left], 
+   Style["\n\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\[LongDash]\
+\[LongDash]\[LongDash]\[LongDash]\[LongDash]", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["\n", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["\[Bullet] E.g. impossible to attribute either state A|B to a pure \
+state 0|1 is an entangled state(composite) ", 
+    RGBColor[0.7, 0, 1, 1], Larger], Ket[
+     Subscript[$CellContext`\[Psi], $CellContext`AB]] -> 
+   2^Rational[-1, 2] (CircleTimes[
+       Ket[0], 
+       Ket[1]] - CircleTimes[
+      Ket[1], 
+      Ket[0]]), 
+   Style[" Here: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], Dot[
+     Bra[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]], 
+     Ket[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]]] -> 
+   Dot[2^Rational[-1, 2] (CircleTimes[
+        Bra[0], 
+        Bra[1]] - CircleTimes[
+       Bra[1], 
+       Bra[0]]), 2^Rational[-1, 2] (CircleTimes[
+        Ket[0], 
+        Ket[1]] - CircleTimes[
+       Ket[1], 
+       Ket[0]])], 
+   Style["\n\[RightArrow] ", Bold, Larger, 
+    RGBColor[0.7, 0, 1, 1]], Dot[
+     Bra[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]], 
+     Ket[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]]] -> 1, 
+   Style[" entropy\[Rule]0", 
+    RGBColor[0, 
+     Rational[2, 3], 0], Larger], 
+   Style["\n", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["Projecting out a subsystem: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], Dot[
+     CircleTimes[
+      Bra[0], 
+      Bra[1]], 
+     Ket[
+      Subscript[$CellContext`\[Psi], $CellContext`AB]]] -> Dot[
+     CircleTimes[
+      Bra[0], 
+      Bra[1]], 2^Rational[-1, 2] (CircleTimes[
+        Ket[0], 
+        Ket[1]] - CircleTimes[
+       Ket[1], 
+       Ket[0]])], 
+   Style["\n\[RightArrow] ", Bold, Larger, 
+    RGBColor[0.7, 0, 1, 1]], CircleTimes[
+     Dot[
+      Bra[0], 
+      Ket[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]]], 
+     Dot[
+      Bra[1], 
+      Ket[
+       Subscript[$CellContext`\[Psi], $CellContext`AB]]]] -> 
+   2^Rational[-1, 2], 
+   Style[" entropy>0", 
+    RGBColor[0, 
+     Rational[2, 3], 0], Larger], 
+   Style["\n\[Implies] ", Bold, Larger, 
+    RGBColor[0.7, 0, 1, 1]], 
+   Style["Entropy[subsystem]>Entropy[whole system]\[Implies]Entangled state.", 
+    RGBColor[0.7, 0, 1, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.70056939090484*^9, 3.70057139801217*^9, 3.700571661699533*^9, {
+   3.700571776166535*^9, 3.70057179646754*^9}, 3.700571837359602*^9, 
+   3.700571881562282*^9, {3.7005720033773623`*^9, 3.700572033598626*^9}, 
+   3.700572107656066*^9, 3.700572325436336*^9, {3.700572358965407*^9, 
+   3.7005723810319977`*^9}, {3.700572451793078*^9, 3.700572490632572*^9}, 
+   3.700572539227371*^9, 3.700572623604331*^9, {3.700572796847425*^9, 
+   3.7005728055392*^9}, 3.700572904717778*^9, 3.700573024561285*^9, 
+   3.700573068073386*^9, 3.7005733926995993`*^9, {3.700573450867785*^9, 
+   3.700573476793866*^9}, {3.700573512380726*^9, 3.7005735280297623`*^9}, {
+   3.7005737157302837`*^9, 3.700573726865287*^9}, 3.7005737648738337`*^9, {
+   3.700573844768557*^9, 3.700573948666733*^9}, {3.700573979059781*^9, 
+   3.700573987665078*^9}, {3.700574019388318*^9, 3.700574053727092*^9}, 
+   3.700574136376727*^9, {3.700574173137471*^9, 3.700574254666594*^9}, 
+   3.700574309002084*^9, {3.700574398855147*^9, 3.700574406719411*^9}, {
+   3.700574464511868*^9, 3.700574552855441*^9}, 3.700574650052453*^9, 
+   3.700574696165851*^9, {3.700574763898457*^9, 3.700574769053492*^9}, {
+   3.70057483995006*^9, 3.700574867558406*^9}, {3.7005749321171503`*^9, 
+   3.700574989884118*^9}, {3.700575024365044*^9, 3.7005750370020943`*^9}, 
+   3.7005750728675423`*^9, {3.700575108901569*^9, 3.700575124626279*^9}, {
+   3.700575202935608*^9, 3.700575240458288*^9}, 3.700576006886509*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{"\"\<Density matrix operator: \>\"", ",", 
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"\[Rho]", "\[Rule]", 
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           SubscriptBox["w", "i"], 
+           RowBox[{
+            RowBox[{"Ket", "[", 
+             SubscriptBox["\[Alpha]", "i"], "]"}], ".", 
+            RowBox[{"Bra", "[", 
+             SubscriptBox["\[Alpha]", "i"], "]"}]}]}], ",", "i"}], "]"}]}], 
+       ",", " ", 
+       RowBox[{
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          SubscriptBox["w", "i"], ",", "i"}], "]"}], "\[Rule]", "1"}], ",", 
+       RowBox[{
+        SubscriptBox["w", "i"], "\[GreaterEqual]", "0"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Bra", "[", 
+          SubscriptBox["\[Alpha]", "i"], "]"}], ".", 
+         RowBox[{"Ket", "[", 
+          SubscriptBox["\[Alpha]", "i"], "]"}]}], "\[Rule]", "1"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"\[Rho]", "->", 
+          RowBox[{"Sum", "[", 
+           RowBox[{
+            RowBox[{
+             SubscriptBox["w", "i"], 
+             RowBox[{
+              SubscriptBox[
+               RowBox[{"(", 
+                SuperscriptBox["\[Rho]", "A"], ")"}], "i"], "\[CircleTimes]", 
+              
+              SubscriptBox[
+               RowBox[{"(", 
+                SuperscriptBox["\[Rho]", "A"], ")"}], "i"]}]}], ",", "i"}], 
+           "]"}]}], ")"}], "[", 
+        RowBox[{"CG", "[", "\"\<if separable\>\"", "]"}], "]"}]}], 
+      "\[IndentingNewLine]", "}"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"$", "//", 
+     RowBox[{
+      RowBox[{"ColumnForms", "[", 
+       RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}]}], "\[IndentingNewLine]", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.700575558624104*^9, 3.700575659378418*^9}, {
+  3.700575708188767*^9, 3.700575768446624*^9}, {3.700575833574018*^9, 
+  3.700575928310401*^9}, {3.7005760820358953`*^9, 3.7005760893214273`*^9}, {
+  3.7005762057979603`*^9, 3.7005762071531677`*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Density matrix operator: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   TagBox[GridBox[{
+      {
+       RowBox[{"\[Rho]", "\[Rule]", 
+        RowBox[{
+         UnderscriptBox["\[Sum]", "i"], 
+         RowBox[{
+          RowBox[{
+           InterpretationBox[
+            RowBox[{
+             StyleBox["\[LeftBracketingBar]",
+              FontWeight->Bold], 
+             SubscriptBox["\[Alpha]", "i"], 
+             StyleBox["\[RightAngleBracket]",
+              FontWeight->Bold]}],
+            Ket[
+             Subscript[$CellContext`\[Alpha], $CellContext`i]],
+            Editable->False,
+            SyntaxForm->Automatic], ".", 
+           InterpretationBox[
+            RowBox[{
+             StyleBox["\[LeftAngleBracket]",
+              FontWeight->Bold], 
+             SubscriptBox["\[Alpha]", "i"], 
+             StyleBox["\[RightBracketingBar]",
+              FontWeight->Bold]}],
+            Bra[
+             Subscript[$CellContext`\[Alpha], $CellContext`i]],
+            Editable->False,
+            SyntaxForm->Automatic]}], " ", 
+          SubscriptBox["w", "i"]}]}]}]},
+      {
+       RowBox[{
+        RowBox[{
+         UnderscriptBox["\[Sum]", "i"], 
+         SubscriptBox["w", "i"]}], "\[Rule]", "1"}]},
+      {
+       RowBox[{
+        SubscriptBox["w", "i"], "\[GreaterEqual]", "0"}]},
+      {
+       RowBox[{
+        RowBox[{
+         InterpretationBox[
+          RowBox[{
+           StyleBox["\[LeftAngleBracket]",
+            FontWeight->Bold], 
+           SubscriptBox["\[Alpha]", "i"], 
+           StyleBox["\[RightBracketingBar]",
+            FontWeight->Bold]}],
+          Bra[
+           Subscript[$CellContext`\[Alpha], $CellContext`i]],
+          Editable->False,
+          SyntaxForm->Automatic], ".", 
+         InterpretationBox[
+          RowBox[{
+           StyleBox["\[LeftBracketingBar]",
+            FontWeight->Bold], 
+           SubscriptBox["\[Alpha]", "i"], 
+           StyleBox["\[RightAngleBracket]",
+            FontWeight->Bold]}],
+          Ket[
+           Subscript[$CellContext`\[Alpha], $CellContext`i]],
+          Editable->False,
+          SyntaxForm->Automatic]}], "\[Rule]", "1"}]},
+      {
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"\[Rho]", "\[Rule]", 
+          RowBox[{
+           UnderscriptBox["\[Sum]", "i"], 
+           RowBox[{
+            RowBox[{
+             SubscriptBox[
+              SuperscriptBox["\[Rho]", "A"], "i"], "\[CircleTimes]", 
+             SubscriptBox[
+              SuperscriptBox["\[Rho]", "A"], "i"]}], " ", 
+            SubscriptBox["w", "i"]}]}]}], ")"}], "[", 
+        StyleBox["\<\"if separable\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"]}],
+  SequenceForm[
+   Style["Density matrix operator: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Grid[{{$CellContext`\[Rho] -> Sum[Dot[
+          Ket[
+           Subscript[$CellContext`\[Alpha], $CellContext`i]], 
+          Bra[
+           Subscript[$CellContext`\[Alpha], $CellContext`i]]] 
+        Subscript[$CellContext`w, $CellContext`i], $CellContext`i]}, {Sum[
+        Subscript[$CellContext`w, $CellContext`i], $CellContext`i] -> 1}, {
+     Subscript[$CellContext`w, $CellContext`i] >= 0}, {Dot[
+        Bra[
+         Subscript[$CellContext`\[Alpha], $CellContext`i]], 
+        Ket[
+         Subscript[$CellContext`\[Alpha], $CellContext`i]]] -> 1}, {
+      ($CellContext`\[Rho] -> Sum[CircleTimes[
+          Subscript[$CellContext`\[Rho]^$CellContext`A, $CellContext`i], 
+          Subscript[$CellContext`\[Rho]^$CellContext`A, $CellContext`i]] 
+        Subscript[$CellContext`w, $CellContext`i], $CellContext`i])[
+       Style["if separable", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left]],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.700575632711566*^9, 3.700575660319181*^9}, {
+   3.7005757232214127`*^9, 3.700575738841826*^9}, 3.70057576919765*^9, 
+   3.700575895227458*^9, 3.700575929000141*^9, 3.70057602900074*^9, 
+   3.7005760899680862`*^9, 3.700576207863866*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Entropy", "Subsubsection",
+ CellChangeTimes->{{3.7005769844754963`*^9, 3.700576986297434*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{"\"\<Shannon entropy: \>\"", ",", 
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"H", "[", 
+         RowBox[{"CG", "[", "\"\<Shannon entropy\>\"", "]"}], "]"}], 
+        "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           SubscriptBox["p", "i"], " ", 
+           RowBox[{"Log", "[", 
+            RowBox[{"2", ",", 
+             SubscriptBox["p", "i"]}], "]"}]}], "]"}]}]}], ",", 
+       RowBox[{
+        SubscriptBox["p", "i"], "[", 
+        RowBox[{"CG", "[", "\"\<probability\>\"", "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"S", "[", "\[Rho]", "]"}], "[", 
+         RowBox[{"CG", "[", "\"\<von Neumann entropy\>\"", "]"}], "]"}], 
+        "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{"Tr", "[", 
+          RowBox[{"\[Rho]", " ", 
+           RowBox[{"Log", "[", 
+            RowBox[{"2", ",", "\[Rho]"}], "]"}]}], "]"}]}]}], ",", 
+       RowBox[{"\[Rho]", "[", 
+        RowBox[{
+        "CG", "[", 
+         "\"\<mixed state probability distribution over an ensemble\>\"", 
+         "]"}], "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"S", "[", "\[Rho]", "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           RowBox[{"Sum", "[", 
+            RowBox[{
+             RowBox[{
+              SubscriptBox["\[Lambda]", "i"], 
+              RowBox[{"Log", "[", 
+               RowBox[{"2", ",", 
+                SubscriptBox["\[Lambda]", "i"]}], "]"}]}], ",", "i"}], 
+            "]"}]}]}], ")"}], "[", 
+        RowBox[{"CG", "[", "\"\<finite case\>\"", "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        SubscriptBox["\[Lambda]", "i"], "[", 
+        RowBox[{"CG", "[", "\"\<eigenvalues of \[Rho]\>\"", "]"}], "]"}]}], 
+      "\[IndentingNewLine]", "}"}]}], ";", 
+    RowBox[{"$", "//", 
+     RowBox[{
+      RowBox[{"ColumnForms", "[", 
+       RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}]}], "\[IndentingNewLine]", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.700576963113388*^9, 3.700576965285486*^9}, {
+  3.700577021710431*^9, 3.70057712369998*^9}, {3.700577177982362*^9, 
+  3.700577295446527*^9}, {3.700577343675087*^9, 3.700577387975628*^9}, {
+  3.700577506374959*^9, 3.700577621012937*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Shannon entropy: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   TagBox[GridBox[{
+      {
+       RowBox[{
+        RowBox[{"H", "[", 
+         StyleBox["\<\"Shannon entropy\"\>",
+          StripOnInput->False,
+          LineColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FrontFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          BackFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          GraphicsColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FontSize->Larger,
+          FontColor->RGBColor[0, 
+            Rational[2, 3], 0]], "]"}], "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           SubscriptBox["p", "i"], " ", 
+           RowBox[{"Log", "[", 
+            RowBox[{"2", ",", 
+             SubscriptBox["p", "i"]}], "]"}]}], "]"}]}]}]},
+      {
+       RowBox[{
+        SubscriptBox["p", "i"], "[", 
+        StyleBox["\<\"probability\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{
+        RowBox[{
+         RowBox[{"S", "[", "\[Rho]", "]"}], "[", 
+         StyleBox["\<\"von Neumann entropy\"\>",
+          StripOnInput->False,
+          LineColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FrontFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          BackFaceColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          GraphicsColor->RGBColor[0, 
+            Rational[2, 3], 0],
+          FontSize->Larger,
+          FontColor->RGBColor[0, 
+            Rational[2, 3], 0]], "]"}], "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{"Tr", "[", 
+          FractionBox[
+           RowBox[{"\[Rho]", " ", 
+            RowBox[{"Log", "[", "\[Rho]", "]"}]}], 
+           RowBox[{"Log", "[", "2", "]"}]], "]"}]}]}]},
+      {
+       RowBox[{"\[Rho]", "[", 
+        StyleBox["\<\"mixed state probability distribution over an ensemble\"\
+\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"S", "[", "\[Rho]", "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           RowBox[{
+            UnderscriptBox["\[Sum]", "i"], 
+            FractionBox[
+             RowBox[{
+              RowBox[{"Log", "[", 
+               SubscriptBox["\[Lambda]", "i"], "]"}], " ", 
+              SubscriptBox["\[Lambda]", "i"]}], 
+             RowBox[{"Log", "[", "2", "]"}]]}]}]}], ")"}], "[", 
+        StyleBox["\<\"finite case\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{
+        SubscriptBox["\[Lambda]", "i"], "[", 
+        StyleBox["\<\"eigenvalues of \[Rho]\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"]}],
+  SequenceForm[
+   Style["Shannon entropy: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Grid[{{$CellContext`H[
+        Style["Shannon entropy", 
+         RGBColor[0, 
+          Rational[2, 3], 0], Larger]] -> -
+       Sum[Subscript[$CellContext`p, $CellContext`i] Log[2, 
+           Subscript[$CellContext`p, $CellContext`i]]]}, {
+      Subscript[$CellContext`p, $CellContext`i][
+       Style["probability", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {$CellContext`S[$CellContext`\[Rho]][
+        Style["von Neumann entropy", 
+         RGBColor[0, 
+          Rational[2, 3], 0], Larger]] -> -
+       Tr[$CellContext`\[Rho] Log[2]^(-1) Log[$CellContext`\[Rho]]]}, {
+      $CellContext`\[Rho][
+       Style["mixed state probability distribution over an ensemble", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {
+      ($CellContext`S[$CellContext`\[Rho]] -> -Sum[Log[2]^(-1) Log[
+           Subscript[$CellContext`\[Lambda], $CellContext`i]] 
+         Subscript[$CellContext`\[Lambda], $CellContext`i], $CellContext`i])[
+       Style["finite case", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {
+      Subscript[$CellContext`\[Lambda], $CellContext`i][
+       Style["eigenvalues of \[Rho]", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.700577296187834*^9, 3.7005773890272837`*^9, {3.700577616524954*^9, 
+   3.7005776215961018`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["$defQE"], "Input",
+ CellChangeTimes->{{3.700569231776587*^9, 3.700569241566888*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.700569245760651*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{909, 635},
+WindowMargins->{{11, Automatic}, {Automatic, 10}},
+FrontEndVersion->"11.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+21, 2016)",
+StyleDefinitions->"tuTensorialStyle.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 514, 9, 41, "Input",
+ InitializationCell->True],
+Cell[1075, 31, 1174, 24, 74, "Input",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[2274, 59, 10115, 240, 476, "Input",
+ InitializationCell->True],
+Cell[12392, 301, 5439, 151, 146, "Output"],
+Cell[17834, 454, 5276, 159, 126, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23147, 618, 260, 6, 42, "Input"],
+Cell[23410, 626, 793, 24, 47, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24240, 655, 119, 1, 47, "Subsection"],
+Cell[CellGroupData[{
+Cell[24384, 660, 9369, 231, 463, "Input"],
+Cell[33756, 893, 35243, 1002, 353, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69036, 1900, 2098, 57, 109, "Input"],
+Cell[71137, 1959, 5157, 143, 113, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76331, 2107, 100, 1, 42, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[76456, 2112, 2380, 64, 138, "Input"],
+Cell[78839, 2178, 6364, 184, 147, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[85240, 2367, 98, 1, 41, "Input"],
+Cell[85341, 2370, 87, 2, 26, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

@@ -1,0 +1,3739 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[    110065,       3738]
+NotebookOptionsPosition[     85608,       2993]
+NotebookOutlinePosition[     93509,       3183]
+CellTagsIndexPosition[     93262,       3174]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[{
+ "Further Introduction to ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"]
+}], "Title",
+ CellMargins->0,
+ CellFrameMargins->{{60, 9}, {9, 12}},
+ FontColor->GrayLevel[1],
+ Background->GrayLevel[0]],
+
+Cell["\<\
+Jason Harris
+Wolfram Research\
+\>", "Text",
+ FontSize->36,
+ FontSlant->"Italic"],
+
+Cell[CellGroupData[{
+
+Cell["Introduction", "Section",
+ CellMargins->{{Inherited, Inherited}, {Inherited, 10}}],
+
+Cell["\<\
+This talk will revisit some of the topics of the first day and look at \
+several topics in pattern matching in more detail. Topics include Structure \
+Manipulation, Scoping Constructs, Caching of Values and Performance \
+considerations, Pure Functions with Multiple Arguments, Attributes, Sequence \
+Objects & Matching, introduce Manipulate, discuss compilation and Parallel \
+programming, and introducte the Notation package.\
+\>", "Text"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Recap: Command Completion, Convert To, and Last Input / Output\
+\>", "Section"],
+
+Cell["\<\
+Command completion is your friend! \[CommandKey]-K to complete the command, \
+and \[CommandKey]-\[ShiftKey]-K to template-ize the command.\
+\>", "Text"],
+
+Cell["Complete WeierstrassP, NIntegrate, WorkingPrecision", "SmallText"],
+
+Cell[BoxData[
+ RowBox[{"1", "+", "1"}]], "Input"],
+
+Cell["\<\
+I also use \[CommandKey]-L, to get the last input and \[CommandKey]-\
+\[ShiftKey]-L to get the last output.\
+\>", "Text"],
+
+Cell["\<\
+Also \[CommandKey]-\[ShiftKey]-N will convert / Canonicalize to StandardForm, \
+whereas  \[CommandKey]-\[ShiftKey]-T will convert / Canonicalize to \
+TraditionalForm.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"1", "+", "1"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   TagBox[
+    FrameBox["f"],
+    "Placeholder"], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     TagBox[
+      FrameBox["x"],
+      "Placeholder"], ",", 
+     TagBox[
+      FrameBox[
+       SubscriptBox["x", "min"]],
+      "Placeholder"], ",", 
+     TagBox[
+      FrameBox[
+       SubscriptBox["x", "max"]],
+      "Placeholder"]}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Gamma", "[", "z", "]"}], "\[LeftDoubleBracket]", "1", 
+  "\[RightDoubleBracket]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Gamma", "[", "z", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  SubsuperscriptBox["\[Integral]", "a", "b"], 
+  RowBox[{
+   RowBox[{"Sin", "[", "x", "]"}], 
+   RowBox[{"\[DifferentialD]", "x"}]}]}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell["Core Language", "Title"],
+
+Cell[CellGroupData[{
+
+Cell["Recap: Expressions", "Section"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"nb", "=", 
+  RowBox[{"InputNotebook", "[", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ TemplateBox[{FrontEndObject[
+    LinkObject["gu3fk_shm", 3, 1]],11,
+   "FrontEndObject[LinkObject[\"gu3fk_shm\", 3, 1]]","11",
+   "\"Porto 2014 JFH Lecture2.nb\"",
+   "\"/Users/jason/Desktop/Porto/Talk/Porto 2014 JFH Lecture2.nb\""},
+  "NotebookObject"]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["General Expressions", "Subsection"],
+
+Cell[TextData[{
+ StyleBox["Everything",
+  FontWeight->"Bold"],
+ " inside ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " is an ",
+ ButtonBox["expression",
+  BaseStyle->"Link",
+  ButtonData->"paclet:tutorial/EverythingIsAnExpression"],
+ " of the form (apart from terminals):"
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["head",
+   FontSlant->"Italic"], "[", 
+  RowBox[{
+   SubscriptBox[
+    StyleBox["argument",
+     FontSlant->"Italic"], "1"], ",", 
+   SubscriptBox[
+    StyleBox["argument",
+     FontSlant->"Italic"], "2"], ",", "..."}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"a", "+", 
+   SuperscriptBox["d", "2"], "+", "f", "+", 
+   RowBox[{"b", "*", "c"}]}], "//", "TreeForm"}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[
+  TagBox[GraphicsComplexBox[{{1.2977713690461004`, 1.2977713690461004`}, {0., 
+    0.6488856845230502}, {0.6488856845230502, 0.6488856845230502}, {
+    0.3244428422615251, 0.}, {0.9733285267845753, 0.}, {1.9466570535691505`, 
+    0.6488856845230502}, {1.6222142113076254`, 0.}, {2.271099895830676, 0.}, {
+    2.5955427380922007`, 0.6488856845230502}}, {
+     {RGBColor[0.55, 0.45, 0.45], 
+      LineBox[{{1, 2}, {1, 3}, {1, 6}, {1, 9}, {3, 4}, {3, 5}, {6, 7}, {6, 
+       8}}]}, {
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox["Plus", "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 1],
+        TagBox[
+         RowBox[{"a", "+", 
+           RowBox[{"b", " ", "c"}], "+", 
+           SuperscriptBox["d", "2"], "+", "f"}], HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`a + $CellContext`b $CellContext`c + \
+$CellContext`d^2 + $CellContext`f], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["a",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 2],
+        TagBox["a", HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`a], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox["Times", "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 3],
+        TagBox[
+         RowBox[{"b", " ", "c"}], HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`b $CellContext`c], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["b",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 4],
+        TagBox["b", HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`b], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["c",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 5],
+        TagBox["c", HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`c], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox["Power", "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 6],
+        TagBox[
+         SuperscriptBox["d", "2"], HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`d^2], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["d",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 7],
+        TagBox["d", HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`d], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["2",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 8],
+        TagBox["2", HoldForm]],
+       Annotation[#, 
+        HoldForm[2], "Tooltip"]& ], 
+      TagBox[
+       TooltipBox[InsetBox[
+         FrameBox[
+          StyleBox[
+           TagBox["f",
+            HoldForm], "StandardForm", "Output",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->Scaled[0.05],
+           FontColor->GrayLevel[0]],
+          Background->RGBColor[1., 1., 0.871],
+          FrameStyle->GrayLevel[0.5],
+          StripOnInput->False], 9],
+        TagBox["f", HoldForm]],
+       Annotation[#, 
+        HoldForm[$CellContext`f], "Tooltip"]& ]}}],
+   Annotation[#, 
+    VertexCoordinateRules -> {{1.2977713690461004`, 1.2977713690461004`}, {0.,
+      0.6488856845230502}, {0.6488856845230502, 0.6488856845230502}, {
+     0.3244428422615251, 0.}, {0.9733285267845753, 0.}, {1.9466570535691505`, 
+     0.6488856845230502}, {1.6222142113076254`, 0.}, {2.271099895830676, 
+     0.}, {2.5955427380922007`, 0.6488856845230502}}]& ],
+  AspectRatio->NCache[2^Rational[-1, 2], 0.7071067811865475],
+  FrameTicks->Automatic,
+  PlotRange->All,
+  PlotRangePadding->Scaled[0.1]]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  SubscriptBox["\[PartialD]", "x"], 
+  RowBox[{"f", "[", "x", "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["f", "\[Prime]",
+   MultilineFunction->None], "[", "x", "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", " ", "@", " ", "%"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{"Derivative", "[", "1", "]"}], "[", "f", "]"}], "[", "x", "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Normal", " ", "@", " ", 
+  RowBox[{"Series", "[", 
+   RowBox[{
+    RowBox[{"Sin", "[", "x", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "3"}], "}"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"x", "-", 
+  FractionBox[
+   SuperscriptBox["x", "3"], "6"]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", "  ", "@", " ", "%9"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"SeriesData", "[", 
+    RowBox[{"x", ",", "0", ",", 
+     RowBox[{"List", "[", 
+      RowBox[{"1", ",", "0", ",", 
+       RowBox[{"Rational", "[", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", "6"}], "]"}]}], "]"}], ",", "1", ",", "4", 
+     ",", "1"}], "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"%", "/.", 
+  RowBox[{
+   SuperscriptBox["x", "3"], "\[Rule]", "a"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox["a", "6"]}], "+", "x"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Look at the full form of these last two. Try replacement in the series \
+object for ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox["x", "3"], TraditionalForm]],
+  FormatType->"TraditionalForm"]
+}], "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Recap: Pure Functions", "Section"],
+
+Cell["\<\
+A pure function (or lambda function in other terminology) can be thought of \
+as a small unnamed utility function.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MySquare", "[", "x_", "]"}], ":=", 
+  SuperscriptBox["x", "2"]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MySquare", " ", "/@", " ", 
+  RowBox[{"{", 
+   RowBox[{"2", ",", "f", ",", 
+    RowBox[{"Sin", "[", "x", "]"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"4", ",", 
+   SuperscriptBox["f", "2"], ",", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", "x", "]"}], "2"]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"a", "\[Function]", 
+    SuperscriptBox["a", "2"]}], ")"}], " ", "/@", " ", 
+  RowBox[{"{", 
+   RowBox[{"2", ",", "f", ",", 
+    RowBox[{"Sin", "[", "x", "]"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"4", ",", 
+   SuperscriptBox["f", "2"], ",", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", "x", "]"}], "2"]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    SuperscriptBox["#", "2"], "&"}], ")"}], "/@", " ", 
+  RowBox[{"{", 
+   RowBox[{"2", ",", "f", ",", 
+    RowBox[{"Sin", "[", "x", "]"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"4", ",", 
+   SuperscriptBox["f", "2"], ",", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", "x", "]"}], "2"]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Use ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"(", 
+    RowBox[{"a", "\[Function]", 
+     SuperscriptBox["a", "2"]}], ")"}], TraditionalForm]]],
+ "\n",
+ "Use ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["#", "2"], "&"}], ")"}], TraditionalForm]]]
+}], "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Pure functions of more than one variable", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b"}], "}"}], "\[Function]", 
+    RowBox[{"g", "[", 
+     RowBox[{"a", ",", 
+      RowBox[{
+       SuperscriptBox["b", "2"], "+", "1"}]}], "]"}]}], ")"}], "[", 
+  RowBox[{"t", ",", "w"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{"t", ",", 
+   RowBox[{"1", "+", 
+    SuperscriptBox["w", "2"]}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"(", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", "b"}], "}"}], "\[Function]", 
+   RowBox[{"g", "[", 
+    RowBox[{"a", ",", 
+     RowBox[{
+      SuperscriptBox["b", "2"], "+", "1"}]}], "]"}]}], ")"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Function", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", "b"}], "}"}], ",", 
+   RowBox[{"g", "[", 
+    RowBox[{"a", ",", 
+     RowBox[{
+      SuperscriptBox["b", "2"], "+", "1"}]}], "]"}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Function", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b"}], "}"}], ",", 
+    RowBox[{"g", "[", 
+     RowBox[{"a", ",", 
+      RowBox[{
+       SuperscriptBox["b", "2"], "+", "1"}]}], "]"}]}], "]"}], "[", 
+  RowBox[{"t", ",", "w"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{"t", ",", 
+   RowBox[{"1", "+", 
+    SuperscriptBox["w", "2"]}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"g", "[", 
+     RowBox[{"#1", ",", 
+      RowBox[{
+       SuperscriptBox["#2", "2"], "+", "1"}]}], "]"}], "&"}], ")"}], "[", 
+  RowBox[{"t", ",", "w"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{"t", ",", 
+   RowBox[{"1", "+", 
+    SuperscriptBox["w", "2"]}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", " ", "@", " ", 
+  RowBox[{"Function", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b"}], "}"}], ",", 
+    RowBox[{"g", "[", 
+     RowBox[{"a", ",", 
+      RowBox[{
+       SuperscriptBox["b", "2"], "+", "1"}]}], "]"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"Function", "[", 
+    RowBox[{
+     RowBox[{"List", "[", 
+      RowBox[{"a", ",", "b"}], "]"}], ",", 
+     RowBox[{"g", "[", 
+      RowBox[{"a", ",", 
+       RowBox[{"Plus", "[", 
+        RowBox[{
+         RowBox[{"Power", "[", 
+          RowBox[{"b", ",", "2"}], "]"}], ",", "1"}], "]"}]}], "]"}]}], "]"}],
+   
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", " ", "[", 
+  RowBox[{
+   RowBox[{"g", "[", 
+    RowBox[{"#1", ",", 
+     RowBox[{
+      SuperscriptBox["#2", "2"], "+", "1"}]}], "]"}], "&"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"Function", "[", 
+    RowBox[{"g", "[", 
+     RowBox[{
+      RowBox[{"Slot", "[", "1", "]"}], ",", 
+      RowBox[{"Plus", "[", 
+       RowBox[{
+        RowBox[{"Power", "[", 
+         RowBox[{
+          RowBox[{"Slot", "[", "2", "]"}], ",", "2"}], "]"}], ",", "1"}], 
+       "]"}]}], "]"}], "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Derivatives and Replacements", "Section"],
+
+Cell["This came up a lot in the exercises", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SubscriptBox["\[PartialD]", "x"], 
+   RowBox[{"f", "[", "x", "]"}]}], "+", 
+  RowBox[{"2", 
+   RowBox[{
+    SubscriptBox["\[PartialD]", 
+     RowBox[{"x", ",", "x"}]], 
+    RowBox[{"f", "[", "x", "]"}]}]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    SuperscriptBox["f", "\[Prime]",
+     MultilineFunction->None], "[", "x", "]"}], "+", 
+   RowBox[{"2", " ", 
+    RowBox[{
+     SuperscriptBox["f", "\[Prime]\[Prime]",
+      MultilineFunction->None], "[", "x", "]"}]}]}], "/.", 
+  RowBox[{"f", "\[Rule]", 
+   RowBox[{"(", 
+    RowBox[{"x", "\[Function]", 
+     SuperscriptBox["x", "2"]}], ")"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"4", "+", 
+  RowBox[{"2", " ", "x"}]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"%", "/.", 
+  RowBox[{
+   RowBox[{"f", "[", "x", "]"}], "\[Rule]", 
+   SuperscriptBox["x", "2"]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SuperscriptBox["f", "\[Prime]",
+    MultilineFunction->None], "[", "x", "]"}], "+", 
+  RowBox[{"2", " ", 
+   RowBox[{
+    SuperscriptBox["f", "\[Prime]\[Prime]",
+     MultilineFunction->None], "[", "x", "]"}]}]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SuperscriptBox["f", "\[Prime]",
+    MultilineFunction->None], "[", "x", "]"}], "//", "FullForm"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{"Derivative", "[", "1", "]"}], "[", "f", "]"}], "[", "x", "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell["Why isn\[CloseCurlyQuote]t this working?", "Text"],
+
+Cell["\<\
+Do FullForm, show replacement isn\[CloseCurlyQuote]t working, use a pure \
+function instead\
+\>", "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Functionize", "Subsection"],
+
+Cell[TextData[{
+ "Write a function which turns an expression into a pure function ",
+ Cell[BoxData[
+  RowBox[{"Functionize", "[", 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["x", "2"], "+", 
+     RowBox[{"3", "x"}], "+", "c"}], ",", "x"}], "]"}]], "Input"],
+ " which yields ",
+ Cell[BoxData[
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["#", "2"], "+", 
+     RowBox[{"3", "#"}], "+", "c"}], "&"}], ")"}]], "Input"]
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Functionize", "[", 
+   RowBox[{"expr_", ",", "x_"}], "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"Function", "@@", 
+   RowBox[{"{", 
+    RowBox[{"expr", "/.", 
+     RowBox[{"x", "\[Rule]", "#"}]}], "}"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SuperscriptBox["x", "2"], "+", 
+   RowBox[{"3", "x"}], "+", "c"}], "/.", 
+  RowBox[{"x", "\[Rule]", "#"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Functionize", "[", 
+  RowBox[{
+   RowBox[{
+    SuperscriptBox["x", "2"], "+", 
+    RowBox[{"3", "x"}], "+", "c"}], ",", "x"}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Function", "[", 
+   RowBox[{"x", ",", 
+    RowBox[{"c", "+", 
+     RowBox[{"3", " ", "x"}], "+", 
+     SuperscriptBox["x", "2"]}]}], "]"}], "[", "t", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"c", "+", 
+  RowBox[{"3", " ", "t"}], "+", 
+  SuperscriptBox["t", "2"]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"c", "+", 
+     RowBox[{"3", " ", "#1"}], "+", 
+     SuperscriptBox["#1", "2"]}], "&"}], ")"}], "[", "t", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"c", "+", 
+  RowBox[{"3", " ", "t"}], "+", 
+  SuperscriptBox["t", "2"]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"c", "+", 
+   RowBox[{"3", " ", "#1"}], "+", 
+   SuperscriptBox["#1", "2"]}], "//", "FullForm", " "}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"Plus", "[", 
+    RowBox[{"c", ",", 
+     RowBox[{"Times", "[", 
+      RowBox[{"3", ",", 
+       RowBox[{"Slot", "[", "1", "]"}]}], "]"}], ",", 
+     RowBox[{"Power", "[", 
+      RowBox[{
+       RowBox[{"Slot", "[", "1", "]"}], ",", "2"}], "]"}]}], "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Or we could just use named variables as well so  ",
+ Cell[BoxData[
+  RowBox[{"Functionize", "[", 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["x", "2"], "+", 
+     RowBox[{"3", "x"}], "+", "c"}], ",", "x"}], "]"}]], "Input"],
+ " could yield ",
+ Cell[BoxData[
+  RowBox[{"(", 
+   RowBox[{"x", "\[Function]", 
+    RowBox[{
+     SuperscriptBox["x", "2"], "+", 
+     RowBox[{"3", "x"}], "+", "c"}]}], ")"}]], "Input"],
+ " instead."
+}], "Text"],
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "[", "Functionize", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Functionize", "[", 
+   RowBox[{"expr_", ",", "x_"}], "]"}], ":=", 
+  RowBox[{"Function", "[", 
+   RowBox[{"x", ",", "expr"}], "]"}]}]}], "Input",
+ AutoStyleOptions->{"HighlightLocalScopeConflicts"->False}],
+
+Cell["\<\
+Functionize[expr_, var_] := Function @@ {expr /. var -> #}
+Functionize[expr_, var_] := Function[var, expr]\
+\>", "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Recap: Structure Manipulation", "Section"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["Map",
+ BaseStyle->"Link",
+ ButtonData->"paclet:ref/Map"]], "Subsection"],
+
+Cell[TextData[{
+ "You can use ",
+ ButtonBox["Map",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/Map"],
+ " to map a function onto a list or more generally onto an expression. (Short \
+form: /@)"
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{"a", "[", 
+  RowBox[{"b", "[", "g", "]"}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"g", "[", "foo", "]"}], "/@", 
+  RowBox[{"{", 
+   RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"foo", "[", "a", "]"}], ",", 
+    RowBox[{"foo", "[", "b", "]"}], ",", 
+    RowBox[{"foo", "[", "c", "]"}], ",", 
+    RowBox[{"foo", "[", "d", "]"}]}], "}"}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Do a map of foo over g[a,b,c,d]. Talk about g@foo and precedence of \
+operations.\
+\>", "SmallText"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["Apply",
+ BaseStyle->"Link",
+ ButtonData->"paclet:ref/Apply"]], "Subsection"],
+
+Cell["\<\
+Apply will replace the head of an expression. (Short form: @@)\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"bar", "@@", 
+  RowBox[{"f", "[", 
+   RowBox[{"g", "+", "k"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"bar", "[", 
+  RowBox[{"g", "+", "k"}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell["Apply on the children is done via @@@", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"bar", "@@@", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"foo", "[", "a", "]"}], ",", 
+    RowBox[{"goo", "[", "b", "]"}], ",", 
+    RowBox[{"boo", "[", "c", "]"}], ",", 
+    RowBox[{"woo", "[", "d", "]"}]}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"bar", "[", "a", "]"}], ",", 
+   RowBox[{"bar", "[", "b", "]"}], ",", 
+   RowBox[{"bar", "[", "c", "]"}], ",", 
+   RowBox[{"bar", "[", "d", "]"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Apply", "[", 
+  RowBox[{"bar", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"foo", "[", 
+      RowBox[{"a", "[", "g", "]"}], "]"}], ",", 
+     RowBox[{"goo", "[", 
+      RowBox[{"b", "[", "h", "]"}], "]"}], ",", 
+     RowBox[{"boo", "[", 
+      RowBox[{"c", "[", "y", "]"}], "]"}], ",", 
+     RowBox[{"woo", "[", 
+      RowBox[{"d", "[", "y", "]"}], "]"}]}], "}"}], ",", 
+   RowBox[{"{", "2", "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"foo", "[", 
+    RowBox[{"bar", "[", "g", "]"}], "]"}], ",", 
+   RowBox[{"goo", "[", 
+    RowBox[{"bar", "[", "h", "]"}], "]"}], ",", 
+   RowBox[{"boo", "[", 
+    RowBox[{"bar", "[", "y", "]"}], "]"}], ",", 
+   RowBox[{"woo", "[", 
+    RowBox[{"bar", "[", "y", "]"}], "]"}]}], "}"}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["Flatten",
+ BaseStyle->"Link",
+ ButtonData->"paclet:ref/Flaten"]], "Subsection"],
+
+Cell["Flatten will flatten out nested lists", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Flatten", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", 
+     RowBox[{"{", 
+      RowBox[{"b", ",", 
+       RowBox[{"{", "c", "}"}]}], "}"}], ",", "d"}], "}"}], ",", "1"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"a", ",", "b", ",", 
+   RowBox[{"{", "c", "}"}], ",", "d"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell["Flatten will takes a level parameter", "Text"],
+
+Cell["Include a level parameter in the flatten", "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Attributes", "Section"],
+
+Cell["\<\
+Attributes can be \[OpenCurlyDoubleQuote]added\[CloseCurlyDoubleQuote] to \
+functions and they change the behavior of functions in specific ways.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Listable Attributes", "Subsection"],
+
+Cell[TextData[{
+ "Many functions are ",
+ StyleBox["Listable", "MR"],
+ " in ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Plus", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"1", "+", "a"}], ",", 
+   RowBox[{"2", "+", "b"}], ",", 
+   RowBox[{"3", "+", "c"}], ",", 
+   RowBox[{"4", "+", "d"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "Plus"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"\\!\\(\\*RowBox[{StyleBox[\\\"x\\\", \\\"TI\\\"], \\\"+\\\", \
+StyleBox[\\\"y\\\", \\\"TI\\\"], \\\"+\\\", StyleBox[\\\"z\\\", \\\"TI\\\"]}]\
+\\) represents a sum of terms. \"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:ref/Plus"]}]], "Print", "PrintUsage",
+ CellTags->"Info3615116442-4968115"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {
+     RowBox[{
+      RowBox[{"Attributes", "[", "Plus", "]"}], "=", 
+      RowBox[{"{", 
+       RowBox[{
+       "Flat", ",", "Listable", ",", "NumericFunction", ",", "OneIdentity", 
+        ",", "Orderless", ",", "Protected"}], "}"}]}]},
+    {" "},
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{"Default", "[", "Plus", "]"}], ":=", "0"}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[Plus],
+  Editable->False]], "Print",
+ CellTags->"Info3615116442-4968115"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData["Plus"], "Input"],
+
+Cell[BoxData[
+ RowBox[{"SetAttributes", "[", 
+  RowBox[{"foo", ",", "Listable"}], "]"}]], "Input"],
+
+Cell["Do Power[{1,2,3,4},2] and Plus, etc. Make foo listable.", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Holding Attributes", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "[", 
+  RowBox[{"f", ",", "g"}], "]"}], "\n", 
+ RowBox[{
+  RowBox[{"f", "[", 
+   RowBox[{"g", "[", "a_", "]"}], "]"}], ":=", 
+  RowBox[{"B", "[", "a", "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"g", "[", "x_", "]"}], ":=", 
+  SuperscriptBox["x", "2"]}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "[", 
+  RowBox[{"g", "[", "r", "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"B", "[", "r", "]"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"SetAttributes", "[", 
+  RowBox[{"f", ",", "HoldAll"}], "]"}]], "Input"],
+
+Cell[TextData[{
+ "By setting the ",
+ StyleBox["HoldAll", "MR"],
+ " attribute on a function, it will not by default evaluate its arguments."
+}], "Text"],
+
+Cell["SetAttributes[f, HoldAll]", "SmallText"],
+
+Cell[TextData[{
+ "Other common attributes, are ",
+ StyleBox["HoldFirst", "MR"],
+ ", ",
+ StyleBox["HoldRest", "MR"],
+ ", ",
+ StyleBox["HoldAllComplete", "MR"]
+}], "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Matching Attributes", "Subsection"],
+
+Cell[TextData[{
+ "For us, later we will revisit the attributes ",
+ StyleBox["Flat", "MR"],
+ ", ",
+ StyleBox["Orderless", "MR"],
+ ", and ",
+ StyleBox["OneIdentity", "MR"],
+ "."
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{"SetAttributes", "[", 
+  RowBox[{"plus", ",", 
+   RowBox[{"{", 
+    RowBox[{"Flat", ",", "Orderless"}], "}"}]}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plus", "[", 
+  RowBox[{"b", ",", 
+   RowBox[{"plus", "[", 
+    RowBox[{"a", ",", "c"}], "]"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"plus", "[", 
+  RowBox[{"a", ",", "b", ",", "c"}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"plus", "[", 
+   RowBox[{"a_", ",", "b_"}], "]"}], ":=", 
+  RowBox[{"g", "[", 
+   RowBox[{"a", ",", "b"}], "]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plus", "[", 
+  RowBox[{"x", ",", "y", ",", "z"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{
+   RowBox[{"plus", "[", "x", "]"}], ",", 
+   RowBox[{"g", "[", 
+    RowBox[{
+     RowBox[{"plus", "[", "y", "]"}], ",", 
+     RowBox[{"plus", "[", "z", "]"}]}], "]"}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"SetAttributes", "[", 
+  RowBox[{"plus", ",", 
+   RowBox[{"{", 
+    RowBox[{"Flat", ",", "Orderless", ",", "OneIdentity"}], "}"}]}], 
+  "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plus", "[", 
+  RowBox[{"x", ",", "y", ",", "z"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"g", "[", 
+  RowBox[{"x", ",", 
+   RowBox[{"g", "[", 
+    RowBox[{"y", ",", "z"}], "]"}]}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "Plus"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"\!\(\*RowBox[{StyleBox[\\\"x\\\", \\\"TI\\\"], \\\"+\\\", \
+StyleBox[\\\"y\\\", \\\"TI\\\"], \\\"+\\\", StyleBox[\\\"z\\\", \\\"TI\\\"]}]\
+\) represents a sum of terms. \"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:ref/Plus"]}]], "Print", "PrintUsage",
+ CellTags->"Info3615116713-4968115"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {
+     RowBox[{
+      RowBox[{"Attributes", "[", "Plus", "]"}], "=", 
+      RowBox[{"{", 
+       RowBox[{
+       "Flat", ",", "Listable", ",", "NumericFunction", ",", "OneIdentity", 
+        ",", "Orderless", ",", "Protected"}], "}"}]}]},
+    {" "},
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{"Default", "[", "Plus", "]"}], ":=", "0"}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[Plus],
+  Editable->False]], "Print",
+ CellTags->"Info3615116713-4968115"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Permission Attributes", "Subsection"],
+
+Cell[BoxData[
+ RowBox[{"Foo", "/:", 
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"Foo", "[", "x_", "]"}], ",", "x_"}], "]"}], ":=", 
+  SuperscriptBox[
+   RowBox[{"Foo", "[", 
+    RowBox[{"2", "x"}], "]"}], "2"]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "Foo"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Global`Foo", "Print", "PrintUsage",
+ CellTags->"Info3615116989-4968115"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{
+          SubscriptBox["\[PartialD]", "x_"], 
+          RowBox[{"Foo", "[", "x_", "]"}]}], "^:=", 
+         SuperscriptBox[
+          RowBox[{"Foo", "[", 
+           RowBox[{"2", " ", "x"}], "]"}], "2"]}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[$CellContext`Foo],
+  Editable->False]], "Print",
+ CellTags->"Info3615116989-4968115"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"D", "[", 
+  RowBox[{
+   RowBox[{"Foo", "[", "t", "]"}], ",", "t"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ SuperscriptBox[
+  RowBox[{"Foo", "[", 
+   RowBox[{"2", " ", "t"}], "]"}], "2"]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"ClearAttributes", "[", 
+  RowBox[{"D", ",", "ReadProtected"}], "]"}]], "Input"],
+
+Cell[TextData[{
+ "ClearAttributes[D, Protected]",
+ "\n",
+ Cell[BoxData[
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"Foo", "[", "x_", "]"}], ",", "x_"}], "]"}], ":=", 
+   SuperscriptBox[
+    RowBox[{"Foo", "[", 
+     RowBox[{"2", "x"}], "]"}], "2"]}]], "SmallText"],
+ "\n",
+ Cell[BoxData[
+  RowBox[{"Foo", "/:", 
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"Foo", "[", "x_", "]"}], ",", "x_"}], "]"}], ":=", 
+   SuperscriptBox[
+    RowBox[{"Foo", "[", 
+     RowBox[{"2", "x"}], "]"}], "2"]}]], "SmallText"]
+}], "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Riffle Solution", "Section"],
+
+Cell["\<\
+It is instructive to walk through the exercise for MyRiffle in the exercises. \
+Riffle has the following behavior:\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Riffle", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "}"}], ",", "x"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"a", ",", "x", ",", "b", ",", "x", ",", "c", ",", "x", ",", "d"}], 
+  "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MyRiffle", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", "b", ",", 
+     RowBox[{"{", 
+      RowBox[{"c", ",", "g"}], "}"}], ",", "d"}], "}"}], ",", "x"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"a", ",", "x", ",", "b", ",", "x", ",", 
+   RowBox[{"{", 
+    RowBox[{"c", ",", "g"}], "}"}], ",", "x", ",", "d"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyRiffle", "[", 
+   RowBox[{"expr_List", ",", "r_"}], "]"}], ":=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"{", 
+        RowBox[{"expr", ",", 
+         RowBox[{"Table", "[", 
+          RowBox[{"r", ",", 
+           RowBox[{"{", 
+            RowBox[{"Length", "@", "expr"}], "}"}]}], "]"}]}], "}"}], 
+       "\[Transpose]"], ",", "1"}], "]"}], ",", 
+    RowBox[{"-", "1"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+MyRiffle[a_List, x_] := Drop[Flatten[{a, Table[x, {Length @a}]}\[Transpose], \
+1], -1]\
+\>", "SmallText"],
+
+Cell[CellGroupData[{
+
+Cell["Pure Function Approach", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"Drop", "[", 
+     RowBox[{"#", ",", 
+      RowBox[{"-", "1"}]}], "]"}], "&"}], ")"}], "@", 
+  RowBox[{"{", 
+   RowBox[{"t", ",", "u", ",", "u"}], "}"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"t", ",", "u"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyRiffle", "[", 
+   RowBox[{"a_List", ",", "x_"}], "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"Drop", "[", 
+      RowBox[{"#", ",", 
+       RowBox[{"-", "1"}]}], "]"}], "&"}], ")"}], "@", "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Flatten", "[", 
+       RowBox[{"#", ",", "1"}], "]"}], "&"}], ")"}], "@", 
+    "\[IndentingNewLine]", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"a", ",", 
+        RowBox[{"Table", "[", 
+         RowBox[{"x", ",", 
+          RowBox[{"{", 
+           RowBox[{"Length", " ", "@", "a"}], "}"}]}], "]"}]}], "}"}], 
+      "\[Transpose]"}], ")"}]}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyRiffle", "[", 
+   RowBox[{"a_List", ",", "x_"}], "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Drop", "[", 
+       RowBox[{"#", ",", 
+        RowBox[{"-", "1"}]}], "]"}], "&"}], "@", "\[IndentingNewLine]", 
+     RowBox[{"Flatten", "[", 
+      RowBox[{"#", ",", "1"}], "]"}]}], "&"}], "@", "\[IndentingNewLine]", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"a", ",", 
+       RowBox[{"Table", "[", 
+        RowBox[{"x", ",", 
+         RowBox[{"{", 
+          RowBox[{"Length", " ", "@", "a"}], "}"}]}], "]"}]}], "}"}], 
+     "\[Transpose]"}], ")"}]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Drop", "[", 
+      RowBox[{"#", ",", 
+       RowBox[{"-", "1"}]}], "]"}], "&"}], "@", "\[IndentingNewLine]", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{"#", ",", "1"}], "]"}]}], "&"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"Function", "[", 
+    RowBox[{
+     RowBox[{"Function", "[", 
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{"Slot", "[", "1", "]"}], ",", 
+        RowBox[{"-", "1"}]}], "]"}], "]"}], "[", 
+     RowBox[{"Flatten", "[", 
+      RowBox[{
+       RowBox[{"Slot", "[", "1", "]"}], ",", "1"}], "]"}], "]"}], "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullForm", "[", 
+  RowBox[{"Hold", "[", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Drop", "[", 
+       RowBox[{"#", ",", 
+        RowBox[{"-", "1"}]}], "]"}], "&"}], ")"}], "@", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Flatten", "[", 
+       RowBox[{"#", ",", "1"}], "]"}], "&"}], ")"}]}], "]"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   RowBox[{"Hold", "[", 
+    RowBox[{
+     RowBox[{"Function", "[", 
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{"Slot", "[", "1", "]"}], ",", 
+        RowBox[{"-", "1"}]}], "]"}], "]"}], "[", 
+     RowBox[{"Function", "[", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{
+        RowBox[{"Slot", "[", "1", "]"}], ",", "1"}], "]"}], "]"}], "]"}], 
+    "]"}],
+   ShowSpecialCharacters->False,
+   ShowStringCharacters->True,
+   NumberMarks->True],
+  FullForm]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MyRiffle", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", 
+     RowBox[{"{", 
+      RowBox[{"b", ",", "c"}], "}"}], ",", "g", ",", "d"}], "}"}], ",", "x"}],
+   "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"a", ",", "x", ",", 
+   RowBox[{"{", 
+    RowBox[{"b", ",", "c"}], "}"}], ",", "x", ",", "g", ",", "x", ",", "d"}], 
+  "}"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Scoping", "Section"],
+
+Cell[TextData[{
+ "You can Localize variables with ",
+ ButtonBox["Block",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/Block"],
+ ", ",
+ ButtonBox["Module",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/Module"],
+ ", and ",
+ ButtonBox["With",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/With"],
+ "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell["The Problem", "Subsection"],
+
+Cell["Nikolai at one time used the following:", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"f", "[", "d_", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "x", "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"x", "/.", 
+     RowBox[{"NSolve", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"HermiteH", "[", 
+         RowBox[{"d", ",", "x"}], "]"}], " ", "\[Equal]", "0"}], ",", "x"}], 
+      "]"}]}]}], "\[IndentingNewLine]", "]"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "[", "4", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", "1.6506801238857844`"}], ",", 
+   RowBox[{"-", "0.5246476232752904`"}], ",", "0.5246476232752904`", ",", 
+   "1.6506801238857847`"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "[", "5", "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", "2.0201828704560856`"}], ",", 
+   RowBox[{"-", "0.9585724646138186`"}], ",", "0.`", ",", 
+   "0.9585724646138185`", ",", "2.0201828704560856`"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"x", "=", "2"}]], "Input"],
+
+Cell[BoxData["2"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "[", "4", "]"}]], "Input"],
+
+Cell[BoxData["2"], "Output"]
+}, Open  ]],
+
+Cell["\<\
+With motivation get down to z[degree_]:=Block[{x}, x /. NSolve[HermiteH[4,x] \
+\[Equal]0,x]]\
+\>", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Block", "Subsection"],
+
+Cell["\<\
+Task return the reverse list of roots of a polynomial in some variable \
+wrapped in fud.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"foo", "[", 
+   RowBox[{"poly_", ",", "x_"}], "]"}], "\[Rule]", 
+  RowBox[{"fud", " ", "reverse", " ", "of", " ", "roots"}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"x", "=", "2"}]], "Input"],
+
+Cell[BoxData["2"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"foo", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["x", "2"], "+", 
+     RowBox[{"3", " ", "x"}], " ", "+", "4"}], "\[Equal]", "0"}], ",", "x"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Solve", "::", "ivar"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"\[NoBreak]\\!\\(2\\)\[NoBreak] is not a valid variable. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/ivar\\\", \
+ButtonNote -> \\\"Solve::ivar\\\"]\\)\"\>"}]], "Message", "MSG"],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"ReplaceAll", "::", "reps"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"\[NoBreak]\\!\\({\\(Solve[\\(\\(False, 2\\)\\)]\\)}\\)\
+\[NoBreak] is neither a list of replacement rules nor a valid dispatch table, \
+and so cannot be used for replacing. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/ReplaceAll/reps\\\", \
+ButtonNote -> \\\"ReplaceAll::reps\\\"]\\)\"\>"}]], "Message", "MSG"],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"ReplaceAll", "::", "reps"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"\[NoBreak]\\!\\({2}\\)\[NoBreak] is neither a list of \
+replacement rules nor a valid dispatch table, and so cannot be used for \
+replacing. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\
+\\\", ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/ReplaceAll/reps\\\
+\", ButtonNote -> \\\"ReplaceAll::reps\\\"]\\)\"\>"}]], "Message", "MSG"],
+
+Cell[BoxData[
+ RowBox[{"fud", "[", 
+  RowBox[{
+   RowBox[{"Solve", "[", 
+    RowBox[{"False", ",", "2"}], "]"}], ",", "2"}], "]"}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{"SetAttributes", "[", 
+  RowBox[{"foo", ",", "HoldAll"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"foo", "[", 
+   RowBox[{"poly_", ",", " ", "x_"}], "]"}], " ", ":=", "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"sol", ",", "x"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"sol", " ", "=", " ", 
+      RowBox[{"Solve", "[", 
+       RowBox[{"poly", ",", " ", "x"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"fud", " ", "@@", " ", 
+      RowBox[{"Reverse", "[", 
+       RowBox[{"x", " ", "/.", " ", "sol"}], "]"}]}]}]}], 
+   "\[IndentingNewLine]", "]"}]}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Blocks and Modules", "Subsection"],
+
+Cell["What is the output of:", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"yy", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Block", "[", 
+  RowBox[{
+   RowBox[{"{", "yy", "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", " ", "@", " ", "yy"}], ";", "\[IndentingNewLine]", 
+    RowBox[{"yy", "=", "2"}], ";", "\[IndentingNewLine]", 
+    RowBox[{"Print", " ", "@", " ", "yy"}], ";"}]}], "\[IndentingNewLine]", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Print", " ", "@", " ", "yy"}], ";"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["yy"], "Print"],
+
+Cell[BoxData["2"], "Print"],
+
+Cell[BoxData["1"], "Print"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"x", "=."}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], ",", 
+   SuperscriptBox["x", "2"]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ SuperscriptBox["x", "2"]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Module", "[", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], ",", 
+   SuperscriptBox["x", "2"]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ SuperscriptBox["x$1277", "2"]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Block is \[OpenCurlyDoubleQuote]dynamic\[CloseCurlyDoubleQuote] scoping and \
+Module is \[OpenCurlyDoubleQuote]lexical\[CloseCurlyDoubleQuote] scoping. \
+Tend to use Block.\
+\>", "Text"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Fibonacci, Performance, and Timings", "Section"],
+
+Cell["\<\
+I am going to talk about how to gauge performance, algorithm selection, and \
+timings.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Simple Fibonacci", "Subsection"],
+
+Cell["Here is a naive implementation of Fibonacci", "Text"],
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "@", "MyFib"}], "\n", 
+ RowBox[{
+  RowBox[{"MyFib", "[", 
+   RowBox[{"n_Integer", "/;", 
+    RowBox[{"n", ">", "0"}]}], "]"}], ":=", 
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"MyFib", "[", 
+     RowBox[{"n", "-", "1"}], "]"}], "2"], "+", 
+   SuperscriptBox[
+    RowBox[{"MyFib", "[", 
+     RowBox[{"n", "-", "2"}], "]"}], "2"]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyFib", "[", "1", "]"}], "=", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyFib", "[", "0", "]"}], "=", "0"}], ";"}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MyFib", "[", "8", "]"}]], "Input"],
+
+Cell[BoxData["21"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Fibonacci", "[", "8", "]"}]], "Input"],
+
+Cell[BoxData["21"], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Performance of Simple Fibonacci", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"timings", "=", 
+  RowBox[{"N", "/@", 
+   RowBox[{"First", "/@", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Timing", "@", 
+       RowBox[{"MyFib", "[", "n", "]"}]}], ",", 
+      RowBox[{"{", 
+       RowBox[{"n", ",", "1", ",", "30"}], "}"}]}], "]"}]}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "6.`*^-6", ",", "9.`*^-6", ",", "5.`*^-6", ",", "0.00001`", ",", 
+   "0.000015`", ",", "0.000026`", ",", "0.000042`", ",", "0.000069`", ",", 
+   "0.000111`", ",", "0.000179`", ",", "0.000291`", ",", "0.000472`", ",", 
+   "0.000765`", ",", "0.001318`", ",", "0.002002`", ",", "0.00323`", ",", 
+   "0.005217`", ",", "0.008662`", ",", "0.013539`", ",", "0.02247`", ",", 
+   "0.037839`", ",", "0.058118`", ",", "0.093429`", ",", "0.151038`", ",", 
+   "0.243518`", ",", "0.402411`", ",", "0.640034`", ",", "1.065652`", ",", 
+   "1.682794`", ",", "2.723782`"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p1", "=", 
+  RowBox[{"ListPlot", "[", 
+   RowBox[{"timings", ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "3"}], "}"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, 
+   {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.019444444444444445`], 
+    AbsoluteThickness[1.6], PointBox[CompressedData["
+1:eJxTTMoPSmViYGCQA2IQDQEf7EOeCBQWa920gwo42K8+M+Xa/UdQPofDx4zH
+HVt/XIHyBaD8J1C+iEOmbKivQOl7KF/CgXWRemqQ828oX8bh5PF3TKqsbPYQ
+voKDjIrLzyYxIShfyYGxY3eVqKQslK/iYJy1z8uuTB3KV3PgOLuuWlvIGMrX
+cPiT6z/hxjs7KF/LIf/y/L8egp5Qvo6Do2bUTvEZoVC+nkP59ZsT6tMSoHwD
+h/S327jPlmZB+YYOD7crHsuOK4XyjRzmxe77mri3Eco3dpi85vDF0F3dUL6J
+w+HGCToJTNOhfFMHtqts6oviF0P5Zg4XtOdVLTm4Fso3d3hYXd/87dV2KN/C
+gYPFarJZ6GEo39LhSMI/rpna56F8K4fPtsqCUgdvQvnWDg31XlM1qp9A+TYO
+DGv6ZF7yfITybR1+Ve1L2/nmF5Rv53CgfLa53ylWBwAzM398
+     "]]}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{},
+  PlotRange->{{0., 30.}, {0, 3}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {0, 0}},
+  Ticks->{Automatic, Automatic}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"theFit", "=", 
+  RowBox[{
+   RowBox[{"a", "+", 
+    RowBox[{"b", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"c", " ", "x"}]]}]}], "/.", 
+   RowBox[{"FindFit", "[", 
+    RowBox[{"timings", ",", 
+     RowBox[{"a", "+", 
+      RowBox[{"b", " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"c", " ", "x"}]]}]}], ",", 
+     RowBox[{"{", 
+      RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x"}], 
+    "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", "0.0004582411896455454`"}], "+", 
+  RowBox[{"1.6130992649897033`*^-6", " ", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"0.47799043396397284`", " ", "x"}]]}]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p2", "=", 
+  RowBox[{"Plot", "[", 
+   RowBox[{"theFit", ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "30"}], "}"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "3"}], "}"}]}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {}, 
+   {RGBColor[0.368417, 0.506779, 0.709798], AbsoluteThickness[1.6], Opacity[
+    1.], LineBox[CompressedData["
+1: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
+     "]]}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{"DefaultBoundaryStyle" -> Automatic, "ScalingFunctions" -> None},
+  PlotRange->{{0., 29.999999387755103`}, {0, 3}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {0, 0}},
+  Ticks->{Automatic, Automatic}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Show", "[", 
+  RowBox[{"p1", ",", "p2"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ GraphicsBox[{{{}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.019444444444444445`],
+      AbsoluteThickness[1.6], PointBox[CompressedData["
+1:eJxTTMoPSmViYGCQA2IQDQEf7EOeCBQWa920gwo42K8+M+Xa/UdQPofDx4zH
+HVt/XIHyBaD8J1C+iEOmbKivQOl7KF/CgXWRemqQ828oX8bh5PF3TKqsbPYQ
+voKDjIrLzyYxIShfyYGxY3eVqKQslK/iYJy1z8uuTB3KV3PgOLuuWlvIGMrX
+cPiT6z/hxjs7KF/LIf/y/L8egp5Qvo6Do2bUTvEZoVC+nkP59ZsT6tMSoHwD
+h/S327jPlmZB+YYOD7crHsuOK4XyjRzmxe77mri3Eco3dpi85vDF0F3dUL6J
+w+HGCToJTNOhfFMHtqts6oviF0P5Zg4XtOdVLTm4Fso3d3hYXd/87dV2KN/C
+gYPFarJZ6GEo39LhSMI/rpna56F8K4fPtsqCUgdvQvnWDg31XlM1qp9A+TYO
+DGv6ZF7yfITybR1+Ve1L2/nmF5Rv53CgfLa53ylWBwAzM398
+      "]]}, {}}, {{}, {}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], AbsoluteThickness[1.6], Opacity[
+     1.], LineBox[CompressedData["
+1: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
+      "]]}}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{},
+  PlotRange->{{0., 30.}, {0, 3}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {0, 0}},
+  Ticks->{Automatic, Automatic}]], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{"pts", "=", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"Timing", " ", "@", " ", 
+     RowBox[{"MyFib", "[", "n", "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"n", ",", "1", ",", "30"}], "}"}]}], "]"}]}], "\n", 
+ RowBox[{"timings", " ", "=", 
+  RowBox[{"N", "/@", 
+   RowBox[{"First", "/@", "pts"}]}]}], "\n", 
+ RowBox[{"theCoeffs", "=", " ", 
+  RowBox[{"FindFit", "[", 
+   RowBox[{"timings", ",", 
+    RowBox[{
+     RowBox[{"a", " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"b", " ", "x"}]]}], " ", "+", "c"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x"}], "]"}]}], "\n", 
+ RowBox[{"theFit", " ", "=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"a", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"b", " ", "x"}]]}], " ", "+", "c"}], " ", "/.", 
+   "theCoeffs"}]}], "\n", 
+ RowBox[{"p1", "=", 
+  RowBox[{"ListPlot", "[", 
+   RowBox[{"timings", ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "3"}], "}"}]}]}], "]"}]}], "\n", 
+ RowBox[{"p2", "=", 
+  RowBox[{"Plot", "[", 
+   RowBox[{"theFit", ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "1", ",", "30"}], "}"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "3"}], "}"}]}]}], "]"}]}], "\n", 
+ RowBox[{"Show", "[", 
+  RowBox[{"p1", ",", "p2"}], "]"}]}], "SmallText"],
+
+Cell["So that is quite bad performance...", "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Caching Fibonacci", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "@", "MyFib"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyFib", "[", "1", "]"}], "=", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyFib", "[", "0", "]"}], "=", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"MyFib", "[", 
+   RowBox[{"n_Integer", "/;", 
+    RowBox[{"n", ">", "0"}]}], "]"}], ":=", "\[IndentingNewLine]", " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"MyFib", "[", "n", "]"}], "=", 
+    RowBox[{
+     RowBox[{"MyFib", "[", 
+      RowBox[{"n", "-", "1"}], "]"}], "+", 
+     RowBox[{"MyFib", "[", 
+      RowBox[{"n", "-", "2"}], "]"}]}]}], ")"}]}]}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MyFib", "[", "700", "]"}]], "Input"],
+
+Cell[BoxData[\
+"87470814955752846203978413017571327342367240967697381074230432592527501911290\
+377655628227150878427331693193369109193672330777527943718169105124275"], \
+"Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Fibonacci", "[", "700", "]"}], "\[Equal]", "%"}]], "Input"],
+
+Cell[BoxData["True"], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"??", "MyFib"}]], "Input"],
+
+Cell["\<\
+Cache the simple Fibonacci sequences as we compute them:
+MyFib[n_Integer /; n >= 0] := MyFib[n] = MyFib[n - 1] + MyFib[n - 2]\
+\>", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["A More Intelligent Version", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"fib", "[", "0", "]"}], ":=", "0"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"fib", "[", 
+    RowBox[{"n_Integer", "/;", 
+     RowBox[{"n", ">", "0"}]}], "]"}], ":=", 
+   RowBox[{"fibAux", "[", 
+    RowBox[{"1", ",", "0", ",", 
+     RowBox[{"n", "-", "1"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"fibAux", "[", 
+    RowBox[{
+    "total_", ",", "prev_", ",", "totalSquare_", ",", "prevTotalSquare_", ",",
+      "0"}], "]"}], ":=", "total"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"fibAux", "[", 
+    RowBox[{"total_", ",", "prev_", ",", "n_"}], "]"}], ":=", 
+   RowBox[{"fibAux", "[", 
+    RowBox[{
+     RowBox[{"total", "+", "prev"}], ",", "total", ",", 
+     RowBox[{"n", "-", "1"}]}], "]"}]}], ";"}]}], "Input"],
+
+Cell[BoxData["My"], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Fibonacci", "[", "700", "]"}], "==", 
+  RowBox[{"fib", "[", "700", "]"}]}]], "Input"],
+
+Cell[BoxData["True"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"IntegerLength", " ", "@", " ", 
+  RowBox[{"fib", "[", "700", "]"}]}]], "Input"],
+
+Cell[BoxData["146"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "fib"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Global`fib", "Print", "PrintUsage",
+ CellTags->"Info3615118241-3673309"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{"fib", "[", "0", "]"}], ":=", "0"}]},
+       {" "},
+       {
+        RowBox[{
+         RowBox[{"fib", "[", 
+          RowBox[{"n_Integer", "/;", 
+           RowBox[{"n", ">", "0"}]}], "]"}], ":=", 
+         RowBox[{"fibAux", "[", 
+          RowBox[{"1", ",", "0", ",", 
+           RowBox[{"n", "-", "1"}]}], "]"}]}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[$CellContext`fib],
+  Editable->False]], "Print",
+ CellTags->"Info3615118241-3673309"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "The moral here is that ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " will do to a large degree whatever you tell it to, and so you need to \
+choose algorithms which are sensible."
+}], "Text"],
+
+Cell["\<\
+fib[0] := 0
+fib[n_Integer /; n > 0] := fibAux[1, 0, n - 1];
+fibAux[total_, prev_, 0] := total;
+fibAux[total_, prev_, n_] := fibAux[total + prev, total, n - 1];\
+\>", "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Iteration Limits", "Subsection"],
+
+Cell["\<\
+Of note using the old method this would of course take much much longer than \
+the lifetime of the universe to compute...\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"theFit", "/.", 
+  RowBox[{"x", "\[Rule]", "500"}]}]], "Input"],
+
+Cell[BoxData["1.0045349001341277`*^98"], "Output"]
+}, Open  ]],
+
+Cell["What can we push our new algorithm to?", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"$IterationLimit", "=", "\[Infinity]"}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"IntegerLength", " ", "@", " ", 
+    RowBox[{"fib", "[", "1000000", "]"}]}]}], "]"}]], "Input"],
+
+Cell[BoxData["208988"], "Output"]
+}, Open  ]],
+
+Cell["IntegerLength @ Block[{$IterationLimit=\[Infinity]},fib[1000000]]", \
+"SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Closed Form Solution", "Subsection"],
+
+Cell["\<\
+Interestingly, after doing the exercise you can determine that the closed \
+form solution for Fibonacci[n] is:\
+\>", "Text"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["2", 
+    RowBox[{"-", "n"}]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         SqrtBox["5"]}], ")"}], "n"]}], "+", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        SqrtBox["5"]}], ")"}], "n"]}], ")"}]}], 
+  SqrtBox["5"]]], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Implementing Differentation", "Section"],
+
+Cell["\<\
+Let us now put much of the previous pattern matching together to implement a \
+simple form of differentiation.\
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"f_", "+", "g_"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"MyD", "[", 
+    RowBox[{"f", ",", "x"}], "]"}], "+", 
+   RowBox[{"MyD", "[", 
+    RowBox[{"g", ",", "x"}], "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"f_", " ", "g_"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"f", " ", 
+    RowBox[{"MyD", "[", 
+     RowBox[{"g", ",", "x"}], "]"}]}], "+", 
+   RowBox[{
+    RowBox[{"MyD", "[", 
+     RowBox[{"f", ",", "x"}], "]"}], "g"}]}]}]}], "Input"],
+
+Cell["\<\
+The above rules function for n-arguments through the attributes of plus and \
+times.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"MyD", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"f", "+", "g"}], ")"}], "[", "x", "]"}], ",", "x"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{"x_", ",", "x_"}], "]"}], ":=", "1"}], "\n", 
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    SuperscriptBox["f_", "n_Integer"], ",", "x_"}], "]"}], ":=", 
+  RowBox[{"n", " ", 
+   SuperscriptBox["f", 
+    RowBox[{"n", "-", "1"}]], 
+   RowBox[{"MyD", "[", 
+    RowBox[{"f", ",", "x"}], "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"g_", "[", "f_", "]"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"MyD", "[", 
+     RowBox[{
+      RowBox[{"g", "[", "f", "]"}], ",", "f"}], "]"}], 
+    RowBox[{"MyD", "[", 
+     RowBox[{"f", ",", "x"}], "]"}]}], "/;", 
+   RowBox[{"f", "=!=", "x"}]}]}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"Cos", "[", "x_", "]"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{"-", 
+   RowBox[{"Sin", "[", "x", "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"Sin", "[", "x_", "]"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{"Cos", "[", "x", "]"}]}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"Exp", "[", "f_", "]"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"Exp", "[", "f", "]"}], 
+   RowBox[{"MyD", "[", 
+    RowBox[{"f", ",", "x"}], "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"MyD", "[", 
+   RowBox[{
+    RowBox[{"Log", "[", "f_", "]"}], ",", "x_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"MyD", "[", 
+    RowBox[{"f", ",", "x"}], "]"}], "/", "f"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyD", "[", 
+    RowBox[{"f_", ",", "x_"}], "]"}], "/;", 
+   RowBox[{"FreeQ", "[", 
+    RowBox[{"f", ",", "x"}], "]"}]}], ":=", "0"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MyD", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"y", " ", 
+     RowBox[{"Cos", "[", "x", "]"}]}], "+", 
+    RowBox[{
+     SuperscriptBox["x", "3"], 
+     SuperscriptBox[
+      RowBox[{"Sin", "[", 
+       SuperscriptBox["x", "2"], "]"}], "4"]}], "+", 
+    SuperscriptBox["x", "3"], "+", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      RowBox[{"Sin", "[", "x", "]"}]}]]}], ",", "x"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"3", " ", 
+   SuperscriptBox["x", "2"]}], "-", 
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     RowBox[{"Sin", "[", "x", "]"}]}]], " ", 
+   RowBox[{"Cos", "[", "x", "]"}]}], "-", 
+  RowBox[{"y", " ", 
+   RowBox[{"Sin", "[", "x", "]"}]}], "+", 
+  RowBox[{"8", " ", 
+   SuperscriptBox["x", "4"], " ", 
+   RowBox[{"Cos", "[", 
+    SuperscriptBox["x", "2"], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", 
+     SuperscriptBox["x", "2"], "]"}], "3"]}], "+", 
+  RowBox[{"3", " ", 
+   SuperscriptBox["x", "2"], " ", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", 
+     SuperscriptBox["x", "2"], "]"}], "4"]}]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"D", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"y", " ", 
+     RowBox[{"Cos", "[", "x", "]"}]}], "+", 
+    RowBox[{
+     SuperscriptBox["x", "3"], 
+     SuperscriptBox[
+      RowBox[{"Sin", "[", 
+       SuperscriptBox["x", "2"], "]"}], "4"]}], "+", 
+    SuperscriptBox["x", "3"], "+", 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      RowBox[{"Sin", "[", "x", "]"}]}]]}], ",", "x"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"3", " ", 
+   SuperscriptBox["x", "2"]}], "-", 
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     RowBox[{"Sin", "[", "x", "]"}]}]], " ", 
+   RowBox[{"Cos", "[", "x", "]"}]}], "-", 
+  RowBox[{"y", " ", 
+   RowBox[{"Sin", "[", "x", "]"}]}], "+", 
+  RowBox[{"8", " ", 
+   SuperscriptBox["x", "4"], " ", 
+   RowBox[{"Cos", "[", 
+    SuperscriptBox["x", "2"], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", 
+     SuperscriptBox["x", "2"], "]"}], "3"]}], "+", 
+  RowBox[{"3", " ", 
+   SuperscriptBox["x", "2"], " ", 
+   SuperscriptBox[
+    RowBox[{"Sin", "[", 
+     SuperscriptBox["x", "2"], "]"}], "4"]}]}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"%", "\[Equal]", "%%"}]], "Input"],
+
+Cell[BoxData["True"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", " ", "@", " ", "%"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"x", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"Cos", "[", "x", "]"}], "-", 
+     RowBox[{"Cos", "[", 
+      SuperscriptBox["x", "2"], "]"}]}], ")"}], " ", 
+   RowBox[{"Sin", "[", 
+    SuperscriptBox["x", "2"], "]"}]}], "\[Equal]", "0"}]], "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+
+Cell[CellGroupData[{
+
+Cell["Summary:", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Choose your algorithims wisely", "Item",
+ ShowGroupOpener->False],
+
+Cell["For matching, check the FullForm of expressions", "Item"],
+
+Cell["\<\
+Attributes effect the Evaluation and Pattern matching of expressions\
+\>", "Item"],
+
+Cell["You can exectue things in parallel", "Item"],
+
+Cell["You can compile Code to the WVM, or to a C target", "Item"],
+
+Cell["You can link to external C libraries", "Item"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+AutoGeneratedPackage->None,
+WindowSize->{1280, 852},
+WindowMargins->{{Automatic, 176}, {970, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+ShowSelection->True,
+InputAliases->{"intt" -> RowBox[{"\[Integral]", 
+     RowBox[{"\[SelectionPlaceholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "dintt" -> RowBox[{
+     SubsuperscriptBox[
+     "\[Integral]", "\[SelectionPlaceholder]", "\[Placeholder]"], 
+     RowBox[{"\[Placeholder]", 
+       RowBox[{"\[DifferentialD]", "\[Placeholder]"}]}]}], "sumt" -> RowBox[{
+     UnderoverscriptBox["\[Sum]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "prodt" -> RowBox[{
+     UnderoverscriptBox["\[Product]", 
+      RowBox[{"\[SelectionPlaceholder]", "=", "\[Placeholder]"}], 
+      "\[Placeholder]"], "\[Placeholder]"}], "dt" -> RowBox[{
+     SubscriptBox["\[PartialD]", "\[Placeholder]"], " ", 
+     "\[SelectionPlaceholder]"}], "notation" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftRightArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "notation>" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongRightArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "notation<" -> RowBox[{"Notation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], " ", 
+       "\[DoubleLongLeftArrow]", " ", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "symb" -> RowBox[{"Symbolize", "[", 
+     TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], "]"}], 
+  "infixnotation" -> RowBox[{"InfixNotation", "[", 
+     RowBox[{
+       TemplateBox[{"\[SelectionPlaceholder]"}, "NotationTemplateTag"], ",", 
+       "\[Placeholder]"}], "]"}], "addia" -> RowBox[{"AddInputAlias", "[", 
+     RowBox[{"\"\[SelectionPlaceholder]\"", "\[Rule]", 
+       TemplateBox[{"\[Placeholder]"}, "NotationTemplateTag"]}], "]"}], 
+  "pattwraper" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "NotationPatternTag"], 
+  "madeboxeswraper" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "NotationMadeBoxesTag"], "ket" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Ket"], "bra" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Bra"], "operator" -> 
+  TemplateBox[{"\[SelectionPlaceholder]"}, "Operator"]},
+Magnification:>1.5 Inherited,
+FrontEndVersion->"10.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 23, \
+2015)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]], 
+   Cell[
+    StyleData[StyleDefinitions -> "PhysicsStyles.nb"]], 
+   Cell[
+    StyleData[
+    All, "SlideShow", StyleDefinitions -> StyleData[All, "Presentation"]], 
+    PageWidth -> WindowWidth, DockedCells -> 
+    FEPrivate`FrontEndResource["FEExpressions", "SlideshowToolbar"], 
+    ScrollingOptions -> {
+     "PagewiseDisplay" -> True, "VerticalScrollRange" -> Fit}, 
+    ShowCellBracket -> True, MenuSortingValue -> 1300], 
+   Cell[
+    CellGroupData[{
+      Cell["Local Changes", "Subtitle"], 
+      Cell[
+       StyleData["Commutator"], 
+       TemplateBoxOptions -> {DisplayFunction -> (SubscriptBox[
+           RowBox[{"[", 
+             RowBox[{#, ",", #2}], "]"}], "-"]& ), SyntaxForm -> "symbol", 
+         Tooltip -> Automatic}], 
+      Cell[
+       CellGroupData[{
+         Cell[
+          StyleData["SmallText"], CellMargins -> {{60, 10}, {7, 7}}, 
+          LineSpacing -> {1, 3}, CounterIncrements -> "SmallText", FontSize -> 
+          8, FontColor -> GrayLevel[0.7]], 
+         Cell[
+          StyleData["SmallText", "SlideShow"], 
+          CellMargins -> {{60, 10}, {7, 7}}, LineSpacing -> {1, 3}, 
+          CounterIncrements -> "SmallText", FontSize -> 10, FontColor -> 
+          GrayLevel[0.7]]}, Closed]], 
+      Cell[
+       CellGroupData[{
+         Cell["Styles for Title and Section Cells", "Section"], 
+         Cell[
+          CellGroupData[{
+            Cell["Section", "Subsection"], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Section"], CellFrame -> {{0, 0}, {0, 0}}, 
+                FontSlant -> "Plain"], 
+               Cell[
+                StyleData["Section", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}]}, Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsection"], CellDingbat -> None], 
+               Cell[
+                StyleData["Subsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsubsection"], CellDingbat -> None, FontWeight -> 
+                "Plain", FontColor -> GrayLevel[0.8]], 
+               Cell[
+                StyleData["Subsubsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]], 
+            Cell[
+             CellGroupData[{
+               Cell[
+                StyleData["Subsubsubsection"], CellDingbat -> None, 
+                FontWeight -> "Plain", FontColor -> GrayLevel[0.8]], 
+               Cell[
+                StyleData["Subsubsubsection", "SlideShow"], 
+                CellFrame -> {{0, 0}, {0, 0}}, CellDingbat -> None]}, 
+              Closed]]}, Open]]}, Open]]}, Open]]}, Visible -> False, 
+  FrontEndVersion -> 
+  "10.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 23, 2015)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "SlideShowHeader"->{
+  Cell[1344, 50, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[3008, 122, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[13341, 471, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[18873, 717, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[24240, 943, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[27947, 1103, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[37275, 1481, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[43083, 1717, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[49523, 1972, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[79317, 2740, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"],
+  Cell[85019, 2966, 64, 1, 74, "SlideShowNavigationBar",
+   CellTags->"SlideShowHeader"]},
+ "Info3615116442-4968115"->{
+  Cell[28994, 1154, 440, 10, 63, "Print",
+   CellTags->"Info3615116442-4968115"],
+  Cell[29437, 1166, 989, 29, 83, "Print",
+   CellTags->"Info3615116442-4968115"]},
+ "Info3615116713-4968115"->{
+  Cell[33439, 1338, 436, 10, 63, "Print",
+   CellTags->"Info3615116713-4968115"],
+  Cell[33878, 1350, 989, 29, 83, "Print",
+   CellTags->"Info3615116713-4968115"]},
+ "Info3615116989-4968115"->{
+  Cell[35295, 1404, 78, 1, 60, "Print",
+   CellTags->"Info3615116989-4968115"],
+  Cell[35376, 1407, 910, 26, 37, "Print",
+   CellTags->"Info3615116989-4968115"]},
+ "Info3615118241-3673309"->{
+  Cell[76214, 2617, 78, 1, 60, "Print",
+   CellTags->"Info3615118241-3673309"],
+  Cell[76295, 2620, 1020, 30, 83, "Print",
+   CellTags->"Info3615118241-3673309"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"SlideShowHeader", 91483, 3128},
+ {"Info3615116442-4968115", 92495, 3151},
+ {"Info3615116713-4968115", 92689, 3156},
+ {"Info3615116989-4968115", 92883, 3161},
+ {"Info3615118241-3673309", 93075, 3166}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[422, 15, 214, 8, 108, "Title"],
+Cell[639, 25, 90, 5, 148, "Text"],
+Cell[CellGroupData[{
+Cell[754, 34, 88, 1, 76, "Section"],
+Cell[845, 37, 450, 7, 135, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1344, 50, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[1433, 55, 89, 2, 88, "Section"],
+Cell[1525, 59, 162, 3, 46, "Text"],
+Cell[1690, 64, 72, 0, 35, "SmallText"],
+Cell[1765, 66, 49, 1, 43, "Input"],
+Cell[1817, 69, 131, 3, 46, "Text"],
+Cell[1951, 74, 190, 4, 76, "Text"],
+Cell[2144, 80, 49, 1, 43, "Input"],
+Cell[2196, 83, 399, 18, 53, "Input"],
+Cell[2598, 103, 128, 3, 43, "Input"],
+Cell[2729, 108, 58, 1, 43, "Input"],
+Cell[2790, 111, 169, 5, 71, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3008, 122, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[3075, 125, 30, 0, 137, "Title"],
+Cell[CellGroupData[{
+Cell[3130, 129, 37, 0, 88, "Section"],
+Cell[CellGroupData[{
+Cell[3192, 133, 85, 2, 43, "Input"],
+Cell[3280, 137, 280, 6, 60, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3597, 148, 41, 0, 65, "Subsection"],
+Cell[3641, 150, 293, 11, 46, "Text"],
+Cell[3937, 163, 271, 10, 44, "Input"],
+Cell[CellGroupData[{
+Cell[4233, 177, 149, 4, 45, "Input"],
+Cell[4385, 183, 6925, 190, 404, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11347, 378, 104, 3, 43, "Input"],
+Cell[11454, 383, 114, 3, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11605, 391, 66, 1, 43, "Input"],
+Cell[11674, 394, 248, 9, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11959, 408, 214, 6, 43, "Input"],
+Cell[12176, 416, 96, 3, 70, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12309, 424, 68, 1, 43, "Input"],
+Cell[12380, 427, 423, 14, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12840, 446, 104, 3, 45, "Input"],
+Cell[12947, 451, 90, 3, 62, "Output"]
+}, Open  ]],
+Cell[13052, 457, 228, 7, 39, "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13341, 471, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[13430, 476, 40, 0, 88, "Section"],
+Cell[13473, 478, 138, 3, 46, "Text"],
+Cell[13614, 483, 110, 3, 46, "Input"],
+Cell[CellGroupData[{
+Cell[13749, 490, 156, 4, 43, "Input"],
+Cell[13908, 496, 165, 5, 50, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14110, 506, 232, 7, 50, "Input"],
+Cell[14345, 515, 165, 5, 50, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14547, 525, 212, 7, 50, "Input"],
+Cell[14762, 534, 165, 5, 50, "Output"]
+}, Open  ]],
+Cell[14942, 542, 313, 14, 74, "SmallText"],
+Cell[CellGroupData[{
+Cell[15280, 560, 62, 0, 65, "Subsection"],
+Cell[CellGroupData[{
+Cell[15367, 564, 297, 10, 50, "Input"],
+Cell[15667, 576, 128, 4, 49, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15832, 585, 239, 8, 50, "Input"],
+Cell[16074, 595, 242, 8, 49, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16353, 608, 299, 10, 50, "Input"],
+Cell[16655, 620, 128, 4, 49, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16820, 629, 233, 8, 50, "Input"],
+Cell[17056, 639, 128, 4, 49, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17221, 648, 288, 9, 50, "Input"],
+Cell[17512, 659, 468, 17, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18017, 681, 194, 6, 50, "Input"],
+Cell[18214, 689, 454, 16, 43, "Output"]
+}, Open  ]],
+Cell[18683, 708, 129, 2, 144, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18873, 717, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[18962, 722, 47, 0, 88, "Section"],
+Cell[19012, 724, 51, 0, 46, "Text"],
+Cell[19066, 726, 256, 9, 46, "Input"],
+Cell[CellGroupData[{
+Cell[19347, 739, 407, 13, 50, "Input"],
+Cell[19757, 754, 73, 2, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19867, 761, 133, 4, 45, "Input"],
+Cell[20003, 767, 262, 8, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20302, 780, 146, 4, 43, "Input"],
+Cell[20451, 786, 248, 9, 43, "Output"]
+}, Open  ]],
+Cell[20714, 798, 56, 0, 46, "Text"],
+Cell[20773, 800, 120, 3, 35, "SmallText"],
+Cell[CellGroupData[{
+Cell[20918, 807, 33, 0, 65, "Subsection"],
+Cell[20954, 809, 444, 15, 79, "Text"],
+Cell[21401, 826, 256, 7, 69, "Input"],
+Cell[21660, 835, 156, 5, 45, "Input"],
+Cell[21819, 842, 167, 5, 50, "Input"],
+Cell[CellGroupData[{
+Cell[22011, 851, 201, 6, 50, "Input"],
+Cell[22215, 859, 107, 3, 45, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22359, 867, 186, 6, 50, "Input"],
+Cell[22548, 875, 107, 3, 45, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22692, 883, 146, 4, 45, "Input"],
+Cell[22841, 889, 412, 14, 43, "Output"]
+}, Open  ]],
+Cell[23268, 906, 457, 16, 81, "Text"],
+Cell[23728, 924, 313, 7, 69, "Input"],
+Cell[24044, 933, 135, 3, 54, "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24240, 943, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[24329, 948, 48, 0, 88, "Section"],
+Cell[CellGroupData[{
+Cell[24402, 952, 97, 2, 65, "Subsection"],
+Cell[24502, 956, 207, 7, 405, "Text"],
+Cell[24712, 965, 82, 2, 238, "Input"],
+Cell[CellGroupData[{
+Cell[24819, 971, 147, 4, 238, "Input"],
+Cell[24969, 977, 250, 7, 339, "Output"]
+}, Open  ]],
+Cell[25234, 987, 110, 3, 130, "SmallText"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[25381, 995, 101, 2, 51, "Subsection"],
+Cell[25485, 999, 86, 2, 46, "Text"],
+Cell[CellGroupData[{
+Cell[25596, 1005, 104, 3, 43, "Input"],
+Cell[25703, 1010, 80, 2, 43, "Output"]
+}, Open  ]],
+Cell[25798, 1015, 53, 0, 46, "Text"],
+Cell[CellGroupData[{
+Cell[25876, 1019, 248, 7, 43, "Input"],
+Cell[26127, 1028, 217, 6, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26381, 1039, 446, 13, 43, "Input"],
+Cell[26830, 1054, 345, 10, 43, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27224, 1070, 104, 2, 65, "Subsection"],
+Cell[27331, 1074, 53, 0, 46, "Text"],
+Cell[CellGroupData[{
+Cell[27409, 1078, 226, 8, 43, "Input"],
+Cell[27638, 1088, 117, 3, 43, "Output"]
+}, Open  ]],
+Cell[27770, 1094, 52, 0, 46, "Text"],
+Cell[27825, 1096, 61, 0, 35, "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27947, 1103, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[28036, 1108, 29, 0, 88, "Section"],
+Cell[28068, 1110, 169, 3, 46, "Text"],
+Cell[CellGroupData[{
+Cell[28262, 1117, 41, 0, 65, "Subsection"],
+Cell[28306, 1119, 143, 7, 47, "Text"],
+Cell[CellGroupData[{
+Cell[28474, 1130, 218, 6, 43, "Input"],
+Cell[28695, 1138, 189, 6, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28921, 1149, 48, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[28994, 1154, 440, 10, 63, "Print",
+ CellTags->"Info3615116442-4968115"],
+Cell[29437, 1166, 989, 29, 83, "Print",
+ CellTags->"Info3615116442-4968115"]
+}, Open  ]]
+}, Open  ]],
+Cell[30453, 1199, 30, 0, 43, "Input"],
+Cell[30486, 1201, 98, 2, 43, "Input"],
+Cell[30587, 1205, 76, 0, 35, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30700, 1210, 40, 0, 65, "Subsection"],
+Cell[30743, 1212, 293, 9, 97, "Input"],
+Cell[CellGroupData[{
+Cell[31061, 1225, 82, 2, 43, "Input"],
+Cell[31146, 1229, 55, 1, 43, "Output"]
+}, Open  ]],
+Cell[31216, 1233, 95, 2, 43, "Input"],
+Cell[31314, 1237, 151, 4, 47, "Text"],
+Cell[31468, 1243, 46, 0, 35, "SmallText"],
+Cell[31517, 1245, 169, 7, 47, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[31723, 1257, 41, 0, 65, "Subsection"],
+Cell[31767, 1259, 187, 8, 47, "Text"],
+Cell[31957, 1269, 152, 4, 43, "Input"],
+Cell[CellGroupData[{
+Cell[32134, 1277, 137, 4, 43, "Input"],
+Cell[32274, 1283, 91, 2, 43, "Output"]
+}, Open  ]],
+Cell[32380, 1288, 159, 5, 44, "Input"],
+Cell[CellGroupData[{
+Cell[32564, 1297, 90, 2, 43, "Input"],
+Cell[32657, 1301, 232, 7, 43, "Output"]
+}, Open  ]],
+Cell[32904, 1311, 175, 5, 43, "Input"],
+Cell[CellGroupData[{
+Cell[33104, 1320, 90, 2, 43, "Input"],
+Cell[33197, 1324, 132, 4, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33366, 1333, 48, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[33439, 1338, 436, 10, 63, "Print",
+ CellTags->"Info3615116713-4968115"],
+Cell[33878, 1350, 989, 29, 83, "Print",
+ CellTags->"Info3615116713-4968115"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[34928, 1386, 43, 0, 65, "Subsection"],
+Cell[34974, 1388, 224, 7, 46, "Input"],
+Cell[CellGroupData[{
+Cell[35223, 1399, 47, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[35295, 1404, 78, 1, 60, "Print",
+ CellTags->"Info3615116989-4968115"],
+Cell[35376, 1407, 910, 26, 37, "Print",
+ CellTags->"Info3615116989-4968115"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[36335, 1439, 108, 3, 43, "Input"],
+Cell[36446, 1444, 105, 3, 45, "Output"]
+}, Open  ]],
+Cell[36566, 1450, 103, 2, 43, "Input"],
+Cell[36672, 1454, 542, 20, 71, "SmallText"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37275, 1481, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[37364, 1486, 34, 0, 88, "Section"],
+Cell[37401, 1488, 138, 3, 46, "Text"],
+Cell[CellGroupData[{
+Cell[37564, 1495, 154, 5, 43, "Input"],
+Cell[37721, 1502, 126, 3, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37884, 1510, 209, 7, 43, "Input"],
+Cell[38096, 1519, 172, 4, 43, "Output"]
+}, Open  ]],
+Cell[38283, 1526, 505, 16, 51, "Input"],
+Cell[38791, 1544, 115, 3, 35, "SmallText"],
+Cell[CellGroupData[{
+Cell[38931, 1551, 44, 0, 65, "Subsection"],
+Cell[CellGroupData[{
+Cell[39000, 1555, 229, 8, 43, "Input"],
+Cell[39232, 1565, 73, 2, 43, "Output"]
+}, Open  ]],
+Cell[39320, 1570, 740, 25, 119, "Input"],
+Cell[40063, 1597, 674, 21, 119, "Input"],
+Cell[CellGroupData[{
+Cell[40762, 1622, 292, 9, 69, "Input"],
+Cell[41057, 1633, 477, 16, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[41571, 1654, 361, 12, 43, "Input"],
+Cell[41935, 1668, 519, 18, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[42491, 1691, 209, 7, 43, "Input"],
+Cell[42703, 1700, 175, 5, 43, "Output"]
+}, Open  ]],
+Cell[42893, 1708, 129, 2, 144, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[43083, 1717, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[43172, 1722, 26, 0, 88, "Section"],
+Cell[43201, 1724, 315, 14, 46, "Text"],
+Cell[CellGroupData[{
+Cell[43541, 1742, 33, 0, 65, "Subsection"],
+Cell[43577, 1744, 55, 0, 46, "Text"],
+Cell[43635, 1746, 436, 12, 119, "Input"],
+Cell[CellGroupData[{
+Cell[44096, 1762, 54, 1, 43, "Input"],
+Cell[44153, 1765, 207, 5, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44397, 1775, 54, 1, 43, "Input"],
+Cell[44454, 1778, 219, 5, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44710, 1788, 49, 1, 43, "Input"],
+Cell[44762, 1791, 28, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44827, 1796, 54, 1, 43, "Input"],
+Cell[44884, 1799, 28, 0, 43, "Output"]
+}, Open  ]],
+Cell[44927, 1802, 121, 3, 35, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45085, 1810, 27, 0, 65, "Subsection"],
+Cell[45115, 1812, 112, 3, 46, "Text"],
+Cell[45230, 1817, 170, 4, 44, "Input"],
+Cell[CellGroupData[{
+Cell[45425, 1825, 49, 1, 43, "Input"],
+Cell[45477, 1828, 28, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45542, 1833, 206, 7, 50, "Input"],
+Cell[45751, 1842, 389, 8, 34, "Message"],
+Cell[46143, 1852, 519, 10, 34, "Message"],
+Cell[46665, 1864, 485, 9, 34, "Message"],
+Cell[47153, 1875, 142, 4, 43, "Output"]
+}, Open  ]],
+Cell[47310, 1882, 677, 17, 169, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48024, 1904, 40, 0, 65, "Subsection"],
+Cell[48067, 1906, 38, 0, 46, "Text"],
+Cell[CellGroupData[{
+Cell[48130, 1910, 500, 12, 194, "Input"],
+Cell[CellGroupData[{
+Cell[48655, 1926, 28, 0, 33, "Print"],
+Cell[48686, 1928, 27, 0, 33, "Print"],
+Cell[48716, 1930, 27, 0, 33, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[48770, 1934, 45, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[48840, 1939, 130, 4, 50, "Input"],
+Cell[48973, 1945, 51, 1, 45, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49061, 1951, 131, 4, 50, "Input"],
+Cell[49195, 1957, 56, 1, 45, "Output"]
+}, Open  ]],
+Cell[49266, 1961, 196, 4, 46, "Text"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49523, 1972, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[49612, 1977, 54, 0, 88, "Section"],
+Cell[49669, 1979, 110, 3, 46, "Text"],
+Cell[CellGroupData[{
+Cell[49804, 1986, 38, 0, 65, "Subsection"],
+Cell[49845, 1988, 59, 0, 46, "Text"],
+Cell[49907, 1990, 581, 18, 121, "Input"],
+Cell[CellGroupData[{
+Cell[50513, 2012, 58, 1, 43, "Input"],
+Cell[50574, 2015, 29, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[50640, 2020, 62, 1, 43, "Input"],
+Cell[50705, 2023, 29, 0, 43, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[50783, 2029, 53, 0, 65, "Subsection"],
+Cell[CellGroupData[{
+Cell[50861, 2033, 303, 9, 43, "Input"],
+Cell[51167, 2044, 615, 10, 132, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[51819, 2059, 207, 6, 43, "Input"],
+Cell[52029, 2067, 1245, 30, 376, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53311, 2102, 474, 15, 43, "Input"],
+Cell[53788, 2119, 217, 5, 45, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54042, 2129, 274, 8, 43, "Input"],
+Cell[54319, 2139, 8492, 148, 376, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[62848, 2292, 82, 2, 43, "Input"],
+Cell[62933, 2296, 9054, 159, 376, "Output"]
+}, Open  ]],
+Cell[72002, 2458, 1392, 42, 145, "SmallText"],
+Cell[73397, 2502, 51, 0, 46, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[73485, 2507, 39, 0, 65, "Subsection"],
+Cell[73527, 2509, 646, 19, 144, "Input"],
+Cell[CellGroupData[{
+Cell[74198, 2532, 60, 1, 43, "Input"],
+Cell[74261, 2535, 179, 3, 69, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74477, 2543, 94, 2, 43, "Input"],
+Cell[74574, 2547, 31, 0, 43, "Output"]
+}, Open  ]],
+Cell[74620, 2550, 49, 1, 43, "Input"],
+Cell[74672, 2553, 154, 3, 54, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74863, 2561, 48, 0, 65, "Subsection"],
+Cell[74914, 2563, 808, 24, 119, "Input"],
+Cell[75725, 2589, 28, 0, 43, "Input"],
+Cell[CellGroupData[{
+Cell[75778, 2593, 120, 3, 43, "Input"],
+Cell[75901, 2598, 31, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[75969, 2603, 103, 2, 43, "Input"],
+Cell[76075, 2607, 30, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76142, 2612, 47, 1, 43, "Input"],
+Cell[CellGroupData[{
+Cell[76214, 2617, 78, 1, 60, "Print",
+ CellTags->"Info3615118241-3673309"],
+Cell[76295, 2620, 1020, 30, 83, "Print",
+ CellTags->"Info3615118241-3673309"]
+}, Open  ]]
+}, Open  ]],
+Cell[77342, 2654, 218, 6, 76, "Text"],
+Cell[77563, 2662, 188, 5, 91, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77788, 2672, 38, 0, 65, "Subsection"],
+Cell[77829, 2674, 145, 3, 46, "Text"],
+Cell[CellGroupData[{
+Cell[77999, 2681, 86, 2, 43, "Input"],
+Cell[78088, 2685, 50, 0, 45, "Output"]
+}, Open  ]],
+Cell[78153, 2688, 54, 0, 46, "Text"],
+Cell[CellGroupData[{
+Cell[78232, 2692, 265, 7, 69, "Input"],
+Cell[78500, 2701, 33, 0, 43, "Output"]
+}, Open  ]],
+Cell[78548, 2704, 88, 1, 35, "SmallText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[78673, 2710, 42, 0, 65, "Subsection"],
+Cell[78718, 2712, 134, 3, 46, "Text"],
+Cell[78855, 2717, 401, 16, 95, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[79317, 2740, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[79406, 2745, 46, 0, 88, "Section"],
+Cell[79455, 2747, 134, 3, 46, "Text"],
+Cell[79592, 2752, 567, 20, 69, "Input"],
+Cell[80162, 2774, 108, 3, 46, "Text"],
+Cell[80273, 2779, 162, 6, 43, "Input"],
+Cell[80438, 2787, 704, 24, 101, "Input"],
+Cell[81145, 2813, 341, 11, 69, "Input"],
+Cell[81489, 2826, 446, 15, 69, "Input"],
+Cell[81938, 2843, 190, 6, 44, "Input"],
+Cell[CellGroupData[{
+Cell[82153, 2853, 439, 14, 52, "Input"],
+Cell[82595, 2869, 679, 22, 51, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[83311, 2896, 437, 14, 52, "Input"],
+Cell[83751, 2912, 679, 22, 51, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[84467, 2939, 57, 1, 43, "Input"],
+Cell[84527, 2942, 31, 0, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[84595, 2947, 70, 1, 43, "Input"],
+Cell[84668, 2950, 290, 9, 50, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[85019, 2966, 64, 1, 74, "SlideShowNavigationBar",
+ CellTags->"SlideShowHeader"],
+Cell[CellGroupData[{
+Cell[85108, 2971, 27, 0, 88, "Section"],
+Cell[CellGroupData[{
+Cell[85160, 2975, 71, 1, 43, "Item"],
+Cell[85234, 2978, 63, 0, 43, "Item"],
+Cell[85300, 2980, 92, 2, 43, "Item"],
+Cell[85395, 2984, 50, 0, 43, "Item"],
+Cell[85448, 2986, 65, 0, 43, "Item"],
+Cell[85516, 2988, 52, 0, 43, "Item"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

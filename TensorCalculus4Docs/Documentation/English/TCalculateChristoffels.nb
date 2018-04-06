@@ -1,0 +1,2525 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[    100945,       2401]*)
+(*NotebookOutlinePosition[    101970,       2437]*)
+(*  CellTagsIndexPosition[    101893,       2431]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["CalculateChristoffels", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["CalculateChristoffels",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\({x, \[Delta], g, \[CapitalGamma]}, flavor : Identity, 
+          simplification : Identity\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " calculates the down and up Christoffel symbol arrays."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "The routine returns the ",
+  Cell[BoxData[
+      \({\[CapitalGamma]ddd, \[CapitalGamma]udd}\)]],
+  " arrays."
+}], "MathCaption"],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \({x, \[Delta], g, \[CapitalGamma]}\)]],
+  " are the same symbols used in the various derivative expansion routines. \
+",
+  Cell[BoxData[
+      \(x\)]],
+  " is the coordinate, ",
+  Cell[BoxData[
+      \(\[Delta]\)]],
+  " the Kronecker symbol, ",
+  Cell[BoxData[
+      \(g\)]],
+  " the metric tensor label. ",
+  Cell[BoxData[
+      \(\[CapitalGamma]\)]],
+  " is not actually used in the routine."
+}], "MathCaption"],
+
+Cell["\<\
+A shortcut must be defined for the metric tensor g and values must have been \
+set for its components and the inverse components.\
+\>", "MathCaption"],
+
+Cell["\<\
+The optional argument flavor is the flavor in which the calculation will be \
+performed. Several metric tensors and sets of Christoffel symbols may exist \
+at the same time.\
+\>", "MathCaption"],
+
+Cell["\<\
+Simplification is an optional argument that supplies a routine to simplify \
+the Christoffel symbols. By default no simplification is done.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["DeclareBaseIndices",
+    ButtonData:>{"DeclareBaseIndices"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SetTensorValues",
+    ButtonData:>{"SetTensorValues"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SetTensorValueRules",
+    ButtonData:>{"SetTensorValueRules"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["CoordinatesToTensors",
+    ButtonData:>{"CoordinatesToTensors"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save settings", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\n", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor[{red, Red}, {green, 
+          SapGreen}];\)\), "\[IndentingNewLine]", 
+    \(DeclareBaseIndices[{1, 2, 
+        3}, {red, {r, \[Phi], \[Theta]}}, {green, {\[Theta], \[Phi]}}]\), "\
+\[IndentingNewLine]", 
+    \(\(labs = {x, \[Delta], g, \[CapitalGamma]};\)\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{x}, 1}, {{g}, 2}, {{\[CapitalGamma]}, 
+        3}]\)], "Input",
+  CellLabel->"In[8]:="],
+
+Cell[TextData[{
+  "The metric for a spherical coordinate system using ",
+  Cell[BoxData[
+      \({1, 2, 3}\)]],
+  " as base indices is..."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\((metric = 
+          DiagonalMatrix[{1, r\^2, \(r\^2\) Sin[\[Phi]]\^2}] // 
+            CoordinatesToTensors[{r, \[Phi], \[Theta]}])\) // 
+      MatrixForm\), "\[IndentingNewLine]", 
+    \(\(MapThread[
+        SetTensorValueRules[#1, #2] &, {{gdd[a, b], guu[a, b]}, {metric, 
+            Inverse[metric]}}];\)\)}], "Input",
+  CellLabel->"In[9]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"1", "0", "0"},
+            {"0", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm], "0"},
+            {"0", "0", 
+              RowBox[{
+                SuperscriptBox[
+                  RowBox[{"Sin", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "2"],
+                      Tensor[ x, {2}, {Void}],
+                      Editable->False], "]"}], "2"], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[9]//MatrixForm="]
+}, Open  ]],
+
+Cell["Calculating the up and down Christoffel symbols gives...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \({down\[CapitalGamma], up\[CapitalGamma]} = 
+      CalculateChristoffels[labs]\)], "Input",
+  CellLabel->"In[11]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{"{", 
+          RowBox[{
+            RowBox[{"{", 
+              RowBox[{\({0, 0, 0}\), ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", 
+                    RowBox[{"-", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}], ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      RowBox[{"-", 
+                        SuperscriptBox[
+                          RowBox[{"Sin", "[", 
+                            InterpretationBox[
+                              SubsuperscriptBox["x", 
+                                TagBox[
+                                  StyleBox["2",
+                                    ShowContents->False],
+                                  (StyleForm[ #, ShowContents -> False]&)], 
+                                "2"],
+                              Tensor[ x, {2}, {Void}],
+                              Editable->False], "]"}], "2"]}], " ", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}]}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+              RowBox[{
+                RowBox[{"{", 
+                  RowBox[{"0", ",", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      RowBox[{"-", 
+                        RowBox[{"Cos", "[", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["2",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "2"],
+                            Tensor[ x, {2}, {Void}],
+                            Editable->False], "]"}]}], " ", 
+                      RowBox[{"Sin", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}], " ", 
+                      TagBox[
+                        SuperscriptBox[
+                          RowBox[{"(", 
+                            InterpretationBox[
+                              SubsuperscriptBox["x", 
+                                TagBox[
+                                  StyleBox["1",
+                                    ShowContents->False],
+                                  (StyleForm[ #, ShowContents -> False]&)], 
+                                "1"],
+                              Tensor[ x, {1}, {Void}],
+                              Editable->False], ")"}], "2"],
+                        DisplayForm]}]}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+              RowBox[{
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      SuperscriptBox[
+                        RowBox[{"Sin", "[", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["2",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "2"],
+                            Tensor[ x, {2}, {Void}],
+                            Editable->False], "]"}], "2"], " ", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}]}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      RowBox[{"Cos", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}], " ", 
+                      RowBox[{"Sin", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}], " ", 
+                      TagBox[
+                        SuperscriptBox[
+                          RowBox[{"(", 
+                            InterpretationBox[
+                              SubsuperscriptBox["x", 
+                                TagBox[
+                                  StyleBox["1",
+                                    ShowContents->False],
+                                  (StyleForm[ #, ShowContents -> False]&)], 
+                                "1"],
+                              Tensor[ x, {1}, {Void}],
+                              Editable->False], ")"}], "2"],
+                        DisplayForm]}]}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{
+                    RowBox[{
+                      SuperscriptBox[
+                        RowBox[{"Sin", "[", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["2",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "2"],
+                            Tensor[ x, {2}, {Void}],
+                            Editable->False], "]"}], "2"], " ", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}], ",", 
+                    RowBox[{
+                      RowBox[{"Cos", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}], " ", 
+                      RowBox[{"Sin", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}], " ", 
+                      TagBox[
+                        SuperscriptBox[
+                          RowBox[{"(", 
+                            InterpretationBox[
+                              SubsuperscriptBox["x", 
+                                TagBox[
+                                  StyleBox["1",
+                                    ShowContents->False],
+                                  (StyleForm[ #, ShowContents -> False]&)], 
+                                "1"],
+                              Tensor[ x, {1}, {Void}],
+                              Editable->False], ")"}], "2"],
+                        DisplayForm]}], ",", "0"}], "}"}]}], "}"}]}], "}"}], 
+        ",", 
+        RowBox[{"{", 
+          RowBox[{
+            RowBox[{"{", 
+              RowBox[{\({0, 0, 0}\), ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", 
+                    RowBox[{"-", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}], ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      RowBox[{"-", 
+                        SuperscriptBox[
+                          RowBox[{"Sin", "[", 
+                            InterpretationBox[
+                              SubsuperscriptBox["x", 
+                                TagBox[
+                                  StyleBox["2",
+                                    ShowContents->False],
+                                  (StyleForm[ #, ShowContents -> False]&)], 
+                                "2"],
+                              Tensor[ x, {2}, {Void}],
+                              Editable->False], "]"}], "2"]}], " ", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]}]}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+              RowBox[{
+                RowBox[{"{", 
+                  RowBox[{"0", ",", 
+                    TagBox[
+                      SuperscriptBox[
+                        RowBox[{"(", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["1",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "1"],
+                            Tensor[ x, {1}, {Void}],
+                            Editable->False], ")"}], \(-1\)],
+                      DisplayForm], ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{
+                    TagBox[
+                      SuperscriptBox[
+                        RowBox[{"(", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["1",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "1"],
+                            Tensor[ x, {1}, {Void}],
+                            Editable->False], ")"}], \(-1\)],
+                      DisplayForm], ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{
+                      RowBox[{"-", 
+                        RowBox[{"Cos", "[", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["2",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "2"],
+                            Tensor[ x, {2}, {Void}],
+                            Editable->False], "]"}]}], " ", 
+                      RowBox[{"Sin", "[", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["2",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "2"],
+                          Tensor[ x, {2}, {Void}],
+                          Editable->False], "]"}]}]}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+              RowBox[{
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    TagBox[
+                      SuperscriptBox[
+                        RowBox[{"(", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["1",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "1"],
+                            Tensor[ x, {1}, {Void}],
+                            Editable->False], ")"}], \(-1\)],
+                      DisplayForm]}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{"0", ",", "0", ",", 
+                    RowBox[{"Cot", "[", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["2",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "2"],
+                        Tensor[ x, {2}, {Void}],
+                        Editable->False], "]"}]}], "}"}], ",", 
+                RowBox[{"{", 
+                  RowBox[{
+                    TagBox[
+                      SuperscriptBox[
+                        RowBox[{"(", 
+                          InterpretationBox[
+                            SubsuperscriptBox["x", 
+                              TagBox[
+                                StyleBox["1",
+                                  ShowContents->False],
+                                (StyleForm[ #, ShowContents -> False]&)], 
+                              "1"],
+                            Tensor[ x, {1}, {Void}],
+                            Editable->False], ")"}], \(-1\)],
+                      DisplayForm], ",", 
+                    RowBox[{"Cot", "[", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["2",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "2"],
+                        Tensor[ x, {2}, {Void}],
+                        Editable->False], "]"}], ",", "0"}], "}"}]}], "}"}]}],
+           "}"}]}], "}"}]], "Output",
+  CellLabel->"Out[11]="]
+}, Open  ]],
+
+Cell["\<\
+We set value rules and display the independent nonzero Christoffel values.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValueRules[\[CapitalGamma]ddd[a, b, c], 
+      down\[CapitalGamma]]\), "\n", 
+    \(SetTensorValueRules[\[CapitalGamma]udd[a, b, c], 
+      up\[CapitalGamma]]\), "\n", 
+    \(\(SelectedTensorRules[\[CapitalGamma], \ \[CapitalGamma]udd[_, b_, c_] /; 
+            OrderedQ[{b, c}]] // UseCoordinates[{r, \[Phi], \[Theta]}]\) // 
+      TableForm\)}], "Input",
+  CellLabel->"In[12]:="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2", "2"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 2, 2}],
+                Editable->False], "\[Rule]", \(-r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3", "3"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 3, 3}],
+                Editable->False], "\[Rule]", \(\(-r\)\ Sin[\[Phi]]\^2\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1", "2"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 1, 2}],
+                Editable->False], "\[Rule]", \(1\/r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3", "3"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 3, 3}],
+                Editable->False], 
+              "\[Rule]", \(\(-Cos[\[Phi]]\)\ Sin[\[Phi]]\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1", "3"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 1, 3}],
+                Editable->False], "\[Rule]", \(1\/r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2", "3"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 2, 3}],
+                Editable->False], "\[Rule]", \(Cot[\[Phi]]\)}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 2, 2}] -> 
+        Times[ -1, r], 
+        Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 3, 3}] -> 
+        Times[ -1, r, 
+          Power[ 
+            Sin[ \[Phi]], 2]], 
+        Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 1, 2}] -> Power[ 
+        r, -1], Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 3, 3}] -> 
+        Times[ -1, 
+          Cos[ \[Phi]], 
+          Sin[ \[Phi]]], 
+        Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 1, 3}] -> Power[ 
+        r, -1], Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 2, 3}] -> 
+        Cot[ \[Phi]]}]]], "Output",
+  CellLabel->"Out[14]//TableForm="]
+}, Open  ]],
+
+Cell["\<\
+The following is the same metric in the red flavor that uses symbols for the \
+base indices\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\((metric = 
+          DiagonalMatrix[{1, r\^2, \(r\^2\) Sin[\[Phi]]\^2}] // 
+            CoordinatesToTensors[{r, \[Phi], \[Theta]}, x, red])\) // 
+      MatrixForm\), "\[IndentingNewLine]", 
+    \(\(MapThread[
+        SetTensorValueRules[#1, #2] &, {{gdd[a, b], guu[a, b]} // 
+            ToFlavor[red], {metric, Inverse[metric]}}];\)\)}], "Input",
+  CellLabel->"In[15]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"1", "0", "0"},
+            {"0", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["r",
+                                FontColor->RGBColor[1, 0, 0]],
+                              (
+                              StyleForm[ #, FontColor -> RGBColor[ 
+                                1, 0, 0]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                      
+                      Tensor[ x, {
+                        red[ r]}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm], "0"},
+            {"0", "0", 
+              RowBox[{
+                SuperscriptBox[
+                  RowBox[{"Sin", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["\[Phi]",
+                                FontColor->RGBColor[1, 0, 0]],
+                              (
+                              StyleForm[ #, FontColor -> RGBColor[ 
+                                1, 0, 0]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                      
+                      Tensor[ x, {
+                        red[ \[Phi]]}, {Void}],
+                      Editable->False], "]"}], "2"], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox[
+                              TagBox[
+                                StyleBox["r",
+                                  FontColor->RGBColor[1, 0, 0]],
+                                (
+                                StyleForm[ #, FontColor -> RGBColor[ 
+                                  1, 0, 0]]&)],
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], 
+                          TagBox[
+                            StyleBox["r",
+                              FontColor->RGBColor[1, 0, 0]],
+                            (
+                            StyleForm[ #, FontColor -> RGBColor[ 
+                              1, 0, 0]]&)]],
+                        Tensor[ x, {
+                          red[ r]}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[15]//MatrixForm="]
+}, Open  ]],
+
+Cell["Calculating and setting rules for the Christoffel values...", "Text"],
+
+Cell[BoxData[{
+    \(\({down\[CapitalGamma]r, up\[CapitalGamma]r} = 
+        CalculateChristoffels[labs, red];\)\), "\n", 
+    \(\(MapThread[
+        SetTensorValueRules[#1, #2] &, {{\[CapitalGamma]ddd[a, b, 
+                c], \[CapitalGamma]udd[a, b, c]} // 
+            ToFlavor[red], {down\[CapitalGamma]r, 
+            up\[CapitalGamma]r}}];\)\)}], "Input",
+  CellLabel->"In[17]:="],
+
+Cell["The Christoffel symbols now display with symbolic indices.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(SelectedTensorRules[\[CapitalGamma], \ \[CapitalGamma]udd[red[_], b_, 
+              c_] /; OrderedQ[{b, c}]] // 
+        UseCoordinates[{r, \[Phi], \[Theta]}, x, red]\) // 
+      TableForm\)], "Input",
+  CellLabel->"In[19]:="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ r], Void, Void}, {Void, 
+                  red[ \[Phi]], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", \(-r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ r], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Theta]]}],
+                Editable->False], "\[Rule]", \(\(-r\)\ Sin[\[Phi]]\^2\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Phi]], Void, Void}, {Void, 
+                  red[ r], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", \(1\/r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Phi]], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Theta]]}],
+                Editable->False], 
+              "\[Rule]", \(\(-Cos[\[Phi]]\)\ Sin[\[Phi]]\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Theta]], Void, Void}, {Void, 
+                  red[ r], 
+                  red[ \[Theta]]}],
+                Editable->False], "\[Rule]", \(1\/r\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Theta]], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", \(Cot[\[Phi]]\)}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {Tensor[ \[CapitalGamma], {
+          red[ r], Void, Void}, {Void, 
+          red[ \[Phi]], 
+          red[ \[Phi]]}] -> Times[ -1, r], Tensor[ \[CapitalGamma], {
+          red[ r], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Theta]]}] -> Times[ -1, r, 
+          Power[ 
+            Sin[ \[Phi]], 2]], Tensor[ \[CapitalGamma], {
+          red[ \[Phi]], Void, Void}, {Void, 
+          red[ r], 
+          red[ \[Phi]]}] -> Power[ r, -1], Tensor[ \[CapitalGamma], {
+          red[ \[Phi]], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Theta]]}] -> Times[ -1, 
+          Cos[ \[Phi]], 
+          Sin[ \[Phi]]], Tensor[ \[CapitalGamma], {
+          red[ \[Theta]], Void, Void}, {Void, 
+          red[ r], 
+          red[ \[Theta]]}] -> Power[ r, -1], Tensor[ \[CapitalGamma], {
+          red[ \[Theta]], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Phi]]}] -> Cot[ \[Phi]]}]]], "Output",
+  CellLabel->"Out[19]//TableForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  "The following is the metric on the surface of a sphere of radius ",
+  Cell[BoxData[
+      \(a\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(SetAttributes[a, Constant];\)\), "\[IndentingNewLine]", 
+    \(\((metric = 
+          DiagonalMatrix[{a\^2, \(a\^2\) Sin[\[Theta]]\^2}] // 
+            CoordinatesToTensors[{\[Theta], \[Phi]}, x, green])\) // 
+      MatrixForm\), "\[IndentingNewLine]", 
+    \(\(MapThread[
+        SetTensorValueRules[#1, #2] &, {{gdd[a, b], guu[a, b]} // 
+            ToFlavor[green], {metric, Inverse[metric]}}];\)\)}], "Input",
+  CellLabel->"In[20]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {\(a\^2\), "0"},
+            {"0", 
+              RowBox[{\(a\^2\), " ", 
+                SuperscriptBox[
+                  RowBox[{"Sin", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["\[Theta]",
+                                FontColor->RGBColor[0.18999, 0.500008, 
+                                0.0800031]],
+                              (
+                              StyleForm[ #, FontColor -> 
+                                RGBColor[ .189993, .5, \
+.080004000000000006]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)]],
+                      Tensor[ x, {
+                        green[ \[Theta]]}, {Void}],
+                      Editable->False], "]"}], "2"]}]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[21]//MatrixForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  "In this case we specify that ",
+  Cell[BoxData[
+      \(Simplify\)]],
+  " is to be used on each of the Christoffel values."
+}], "Text"],
+
+Cell[BoxData[{
+    \(\({down\[CapitalGamma]g, up\[CapitalGamma]g} = 
+        CalculateChristoffels[labs, green, Simplify];\)\), "\n", 
+    \(\(MapThread[
+        SetTensorValueRules[#1, #2] &, {{\[CapitalGamma]ddd[a, b, 
+                c], \[CapitalGamma]udd[a, b, c]} // 
+            ToFlavor[green], {down\[CapitalGamma]g, 
+            up\[CapitalGamma]g}}];\)\)}], "Input",
+  CellLabel->"In[23]:="],
+
+Cell[TextData[{
+  "The result of using Simplify was to generate the double angle ",
+  Cell[BoxData[
+      \(Sin[2  \[Theta]]/2\)]],
+  " term instead of a ",
+  Cell[BoxData[
+      \(Sin[\[Theta]] Cos[\[Theta]]\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(SelectedTensorRules[\[CapitalGamma], \ \[CapitalGamma]udd[green[_], 
+              b_, c_] /; OrderedQ[{b, c}]] // 
+        UseCoordinates[{\[Theta], \[Phi]}, x, green]\) // 
+      TableForm\)], "Input",
+  CellLabel->"In[25]:="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  green[ \[Theta]], Void, Void}, {Void, 
+                  green[ \[Phi]], 
+                  green[ \[Phi]]}],
+                Editable->False], 
+              "\[Rule]", \(\(-\(1\/2\)\)\ Sin[2\ \[Theta]]\)}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  green[ \[Phi]], Void, Void}, {Void, 
+                  green[ \[Theta]], 
+                  green[ \[Phi]]}],
+                Editable->False], "\[Rule]", \(Cot[\[Theta]]\)}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {Tensor[ \[CapitalGamma], {
+          green[ \[Theta]], Void, Void}, {Void, 
+          green[ \[Phi]], 
+          green[ \[Phi]]}] -> Times[ 
+          Rational[ -1, 2], 
+          Sin[ 
+            Times[ 2, \[Theta]]]], Tensor[ \[CapitalGamma], {
+          green[ \[Phi]], Void, Void}, {Void, 
+          green[ \[Theta]], 
+          green[ \[Phi]]}] -> Cot[ \[Theta]]}]]], "Output",
+  CellLabel->"Out[25]//TableForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  "All of these Christoffel values are simultaneously available. Here they \
+are displayed as they are actually stored, without using ",
+  Cell[BoxData[
+      \(UseCoordinates\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(SelectedTensorRules[\[CapitalGamma], \ \[CapitalGamma]udd[_, b_, c_] /; 
+          OrderedQ[{b, c}]] // TableForm\)], "Input",
+  CellLabel->"In[26]:="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2", "2"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 2, 2}],
+                Editable->False], "\[Rule]", 
+              RowBox[{"-", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3", "3"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 3, 3}],
+                Editable->False], "\[Rule]", 
+              RowBox[{
+                RowBox[{"-", 
+                  SuperscriptBox[
+                    RowBox[{"Sin", "[", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["2",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "2"],
+                        Tensor[ x, {2}, {Void}],
+                        Editable->False], "]"}], "2"]}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1", "2"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 1, 2}],
+                Editable->False], "\[Rule]", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], \(-1\)],
+                DisplayForm]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3", "3"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 3, 3}],
+                Editable->False], "\[Rule]", 
+              RowBox[{
+                RowBox[{"-", 
+                  RowBox[{"Cos", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "2"],
+                      Tensor[ x, {2}, {Void}],
+                      Editable->False], "]"}]}], " ", 
+                RowBox[{"Sin", "[", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False], "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1", "3"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 1, 3}],
+                Editable->False], "\[Rule]", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], \(-1\)],
+                DisplayForm]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2", "3"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 2, 3}],
+                Editable->False], "\[Rule]", 
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ r], Void, Void}, {Void, 
+                  red[ \[Phi]], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{"-", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                  Tensor[ x, {
+                    red[ r]}, {Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ r], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Theta]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{
+                RowBox[{"-", 
+                  SuperscriptBox[
+                    RowBox[{"Sin", "[", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox[
+                              TagBox[
+                                StyleBox["\[Phi]",
+                                  FontColor->RGBColor[1, 0, 0]],
+                                (
+                                StyleForm[ #, FontColor -> RGBColor[ 
+                                  1, 0, 0]]&)],
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], 
+                          TagBox[
+                            StyleBox["\[Phi]",
+                              FontColor->RGBColor[1, 0, 0]],
+                            (
+                            StyleForm[ #, FontColor -> RGBColor[ 
+                              1, 0, 0]]&)]],
+                        Tensor[ x, {
+                          red[ \[Phi]]}, {Void}],
+                        Editable->False], "]"}], "2"]}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                  Tensor[ x, {
+                    red[ r]}, {Void}],
+                  Editable->False]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Phi]], Void, Void}, {Void, 
+                  red[ r], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["r",
+                                FontColor->RGBColor[1, 0, 0]],
+                              (
+                              StyleForm[ #, FontColor -> RGBColor[ 
+                                1, 0, 0]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                      
+                      Tensor[ x, {
+                        red[ r]}, {Void}],
+                      Editable->False], ")"}], \(-1\)],
+                DisplayForm]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Phi]], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Theta]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{
+                RowBox[{"-", 
+                  RowBox[{"Cos", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["\[Phi]",
+                                FontColor->RGBColor[1, 0, 0]],
+                              (
+                              StyleForm[ #, FontColor -> RGBColor[ 
+                                1, 0, 0]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                      
+                      Tensor[ x, {
+                        red[ \[Phi]]}, {Void}],
+                      Editable->False], "]"}]}], " ", 
+                RowBox[{"Sin", "[", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox[
+                          TagBox[
+                            StyleBox["\[Phi]",
+                              FontColor->RGBColor[1, 0, 0]],
+                            (
+                            StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                          
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["\[Phi]",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                    Tensor[ x, {
+                      red[ \[Phi]]}, {Void}],
+                    Editable->False], "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["r",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Theta]], Void, Void}, {Void, 
+                  red[ r], 
+                  red[ \[Theta]]}],
+                Editable->False], "\[Rule]", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["r",
+                                FontColor->RGBColor[1, 0, 0]],
+                              (
+                              StyleForm[ #, FontColor -> RGBColor[ 
+                                1, 0, 0]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["r",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                      
+                      Tensor[ x, {
+                        red[ r]}, {Void}],
+                      Editable->False], ")"}], \(-1\)],
+                DisplayForm]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  red[ \[Theta]], Void, Void}, {Void, 
+                  red[ \[Theta]], 
+                  red[ \[Phi]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[1, 0, 0]],
+                          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                  Tensor[ x, {
+                    red[ \[Phi]]}, {Void}],
+                  Editable->False], "]"}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  green[ \[Theta]], Void, Void}, {Void, 
+                  green[ \[Phi]], 
+                  green[ \[Phi]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(-\(1\/2\)\), " ", 
+                RowBox[{"Sin", "[", 
+                  RowBox[{"2", " ", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox[
+                            TagBox[
+                              StyleBox["\[Theta]",
+                                FontColor->RGBColor[0.18999, 0.500008, 
+                                0.0800031]],
+                              (
+                              StyleForm[ #, FontColor -> 
+                                RGBColor[ .189993, .5, \
+.080004000000000006]]&)],
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)]],
+                      Tensor[ x, {
+                        green[ \[Theta]]}, {Void}],
+                      Editable->False]}], "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["\[CapitalGamma]", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Phi]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Phi]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ \[CapitalGamma], {
+                  green[ \[Phi]], Void, Void}, {Void, 
+                  green[ \[Theta]], 
+                  green[ \[Phi]]}],
+                Editable->False], "\[Rule]", 
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox[
+                        TagBox[
+                          StyleBox["\[Theta]",
+                            FontColor->RGBColor[0.18999, 0.500008, 
+                            0.0800031]],
+                          (
+                          StyleForm[ #, FontColor -> 
+                            RGBColor[ .189993, .5, .080004000000000006]]&)],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Theta]",
+                        FontColor->RGBColor[0.18999, 0.500008, 0.0800031]],
+                      (
+                      StyleForm[ #, FontColor -> 
+                        RGBColor[ .189993, .5, .080004000000000006]]&)]],
+                  Tensor[ x, {
+                    green[ \[Theta]]}, {Void}],
+                  Editable->False], "]"}]}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 2, 2}] -> 
+        Times[ -1, 
+          Tensor[ x, {1}, {Void}]], 
+        Tensor[ \[CapitalGamma], {1, Void, Void}, {Void, 3, 3}] -> 
+        Times[ -1, 
+          Power[ 
+            Sin[ 
+              Tensor[ x, {2}, {Void}]], 2], 
+          Tensor[ x, {1}, {Void}]], 
+        Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 1, 2}] -> Power[ 
+          Tensor[ x, {1}, {Void}], -1], 
+        Tensor[ \[CapitalGamma], {2, Void, Void}, {Void, 3, 3}] -> 
+        Times[ -1, 
+          Cos[ 
+            Tensor[ x, {2}, {Void}]], 
+          Sin[ 
+            Tensor[ x, {2}, {Void}]]], 
+        Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 1, 3}] -> Power[ 
+          Tensor[ x, {1}, {Void}], -1], 
+        Tensor[ \[CapitalGamma], {3, Void, Void}, {Void, 2, 3}] -> Cot[ 
+          Tensor[ x, {2}, {Void}]], Tensor[ \[CapitalGamma], {
+          red[ r], Void, Void}, {Void, 
+          red[ \[Phi]], 
+          red[ \[Phi]]}] -> Times[ -1, 
+          Tensor[ x, {
+            red[ r]}, {Void}]], Tensor[ \[CapitalGamma], {
+          red[ r], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Theta]]}] -> Times[ -1, 
+          Power[ 
+            Sin[ 
+              Tensor[ x, {
+                red[ \[Phi]]}, {Void}]], 2], 
+          Tensor[ x, {
+            red[ r]}, {Void}]], Tensor[ \[CapitalGamma], {
+          red[ \[Phi]], Void, Void}, {Void, 
+          red[ r], 
+          red[ \[Phi]]}] -> Power[ 
+          Tensor[ x, {
+            red[ r]}, {Void}], -1], Tensor[ \[CapitalGamma], {
+          red[ \[Phi]], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Theta]]}] -> Times[ -1, 
+          Cos[ 
+            Tensor[ x, {
+              red[ \[Phi]]}, {Void}]], 
+          Sin[ 
+            Tensor[ x, {
+              red[ \[Phi]]}, {Void}]]], Tensor[ \[CapitalGamma], {
+          red[ \[Theta]], Void, Void}, {Void, 
+          red[ r], 
+          red[ \[Theta]]}] -> Power[ 
+          Tensor[ x, {
+            red[ r]}, {Void}], -1], Tensor[ \[CapitalGamma], {
+          red[ \[Theta]], Void, Void}, {Void, 
+          red[ \[Theta]], 
+          red[ \[Phi]]}] -> Cot[ 
+          Tensor[ x, {
+            red[ \[Phi]]}, {Void}]], Tensor[ \[CapitalGamma], {
+          green[ \[Theta]], Void, Void}, {Void, 
+          green[ \[Phi]], 
+          green[ \[Phi]]}] -> Times[ 
+          Rational[ -1, 2], 
+          Sin[ 
+            Times[ 2, 
+              Tensor[ x, {
+                green[ \[Theta]]}, {Void}]]]], Tensor[ \[CapitalGamma], {
+          green[ \[Phi]], Void, Void}, {Void, 
+          green[ \[Theta]], 
+          green[ \[Phi]]}] -> Cot[ 
+          Tensor[ x, {
+            green[ \[Theta]]}, {Void}]]}]]], "Output",
+  CellLabel->"Out[26]//TableForm="]
+}, Open  ]],
+
+Cell["Restore settings", "Text"],
+
+Cell[BoxData[{
+    \(\({{guu[i, j], 
+            gdd[i, j], \[CapitalGamma]ddd[a, b, c], \[CapitalGamma]udd[a, b, 
+              c]}, {guu[i, j], 
+              gdd[i, j], \[CapitalGamma]ddd[a, b, c], \[CapitalGamma]udd[a, 
+                b, c]} // 
+            ToFlavor[red], \[IndentingNewLine]{guu[i, j], 
+              gdd[i, j], \[CapitalGamma]ddd[a, b, c], \[CapitalGamma]udd[a, 
+                b, c]} // ToFlavor[green]} // 
+        Flatten;\)\), "\[IndentingNewLine]", 
+    \(\(ClearTensorValues /@ %;\)\)}], "Input",
+  CellLabel->"In[27]:="],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{x}, 1}, {{g}, 2}]\)], "Input",
+  CellLabel->"In[29]:="],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors, up\[CapitalGamma], down\[CapitalGamma], 
+      up\[CapitalGamma]r, down\[CapitalGamma]r, up\[CapitalGamma]g, 
+      down\[CapitalGamma]g]\)}], "Input",
+  CellLabel->"In[30]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{735, 452},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 68, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1847, 56, 444, 15, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 101722, 2422}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 68, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1847, 56, 444, 15, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2294, 73, 147, 5, 41, "MathCaption"],
+Cell[2444, 80, 452, 17, 58, "MathCaption"],
+Cell[2899, 99, 160, 3, 41, "MathCaption"],
+Cell[3062, 104, 204, 4, 58, "MathCaption"],
+Cell[3269, 110, 170, 3, 58, "MathCaption"],
+Cell[3442, 115, 504, 18, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[3971, 137, 34, 0, 39, "ExampleSection"],
+Cell[4008, 139, 96, 2, 29, "Input"],
+Cell[4107, 143, 29, 0, 25, "Text"],
+Cell[4139, 145, 506, 10, 129, "Input"],
+Cell[4648, 157, 131, 3, 29, "Input"],
+Cell[4782, 162, 150, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[4957, 171, 370, 8, 90, "Input"],
+Cell[5330, 181, 1886, 47, 79, "Output"]
+}, Open  ]],
+Cell[7231, 231, 72, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[7328, 235, 135, 3, 29, "Input"],
+Cell[7466, 240, 16703, 358, 140, "Output"]
+}, Open  ]],
+Cell[24184, 601, 98, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[24307, 607, 411, 8, 89, "Input"],
+Cell[24721, 617, 6021, 142, 161, "Output"]
+}, Open  ]],
+Cell[30757, 762, 115, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[30897, 769, 396, 8, 90, "Input"],
+Cell[31296, 779, 3593, 84, 81, "Output"]
+}, Open  ]],
+Cell[34904, 866, 75, 0, 25, "Text"],
+Cell[34982, 868, 388, 8, 69, "Input"],
+Cell[35373, 878, 74, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[35472, 882, 249, 5, 49, "Input"],
+Cell[35724, 889, 14132, 313, 161, "Output"]
+}, Open  ]],
+Cell[49871, 1205, 135, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[50031, 1214, 461, 9, 110, "Input"],
+Cell[50495, 1225, 1604, 38, 61, "Output"]
+}, Open  ]],
+Cell[52114, 1266, 154, 5, 25, "Text"],
+Cell[52271, 1273, 402, 8, 69, "Input"],
+Cell[52676, 1283, 231, 8, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[52932, 1295, 250, 5, 49, "Input"],
+Cell[53185, 1302, 6341, 142, 69, "Output"]
+}, Open  ]],
+Cell[59541, 1447, 214, 6, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[59780, 1457, 171, 3, 29, "Input"],
+Cell[59954, 1462, 39822, 906, 337, "Output"]
+}, Open  ]],
+Cell[99791, 2371, 32, 0, 25, "Text"],
+Cell[99826, 2373, 552, 11, 89, "Input"],
+Cell[100381, 2386, 98, 2, 29, "Input"],
+Cell[100482, 2390, 435, 7, 89, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

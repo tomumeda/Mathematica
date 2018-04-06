@@ -1,0 +1,1203 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     41484,       1099]*)
+(*NotebookOutlinePosition[     42508,       1135]*)
+(*  CellTagsIndexPosition[     42432,       1129]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["CalculateWeyldown", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["CalculateWeyldown",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\(metric, riemannd, ricci, Rscalar, 
+          simplifyroutine : Identity\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " will calculate the all down Weyl conformal tensor.."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+riemannd is the all down riemann array. (Obtained with CalculateRiemannd)
+ricci is the all down ricci array and Rscalar is the curvature scalar. \
+(Obtained with CalculateRRRG)\
+\>", "MathCaption"],
+
+Cell["\<\
+The optional argument simplifyroutine specifies the simplify routine to be \
+applied to the result.\
+\>", "MathCaption"],
+
+Cell["\<\
+The Weyl tensor can be nonzero only for a space of 4 or greater dimensions.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See the note in ",
+  Cell[BoxData[
+      \(CalculateRiemannd\)]],
+  " for conventions on the signs of curvature tensors."
+}], "MathCaption"],
+
+Cell[TextData[{
+  "See also:  ",
+  ButtonBox["CalculateRiemannd",
+    ButtonData:>{"CalculateRiemannd"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["CalculateRRRG",
+    ButtonData:>{"CalculateRRRG"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Example - The Brinkmann Metric", "ExampleSection"],
+
+Cell["The Brinkmann metric describes plane gravitational waves.", "Text"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the settings and declare base indices and flavors.", "Text"],
+
+Cell[BoxData[
+    \(\(oldindices = CompleteBaseIndices;\)\)], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[{
+    \(DefineTensorShortcuts[{{x}, 1}, {{g, \[Delta], R, zero}, 
+        2}, {{\[CapitalGamma]}, 3}, {{R, W}, 4}]\), "\[IndentingNewLine]", 
+    \(DeclareZeroTensor[zero]\), "\[IndentingNewLine]", 
+    \(\(labs = {x, \[Delta], g, \[CapitalGamma]};\)\)}], "Input",
+  CellLabel->"In[3]:="],
+
+Cell["Setting the base indices and metric.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{\(vars = {u, v, x, y};\), "\n", \(DeclareBaseIndices[
+      vars]\), "\n", \(simplifyroutine = Simplify;\), "\n", 
+    RowBox[{
+      RowBox[{"(", 
+        RowBox[{"cmetric", "=", 
+          RowBox[{"(", GridBox[{
+                {\(H[u, x, y]\), "1", "0", "0"},
+                {"1", "0", "0", "0"},
+                {"0", "0", \(-1\), "0"},
+                {"0", "0", "0", \(-1\)}
+                }], ")"}]}], ")"}], "//", 
+      "MatrixForm"}], "\n", \(\((metric = 
+          cmetric // CoordinatesToTensors[])\) // 
+      MatrixForm\), "\n", \(MapThread[
+        SetTensorValues[#1, #2] &, {{gdd[a, b], guu[a, b]}, {metric, 
+            simplifyroutine@\(Inverse@metric\)}}];\)}], "Input",
+  CellLabel->"In[6]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {\(H[u, x, y]\), "1", "0", "0"},
+            {"1", "0", "0", "0"},
+            {"0", "0", \(-1\), "0"},
+            {"0", "0", "0", \(-1\)}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[9]//MatrixForm="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              RowBox[{"H", "[", 
+                RowBox[{
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["u",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "u"],
+                    Tensor[ x, {u}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["x",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "x"],
+                    Tensor[ x, {x}, {Void}],
+                    Editable->False], ",", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["y",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "y"],
+                    Tensor[ x, {y}, {Void}],
+                    Editable->False]}], "]"}], "1", "0", "0"},
+            {"1", "0", "0", "0"},
+            {"0", "0", \(-1\), "0"},
+            {"0", "0", "0", \(-1\)}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[10]//MatrixForm="]
+}, Open  ]],
+
+Cell["Calculate the Christoffel symbols.", "Text"],
+
+Cell[BoxData[
+    \(\(MapThread[
+        SetTensorValues[#1, #2] &, {{\[CapitalGamma]ddd[a, b, 
+              c], \[CapitalGamma]udd[a, b, c]}, 
+          CalculateChristoffels[labs, Identity, \ 
+            simplifyroutine]}];\)\)], "Input",
+  CellLabel->"In[12]:="],
+
+Cell["Calculate the Riemann tensor.", "Text"],
+
+Cell[BoxData[
+    \(\(riemannd = 
+        CalculateRiemannd[labs, \ Identity, \ simplifyroutine];\)\)], "Input",\
+
+  CellLabel->"In[13]:="],
+
+Cell["\<\
+Calculate the up Riemann, Ricci, Rscalar, and Einstein tensors.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(\({riemannu, ricci, Rscalar, einstein} = 
+        CalculateRRRG[g, \ riemannd, Identity, simplifyroutine];\)\)], "Input",\
+
+  CellLabel->"In[14]:="],
+
+Cell["Calculate the Weyl tensor.", "Text"],
+
+Cell[BoxData[
+    \(\(weyldown = 
+        CalculateWeyldown[metric, riemannd, ricci, Rscalar, 
+          simplifyroutine];\)\)], "Input",
+  CellLabel->"In[15]:="],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(SetTensorValueRules[Wdddd[a, b, c, d], 
+        weyldown];\)\), "\[IndentingNewLine]", 
+    \(\(NonzeroValueRules[W] // UseCoordinates[]\) // TableForm\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  x  u  x\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, x, u, x}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 0, 2)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}], 
+                    "-", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  x  u  y\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, x, u, y}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(-\(1\/2\)\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  x  x  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, x, x, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{"-", 
+                      RowBox[{
+                        SuperscriptBox["H", 
+                          TagBox[\((0, 0, 2)\),
+                            Derivative],
+                          MultilineFunction->None], "[", \(u, x, y\), "]"}]}],
+                     "+", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  x  y  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, x, y, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/2\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  y  u  x\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, y, u, x}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(-\(1\/2\)\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  y  u  y\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, y, u, y}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{"-", 
+                      RowBox[{
+                        SuperscriptBox["H", 
+                          TagBox[\((0, 0, 2)\),
+                            Derivative],
+                          MultilineFunction->None], "[", \(u, x, y\), "]"}]}],
+                     "+", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  y  x  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, y, x, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/2\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(u  y  y  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {u, y, y, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 0, 2)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}], 
+                    "-", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(x  u  u  x\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {x, u, u, x}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{"-", 
+                      RowBox[{
+                        SuperscriptBox["H", 
+                          TagBox[\((0, 0, 2)\),
+                            Derivative],
+                          MultilineFunction->None], "[", \(u, x, y\), "]"}]}],
+                     "+", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(x  u  u  y\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {x, u, u, y}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/2\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(x  u  x  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {x, u, x, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 0, 2)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}], 
+                    "-", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(x  u  y  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {x, u, y, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(-\(1\/2\)\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(y  u  u  x\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {y, u, u, x}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/2\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(y  u  u  y\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {y, u, u, y}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 0, 2)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}], 
+                    "-", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(y  u  x  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["x",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {y, u, x, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(-\(1\/2\)\), " ", 
+                RowBox[{
+                  SuperscriptBox["H", 
+                    TagBox[\((0, 1, 1)\),
+                      Derivative],
+                    MultilineFunction->None], "[", \(u, x, y\), "]"}]}]}]},
+          {
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["W", \(y  u  y  u\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["y",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["u",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ W, {Void, Void, Void, Void}, {y, u, y, u}],
+                Editable->False], "\[Rule]", 
+              RowBox[{\(1\/4\), " ", 
+                RowBox[{"(", 
+                  RowBox[{
+                    RowBox[{"-", 
+                      RowBox[{
+                        SuperscriptBox["H", 
+                          TagBox[\((0, 0, 2)\),
+                            Derivative],
+                          MultilineFunction->None], "[", \(u, x, y\), "]"}]}],
+                     "+", 
+                    RowBox[{
+                      SuperscriptBox["H", 
+                        TagBox[\((0, 2, 0)\),
+                          Derivative],
+                        MultilineFunction->None], "[", \(u, x, y\), "]"}]}], 
+                  ")"}]}]}]}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {Tensor[ W, {Void, Void, Void, Void}, {u, x, u, x}] -> Times[
+         
+          Rational[ 1, 4], 
+          Plus[ 
+            Derivative[ 0, 0, 2][ H][ u, x, y], 
+            Times[ -1, 
+              Derivative[ 0, 2, 0][ H][ u, x, y]]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, x, u, y}] -> Times[ 
+          Rational[ -1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, x, x, u}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Times[ -1, 
+              Derivative[ 0, 0, 2][ H][ u, x, y]], 
+            Derivative[ 0, 2, 0][ H][ u, x, y]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, x, y, u}] -> Times[ 
+          Rational[ 1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, y, u, x}] -> Times[ 
+          Rational[ -1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, y, u, y}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Times[ -1, 
+              Derivative[ 0, 0, 2][ H][ u, x, y]], 
+            Derivative[ 0, 2, 0][ H][ u, x, y]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, y, x, u}] -> Times[ 
+          Rational[ 1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {u, y, y, u}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Derivative[ 0, 0, 2][ H][ u, x, y], 
+            Times[ -1, 
+              Derivative[ 0, 2, 0][ H][ u, x, y]]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {x, u, u, x}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Times[ -1, 
+              Derivative[ 0, 0, 2][ H][ u, x, y]], 
+            Derivative[ 0, 2, 0][ H][ u, x, y]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {x, u, u, y}] -> Times[ 
+          Rational[ 1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {x, u, x, u}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Derivative[ 0, 0, 2][ H][ u, x, y], 
+            Times[ -1, 
+              Derivative[ 0, 2, 0][ H][ u, x, y]]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {x, u, y, u}] -> Times[ 
+          Rational[ -1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {y, u, u, x}] -> Times[ 
+          Rational[ 1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {y, u, u, y}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Derivative[ 0, 0, 2][ H][ u, x, y], 
+            Times[ -1, 
+              Derivative[ 0, 2, 0][ H][ u, x, y]]]], Tensor[ 
+        W, {Void, Void, Void, Void}, {y, u, x, u}] -> Times[ 
+          Rational[ -1, 2], 
+          Derivative[ 0, 1, 1][ H][ u, x, y]], Tensor[ 
+        W, {Void, Void, Void, Void}, {y, u, y, u}] -> Times[ 
+          Rational[ 1, 4], 
+          Plus[ 
+            Times[ -1, 
+              Derivative[ 0, 0, 2][ H][ u, x, y]], 
+            Derivative[ 0, 2, 0][ H][ u, x, y]]]}]]], "Output",
+  CellLabel->"Out[17]//TableForm="]
+}, Open  ]],
+
+Cell["\<\
+An identity for the Weyl tensor is that the contraction on the 2nd and 4th \
+slots is zero.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(guu[b, d] Wdddd[a, d, c, b] \[Equal] 
+      zerodd[a, c]\), "\[IndentingNewLine]", 
+    \(% // MetricSimplify[g]\), "\[IndentingNewLine]", 
+    \(\((ToArrayValues[] /@ %%)\) // Simplify\)}], "Input",
+  CellLabel->"In[18]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["g", 
+            RowBox[{
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], \(b  d\)],
+          Tensor[ g, {b, d}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["W", \(a  d  c  b\), 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ W, {Void, Void, Void, Void}, {a, d, c, b}],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["zero", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ zero, {Void, Void}, {a, c}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["W", 
+          RowBox[{"a", "d", "c", 
+            TagBox[
+              StyleBox["d",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["d",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "d"}]],
+        Tensor[ W, {Void, Void, Void, d}, {a, d, c, Void}],
+        Editable->False], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["zero", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ zero, {Void, Void}, {a, c}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[19]="],
+
+Cell[BoxData[
+    \(True\)], "Output",
+  CellLabel->"Out[20]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(\(\[IndentingNewLine]\)\({gdd[i, j], 
+      guu[i, j], \[CapitalGamma]ddd[i, j, k], \[CapitalGamma]udd[i, j, k], 
+      Wdddd[a, b, c, d]}\[IndentingNewLine]
+    ClearTensorValues[% // Evaluate]\)\)\)], "Input",
+  CellLabel->"In[21]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["g", \(i  j\), 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ g, {Void, Void}, {i, j}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["g", 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], \(i  j\)],
+          Tensor[ g, {i, j}, {Void, Void}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", \(i  j  k\), 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {Void, Void, Void}, {i, j, k}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j", "k"}], 
+            RowBox[{"i", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {i, Void, Void}, {Void, j, k}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["W", \(a  b  c  d\), 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ W, {Void, Void, Void, Void}, {a, b, c, d}],
+          Editable->False]}], "}"}]], "Output",
+  CellLabel->"Out[21]="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{x}, 1}, {{g, \[Delta], R, zero}, 
+        2}, {{\[CapitalGamma]}, 3}, {{R, W}, 4}]\)], "Input",
+  CellLabel->"In[23]:="],
+
+Cell[BoxData[
+    \(DeclareBaseIndices @@ oldindices\)], "Input",
+  CellLabel->"In[24]:="],
+
+Cell[BoxData[
+    \(Clear[oldindices, labs, vars, metric, cmetric, riemannd, riemannu, 
+      ricci, Rscalar, einstein]\)], "Input",
+  CellLabel->"In[25]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{728, 526},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 64, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1843, 56, 419, 15, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 42261, 1120}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 64, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1843, 56, 419, 15, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2265, 73, 207, 4, 66, "MathCaption"],
+Cell[2475, 79, 130, 3, 41, "MathCaption"],
+Cell[2608, 84, 106, 2, 41, "MathCaption"],
+Cell[2717, 88, 159, 5, 41, "MathCaption"],
+Cell[2879, 95, 265, 10, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[3169, 109, 56, 0, 39, "ExampleSection"],
+Cell[3228, 111, 73, 0, 25, "Text"],
+Cell[3304, 113, 96, 2, 29, "Input"],
+Cell[3403, 117, 71, 0, 25, "Text"],
+Cell[3477, 119, 94, 2, 29, "Input"],
+Cell[3574, 123, 301, 5, 69, "Input"],
+Cell[3878, 130, 52, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[3955, 134, 730, 16, 202, "Input"],
+Cell[4688, 152, 459, 13, 85, "Output"],
+Cell[5150, 167, 1580, 39, 89, "Output"]
+}, Open  ]],
+Cell[6745, 209, 50, 0, 25, "Text"],
+Cell[6798, 211, 267, 6, 49, "Input"],
+Cell[7068, 219, 45, 0, 25, "Text"],
+Cell[7116, 221, 139, 4, 29, "Input"],
+Cell[7258, 227, 87, 2, 25, "Text"],
+Cell[7348, 231, 168, 4, 49, "Input"],
+Cell[7519, 237, 42, 0, 25, "Text"],
+Cell[7564, 239, 162, 4, 29, "Input"],
+
+Cell[CellGroupData[{
+Cell[7751, 247, 213, 4, 49, "Input"],
+Cell[7967, 253, 25988, 620, 421, "Output"]
+}, Open  ]],
+Cell[33970, 876, 115, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[34110, 883, 245, 5, 69, "Input"],
+Cell[34358, 890, 1810, 50, 28, "Output"],
+Cell[36171, 942, 1302, 37, 28, "Output"],
+Cell[37476, 981, 63, 2, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[37576, 988, 258, 5, 69, "Input"],
+Cell[37837, 995, 3188, 85, 30, "Output"]
+}, Open  ]],
+Cell[41040, 1083, 163, 3, 29, "Input"],
+Cell[41206, 1088, 90, 2, 29, "Input"],
+Cell[41299, 1092, 157, 3, 49, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

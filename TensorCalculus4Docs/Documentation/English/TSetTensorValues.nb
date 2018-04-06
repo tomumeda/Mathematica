@@ -1,0 +1,1279 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     34154,       1089]*)
+(*NotebookOutlinePosition[     35178,       1125]*)
+(*  CellTagsIndexPosition[     35102,       1119]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["SetTensorValues", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["SetTensorValues",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\(tensortemplate, values, permissive : False\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  "will set the component values of the tensor as UpValues for label.\n\
+\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["SetTensorValues",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\(Tensor[label], value\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  "set the value for a scalar tensor."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "tensortemplate can be a tensor shortcut, e.g., ",
+  Cell[BoxData[
+      \(Tdd[a, b]\)]],
+  ", or a FullForm tensor expression, ",
+  Cell[BoxData[
+      \(Tensor[label, upindices, downindices]\)]],
+  ". There are no shortcuts for scalar tensors."
+}], "MathCaption"],
+
+Cell["\<\
+The order of components in values, that is the levels in the tensor array, \
+will correspond to the Sort order of the raw indices in the tensor template, \
+not necessarily their slot order in the tensor. It will be good practice to \
+usually make the sort order of the template indices the same as the slot \
+order, unless you are deliberately using transposes. \
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "The dimension of each index is that associated with the index flavor by \
+the ",
+  Cell[BoxData[
+      \(DeclareBaseIndices\)]],
+  " statement."
+}], "MathCaption"],
+
+Cell["\<\
+The number of Dimensions of the values tensor must be greater than or equal \
+to the number of indices. Although they will normally be equal, this does \
+allow the setting of arrays as values of tensor components.\
+\>", "MathCaption"],
+
+Cell["\<\
+When arrays are given as component values then all dimensions of the array \
+must be equal to the dimension of the associated index. Setting permissive to \
+True waives this rule.\
+\>", "MathCaption"],
+
+Cell["\<\
+Shortcuts can be used as the tensor pattern, but there are no shortcuts for \
+scalar tensors.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["SetTensorValueRules",
+    ButtonData:>{"SetTensorValueRules"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ClearTensorValues",
+    ButtonData:>{"ClearTensorValues"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["Tensor",
+    ButtonData:>{"Tensor"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["UseCoordinates",
+    ButtonData:>{"UseCoordinates"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["DeclareBaseIndices",
+    ButtonData:>{"DeclareBaseIndices"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the settings and declare base indices and flavors.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\n", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareBaseIndices[{1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(DeclareIndexFlavor[{red, Red}, {blue, Blue}]\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell["We define some tensor shortcuts.", "Text"],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{v, g, e}, 1}, {h, 2}]\)], "Input",
+  CellLabel->"In[7]:="],
+
+Cell["Here is a tensor. It has no values.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(vu[i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[8]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["v", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "i"],
+      Tensor[ v, {i}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[8]="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["v", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "1"],
+          Tensor[ v, {1}, {Void}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["v", 
+            TagBox[
+              StyleBox["2",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "2"],
+          Tensor[ v, {2}, {Void}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["v", 
+            TagBox[
+              StyleBox["3",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "3"],
+          Tensor[ v, {3}, {Void}],
+          Editable->False]}], "}"}]], "Output",
+  CellLabel->"Out[9]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "Now we create values for the contravariant components of ",
+  Cell[BoxData[
+      \(v\)]],
+  ". When the tensor is expanded it takes on the values."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValues[vu[i], {1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(vu[i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[10]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["v", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "i"],
+      Tensor[ v, {i}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[11]="],
+
+Cell[BoxData[
+    \({1, 2, 3}\)], "Output",
+  CellLabel->"Out[12]="]
+}, Open  ]],
+
+Cell["The definitions are stored in...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(UpValues[v]\)], "Input",
+  CellLabel->"In[13]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{"HoldPattern", "[", 
+            InterpretationBox[
+              SubsuperscriptBox["v", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              1,
+              Editable->False], "]"}], "\[RuleDelayed]", "1"}], ",", 
+        RowBox[{
+          RowBox[{"HoldPattern", "[", 
+            InterpretationBox[
+              SubsuperscriptBox["v", 
+                TagBox[
+                  StyleBox["2",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "2"],
+              2,
+              Editable->False], "]"}], "\[RuleDelayed]", "2"}], ",", 
+        RowBox[{
+          RowBox[{"HoldPattern", "[", 
+            InterpretationBox[
+              SubsuperscriptBox["v", 
+                TagBox[
+                  StyleBox["3",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "3"],
+              3,
+              Editable->False], "]"}], "\[RuleDelayed]", "3"}]}], 
+      "}"}]], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell["Only the contravariant components have values.", "Text"],
+
+Cell["We can erase the values using ...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearTensorValues[vu[i]];\)\), "\[IndentingNewLine]", 
+    \(UpValues[v]\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    \({}\)], "Output",
+  CellLabel->"Out[15]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "Here is an order 2 tensor, ",
+  Cell[BoxData[
+      \(h\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(hud[i, j]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // MatrixForm\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["h", 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+        RowBox[{"i", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ h, {i, Void}, {Void, j}],
+      Editable->False]], "Output",
+  CellLabel->"Out[16]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {1, Void}, {Void, 1}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {1, Void}, {Void, 2}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"1", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {1, Void}, {Void, 3}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {2, Void}, {Void, 1}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {2, Void}, {Void, 2}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"2", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {2, Void}, {Void, 3}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {3, Void}, {Void, 1}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {3, Void}, {Void, 2}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"3", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {3, Void}, {Void, 3}],
+                Editable->False]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[17]//MatrixForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  "We will set the following values for the components of ",
+  Cell[BoxData[
+      \(h\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\((hvalues = Table[j - i, {i, 1, 3}, {j, 1, 3}])\) // 
+      MatrixForm\)], "Input",
+  CellLabel->"In[18]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"0", "1", "2"},
+            {\(-1\), "0", "1"},
+            {\(-2\), \(-1\), "0"}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[18]//MatrixForm="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValues[hud[i, j], hvalues]\), "\[IndentingNewLine]", 
+    \(hud[i, j]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // MatrixForm\)}], "Input",
+  CellLabel->"In[19]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["h", 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+        RowBox[{"i", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ h, {i, Void}, {Void, j}],
+      Editable->False]], "Output",
+  CellLabel->"Out[20]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"0", "1", "2"},
+            {\(-1\), "0", "1"},
+            {\(-2\), \(-1\), "0"}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[21]//MatrixForm="]
+}, Open  ]],
+
+Cell["\<\
+If we reverse the indices in the tensor template when using SetTensorValues, \
+then we obtain the transposed values. You should only do this if you \
+deliberately want to put in the transposed values. Normally you should put \
+the indices into the slots in sort order.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValues[hud[j, i], hvalues]\), "\[IndentingNewLine]", 
+    \(hud[i, j]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // MatrixForm\)}], "Input",
+  CellLabel->"In[22]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["h", 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+        RowBox[{"i", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ h, {i, Void}, {Void, j}],
+      Editable->False]], "Output",
+  CellLabel->"Out[23]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"0", \(-1\), \(-2\)},
+            {"1", "0", \(-1\)},
+            {"2", "1", "0"}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[24]//MatrixForm="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(ClearTensorValues[hud[i, j]]\)], "Input",
+  CellLabel->"In[25]:="],
+
+Cell[TextData[{
+  "We can also create rules that substitute arrays for tensor components. The \
+last index could be associated with arrays with any number of levels. Let ",
+  Cell[BoxData[
+      SubscriptBox["g", 
+        StyleBox["i",
+          FontColor->RGBColor[1, 0, 0]]]]],
+  " be a set of basis vectors."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    RowBox[{"SetTensorValues", "[", 
+      RowBox[{\(gd[red@i]\), ",", 
+        RowBox[{"(", GridBox[{
+              {"1", "0", "3"},
+              {"0", "2", "1"},
+              {"2", "2", "3"}
+              }], ")"}]}], "]"}], "\[IndentingNewLine]", \(gd[
+      red@i]\), "\[IndentingNewLine]", \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[26]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["g", 
+        TagBox[
+          StyleBox["i",
+            FontColor->RGBColor[1, 0, 0]],
+          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+        TagBox[
+          StyleBox[
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)]],
+      Tensor[ g, {Void}, {
+        red[ i]}],
+      Editable->False]], "Output",
+  CellLabel->"Out[27]="],
+
+Cell[BoxData[
+    \({{1, 0, 3}, {0, 2, 1}, {2, 2, 3}}\)], "Output",
+  CellLabel->"Out[28]="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(ClearTensorValues[gd[red@i]]\)], "Input",
+  CellLabel->"In[29]:="],
+
+Cell["\<\
+Suppose we want to set tangent vectors in the 3D embedding space of the \
+following 2D manifold.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(\[Xi][u_, v_] := {u + v, u - v, 2  u\ v}\)], "Input",
+  CellLabel->"In[30]:="],
+
+Cell["\<\
+If we try to directly set 3D tensor values they don't set because the \
+dimensions must match the dimension associated with the index.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(DeclareBaseIndices[{u, v}]\), "\[IndentingNewLine]", 
+    \(SetTensorValues[
+      ed[i], {\[PartialD]\_u\ \[Xi][u, v], \[PartialD]\_v\ \[Xi][u, 
+            v]}]\)}], "Input",
+  CellLabel->"In[31]:="],
+
+Cell[BoxData[
+    \(SetTensorValues::"size" \(\(:\)\(\ \)\) 
+      "The size of each value array must be the same as as the dimension of \
+the corresponding index."\)], "Message",
+  CellLabel->"From In[31]:="],
+
+Cell[BoxData[
+    \($Failed\)], "Output",
+  CellLabel->"Out[32]="]
+}, Open  ]],
+
+Cell["\<\
+By setting the optional argument permissive to True the values can be set.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValues[
+      ed[i], {\[PartialD]\_u\ \[Xi][u, v], \[PartialD]\_v\ \[Xi][u, v]}, 
+      True]\), "\[IndentingNewLine]", 
+    \(ed[i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[33]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["e", "i", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)]],
+      Tensor[ e, {Void}, {i}],
+      Editable->False]], "Output",
+  CellLabel->"Out[34]="],
+
+Cell[BoxData[
+    \({{1, 1, 2\ v}, {1, \(-1\), 2\ u}}\)], "Output",
+  CellLabel->"Out[35]="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(ClearTensorValues[ed[i]]\)], "Input",
+  CellLabel->"In[36]:="],
+
+Cell["\<\
+We can create and store values for rectangular arrays by using different \
+flavor indices and associating different base indices with each flavor.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{1, 2}, {blue, {1, 2, 3}}]\)], "Input",
+  CellLabel->"In[37]:="],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    RowBox[{"SetTensorValues", "[", 
+      RowBox[{\(hdd[i, blue@j]\), ",", 
+        RowBox[{"(", GridBox[{
+              {"1", "0", "2"},
+              {"0", "1", "3"}
+              }], ")"}], ",", "True"}], "]"}], "\n", \(hdd[i, 
+      blue@j]\), "\[IndentingNewLine]", \(\(% // EinsteinArray[]\) // 
+      MatrixForm\), "\[IndentingNewLine]", \(ClearTensorValues[
+      hdd[i, blue@j]]\)}], "Input",
+  CellLabel->"In[38]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["h", 
+        RowBox[{"i", 
+          TagBox[
+            StyleBox["j",
+              FontColor->RGBColor[0, 0, 1]],
+            (StyleForm[ #, FontColor -> RGBColor[ 0, 0, 1]]&)]}], 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["j",
+                  FontColor->RGBColor[0, 0, 1]],
+                (StyleForm[ #, FontColor -> RGBColor[ 0, 0, 1]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ h, {Void, Void}, {i, 
+        blue[ j]}],
+      Editable->False]], "Output",
+  CellLabel->"Out[39]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"1", "0", "2"},
+            {"0", "1", "3"}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[40]//MatrixForm="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{1, 2, 3}]\)], "Input",
+  CellLabel->"In[42]:="],
+
+Cell["\<\
+We can set values for only selected components of a tensor by creating a \
+corresponding array and then using it to set the values. Notice that only \
+rules for the set values are created.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{\(mat = hdd[i, j] // ToArrayValues[];\), "\[IndentingNewLine]", 
+  
+    RowBox[{
+      RowBox[{\(Part[mat, {1, 2}, {1, 2}]\), "=", 
+        RowBox[{"(", GridBox[{
+              {"2", "0"},
+              {"1", "3"}
+              }], ")"}]}], ";"}], "\[IndentingNewLine]", \(mat // 
+      MatrixForm\), "\[IndentingNewLine]", \(SetTensorValues[hdd[i, j], 
+      mat]\), "\[IndentingNewLine]", \(hdd[i, 
+      j]\), "\[IndentingNewLine]", \(\(% // EinsteinArray[]\) // 
+      MatrixForm\)}], "Input",
+  CellLabel->"In[43]:="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"2", "0", 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(1  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {1, 3}],
+                Editable->False]},
+            {"1", "3", 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(2  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {2, 3}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  1\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 1}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  2\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 2}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 3}],
+                Editable->False]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[45]//MatrixForm="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["h", \(i  j\), 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ h, {Void, Void}, {i, j}],
+      Editable->False]], "Output",
+  CellLabel->"Out[47]="],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {"2", "0", 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(1  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {1, 3}],
+                Editable->False]},
+            {"1", "3", 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(2  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {2, 3}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  1\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 1}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  2\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 2}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["h", \(3  3\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ h, {Void, Void}, {3, 3}],
+                Editable->False]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output",
+  CellLabel->"Out[48]//MatrixForm="]
+}, Open  ]],
+
+Cell[TextData[{
+  "Definitions can also be created for scalar tensors. (Note that ",
+  Cell[BoxData[
+      \(Tensor[\[Phi]]\)]],
+  " displays as just ",
+  Cell[BoxData[
+      \(\[Phi]\)]],
+  ".)"
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(Clear[\[Phi]];\)\), "\[IndentingNewLine]", 
+    \(SetTensorValues[Tensor[\[Phi]], t\^2]\), "\[IndentingNewLine]", 
+    \(UpValues[\[Phi]]\), "\[IndentingNewLine]", 
+    \(Tensor[\[Phi]]\)}], "Input",
+  CellLabel->"In[49]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{"HoldPattern", "[", 
+          InterpretationBox["\[Phi]",
+            Power[ t, 2],
+            Editable->False], "]"}], "\[RuleDelayed]", \(t\^2\)}], 
+      "}"}]], "Output",
+  CellLabel->"Out[51]="],
+
+Cell[BoxData[
+    \(t\^2\)], "Output",
+  CellLabel->"Out[52]="]
+}, Open  ]],
+
+Cell["The definition can be cleared with...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(ClearTensorValues[Tensor[\[Phi]]]\), "\[IndentingNewLine]", 
+    \(UpValues[\[Phi]]\)}], "Input",
+  CellLabel->"In[53]:="],
+
+Cell[BoxData[
+    \({}\)], "Output",
+  CellLabel->"Out[54]="]
+}, Open  ]],
+
+Cell["\<\
+It is permissible to have the same symbol for the tensor label, a pattern \
+index, and as one of the values.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValues[vu[v], {v, 1, 2}]\), "\[IndentingNewLine]", 
+    \(vu[v]\), "\[IndentingNewLine]", 
+    \(% // EinsteinArray[]\)}], "Input",
+  CellLabel->"In[55]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["v", 
+        TagBox[
+          StyleBox["v",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "v"],
+      Tensor[ v, {v}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[56]="],
+
+Cell[BoxData[
+    \({v, 1, 2}\)], "Output",
+  CellLabel->"Out[57]="]
+}, Open  ]],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{v, g}, 1}, {h, 2}]\)], "Input",
+  CellLabel->"In[58]:="],
+
+Cell["Restore the original state...", "Text"],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors, \[Xi], mat]\)}], "Input",
+  CellLabel->"In[59]:="],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{v, g, e}, 1}, {h, 2}]\)], "Input",
+  CellLabel->"In[63]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{763, 464},
+WindowMargins->{{3, Automatic}, {Automatic, 2}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 62, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1841, 56, 696, 26, 56, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 34931, 1110}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 62, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1841, 56, 696, 26, 56, "Usage",
+  CellTags->"Function?"],
+Cell[2540, 84, 283, 8, 58, "MathCaption"],
+Cell[2826, 94, 393, 6, 75, "MathCaption"],
+Cell[3222, 102, 182, 6, 41, "MathCaption"],
+Cell[3407, 110, 244, 4, 58, "MathCaption"],
+Cell[3654, 116, 210, 4, 58, "MathCaption"],
+Cell[3867, 122, 124, 3, 41, "MathCaption"],
+Cell[3994, 127, 586, 22, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4605, 153, 34, 0, 39, "ExampleSection"],
+Cell[4642, 155, 96, 2, 29, "Input"],
+Cell[4741, 159, 71, 0, 25, "Text"],
+Cell[4815, 161, 336, 6, 109, "Input"],
+Cell[5154, 169, 48, 0, 25, "Text"],
+Cell[5205, 171, 102, 2, 29, "Input"],
+Cell[5310, 175, 51, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[5386, 179, 118, 3, 49, "Input"],
+Cell[5507, 184, 288, 9, 27, "Output"],
+Cell[5798, 195, 918, 27, 27, "Output"]
+}, Open  ]],
+Cell[6731, 225, 179, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[6935, 234, 186, 4, 69, "Input"],
+Cell[7124, 240, 289, 9, 27, "Output"],
+Cell[7416, 251, 68, 2, 27, "Output"]
+}, Open  ]],
+Cell[7499, 256, 48, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[7572, 260, 69, 2, 29, "Input"],
+Cell[7644, 264, 1220, 34, 27, "Output"]
+}, Open  ]],
+Cell[8879, 301, 62, 0, 25, "Text"],
+Cell[8944, 303, 49, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[9018, 307, 134, 3, 49, "Input"],
+Cell[9155, 312, 61, 2, 27, "Output"]
+}, Open  ]],
+Cell[9231, 317, 97, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[9353, 326, 141, 3, 49, "Input"],
+Cell[9497, 331, 484, 15, 30, "Output"],
+Cell[9984, 348, 5533, 138, 87, "Output"]
+}, Open  ]],
+Cell[15532, 489, 125, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[15682, 498, 129, 3, 29, "Input"],
+Cell[15814, 503, 403, 12, 69, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[16254, 520, 210, 4, 69, "Input"],
+Cell[16467, 526, 484, 15, 30, "Output"],
+Cell[16954, 543, 403, 12, 69, "Output"]
+}, Open  ]],
+Cell[17372, 558, 292, 5, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[17689, 567, 210, 4, 69, "Input"],
+Cell[17902, 573, 484, 15, 30, "Output"],
+Cell[18389, 590, 403, 12, 69, "Output"]
+}, Open  ]],
+Cell[18807, 605, 86, 2, 29, "Input"],
+Cell[18896, 609, 323, 8, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[19244, 621, 373, 9, 99, "Input"],
+Cell[19620, 632, 602, 18, 27, "Output"],
+Cell[20225, 652, 92, 2, 27, "Output"]
+}, Open  ]],
+Cell[20332, 657, 86, 2, 29, "Input"],
+Cell[20421, 661, 120, 3, 25, "Text"],
+Cell[20544, 666, 98, 2, 29, "Input"],
+Cell[20645, 670, 158, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[20828, 677, 222, 5, 49, "Input"],
+Cell[21053, 684, 209, 4, 35, "Message"],
+Cell[21265, 690, 66, 2, 27, "Output"]
+}, Open  ]],
+Cell[21346, 695, 98, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[21469, 701, 255, 6, 69, "Input"],
+Cell[21727, 709, 289, 9, 27, "Output"],
+Cell[22019, 720, 92, 2, 27, "Output"]
+}, Open  ]],
+Cell[22126, 725, 82, 2, 29, "Input"],
+Cell[22211, 729, 170, 3, 25, "Text"],
+Cell[22384, 734, 103, 2, 29, "Input"],
+
+Cell[CellGroupData[{
+Cell[22512, 740, 442, 10, 101, "Input"],
+Cell[22957, 752, 814, 24, 30, "Output"],
+Cell[23774, 778, 365, 11, 53, "Output"]
+}, Open  ]],
+Cell[24154, 792, 87, 2, 29, "Input"],
+Cell[24244, 796, 212, 4, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[24481, 804, 536, 12, 142, "Input"],
+Cell[25020, 818, 3104, 77, 87, "Output"],
+Cell[28127, 897, 465, 14, 30, "Output"],
+Cell[28595, 913, 3104, 77, 87, "Output"]
+}, Open  ]],
+Cell[31714, 993, 207, 8, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[31946, 1005, 247, 5, 90, "Input"],
+Cell[32196, 1012, 264, 8, 27, "Output"],
+Cell[32463, 1022, 63, 2, 27, "Output"]
+}, Open  ]],
+Cell[32541, 1027, 53, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[32619, 1031, 143, 3, 49, "Input"],
+Cell[32765, 1036, 61, 2, 27, "Output"]
+}, Open  ]],
+Cell[32841, 1041, 132, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[32998, 1048, 186, 4, 69, "Input"],
+Cell[33187, 1054, 289, 9, 27, "Output"],
+Cell[33479, 1065, 68, 2, 27, "Output"]
+}, Open  ]],
+Cell[33562, 1070, 99, 2, 29, "Input"],
+Cell[33664, 1074, 45, 0, 25, "Text"],
+Cell[33712, 1076, 309, 5, 89, "Input"],
+Cell[34024, 1083, 102, 2, 29, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

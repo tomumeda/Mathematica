@@ -1,0 +1,3050 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[    104184,       2910]*)
+(*NotebookOutlinePosition[    105247,       2947]*)
+(*  CellTagsIndexPosition[    105170,       2941]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["SimplifyTensorSum", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["SimplifyTensorSum",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["expr",
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " will check that all terms in a tensor sum have valid indices, that the \
+free indices are the same in all terms, and will simplify the sum by matching \
+dummy indices in all terms that have the same index structure."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+ Terms which have the same tensor labels and index structure will be made the \
+same, but subparts of a term that are similar to other terms may not be the \
+same.\
+\>", "MathCaption"],
+
+Cell["\<\
+ Free indices are indices that appear only once in each term. They must be \
+the same in all terms. Dummy indices are indices that appear exactly once in \
+an up position and once in a down position. All other indices are bad.\
+\>", "MathCaption"],
+
+Cell["\<\
+ If the free indices do not match or there are bad indices in any terms, \
+error messages are given and the simplification is aborted.\
+\>", "MathCaption"],
+
+Cell["\<\
+ IndexChange can be used to perform specific reindexing under the user's \
+control.\
+\>", "MathCaption"],
+
+Cell["\<\
+TensorSimplify automatically applies SimplifyTensorSum to terms with similar \
+patterns, takes into account declared symmetries and is the routine of \
+choice.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["TensorSimplify",
+    ButtonData:>{"TensorSimplify"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["PatternReplaceIndex",
+    ButtonData:>{"PatternReplaceIndex"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["UpDownAdjust",
+    ButtonData:>{"UpDownAdjust"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["UpDownSwap",
+    ButtonData:>{"UpDownSwap"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["IndexChange",
+    ButtonData:>{"IndexChange"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SymmetrizeSlots",
+    ButtonData:>{"SymmetrizeSlots"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SymmetrizePattern",
+    ButtonData:>{"SymmetrizePattern"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["NondependentPartialD",
+    ButtonData:>{"NondependentPartialD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["MapLevelParts",
+    ButtonData:>{"MapLevelParts"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["MapLevelPatterns",
+    ButtonData:>{"MapLevelPatterns"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["DeclareTensorSymmetries",
+    ButtonData:>{"DeclareTensorSymmetries"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["DeclarePatternSymmetries",
+    ButtonData:>{"DeclarePatternSymmetries"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples  ", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save old settings and declare an index flavor.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareIndexFlavor[{red, Red}]\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{b, c, A, B, G}, 1}, {A, 2}, {{a, b, F}, 3}, {F, 
+        4}]\)], "Input",
+  CellLabel->"In[5]:="],
+
+Cell["\<\
+Terms with the same labels and index structure are made the same.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(c\ Ad[i] Bu[i] + a\ Ad[j] Bu[j] + 
+      b\ Ad[m] Bu[m]\), "\[IndentingNewLine]", 
+    \(% // SimplifyTensorSum\), "\[IndentingNewLine]", 
+    \(% // Simplify\)}], "Input",
+  CellLabel->"In[6]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "j", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {j}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j"],
+          Tensor[ B, {j}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "m", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {m}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ B, {m}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[6]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[7]="],
+
+Cell[BoxData[
+    RowBox[{\((a + b + c)\), " ", 
+      InterpretationBox[
+        SubsuperscriptBox["A", "i", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ A, {Void}, {i}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["B", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ B, {i}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[8]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(c\ Ad[i] Bu[i] + a\ Ad[j] Bu[j] + b\ Ad[m] Bu[m] // 
+      ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // SimplifyTensorSum\), "\[IndentingNewLine]", 
+    \(% // Simplify\)}], "Input",
+  CellLabel->"In[9]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ i]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ i]}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["j",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["j",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ j]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["j",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["j",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ j]}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["m",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["m",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ m]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["m",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["m",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ m]}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[9]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ i]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ i]}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ i]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ i]}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {
+            red[ i]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ B, {
+            red[ i]}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[10]="],
+
+Cell[BoxData[
+    RowBox[{\((a + b + c)\), " ", 
+      InterpretationBox[
+        SubsuperscriptBox["A", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ A, {Void}, {
+          red[ i]}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["B", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ B, {
+          red[ i]}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[11]="]
+}, Open  ]],
+
+Cell["This sum is bad because the free indices do not match.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(a\ Auu[i, j] Gd[i] + b\ Auu[k, m] Gd[k]\), "\n", 
+    \(% // SimplifyTensorSum\)}], "Input",
+  CellLabel->"In[12]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], \(i  j\)],
+          Tensor[ A, {i, j}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {i}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", 
+            RowBox[{
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], \(k  m\)],
+          Tensor[ A, {k, m}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[12]="],
+
+Cell[BoxData[
+    \(SimplifyTensorSum::"free" \(\(:\)\(\ \)\) 
+      "Free indices are not the same in all terms."\)], "Message",
+  CellLabel->"From In[12]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell["\<\
+The second term of this sum contains a bad index. k is repeated 3 times.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(auud[i, k, j] budd[j, k, m] + 2  auud[i, j, k] budd[k, j, m] cu[k] // 
+      ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // SimplifyTensorSum\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["a", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["k",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox["k",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["j",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ a, {
+            red[ i], 
+            red[ k], Void}, {Void, Void, 
+            red[ j]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["b", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["j",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox["m",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["j",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["k",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["m",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ b, {
+            red[ j], Void, Void}, {Void, 
+            red[ k], 
+            red[ m]}],
+          Editable->False]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["a", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["j",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox["j",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["k",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ a, {
+            red[ i], 
+            red[ j], Void}, {Void, Void, 
+            red[ k]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["b", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["k",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox["m",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["k",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["j",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["m",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ b, {
+            red[ k], Void, Void}, {Void, 
+            red[ j], 
+            red[ m]}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["c", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["k",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["k",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ c, {
+            red[ k]}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[14]="],
+
+Cell[BoxData[
+    RowBox[{\(SimplifyTensorSum::"badterm"\), \(\(:\)\(\ \)\), "\<\"Term \
+\\!\\(2\\\\ \\*InterpretationBox[\\(a\\_\\(\\*StyleBox[StyleBox[\\\"i\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]], Rule[ShowContents, \
+False]]\\*StyleBox[StyleBox[\\\"j\\\", Rule[FontColor, RGBColor[1, 0, 0]]], \
+Rule[ShowContents, False]]\\*StyleBox[\\\"k\\\", Rule[FontColor, RGBColor[1, \
+0, 0]]]\\)\\%\\(\\*StyleBox[\\\"i\\\", Rule[FontColor, RGBColor[1, 0, \
+0]]]\\*StyleBox[\\\"j\\\", Rule[FontColor, RGBColor[1, 0, \
+0]]]\\*StyleBox[StyleBox[\\\"k\\\", Rule[FontColor, RGBColor[1, 0, 0]]], \
+Rule[ShowContents, False]]\\)\\), Tensor[a, List[red[i], red[j], Void], \
+List[Void, Void, red[k]]], Rule[Editable, False]]\\\\ \
+\\*InterpretationBox[\\(b\\_\\(\\*StyleBox[StyleBox[\\\"k\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]], Rule[ShowContents, False]]\\*StyleBox[\\\
+\"j\\\", Rule[FontColor, RGBColor[1, 0, 0]]]\\*StyleBox[\\\"m\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]]\\)\\%\\(\\*StyleBox[\\\"k\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]]\\*StyleBox[StyleBox[\\\"j\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]], Rule[ShowContents, \
+False]]\\*StyleBox[StyleBox[\\\"m\\\", Rule[FontColor, RGBColor[1, 0, 0]]], \
+Rule[ShowContents, False]]\\)\\), Tensor[b, List[red[k], Void, Void], \
+List[Void, red[j], red[m]]], Rule[Editable, False]]\\\\ \\*InterpretationBox[\
+\\(c\\_\\(\\*StyleBox[StyleBox[\\\"k\\\", Rule[FontColor, RGBColor[1, 0, \
+0]]], Rule[ShowContents, False]]\\)\\%\\(\\*StyleBox[\\\"k\\\", \
+Rule[FontColor, RGBColor[1, 0, 0]]]\\)\\), Tensor[c, List[red[k]], \
+List[Void]], Rule[Editable, False]]\\) contains bad indices.\"\>"}]], \
+"Message",
+  CellLabel->"From In[14]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[15]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(a\ Fddu[i, j, i] + b\ Fddu[k, j, k] + c\ Fddu[m, j, m]\), "\n", 
+    \(\(% // SimplifyTensorSum\) // Simplify\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"i", "j", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"}]],
+          Tensor[ F, {Void, Void, i}, {i, j, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"k", "j", 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "k"}]],
+          Tensor[ F, {Void, Void, k}, {k, j, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"m", "j", 
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "m"}]],
+          Tensor[ F, {Void, Void, m}, {m, j, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[16]="],
+
+Cell[BoxData[
+    RowBox[{\((a + b + c)\), " ", 
+      InterpretationBox[
+        SubsuperscriptBox["F", 
+          RowBox[{"i", "j", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"}]],
+        Tensor[ F, {Void, Void, i}, {i, j, Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[17]="]
+}, Open  ]],
+
+Cell["\<\
+TensorSimplify, which uses SimplifyTensorSum, combines only the first two \
+terms in this expression. We can use IndexChange to obtain a full \
+simplification.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(a\ Fdduu[i, j, i, j] + b\ Fdduu[j, p, j, p] + 
+      c\ Ad[i] Bu[i] Fdduu[m, r, m, r]\), "\[IndentingNewLine]", 
+    \(% // TensorSimplify\), "\[IndentingNewLine]", 
+    \(MapAt[IndexChange[{{i, j}, {j, p}}], %, 1] // Simplify\)}], "Input",
+  CellLabel->"In[18]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"i", "j", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i", "j"}]],
+          Tensor[ F, {Void, Void, i, j}, {i, j, Void, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"j", "p", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j", "p"}]],
+          Tensor[ F, {Void, Void, j, p}, {j, p, Void, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"m", "r", 
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["r",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["r",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "m", "r"}]],
+          Tensor[ F, {Void, Void, m, r}, {m, r, Void, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{\((a + b)\), " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"i", "j", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i", "j"}]],
+          Tensor[ F, {Void, Void, i, j}, {i, j, Void, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"j", "p", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j", "p"}]],
+          Tensor[ F, {Void, Void, j, p}, {j, p, Void, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[19]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"(", 
+        RowBox[{"a", "+", "b", "+", 
+          RowBox[{"c", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["A", "i", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ A, {Void}, {i}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["B", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ B, {i}, {Void}],
+              Editable->False]}]}], ")"}], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["F", 
+          RowBox[{"j", "p", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["p",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["p",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j", "p"}]],
+        Tensor[ F, {Void, Void, j, p}, {j, p, Void, Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[20]="]
+}, Open  ]],
+
+Cell["This can be done more easily with PatternReplaceIndex", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(a\ Fdduu[i, j, i, j] + b\ Fdduu[j, p, j, p] + 
+      c\ Ad[i] Bu[i] Fdduu[m, r, m, r]\), "\[IndentingNewLine]", 
+    \(\(% // PatternReplaceIndex[{j, p}, Fdduu[a_, b_, a_, b_]]\) // 
+      Simplify\)}], "Input",
+  CellLabel->"In[21]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"a", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"i", "j", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i", "j"}]],
+          Tensor[ F, {Void, Void, i, j}, {i, j, Void, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"b", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"j", "p", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["p",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j", "p"}]],
+          Tensor[ F, {Void, Void, j, p}, {j, p, Void, Void}],
+          Editable->False]}], "+", 
+      RowBox[{"c", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["A", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ A, {Void}, {i}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["B", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ B, {i}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            RowBox[{"m", "r", 
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["r",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["r",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "m", "r"}]],
+          Tensor[ F, {Void, Void, m, r}, {m, r, Void, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[21]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"(", 
+        RowBox[{"a", "+", "b", "+", 
+          RowBox[{"c", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["A", "i", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ A, {Void}, {i}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["B", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ B, {i}, {Void}],
+              Editable->False]}]}], ")"}], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["F", 
+          RowBox[{"j", "p", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["p",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["p",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j", "p"}]],
+        Tensor[ F, {Void, Void, j, p}, {j, p, Void, Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[22]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\((addd[r, s, t] + addd[s, r, t] + addd[s, t, r])\) bu[r] bu[s] 
+      bu[t]\), "\[IndentingNewLine]", 
+    \(% // SimplifyTensorSum\)}], "Input",
+  CellLabel->"In[23]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"(", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["a", \(r  s  t\), 
+              RowBox[{
+                TagBox[
+                  StyleBox["r",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["s",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["t",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ a, {Void, Void, Void}, {r, s, t}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["a", \(s  r  t\), 
+              RowBox[{
+                TagBox[
+                  StyleBox["s",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["r",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["t",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ a, {Void, Void, Void}, {s, r, t}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["a", \(s  t  r\), 
+              RowBox[{
+                TagBox[
+                  StyleBox["s",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["t",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["r",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ a, {Void, Void, Void}, {s, t, r}],
+            Editable->False]}], ")"}], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["r",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "r"],
+        Tensor[ b, {r}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["s",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "s"],
+        Tensor[ b, {s}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["t",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "t"],
+        Tensor[ b, {t}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[23]="],
+
+Cell[BoxData[
+    RowBox[{"3", " ", 
+      InterpretationBox[
+        SubsuperscriptBox["a", \(r  s  t\), 
+          RowBox[{
+            TagBox[
+              StyleBox["r",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["s",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["t",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ a, {Void, Void, Void}, {r, s, t}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["r",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "r"],
+        Tensor[ b, {r}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["s",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "s"],
+        Tensor[ b, {s}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["b", 
+          TagBox[
+            StyleBox["t",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "t"],
+        Tensor[ b, {t}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[24]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "Here, the absolute derivative of a tensor product is taken. It expands to \
+14 terms. ",
+  Cell[BoxData[
+      \(SimplifyTensorSum\)]],
+  " reduces it to 12 terms. Total derivatives of the Christoffel symbol were \
+set to zero. The other terms do not combine because the dummy indices are not \
+in the same place."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Tensor[G, {Void}, {k}] 
+      Tensor[F, {m}, {Void}]\), "\[IndentingNewLine]", 
+    \(expr1 = \((\(AbsoluteD[%, {t, t}] // 
+              ExpandAbsoluteD[{x, \[Delta], 
+                  g, \[CapitalGamma]}, {{a, b}, {c, d}}]\) // Expand)\) /. 
+        TotalD[Tensor[\[CapitalGamma], _, _], _] \[RuleDelayed] 
+          0\), "\[IndentingNewLine]", 
+    \(Length[expr1]\), "\[IndentingNewLine]", 
+    \(expr2 = expr1 // SimplifyTensorSum\), "\[IndentingNewLine]", 
+    \(Length[%]\)}], "Input",
+  CellLabel->"In[25]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["F", 
+          TagBox[
+            StyleBox["m",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "m"],
+        Tensor[ F, {m}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["G", "k", 
+          TagBox[
+            StyleBox["k",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ G, {Void}, {k}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[25]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], t]]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ F, {a}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {a}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "-", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "k"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "a", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {a}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {a}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "-", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {a}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "k"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, c, d}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ F, {c}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {c}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}], "-", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "c", 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "k"}], 
+            RowBox[{"c", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {c, Void, Void}, {Void, d, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}], "-", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "k"}], 
+            RowBox[{"c", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {c, Void, Void}, {Void, d, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "c", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {c}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {c}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {a}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "c"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "k"}], 
+            RowBox[{"c", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {c, Void, Void}, {Void, d, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}], "-", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "c", 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "k"}], 
+            RowBox[{"c", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {c, Void, Void}, {Void, d, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"c", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {c, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "c", "d"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, c, d}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}]}]], "Output",
+  CellLabel->"Out[26]="],
+
+Cell[BoxData[
+    \(14\)], "Output",
+  CellLabel->"Out[27]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], t]]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ F, {a}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {a}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "-", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {a}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "k"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["m",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "m"],
+                Tensor[ F, {m}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {m}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "-", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "k"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "a", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {a}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {a}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "+", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", "k", 
+                  TagBox[
+                    StyleBox["k",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ G, {Void}, {k}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {Void}, {k}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]]}], "-", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {a}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "k"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], {t, t}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["m",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "m"],
+          Tensor[ F, {m}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {a}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b", "d"}], 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {a, Void, Void}, {Void, b, d}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "c", "k"}], 
+            RowBox[{"d", 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {d, Void, Void}, {Void, c, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {c}, {Void}], t]]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "b"}], 
+            RowBox[{"d", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {d, Void, Void}, {Void, a, b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "c"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, d, c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {c}, {Void}], t]]}], "-", 
+      RowBox[{"2", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ F, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", "b", 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ G, {Void}, {b}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "d", "k"}], 
+            RowBox[{"b", 
+              TagBox[
+                StyleBox["d",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {b, Void, Void}, {Void, d, k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[CapitalGamma]", 
+            RowBox[{
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a", "c"}], 
+            RowBox[{"m", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[CapitalGamma], {m, Void, Void}, {Void, a, c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "c"],
+                Tensor[ x, {c}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {c}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["d",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "d"],
+                Tensor[ x, {d}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {d}, {Void}], t]]}]}]], "Output",
+  CellLabel->"Out[28]="],
+
+Cell[BoxData[
+    \(12\)], "Output",
+  CellLabel->"Out[29]="]
+}, Open  ]],
+
+Cell["Restore old settings...", "Text"],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{b, c, A, B, G}, 1}, {A, 2}, {{a, b, F}, 3}, {F, 
+        4}]\)], "Input",
+  CellLabel->"In[30]:="],
+
+Cell[BoxData[{
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldflavors]\)}], "Input",
+  CellLabel->"In[31]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+PrintingStyleEnvironment->"Printout",
+WindowToolbars->{},
+WindowSize->{777, 472},
+WindowMargins->{{3, Automatic}, {Automatic, 2}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 64, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1843, 56, 514, 16, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 104999, 2932}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 64, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1843, 56, 514, 16, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2360, 74, 194, 4, 58, "MathCaption"],
+Cell[2557, 80, 257, 4, 58, "MathCaption"],
+Cell[2817, 86, 165, 3, 41, "MathCaption"],
+Cell[2985, 91, 114, 3, 41, "MathCaption"],
+Cell[3102, 96, 190, 4, 58, "MathCaption"],
+Cell[3295, 102, 1372, 50, 75, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4692, 156, 36, 0, 39, "ExampleSection"],
+Cell[4731, 158, 96, 2, 29, "Input"],
+Cell[4830, 162, 62, 0, 25, "Text"],
+Cell[4895, 164, 205, 4, 69, "Input"],
+Cell[5103, 170, 141, 3, 29, "Input"],
+Cell[5247, 175, 89, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[5361, 181, 217, 5, 69, "Input"],
+Cell[5581, 188, 1806, 53, 30, "Output"],
+Cell[7390, 243, 1806, 53, 27, "Output"],
+Cell[9199, 298, 603, 18, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[9839, 321, 234, 5, 69, "Input"],
+Cell[10076, 328, 3900, 107, 30, "Output"],
+Cell[13979, 437, 3901, 107, 27, "Output"],
+Cell[17883, 546, 1266, 36, 27, "Output"]
+}, Open  ]],
+Cell[19164, 585, 70, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[19259, 589, 138, 3, 49, "Input"],
+Cell[19400, 594, 1616, 46, 30, "Output"],
+Cell[21019, 642, 159, 3, 20, "Message"],
+Cell[21181, 647, 67, 2, 27, "Output"]
+}, Open  ]],
+Cell[21263, 652, 96, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[21384, 658, 206, 4, 49, "Input"],
+Cell[21593, 664, 7757, 201, 30, "Output"],
+Cell[29353, 867, 1678, 25, 26, "Message"],
+Cell[31034, 894, 67, 2, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[31138, 901, 169, 3, 49, "Input"],
+Cell[31310, 906, 2125, 59, 30, "Output"],
+Cell[33438, 967, 706, 20, 30, "Output"]
+}, Open  ]],
+Cell[34159, 990, 183, 4, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[34367, 998, 286, 5, 69, "Input"],
+Cell[34656, 1005, 3176, 87, 30, "Output"],
+Cell[37835, 1094, 2330, 64, 30, "Output"],
+Cell[40168, 1160, 1558, 43, 30, "Output"]
+}, Open  ]],
+Cell[41741, 1206, 69, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[41835, 1210, 257, 5, 49, "Input"],
+Cell[42095, 1217, 3176, 87, 30, "Output"],
+Cell[45274, 1306, 1558, 43, 30, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[46869, 1354, 192, 4, 49, "Input"],
+Cell[47064, 1360, 2903, 79, 28, "Output"],
+Cell[49970, 1441, 1457, 43, 28, "Output"]
+}, Open  ]],
+Cell[51442, 1487, 345, 8, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[51812, 1499, 539, 11, 129, "Input"],
+Cell[52354, 1512, 582, 18, 27, "Output"],
+Cell[52939, 1532, 27316, 728, 121, "Output"],
+Cell[80258, 2262, 61, 2, 27, "Output"],
+Cell[80322, 2266, 23350, 622, 121, "Output"],
+Cell[103675, 2890, 61, 2, 27, "Output"]
+}, Open  ]],
+Cell[103751, 2895, 39, 0, 25, "Text"],
+Cell[103793, 2897, 141, 3, 29, "Input"],
+Cell[103937, 2902, 219, 4, 69, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

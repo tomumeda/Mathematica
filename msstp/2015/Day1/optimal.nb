@@ -1,0 +1,3815 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[    129022,       3806]
+NotebookOptionsPosition[    125822,       3697]
+NotebookOutlinePosition[    126181,       3713]
+CellTagsIndexPosition[    126138,       3710]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ "This notebook provides an example of how to use the packages ",
+ StyleBox["Fermat.m", "Input"],
+ " and ",
+ StyleBox["psi.m", "Input"],
+ ", which compute numerical approximations to the Ricci-flat metric on the \
+Calabi-Yau manifold defined by the polynomial\n",
+ StyleBox["\n", "DisplayFormula"],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     UnderscriptBox["\[Sum]", 
+      StyleBox["a", "TI"],
+      LimitsPositioning->True], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        StyleBox["z", "TI"], 
+        StyleBox["a", "TI"]], ")"}], 
+      RowBox[{
+       StyleBox["N", "TI"], "+", "1"}]]}], "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       StyleBox["N", "TI"], "+", "1"}], ")"}], "\[Psi]", 
+     RowBox[{
+      UnderscriptBox["\[Product]", 
+       StyleBox["a", "TI"],
+       LimitsPositioning->True], 
+      SuperscriptBox[
+       StyleBox["z", "TI"], 
+       StyleBox["a", "TI"]]}]}]}], TraditionalForm]]],
+ StyleBox["\n\nin $CP^N$. These packages follow the strategy and methods \
+described in the paper \"Energy functionals for Calabi-Yau metrics\" by M. \
+Headrick and A. Nassar (arXiv: ", "DisplayFormula"],
+ ButtonBox["0908.2635",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://arxiv.org/abs/0908.2635"], None},
+  ButtonNote->"http://arxiv.org/abs/0908.2635"],
+ StyleBox[" [hep-th]). The package ", "DisplayFormula"],
+ StyleBox["Fermat.m", "Input"],
+ " is for the case ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[Psi]", "\[LongEqual]", "0"}], TraditionalForm]]],
+ ", while the package ",
+ StyleBox["psi.m", "Input"],
+ " is for the case of real non-zero ",
+ Cell[BoxData[
+  FormBox["\[Psi]", TraditionalForm]]],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.4549755968231497`*^9, 3.454975657589468*^9}, {
+   3.458860276286559*^9, 3.458860331676577*^9}, {3.45886040546027*^9, 
+   3.4588605982060833`*^9}, {3.458860939049466*^9, 3.458860947273831*^9}, {
+   3.4588610906556253`*^9, 3.458861091616836*^9}, {3.459616009875286*^9, 
+   3.459616025742992*^9}, {3.4596160592890368`*^9, 3.4596161176350517`*^9}, {
+   3.463334452162121*^9, 3.4633344595064907`*^9}, {3.463334777268471*^9, 
+   3.46333484697066*^9}, 3.463339622012327*^9}],
+
+Cell[TextData[{
+ "Before loading the package, you set the values of the variables N1, which \
+is ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    StyleBox["N", "TI"], "+", "1"}], TraditionalForm]]],
+ " (i.e. 3 for ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox[
+    StyleBox["T", "TI"], "2"], TraditionalForm]]],
+ ", 4 for K3, 5 for the quintic), and ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["k", "TI"], TraditionalForm]]],
+ ". For ",
+ StyleBox["psi.m", "Input"],
+ " you also define ",
+ StyleBox["ps", "Input"],
+ ", which should be a real number. Here we will consider the Fermat example. \
+You should also set the directory where the package is located. For example:"
+}], "Text",
+ CellChangeTimes->{{3.4549756879361563`*^9, 3.454975741769217*^9}, {
+   3.4553054745307007`*^9, 3.4553055288404913`*^9}, {3.4557074599581614`*^9, 
+   3.455707471623062*^9}, {3.4588610991986427`*^9, 3.458861137751369*^9}, {
+   3.458861225465643*^9, 3.458861227281084*^9}, {3.45961613236897*^9, 
+   3.45961617425669*^9}, {3.4596162044575443`*^9, 3.459616206506503*^9}, {
+   3.463334700098936*^9, 3.463334737639626*^9}, 3.463334868723192*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"N1", "=", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"k", "=", "6"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"SetDirectory", "[", "\"\<CY energy/packages\>\"", "]"}]}], "Input",
+ CellChangeTimes->{{3.4511623382096033`*^9, 3.451162357984461*^9}, {
+   3.4511658993077307`*^9, 3.4511658993523817`*^9}, {3.4511659870772057`*^9, 
+   3.451166010902877*^9}, {3.451166108801186*^9, 3.451166155681488*^9}, {
+   3.451166196170045*^9, 3.451166201305336*^9}, {3.451166275197867*^9, 
+   3.4511662770681868`*^9}, {3.451166976365449*^9, 3.451166976754224*^9}, {
+   3.4511672300662117`*^9, 3.4511672301825447`*^9}, {3.451168972085271*^9, 
+   3.451168974413118*^9}, {3.4511697398645477`*^9, 3.4511697417866783`*^9}, {
+   3.451170632571549*^9, 3.451170632634419*^9}, {3.4511708139788094`*^9, 
+   3.451170814090324*^9}, {3.451229743749941*^9, 3.451229744295096*^9}, {
+   3.451229780023181*^9, 3.451229780487792*^9}, {3.451315077552945*^9, 
+   3.451315082941722*^9}, {3.45131513662426*^9, 3.451315136695037*^9}, {
+   3.451338161872656*^9, 3.451338164152441*^9}, {3.4514183885313673`*^9, 
+   3.4514183898018703`*^9}, {3.451418463617611*^9, 3.451418464106388*^9}, {
+   3.4514197325946836`*^9, 3.451419734137257*^9}, {3.451420046268663*^9, 
+   3.451420046893403*^9}, {3.451421445107807*^9, 3.4514214484653177`*^9}, {
+   3.4514986444823303`*^9, 3.451498646024325*^9}, {3.451499700139062*^9, 
+   3.4514997114307423`*^9}, {3.4515033908838797`*^9, 
+   3.4515033923476686`*^9}, {3.451507870791971*^9, 3.451507870822544*^9}, {
+   3.4515082799971933`*^9, 3.451508280364559*^9}, {3.453233428116561*^9, 
+   3.453233428542286*^9}, {3.453925424798465*^9, 3.4539254251986*^9}, {
+   3.453934202152722*^9, 3.453934202625536*^9}, {3.453984928732918*^9, 
+   3.45398492926859*^9}, {3.453985595754806*^9, 3.4539855958260193`*^9}, {
+   3.453994250515216*^9, 3.453994250905683*^9}, {3.4549504183142633`*^9, 
+   3.454950424444709*^9}, {3.4549509070111628`*^9, 3.454950907127294*^9}, {
+   3.454951541211954*^9, 3.454951542784791*^9}, {3.454952607774349*^9, 
+   3.454952608132736*^9}, {3.4549711762652397`*^9, 3.454971176375763*^9}, {
+   3.454975259913206*^9, 3.454975260626236*^9}, {3.455150302225556*^9, 
+   3.455150302667531*^9}, {3.455305534731675*^9, 3.455305586155903*^9}, 
+   3.455707476937606*^9, {3.455707563893941*^9, 3.455707564014476*^9}, {
+   3.458861257036569*^9, 3.458861257397902*^9}, {3.458862676642014*^9, 
+   3.458862676720504*^9}, {3.463185257953301*^9, 3.463185258015093*^9}}],
+
+Cell[BoxData["\<\"/Volumes/mpheadrick/work/CY energy/packages\"\>"], "Output",
+ CellChangeTimes->{3.458861262078862*^9, 3.458862680895565*^9, 
+  3.463154272527474*^9, 3.46318526260574*^9, 3.4631853823331423`*^9, 
+  3.463185543738433*^9, 3.4631857468806763`*^9, 3.463333034010038*^9, 
+  3.463339630630163*^9, 3.463339790080983*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "When the package is loaded, it computes the basis of degree ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"(", 
+    RowBox[{
+     StyleBox["k", "TI"], ",", 
+     StyleBox["k", "TI"]}], ")"}], TraditionalForm]]],
+ " polynomials."
+}], "Text",
+ CellChangeTimes->{{3.4549757478250437`*^9, 3.4549757543043213`*^9}, {
+   3.454975897893785*^9, 3.45497590859048*^9}, {3.459616190649928*^9, 
+   3.459616193897388*^9}, 3.463334895274815*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"<<", "Fermat.m"}]], "Input",
+ CellChangeTimes->{{3.4514179904338007`*^9, 3.451418036177545*^9}, {
+   3.453934615653842*^9, 3.453934615817925*^9}, {3.453934910330277*^9, 
+   3.453934936492302*^9}, {3.454970187249083*^9, 3.454970189777339*^9}, {
+   3.454975266028141*^9, 3.454975275433756*^9}, {3.458777290501972*^9, 
+   3.45877729360112*^9}, 3.458777326602008*^9, {3.4588612368215303`*^9, 
+   3.458861240963305*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Basis of polynomials computed. The space is \"\>", 
+   "\[InvisibleSpace]", "10", "\[InvisibleSpace]", "\<\" dimensional.\"\>"}],
+  SequenceForm[
+  "Basis of polynomials computed. The space is ", 10, " dimensional."],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.4514180366116333`*^9, 3.451418040801072*^9}, 
+   3.4514180822170973`*^9, 3.451418395159699*^9, 3.45141846862386*^9, {
+   3.451419741480857*^9, 3.451419752285243*^9}, {3.451419864787856*^9, 
+   3.451419891856731*^9}, 3.4514200537494097`*^9, 3.4514211308253927`*^9, 
+   3.45142145434387*^9, 3.4514258952883043`*^9, 3.451426165451899*^9, 
+   3.451428662003207*^9, 3.451428842634763*^9, 3.4514288901112967`*^9, 
+   3.451435792194716*^9, 3.451435861183219*^9, 3.4514360910830507`*^9, 
+   3.4514366713468103`*^9, 3.451439255656384*^9, 3.451498652729472*^9, 
+   3.451498783009466*^9, 3.451499488692933*^9, 3.451499568368738*^9, {
+   3.451499707125874*^9, 3.4514997176405888`*^9}, 3.451499861333547*^9, 
+   3.451500078969281*^9, 3.4515002239351797`*^9, 3.451500528589409*^9, 
+   3.45150107768711*^9, 3.451503400407331*^9, 3.451504090917412*^9, 
+   3.451506215203204*^9, 3.451506323290886*^9, 3.4515078870346003`*^9, 
+   3.45150829826467*^9, 3.4515921081049337`*^9, 3.453233439775168*^9, 
+   3.45323371076578*^9, 3.453925104896565*^9, 3.4539254320301237`*^9, 
+   3.453934210578702*^9, 3.453934381013275*^9, 3.4539344335472183`*^9, 
+   3.453934553637691*^9, 3.4539346234026546`*^9, {3.4539348912430573`*^9, 
+   3.453934913103204*^9}, 3.453934945633119*^9, 3.453938553296726*^9, {
+   3.4539386421340313`*^9, 3.45393864740701*^9}, 3.453938692861765*^9, 
+   3.453938887751493*^9, {3.453939159286683*^9, 3.453939175410685*^9}, {
+   3.4539849243577757`*^9, 3.453984938990473*^9}, 3.453985539423647*^9, 
+   3.453985606401464*^9, 3.4539942650006533`*^9, 3.45495042952211*^9, 
+   3.454950494391884*^9, 3.4549509147210217`*^9, 3.454951549627616*^9, 
+   3.4549518170493593`*^9, 3.454951924145721*^9, 3.454952112341064*^9, 
+   3.45495261941574*^9, 3.454956050588192*^9, 3.454969747839344*^9, 
+   3.454969868223971*^9, 3.454970190905511*^9, 3.4549702226684017`*^9, 
+   3.4549711812366467`*^9, 3.454975283845628*^9, 3.4549754571109447`*^9, 
+   3.455150373236733*^9, 3.455304637245591*^9, {3.455305580155431*^9, 
+   3.455305596712534*^9}, 3.45570757493725*^9, 3.458777327620982*^9, 
+   3.458777441901061*^9, 3.4587775261410427`*^9, 3.4587782810224037`*^9, {
+   3.458861242531508*^9, 3.458861265443404*^9}, 3.458862683191085*^9, 
+   3.46315427427884*^9, 3.463185264221798*^9, 3.463185384899222*^9, 
+   3.463185544548197*^9, 3.4631857475234327`*^9, 3.463333036012918*^9, 
+   3.46333963305053*^9, 3.463339790793111*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The function ",
+ StyleBox["sprinkle", "Input"],
+ " sprinkles points on the manifold. The first argument is the number of \
+points to sprinkle, ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox[
+    StyleBox["N", "TI"], "points"], TraditionalForm]]],
+ "), the second is the tolerance ",
+ Cell[BoxData[
+  FormBox["\[Epsilon]", TraditionalForm]]],
+ ". For most purposes, 1000 points and a tolerance of ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[Epsilon]", "\[LongEqual]", "0.1"}], TraditionalForm]]],
+ " should be quite adequate. With these values, the process should take a few \
+seconds."
+}], "Text",
+ CellChangeTimes->{{3.454975921478116*^9, 3.4549760057592278`*^9}, {
+   3.455150253787054*^9, 3.455150297951923*^9}, {3.455150329658024*^9, 
+   3.455150354938938*^9}, 3.455305656563938*^9, {3.455707494151428*^9, 
+   3.45570753480752*^9}, {3.4588612731298943`*^9, 3.458861382022099*^9}, {
+   3.463334907008483*^9, 3.463334951087126*^9}, {3.46333498899123*^9, 
+   3.46333501592214*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"points1", "=", 
+   RowBox[{"sprinkle", "[", 
+    RowBox[{"1000", ",", "0.1"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.454953742305829*^9, 3.4549537462483597`*^9}, {
+  3.454956357371235*^9, 3.4549563979157343`*^9}, {3.454969906123757*^9, 
+  3.4549699064896383`*^9}, {3.454975287451969*^9, 3.454975310066681*^9}, {
+  3.455150327883507*^9, 3.455150328283442*^9}, {3.455707538428282*^9, 
+  3.4557075402994328`*^9}, {3.458777339111455*^9, 3.4587773396071043`*^9}, {
+  3.458861386297242*^9, 3.4588613879979486`*^9}, {3.458861522975527*^9, 
+  3.458861524975676*^9}, {3.463185546793899*^9, 3.463185564696678*^9}}],
+
+Cell[TextData[{
+ "We then have to calculate, for each point, the values of the vector ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox[
+    StyleBox["Q", "TI"], 
+    StyleBox["a", "TI"]], TraditionalForm]]],
+ " and the matrix ",
+ Cell[BoxData[
+  FormBox["\[CapitalPsi]", TraditionalForm]]],
+ " for each polynomial in the basis. For low values of ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["k", "TI"], TraditionalForm]]],
+ " like this one, this takes less than a second:"
+}], "Text",
+ CellChangeTimes->{{3.454976033107046*^9, 3.454976097604251*^9}, {
+  3.454976185400187*^9, 3.454976208777066*^9}, {3.458861421304921*^9, 
+  3.458861439889831*^9}, {3.458861470349557*^9, 3.45886151147744*^9}, {
+  3.463185574461133*^9, 3.463185579727549*^9}, {3.463335034632998*^9, 
+  3.463335080074198*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data1", "=", 
+   RowBox[{"calcData", "[", "points1", "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.454970839531661*^9, 3.454970897381734*^9}, {
+  3.458861494517625*^9, 3.458861533047332*^9}, {3.463185273099687*^9, 
+  3.4631852775161543`*^9}, {3.4631854146714897`*^9, 3.463185416608432*^9}, {
+  3.463185583954422*^9, 3.4631855865379467`*^9}, {3.463185672584114*^9, 
+  3.463185687668692*^9}}],
+
+Cell[TextData[{
+ "For larger set of points and larger values of ",
+ StyleBox["N1", "Input"],
+ " and ",
+ StyleBox["k", "Input"],
+ ", this step can take considerably longer (minutes or hours). Therefore, we \
+have provided functions to store and retrieve the data in binary form (using \
+>> and << would result in text files, which are much larger than binary):"
+}], "Text",
+ CellChangeTimes->{{3.463185599552853*^9, 3.463185650307774*^9}, {
+  3.463185704469844*^9, 3.463185710161233*^9}, {3.463333055679433*^9, 
+  3.46333307913931*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"storeData", "[", 
+  RowBox[{"data1", ",", "\"\<data1\>\""}], "]"}]], "Input",
+ CellChangeTimes->{{3.458777937295*^9, 3.4587779420281353`*^9}, {
+  3.458861762791822*^9, 3.4588617781441727`*^9}}],
+
+Cell[BoxData["\<\"data1\"\>"], "Output",
+ CellChangeTimes->{3.458861780613817*^9, 3.458862694454577*^9, 
+  3.463154304706464*^9, 3.463185768063952*^9, 3.463333092560156*^9, 
+  3.463339659936095*^9, 3.4633397963927317`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data2", "=", 
+   RowBox[{"getData", "[", "\"\<data1\>\"", "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.458861804221019*^9, 3.458861814990789*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"data1", "\[Equal]", "data2"}]], "Input",
+ CellChangeTimes->{{3.458861818354177*^9, 3.458861820478425*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{3.458861821078437*^9, 3.458862696497617*^9, 
+  3.463154308505568*^9, 3.4631857700308533`*^9, 3.4633330982803173`*^9, 
+  3.463339661592998*^9, 3.463339797731656*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "An algebraic metric is represented as a list of real numbers, the \
+coefficients of the basis polynomials. In this case (with ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    StyleBox["N", "TI"], "\[LongEqual]", "3"}], TraditionalForm]]],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    StyleBox["k", "TI"], "\[LongEqual]", "6"}], TraditionalForm]]],
+ ") we saw that the vector space of polynomials is 10-dimensional, so the \
+number of coefficients is 9. The Fubini-Study metric is ",
+ StyleBox["gFS", "Input"],
+ ":"
+}], "Text",
+ CellChangeTimes->{{3.4588618551133966`*^9, 3.458861983895454*^9}, {
+  3.4588620143643*^9, 3.45886202010074*^9}, {3.45886219449864*^9, 
+  3.45886219790443*^9}, {3.458862704130679*^9, 3.458862712835228*^9}, {
+  3.463335132567075*^9, 3.4633351432394037`*^9}, {3.4633351743151608`*^9, 
+  3.463335191722226*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["gFS"], "Input",
+ CellChangeTimes->{{3.4549768005967007`*^9, 3.4549768015544043`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "459.0000000000016`", ",", "204.0000000000007`", ",", "153.00000000000054`",
+    ",", "612.0000000000022`", ",", 
+   RowBox[{"-", "19.890000000000068`"}], ",", "56.61000000000019`", ",", 
+   "51.00000000000018`", ",", "61.600000000000215`", ",", 
+   "21.420000000000073`"}], "}"}]], "Output",
+ CellChangeTimes->{3.454976802805402*^9, 3.45515045055304*^9, 
+  3.4553047149669724`*^9, 3.455305629751737*^9, 3.455707612493991*^9, 
+  3.458777360796172*^9, 3.458777451823419*^9, 3.458777537843442*^9, 
+  3.458778289515572*^9, 3.458862024110956*^9, 3.4588627219302187`*^9, 
+  3.463154312662806*^9, 3.463185773541469*^9, 3.463333103467751*^9, 
+  3.463339666258514*^9, 3.463339801485744*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The function ",
+ StyleBox["EE", "Input"],
+ " evaluates the functional ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["E", "TI"], TraditionalForm]]],
+ ", on a given algebraic metric using a given set of points (for this and \
+other functions, you will get slightly different results from those shown \
+here, since you will have a different sample of points):"
+}], "Text",
+ CellChangeTimes->{{3.458862031685958*^9, 3.458862063773281*^9}, {
+   3.458862097894314*^9, 3.4588621191589108`*^9}, {3.459616387652606*^9, 
+   3.45961642354946*^9}, 3.4633352136379223`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"EE", "[", 
+  RowBox[{"gFS", ",", "data1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.454976729092255*^9, 3.45497673719556*^9}, {
+  3.458777546160555*^9, 3.4587775476402273`*^9}, {3.458862073041914*^9, 
+  3.4588620740559387`*^9}}],
+
+Cell[BoxData["0.09499759963697965`"], "Output",
+ CellChangeTimes->{{3.454976732341836*^9, 3.454976738032926*^9}, 
+   3.455150457478292*^9, 3.455304715119969*^9, 3.455305629912031*^9, 
+   3.455707614800067*^9, 3.4587773640423098`*^9, 3.4587774530597897`*^9, 
+   3.458777549141667*^9, 3.458778291150392*^9, 3.458862074984709*^9, 
+   3.458862735659801*^9, 3.463154314235157*^9, 3.4631857778356857`*^9, 
+   3.4633331052658463`*^9, 3.463339669844969*^9, 3.463339803660427*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The full list of values of ",
+ Cell[BoxData[
+  FormBox["\[Eta]", TraditionalForm]]],
+ " is obtained using ",
+ StyleBox["eta", "Input"],
+ ":"
+}], "Text",
+ CellChangeTimes->{{3.45886207992978*^9, 3.458862094205851*^9}, {
+   3.458862124309599*^9, 3.4588621338308687`*^9}, {3.459616322443314*^9, 
+   3.4596163241314583`*^9}, 3.4633352282572937`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{"eta", "[", 
+   RowBox[{"gFS", ",", "data1"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.458862136360421*^9, 3.4588621568897533`*^9}, {
+  3.458862762035985*^9, 3.458862785649461*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[
+  {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+   EdgeForm[Opacity[0.7]], {}, 
+   {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+    EdgeForm[Opacity[0.7]], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 2], 0}, {
+           Rational[3, 5], 8}]},
+        ImageSizeCache->{{17.749999999999986`, 36.80238095238093}, {
+         86.73829685724263, 96.03778676483914}}],
+       StatusArea[#, 8]& ,
+       TagBoxNote->"8"],
+      StyleBox["8", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[8, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 5], 0}, {
+           Rational[7, 10], 131}]},
+        ImageSizeCache->{{36.30238095238093, 
+         55.35476190476187}, {-48.55386047205367, 96.03778676483914}}],
+       StatusArea[#, 131]& ,
+       TagBoxNote->"131"],
+      StyleBox["131", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[131, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 10], 0}, {
+           Rational[4, 5], 151}]},
+        ImageSizeCache->{{54.85476190476187, 
+         73.90714285714286}, {-70.55258524104495, 96.03778676483914}}],
+       StatusArea[#, 151]& ,
+       TagBoxNote->"151"],
+      StyleBox["151", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[151, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[4, 5], 0}, {
+           Rational[9, 10], 172}]},
+        ImageSizeCache->{{73.40714285714286, 
+         92.45952380952379}, {-93.65124624848578, 96.03778676483914}}],
+       StatusArea[#, 172]& ,
+       TagBoxNote->"172"],
+      StyleBox["172", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[172, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9, 10], 0}, {1, 136}]},
+        ImageSizeCache->{{91.95952380952379, 
+         111.01190476190474`}, {-54.05354166430148, 96.03778676483914}}],
+       StatusArea[#, 136]& ,
+       TagBoxNote->"136"],
+      StyleBox["136", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[136, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{1, 0}, {
+           Rational[11, 10], 115}]},
+        ImageSizeCache->{{110.51190476190474`, 
+         129.5642857142857}, {-30.954880656860652`, 96.03778676483914}}],
+       StatusArea[#, 115]& ,
+       TagBoxNote->"115"],
+      StyleBox["115", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[115, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[11, 10], 0}, {
+           Rational[6, 5], 92}]},
+        ImageSizeCache->{{129.0642857142857, 
+         148.11666666666662`}, {-5.656347172520697, 96.03778676483914}}],
+       StatusArea[#, 92]& ,
+       TagBoxNote->"92"],
+      StyleBox["92", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[92, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[6, 5], 0}, {
+           Rational[13, 10], 44}]},
+        ImageSizeCache->{{147.61666666666662`, 166.6690476190476}, {
+         47.140592273058346`, 96.03778676483914}}],
+       StatusArea[#, 44]& ,
+       TagBoxNote->"44"],
+      StyleBox["44", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[44, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[13, 10], 0}, {
+           Rational[7, 5], 39}]},
+        ImageSizeCache->{{166.1690476190476, 185.22142857142853`}, {
+         52.640273465306166`, 96.03778676483914}}],
+       StatusArea[#, 39]& ,
+       TagBoxNote->"39"],
+      StyleBox["39", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[39, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 5], 0}, {
+           Rational[3, 2], 31}]},
+        ImageSizeCache->{{184.72142857142853`, 203.77380952380952`}, {
+         61.439763372902675`, 96.03778676483914}}],
+       StatusArea[#, 31]& ,
+       TagBoxNote->"31"],
+      StyleBox["31", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[31, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 2], 0}, {
+           Rational[8, 5], 19}]},
+        ImageSizeCache->{{203.27380952380952`, 222.3261904761905}, {
+         74.63899823429743, 96.03778676483914}}],
+       StatusArea[#, 19]& ,
+       TagBoxNote->"19"],
+      StyleBox["19", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[19, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[8, 5], 0}, {
+           Rational[17, 10], 13}]},
+        ImageSizeCache->{{221.8261904761905, 240.87857142857143`}, {
+         81.23861566499481, 96.03778676483914}}],
+       StatusArea[#, 13]& ,
+       TagBoxNote->"13"],
+      StyleBox["13", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[13, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[17, 10], 0}, {
+           Rational[9, 5], 22}]},
+        ImageSizeCache->{{240.37857142857143`, 259.43095238095236`}, {
+         71.33918951894874, 96.03778676483914}}],
+       StatusArea[#, 22]& ,
+       TagBoxNote->"22"],
+      StyleBox["22", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[22, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9, 5], 0}, {
+           Rational[19, 10], 9}]},
+        ImageSizeCache->{{258.93095238095236`, 277.9833333333333}, {
+         85.63836061879307, 96.03778676483914}}],
+       StatusArea[#, 9]& ,
+       TagBoxNote->"9"],
+      StyleBox["9", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[9, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[19, 10], 0}, {2, 11}]},
+        ImageSizeCache->{{277.4833333333333, 296.5357142857143}, {
+         83.43848814189394, 96.03778676483914}}],
+       StatusArea[#, 11]& ,
+       TagBoxNote->"11"],
+      StyleBox["11", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[11, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{2, 0}, {
+           Rational[21, 10], 6}]},
+        ImageSizeCache->{{296.0357142857143, 315.08809523809526`}, {
+         88.93816933414176, 96.03778676483914}}],
+       StatusArea[#, 6]& ,
+       TagBoxNote->"6"],
+      StyleBox["6", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[6, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[11, 5], 0}, {
+           Rational[23, 10], 1}]},
+        ImageSizeCache->{{333.1404761904762, 352.1928571428571}, {
+         94.43785052638958, 96.03778676483914}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ]}, {}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesOrigin->NCache[{
+     Rational[1, 2], 0}, {0.5, 0}],
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  PlotRange->NCache[{{
+      Rational[1, 2], 
+      Rational[23, 10]}, {All, All}}, {{0.5, 2.3}, {All, All}}],
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.1]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{
+  3.458862158155429*^9, {3.4588627524646063`*^9, 3.458862786499878*^9}, 
+   3.4631543193048477`*^9, 3.463185782459628*^9, 3.4633331102416573`*^9, 
+   3.463339673474534*^9, 3.463339805455158*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The function ",
+ StyleBox["minimize", "Input"],
+ " uses ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "'s built-in FindMinimum routine with the method set to Levenberg-Marquardt, \
+starting from any given algebraic metric. This process takes a few seconds."
+}], "Text",
+ CellChangeTimes->{{3.454976225843145*^9, 3.454976358749323*^9}, {
+   3.4549767099211273`*^9, 3.4549767144193773`*^9}, {3.455304667862948*^9, 
+   3.4553047245042458`*^9}, 3.4587774929748373`*^9, 3.458777585105651*^9, {
+   3.4588621832985888`*^9, 3.458862209840212*^9}, {3.4588628548416862`*^9, 
+   3.458862867516819*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"gmin", "=", 
+  RowBox[{"minimize", "[", 
+   RowBox[{"gFS", ",", "data1"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.454970920096549*^9, 3.454970933021393*^9}, {
+   3.455304660360374*^9, 3.455304661120137*^9}, 3.4587774242418528`*^9, {
+   3.458777601365472*^9, 3.458777602205184*^9}, {3.4588622163892603`*^9, 
+   3.458862223210843*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "101.15631613290407`", ",", "63.037854717063965`", ",", 
+   "44.66746211957493`", ",", "226.82472282591033`", ",", 
+   RowBox[{"-", "8.207194199031116`"}], ",", "30.41947467147933`", ",", 
+   "26.98314779433243`", ",", "41.18996109406572`", ",", 
+   "9.331811802607934`"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.454971017138279*^9, 3.45497130854049*^9, 3.454975352601472*^9, 
+   3.4549754775158367`*^9, 3.455150530293518*^9, 3.45530474092142*^9, 
+   3.455305637953087*^9, 3.455707624055985*^9, 3.458777458374976*^9, {
+   3.458777594903761*^9, 3.45877760646087*^9}, 3.458862233584638*^9, 
+   3.458862794567505*^9, 3.458862871680604*^9, 3.463154328670981*^9, 
+   3.4631857891846523`*^9, 3.463333119395503*^9, 3.463339681489356*^9, 
+   3.463339813236825*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"EE", "[", 
+  RowBox[{"gmin", ",", "data1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.454975501404109*^9, 3.454975504717065*^9}, {
+  3.458777612385738*^9, 3.458777613513699*^9}, {3.4588622377649393`*^9, 
+  3.458862239394823*^9}}],
+
+Cell[BoxData["4.9329378559989376`*^-8"], "Output",
+ CellChangeTimes->{3.4549755056074953`*^9, 3.455150530531384*^9, 
+  3.455304741167727*^9, 3.455305638249588*^9, 3.455707641689555*^9, 
+  3.458777614754788*^9, 3.458862240177938*^9, 3.4588627961468687`*^9, 
+  3.4588628732981052`*^9, 3.463154334054286*^9, 3.463185791725169*^9, 
+  3.463333122062162*^9, 3.463339683194195*^9, 3.4633398133566236`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{"eta", "[", 
+   RowBox[{"gmin", ",", "data1"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.458862800552175*^9, 3.458862831877619*^9}, {
+  3.4588628758528748`*^9, 3.4588628807080708`*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[
+  {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+   EdgeForm[Opacity[0.7]], {}, 
+   {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+    EdgeForm[Opacity[0.7]], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1247, 1250], 0}, {
+           Rational[9977, 10000], 1}]},
+        ImageSizeCache->{{17.750000000014552`, 29.38142857143248}, {
+         94.76242187543798, 96.03778676483684}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, {}, {}, {}, {}, {}, {}, {}, {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[4993, 5000], 0}, {
+           Rational[9987, 10000], 1}]},
+        ImageSizeCache->{{129.0642857142957, 140.69571428572817`}, {
+         94.76242187543798, 96.03778676483684}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9987, 10000], 0}, {
+           Rational[2497, 2500], 1}]},
+        ImageSizeCache->{{140.19571428572817`, 151.8271428571461}, {
+         94.76242187543798, 96.03778676483684}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[2497, 2500], 0}, {
+           Rational[9989, 10000], 2}]},
+        ImageSizeCache->{{151.3271428571461, 162.95857142857858`}, {
+         93.98705698603911, 96.03778676483684}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[999, 1000], 0}, {
+           Rational[9991, 10000], 1}]},
+        ImageSizeCache->{{173.59000000001106`, 185.221428571429}, {
+         94.76242187543798, 96.03778676483684}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9991, 10000], 0}, {
+           Rational[1249, 1250], 2}]},
+        ImageSizeCache->{{184.721428571429, 196.35285714286147`}, {
+         93.98705698603911, 96.03778676483684}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1249, 1250], 0}, {
+           Rational[9993, 10000], 5}]},
+        ImageSizeCache->{{195.85285714286147`, 207.48428571429395`}, {
+         91.66096231784252, 96.03778676483684}}],
+       StatusArea[#, 5]& ,
+       TagBoxNote->"5"],
+      StyleBox["5", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[5, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9993, 10000], 0}, {
+           Rational[4997, 5000], 2}]},
+        ImageSizeCache->{{206.98428571429395`, 218.61571428571187`}, {
+         93.98705698603911, 96.03778676483684}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[4997, 5000], 0}, {
+           Rational[1999, 2000], 9}]},
+        ImageSizeCache->{{218.11571428571187`, 229.7471428571589}, {
+         88.55950276024706, 96.03778676483684}}],
+       StatusArea[#, 9]& ,
+       TagBoxNote->"9"],
+      StyleBox["9", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[9, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1999, 2000], 0}, {
+           Rational[2499, 2500], 17}]},
+        ImageSizeCache->{{229.2471428571589, 240.87857142857683`}, {
+         82.35658364505615, 96.03778676483684}}],
+       StatusArea[#, 17]& ,
+       TagBoxNote->"17"],
+      StyleBox["17", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[17, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[2499, 2500], 0}, {
+           Rational[9997, 10000], 25}]},
+        ImageSizeCache->{{240.37857142857683`, 252.0100000000093}, {
+         76.15366452986524, 96.03778676483684}}],
+       StatusArea[#, 25]& ,
+       TagBoxNote->"25"],
+      StyleBox["25", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[25, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9997, 10000], 0}, {
+           Rational[4999, 5000], 60}]},
+        ImageSizeCache->{{251.5100000000093, 263.1414285714418}, {
+         49.01589340090498, 96.03778676483684}}],
+       StatusArea[#, 60]& ,
+       TagBoxNote->"60"],
+      StyleBox["60", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[60, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[4999, 5000], 0}, {
+           Rational[9999, 10000], 120}]},
+        ImageSizeCache->{{262.6414285714418, 274.2728571428597}, {
+         2.4940000369731194`, 96.03778676483684}}],
+       StatusArea[#, 120]& ,
+       TagBoxNote->"120"],
+      StyleBox["120", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[120, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9999, 10000], 0}, {1, 187}]},
+        ImageSizeCache->{{273.7728571428597, 
+         285.4042857142922}, {-49.45544755275078, 96.03778676483684}}],
+       StatusArea[#, 187]& ,
+       TagBoxNote->"187"],
+      StyleBox["187", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[187, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{1, 0}, {
+           Rational[10001, 10000], 244}]},
+        ImageSizeCache->{{284.9042857142922, 
+         296.5357142857247}, {-93.65124624848603, 96.03778676483684}}],
+       StatusArea[#, 244]& ,
+       TagBoxNote->"244"],
+      StyleBox["244", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[244, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[10001, 10000], 0}, {
+           Rational[5001, 5000], 192}]},
+        ImageSizeCache->{{296.0357142857247, 
+         307.6671428571426}, {-53.33227199974509, 96.03778676483684}}],
+       StatusArea[#, 192]& ,
+       TagBoxNote->"192"],
+      StyleBox["192", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[192, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[5001, 5000], 0}, {
+           Rational[10003, 10000], 90}]},
+        ImageSizeCache->{{307.1671428571426, 318.7985714285751}, {
+         25.754946718939053`, 96.03778676483684}}],
+       StatusArea[#, 90]& ,
+       TagBoxNote->"90"],
+      StyleBox["90", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[90, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[10003, 10000], 0}, {
+           Rational[2501, 2500], 33}]},
+        ImageSizeCache->{{318.2985714285751, 329.93000000000757`}, {
+         69.95074541467432, 96.03778676483684}}],
+       StatusArea[#, 33]& ,
+       TagBoxNote->"33"],
+      StyleBox["33", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[33, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[2501, 2500], 0}, {
+           Rational[2001, 2000], 7}]},
+        ImageSizeCache->{{329.43000000000757`, 341.0614285714255}, {
+         90.11023253904479, 96.03778676483684}}],
+       StatusArea[#, 7]& ,
+       TagBoxNote->"7"],
+      StyleBox["7", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[7, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[2001, 2000], 0}, {
+           Rational[5003, 5000], 1}]},
+        ImageSizeCache->{{340.5614285714255, 352.192857142858}, {
+         94.76242187543798, 96.03778676483684}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ]}, {}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesOrigin->NCache[{
+     Rational[1247, 1250], 0}, {0.9976, 0}],
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  PlotRange->NCache[{{
+      Rational[1247, 1250], 
+      Rational[5003, 5000]}, {All, All}}, {{0.9976, 1.0006}, {All, All}}],
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.1]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{3.458862881484342*^9, 3.463154339204342*^9, 
+  3.463185795351664*^9, 3.463333125088814*^9, 3.463339687592966*^9, 
+  3.46333981364946*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Does the value of ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["E", "TI"], TraditionalForm]]],
+ " found really represent the minimum? In other words, have we used enough \
+points to accurately find the minimum? To test this, we pick an independent \
+set of 1000 points, and evaluate ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["E", "TI"], TraditionalForm]]],
+ " at the putative minimum using those points:"
+}], "Text",
+ CellChangeTimes->{{3.455150581380715*^9, 3.4551506146832457`*^9}, {
+  3.455150667067778*^9, 3.4551507126935673`*^9}, {3.455150759145097*^9, 
+  3.45515075988618*^9}, {3.455150794187492*^9, 3.455150836028129*^9}, {
+  3.4587776383773937`*^9, 3.458777641289865*^9}, {3.458862253452814*^9, 
+  3.458862264634091*^9}, {3.458862416693088*^9, 3.458862418771977*^9}, {
+  3.463335248297316*^9, 3.463335282834085*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data3", "=", 
+   RowBox[{"calcData", "[", 
+    RowBox[{"sprinkle", "[", 
+     RowBox[{"1000", ",", "0.1"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.454953742305829*^9, 3.4549537462483597`*^9}, {
+   3.454956357371235*^9, 3.4549563979157343`*^9}, {3.454969906123757*^9, 
+   3.4549699064896383`*^9}, {3.454975287451969*^9, 3.454975310066681*^9}, {
+   3.455150327883507*^9, 3.455150328283442*^9}, 3.4551506480848103`*^9, {
+   3.455304754595662*^9, 3.45530475675556*^9}, {3.45570765795479*^9, 
+   3.4557076589346867`*^9}, {3.458777647508893*^9, 3.458777648043874*^9}, {
+   3.458862274955805*^9, 3.458862276676091*^9}, 3.458862314088427*^9, {
+   3.4588624231749763`*^9, 3.458862425360532*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"EE", "[", 
+  RowBox[{"gmin", ",", "data3"}], "]"}]], "Input",
+ CellChangeTimes->{{3.454975501404109*^9, 3.454975504717065*^9}, 
+   3.455150750625155*^9, {3.4587776521307707`*^9, 3.458777653082857*^9}, {
+   3.458862438414845*^9, 3.458862440822719*^9}}],
+
+Cell[BoxData["5.661783946545002`*^-8"], "Output",
+ CellChangeTimes->{3.4551507570738173`*^9, 3.455304829983008*^9, 
+  3.455305674780403*^9, 3.455707690560042*^9, 3.458777654132161*^9, 
+  3.4588624422564783`*^9, 3.4588628981022253`*^9, 3.463154354040443*^9, 
+  3.463185806112425*^9, 3.4633331328525677`*^9, 3.4633396971425734`*^9, 
+  3.463339821841427*^9}]
+}, Open  ]],
+
+Cell["\<\
+The answer is quite close to the value found using the original set of points.\
+\>", "Text",
+ CellChangeTimes->{{3.45515084098761*^9, 3.455150907783123*^9}, {
+  3.45530478156542*^9, 3.455304790274045*^9}, {3.455304840706707*^9, 
+  3.455304851329277*^9}, {3.4553057368773127`*^9, 3.455305748216795*^9}, {
+  3.458777669821599*^9, 3.458777670554596*^9}, {3.4588624492128897`*^9, 
+  3.4588624509012203`*^9}, {3.45886290610524*^9, 3.458862906566093*^9}, {
+  3.458862984639453*^9, 3.458862985638296*^9}}],
+
+Cell[TextData[{
+ "The polynomial ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox["p", "TI"], TraditionalForm]]],
+ " (entering into the Kaehler potential) can be obtained using the function \
+",
+ StyleBox["p", "Input"],
+ ":"
+}], "Text",
+ CellChangeTimes->{{3.45886246682909*^9, 3.4588624965737534`*^9}, {
+   3.458862538435637*^9, 3.458862543952612*^9}, {3.458862643650988*^9, 
+   3.45886264616157*^9}, {3.458863005897799*^9, 3.458863008526053*^9}, 
+   3.4633352999756536`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p", "[", "gmin", "]"}]], "Input",
+ CellChangeTimes->{{3.458862648856228*^9, 3.45886265210045*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"101.15631613290407`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"8", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}]}], ")"}]}], "+", 
+  RowBox[{"44.66746211957493`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}]}], ")"}]}], "+", 
+  RowBox[{"63.037854717063965`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"12", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"12", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"12", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}]}], ")"}]}], "+", 
+  RowBox[{"226.82472282591033`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"2", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}]}], ")"}]}], "+", 
+  RowBox[{"26.98314779433243`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "1", "3"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}], "+", 
+     RowBox[{"8", " ", 
+      SubsuperscriptBox["u", "2", "3"], " ", 
+      SubsuperscriptBox["u", "3", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "3"]}]}], ")"}]}], "-", 
+  RowBox[{"16.414388398062233`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}]}], ")"}]}], "+", 
+  RowBox[{"60.83894934295866`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}]}], ")"}]}], "-", 
+  RowBox[{"19.59498054703286`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}]}], ")"}]}], "+", 
+  RowBox[{"41.18996109406572`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}]}], ")"}]}], "-", 
+  RowBox[{"22.212280472448214`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}]}], ")"}]}], "+", 
+  RowBox[{"9.331811802607934`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}]}], ")"}]}], "+", 
+  RowBox[{"35.0927491422885`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "1", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "2", "5"], " ", 
+      SubscriptBox["u", "3"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "3"]}], "+", 
+     RowBox[{"4", " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "1"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "1"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}], "+", 
+     RowBox[{"4", " ", 
+      SubscriptBox["u", "2"], " ", 
+      SubsuperscriptBox["u", "3", "5"], " ", 
+      SubscriptBox[
+       OverscriptBox["u", "_"], "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "5"]}]}], ")"}]}], "-", 
+  RowBox[{"2.`", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "2"], " ", 
+      SubsuperscriptBox["u", "3", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "4"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "2"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "4"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "1", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "6"]}], "+", 
+     RowBox[{"2", " ", 
+      SubsuperscriptBox["u", "2", "4"], " ", 
+      SubsuperscriptBox["u", "3", "2"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "6"]}]}], ")"}]}], "+", 
+  RowBox[{"6.`", " ", 
+   RowBox[{"(", 
+    RowBox[{"12", "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "1", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "1", "6"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "2", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "2", "6"]}], "+", 
+     RowBox[{"12", " ", 
+      SubsuperscriptBox["u", "3", "6"], " ", 
+      SubsuperscriptBox[
+       OverscriptBox["u", "_"], "3", "6"]}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.458862654945039*^9, 3.4588629105982437`*^9, 
+  3.463154365366935*^9, 3.46318581695546*^9, 3.463333144686479*^9, 
+  3.4633397098494167`*^9, 3.463339826689283*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The value of the two-derivative functional $\\hat E$ may be computed using \
+the function ",
+ StyleBox["Ehat", "Input"],
+ ", which takes as its arguments ",
+ StyleBox["g", "Input"],
+ " and a set of points (not the data, as ",
+ StyleBox["EE", "Input"],
+ " does):"
+}], "Text",
+ CellChangeTimes->{{3.463333154313567*^9, 3.463333207678761*^9}, {
+  3.463333253396274*^9, 3.463333282771327*^9}, {3.463334073632073*^9, 
+  3.463334125131877*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Ehat", "[", 
+  RowBox[{"gFS", ",", "points1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.463333286645146*^9, 3.463333314374448*^9}}],
+
+Cell[BoxData["1.1053957343801375`"], "Output",
+ CellChangeTimes->{3.4633333158299227`*^9, 3.463339738640841*^9, 
+  3.46333983064709*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Ehat", "[", 
+  RowBox[{"gmin", ",", "points1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.463333286645146*^9, 3.4633333256043158`*^9}}],
+
+Cell[BoxData["5.451910324955294`*^-6"], "Output",
+ CellChangeTimes->{3.463333327388468*^9, 3.4633397462149467`*^9, 
+  3.463339831779221*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Note however that these values are not computed with respect to the \
+volume-normalized metric. To fix this, one should multiply the output of ",
+ StyleBox["Ehat", "Input"],
+ " by the output of ",
+ StyleBox["vmean", "Input"],
+ " to the power ",
+ StyleBox["1/(N1-2)", "Input"],
+ ". The latter should be independent, up to numerical errors, of the choice \
+of ",
+ StyleBox["k", "Input"],
+ " and ",
+ StyleBox["g", "Input"],
+ ". In the case of the Fermat quintic, we have:"
+}], "Text",
+ CellChangeTimes->{{3.463333338444401*^9, 3.463333397951908*^9}, {
+  3.4633334561510897`*^9, 3.463333617927538*^9}, {3.4633336654098663`*^9, 
+  3.4633336784124928`*^9}, {3.463333744652451*^9, 3.463333749923977*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"rescalingfactor", "=", 
+  RowBox[{
+   RowBox[{"vmean", "[", 
+    RowBox[{"gmin", ",", "data1"}], "]"}], "^", 
+   RowBox[{"(", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{"N1", "-", "2"}], ")"}]}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.463333683939169*^9, 3.46333372173416*^9}, {
+  3.463333754060914*^9, 3.463333756387632*^9}, {3.463334156445792*^9, 
+  3.46333417478076*^9}}],
+
+Cell[BoxData["1.2924415547101784`"], "Output",
+ CellChangeTimes->{3.463333724865769*^9, 3.463333756978919*^9, 
+  3.463334175811116*^9, 3.463339843095325*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"rescalingfactor", " ", 
+  RowBox[{"Ehat", "[", 
+   RowBox[{"gFS", ",", "points1"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.463333286645146*^9, 3.463333314374448*^9}, {
+  3.463334141688237*^9, 3.463334146188197*^9}, {3.46333417860667*^9, 
+  3.46333418091644*^9}}],
+
+Cell[BoxData["1.4286593815122643`"], "Output",
+ CellChangeTimes->{3.4633333158299227`*^9, 3.463334183466756*^9, 
+  3.4633398464533987`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"rescalingfactor", " ", 
+  RowBox[{"Ehat", "[", 
+   RowBox[{"gmin", ",", "points1"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.463333286645146*^9, 3.4633333256043158`*^9}, {
+  3.463334192085606*^9, 3.4633341924911633`*^9}}],
+
+Cell[BoxData["7.046275456525694`*^-6"], "Output",
+ CellChangeTimes->{3.463333327388468*^9, 3.4633341949198093`*^9, 
+  3.463339848660746*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The function ",
+ StyleBox["calcI", "Input"],
+ " returns the set of values of the integrand, ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    StyleBox["I", "TI"], "\[Congruent]", 
+    RowBox[{
+     SuperscriptBox[
+      StyleBox["g", "TI"], 
+      RowBox[{
+       OverscriptBox[
+        StyleBox["j", "TI"], "_"], 
+       StyleBox["i", "TI"]}]], 
+     RowBox[{
+      SubscriptBox["\[PartialD]", 
+       StyleBox["i", "TI"]], "ln"}], "\[Eta]", 
+     RowBox[{
+      SubscriptBox["\[PartialD]", 
+       OverscriptBox[
+        StyleBox["j", "TI"], "_"]], "ln"}], "\[Eta]"}]}], TraditionalForm]]],
+ ":"
+}], "Text",
+ CellChangeTimes->{{3.4633342403855343`*^9, 3.463334257943865*^9}, 
+   3.4633343299718237`*^9, 3.463335348481101*^9, {3.463335605691086*^9, 
+   3.4633356469094067`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{"rescalingfactor", " ", 
+   RowBox[{"calcI", "[", 
+    RowBox[{"gFS", ",", "points1"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.463335351261407*^9, 3.463335366296734*^9}, {
+  3.463335529517785*^9, 3.463335536778618*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[
+  {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+   EdgeForm[Opacity[0.7]], {}, 
+   {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+    EdgeForm[Opacity[0.7]], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{0, 0}, {
+           Rational[1, 5], 18}]},
+        ImageSizeCache->{{17.75, 40.51285714285714}, {67.78485010379349, 
+         96.4286731966848}}],
+       StatusArea[#, 18]& ,
+       TagBoxNote->"18"],
+      StyleBox["18", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[18, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 5], 0}, {
+           Rational[2, 5], 33}]},
+        ImageSizeCache->{{40.01285714285714, 62.77571428571429}, {
+         44.331664193050734`, 96.4286731966848}}],
+       StatusArea[#, 33]& ,
+       TagBoxNote->"33"],
+      StyleBox["33", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[33, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[2, 5], 0}, {
+           Rational[3, 5], 48}]},
+        ImageSizeCache->{{62.27571428571429, 85.03857142857142}, {
+         20.87847828230798, 96.4286731966848}}],
+       StatusArea[#, 48]& ,
+       TagBoxNote->"48"],
+      StyleBox["48", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[48, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 5], 0}, {
+           Rational[4, 5], 78}]},
+        ImageSizeCache->{{84.53857142857142, 
+         107.30142857142857`}, {-26.027893539177526`, 96.4286731966848}}],
+       StatusArea[#, 78]& ,
+       TagBoxNote->"78"],
+      StyleBox["78", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[78, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[4, 5], 0}, {1, 102}]},
+        ImageSizeCache->{{106.80142857142857`, 
+         129.5642857142857}, {-63.552990996365935`, 96.4286731966848}}],
+       StatusArea[#, 102]& ,
+       TagBoxNote->"102"],
+      StyleBox["102", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[102, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{1, 0}, {
+           Rational[6, 5], 121}]},
+        ImageSizeCache->{{129.0642857142857, 
+         151.82714285714283`}, {-93.26035981664009, 96.4286731966848}}],
+       StatusArea[#, 121]& ,
+       TagBoxNote->"121"],
+      StyleBox["121", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[121, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[6, 5], 0}, {
+           Rational[7, 5], 114}]},
+        ImageSizeCache->{{151.32714285714283`, 
+         174.08999999999997`}, {-82.31553972496013, 96.4286731966848}}],
+       StatusArea[#, 114]& ,
+       TagBoxNote->"114"],
+      StyleBox["114", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[114, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 5], 0}, {
+           Rational[8, 5], 101}]},
+        ImageSizeCache->{{173.58999999999997`, 
+         196.35285714285715`}, {-61.989445268983076`, 96.4286731966848}}],
+       StatusArea[#, 101]& ,
+       TagBoxNote->"101"],
+      StyleBox["101", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[101, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[8, 5], 0}, {
+           Rational[9, 5], 82}]},
+        ImageSizeCache->{{195.85285714285715`, 
+         218.61571428571426`}, {-32.28207644870892, 96.4286731966848}}],
+       StatusArea[#, 82]& ,
+       TagBoxNote->"82"],
+      StyleBox["82", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[82, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[9, 5], 0}, {2, 79}]},
+        ImageSizeCache->{{218.11571428571426`, 
+         240.8785714285714}, {-27.591439266560386`, 96.4286731966848}}],
+       StatusArea[#, 79]& ,
+       TagBoxNote->"79"],
+      StyleBox["79", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[79, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{2, 0}, {
+           Rational[11, 5], 82}]},
+        ImageSizeCache->{{240.3785714285714, 
+         263.1414285714286}, {-32.28207644870892, 96.4286731966848}}],
+       StatusArea[#, 82]& ,
+       TagBoxNote->"82"],
+      StyleBox["82", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[82, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[11, 5], 0}, {
+           Rational[12, 5], 58}]},
+        ImageSizeCache->{{262.6414285714286, 285.40428571428566`}, {
+         5.243021008479474, 96.4286731966848}}],
+       StatusArea[#, 58]& ,
+       TagBoxNote->"58"],
+      StyleBox["58", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[58, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[12, 5], 0}, {
+           Rational[13, 5], 55}]},
+        ImageSizeCache->{{284.90428571428566`, 307.66714285714284`}, {
+         9.933658190628023, 96.4286731966848}}],
+       StatusArea[#, 55]& ,
+       TagBoxNote->"55"],
+      StyleBox["55", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[55, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[13, 5], 0}, {
+           Rational[14, 5], 23}]},
+        ImageSizeCache->{{307.16714285714284`, 329.92999999999995`}, {
+         59.96712146687924, 96.4286731966848}}],
+       StatusArea[#, 23]& ,
+       TagBoxNote->"23"],
+      StyleBox["23", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[23, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[14, 5], 0}, {3, 6}]},
+        ImageSizeCache->{{329.42999999999995`, 352.1928571428571}, {
+         86.5473988323877, 96.4286731966848}}],
+       StatusArea[#, 6]& ,
+       TagBoxNote->"6"],
+      StyleBox["6", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[6, {
+        GrayLevel[0]}], "Tooltip"]& ]}, {}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesOrigin->{0, 0},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  PlotRange->{{0, 3}, {All, All}},
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.1]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{3.463335538435877*^9, 3.4633398553464947`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{"rescalingfactor", " ", 
+   RowBox[{"calcI", "[", 
+    RowBox[{"gmin", ",", "points1"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.463335351261407*^9, 3.463335366296734*^9}, {
+  3.463335529517785*^9, 3.46333554375333*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[
+  {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+   EdgeForm[Opacity[0.7]], {}, 
+   {RGBColor[0.798413061722744, 0.824719615472648, 0.968322270542458], 
+    EdgeForm[Opacity[0.7]], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{0, 0}, {
+           Rational[1, 200000], 640}]},
+        ImageSizeCache->{{17.75, 25.352083333333333`}, {-93.02122627646128, 
+         96.58569344128486}}],
+       StatusArea[#, 640]& ,
+       TagBoxNote->"640"],
+      StyleBox["640", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[640, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 200000], 0}, {
+           Rational[1, 100000], 188}]},
+        ImageSizeCache->{{24.852083333333333`, 32.454166666666666`}, {
+         40.53553577419693, 96.58569344128486}}],
+       StatusArea[#, 188]& ,
+       TagBoxNote->"188"],
+      StyleBox["188", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[188, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 100000], 0}, {
+           Rational[3, 200000], 67}]},
+        ImageSizeCache->{{31.954166666666666`, 39.55624999999999}, {
+         76.2885627833333, 96.58569344128486}}],
+       StatusArea[#, 67]& ,
+       TagBoxNote->"67"],
+      StyleBox["67", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[67, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 200000], 0}, {
+           Rational[1, 50000], 37}]},
+        ImageSizeCache->{{39.05624999999999, 46.65833333333333}, {
+         85.15294964510267, 96.58569344128486}}],
+       StatusArea[#, 37]& ,
+       TagBoxNote->"37"],
+      StyleBox["37", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[37, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 50000], 0}, {
+           Rational[1, 40000], 12}]},
+        ImageSizeCache->{{46.15833333333333, 53.76041666666666}, {
+         92.53993869657712, 96.58569344128486}}],
+       StatusArea[#, 12]& ,
+       TagBoxNote->"12"],
+      StyleBox["12", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[12, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 40000], 0}, {
+           Rational[3, 100000], 12}]},
+        ImageSizeCache->{{53.26041666666666, 60.86249999999999}, {
+         92.53993869657712, 96.58569344128486}}],
+       StatusArea[#, 12]& ,
+       TagBoxNote->"12"],
+      StyleBox["12", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[12, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 100000], 0}, {
+           Rational[7, 200000], 12}]},
+        ImageSizeCache->{{60.36249999999999, 67.96458333333331}, {
+         92.53993869657712, 96.58569344128486}}],
+       StatusArea[#, 12]& ,
+       TagBoxNote->"12"],
+      StyleBox["12", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[12, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 200000], 0}, {
+           Rational[1, 25000], 17}]},
+        ImageSizeCache->{{67.46458333333331, 75.06666666666666}, {
+         91.06254088628222, 96.58569344128486}}],
+       StatusArea[#, 17]& ,
+       TagBoxNote->"17"],
+      StyleBox["17", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[17, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 25000], 0}, {
+           Rational[9, 200000], 4}]},
+        ImageSizeCache->{{74.56666666666666, 82.16874999999999}, {
+         94.90377519304894, 96.58569344128486}}],
+       StatusArea[#, 4]& ,
+       TagBoxNote->"4"],
+      StyleBox["4", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[4, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[11, 200000], 0}, {
+           Rational[3, 50000], 2}]},
+        ImageSizeCache->{{95.87291666666665, 103.47499999999998`}, {
+         95.4947343171669, 96.58569344128486}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 50000], 0}, {
+           Rational[13, 200000], 1}]},
+        ImageSizeCache->{{102.97499999999998`, 110.5770833333333}, {
+         95.79021387922589, 96.58569344128486}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 100000], 0}, {
+           Rational[3, 40000], 2}]},
+        ImageSizeCache->{{117.17916666666663`, 124.78124999999996`}, {
+         95.4947343171669, 96.58569344128486}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[3, 40000], 0}, {
+           Rational[1, 12500], 1}]},
+        ImageSizeCache->{{124.28124999999996`, 131.88333333333333`}, {
+         95.79021387922589, 96.58569344128486}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 12500], 0}, {
+           Rational[17, 200000], 1}]},
+        ImageSizeCache->{{131.38333333333333`, 138.98541666666665`}, {
+         95.79021387922589, 96.58569344128486}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, {}, {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[1, 10000], 0}, {
+           Rational[21, 200000], 2}]},
+        ImageSizeCache->{{159.79166666666663`, 167.39374999999995`}, {
+         95.4947343171669, 96.58569344128486}}],
+       StatusArea[#, 2]& ,
+       TagBoxNote->"2"],
+      StyleBox["2", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[2, {
+        GrayLevel[0]}], "Tooltip"]& ], {}, {}, {}, {}, {}, {}, {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[7, 50000], 0}, {
+           Rational[29, 200000], 1}]},
+        ImageSizeCache->{{216.60833333333326`, 224.21041666666662`}, {
+         95.79021387922589, 96.58569344128486}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], 
+      "Tooltip"]& ], {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
+{}, {}, {}, 
+    TagBox[
+     TooltipBox[
+      TagBox[
+       DynamicBox[{
+         FEPrivate`If[
+          CurrentValue["MouseOver"], 
+          EdgeForm[{
+            GrayLevel[0.5], 
+            AbsoluteThickness[1.5], 
+            Opacity[0.66]}], {}, {}], 
+         RectangleBox[{
+           Rational[23, 100000], 0}, {
+           Rational[47, 200000], 1}]},
+        ImageSizeCache->{{344.44583333333327`, 352.04791666666654`}, {
+         95.79021387922589, 96.58569344128486}}],
+       StatusArea[#, 1]& ,
+       TagBoxNote->"1"],
+      StyleBox["1", {
+        GrayLevel[0]}, StripOnInput -> False]],
+     Annotation[#, 
+      Style[1, {
+        GrayLevel[0]}], "Tooltip"]& ]}, {}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesOrigin->{0, 0},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  PlotRange->NCache[{{0, 
+      Rational[47, 200000]}, {All, All}}, {{0, 0.000235}, {All, All}}],
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.1]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{3.4633355456078033`*^9, 3.4633398582501383`*^9}]
+}, Open  ]]
+},
+WindowSize->{715, 756},
+WindowMargins->{{Automatic, 4}, {Automatic, 0}},
+ShowSelection->True,
+FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 2201, 60, 133, "Text"],
+Cell[2749, 82, 1116, 28, 59, "Text"],
+Cell[CellGroupData[{
+Cell[3890, 114, 2503, 36, 58, "Input"],
+Cell[6396, 152, 330, 4, 27, "Output"]
+}, Open  ]],
+Cell[6741, 159, 443, 12, 26, "Text"],
+Cell[CellGroupData[{
+Cell[7209, 175, 439, 7, 27, "Input"],
+Cell[7651, 184, 2711, 40, 20, "Print"]
+}, Open  ]],
+Cell[10377, 227, 997, 24, 59, "Text"],
+Cell[11377, 253, 649, 11, 27, "Input"],
+Cell[12029, 266, 783, 20, 41, "Text"],
+Cell[12815, 288, 427, 8, 27, "Input"],
+Cell[13245, 298, 535, 11, 56, "Text"],
+Cell[CellGroupData[{
+Cell[13805, 313, 217, 4, 27, "Input"],
+Cell[14025, 319, 222, 3, 27, "Output"]
+}, Open  ]],
+Cell[14262, 325, 184, 4, 27, "Input"],
+Cell[CellGroupData[{
+Cell[14471, 333, 130, 2, 27, "Input"],
+Cell[14604, 337, 215, 3, 27, "Output"]
+}, Open  ]],
+Cell[14834, 343, 856, 21, 56, "Text"],
+Cell[CellGroupData[{
+Cell[15715, 368, 99, 1, 27, "Input"],
+Cell[15817, 371, 724, 13, 27, "Output"]
+}, Open  ]],
+Cell[16556, 387, 573, 13, 41, "Text"],
+Cell[CellGroupData[{
+Cell[17154, 404, 251, 5, 27, "Input"],
+Cell[17408, 411, 471, 6, 27, "Output"]
+}, Open  ]],
+Cell[17894, 420, 363, 10, 26, "Text"],
+Cell[CellGroupData[{
+Cell[18282, 434, 239, 5, 27, "Input"],
+Cell[18524, 441, 12135, 393, 241, "Output"]
+}, Open  ]],
+Cell[30674, 837, 616, 13, 41, "Text"],
+Cell[CellGroupData[{
+Cell[31315, 854, 359, 7, 27, "Input"],
+Cell[31677, 863, 801, 15, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32515, 883, 251, 5, 27, "Input"],
+Cell[32769, 890, 398, 5, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33204, 900, 242, 5, 27, "Input"],
+Cell[33449, 907, 14345, 460, 241, "Output"]
+}, Open  ]],
+Cell[47809, 1370, 837, 18, 41, "Text"],
+Cell[48649, 1390, 737, 13, 27, "Input"],
+Cell[CellGroupData[{
+Cell[49411, 1407, 275, 5, 27, "Input"],
+Cell[49689, 1414, 355, 5, 30, "Output"]
+}, Open  ]],
+Cell[50059, 1422, 508, 8, 26, "Text"],
+Cell[50570, 1432, 468, 13, 26, "Text"],
+Cell[CellGroupData[{
+Cell[51063, 1449, 122, 2, 27, "Input"],
+Cell[51188, 1453, 47153, 1347, 754, "Output"]
+}, Open  ]],
+Cell[98356, 2803, 456, 12, 41, "Text"],
+Cell[CellGroupData[{
+Cell[98837, 2819, 154, 3, 27, "Input"],
+Cell[98994, 2824, 136, 2, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[99167, 2831, 157, 3, 27, "Input"],
+Cell[99327, 2836, 140, 2, 30, "Output"]
+}, Open  ]],
+Cell[99482, 2841, 715, 17, 56, "Text"],
+Cell[CellGroupData[{
+Cell[100222, 2862, 416, 11, 27, "Input"],
+Cell[100641, 2875, 157, 2, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[100835, 2882, 288, 6, 27, "Input"],
+Cell[101126, 2890, 139, 2, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[101302, 2897, 246, 5, 27, "Input"],
+Cell[101551, 2904, 140, 2, 30, "Output"]
+}, Open  ]],
+Cell[101706, 2909, 792, 26, 37, "Text"],
+Cell[CellGroupData[{
+Cell[102523, 2939, 280, 6, 27, "Input"],
+Cell[102806, 2947, 10470, 341, 241, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[113313, 3293, 280, 6, 27, "Input"],
+Cell[113596, 3301, 12210, 393, 242, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

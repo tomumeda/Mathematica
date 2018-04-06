@@ -1,0 +1,522 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     13476,        435]*)
+(*NotebookOutlinePosition[     14500,        471]*)
+(*  CellTagsIndexPosition[     14425,        465]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["DotTensorFactors", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        RowBox[{
+          StyleBox["DotTensorFactors",
+            "MR"], 
+          StyleBox["[",
+            "MR"], 
+          StyleBox["order",
+            "TI"], 
+          StyleBox["]",
+            "MR"]}], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["term",
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " will convert a product of tensor factors to a Dot product and put them in \
+the order specified."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "The routines in the Arrays section of Tensorial Help facilitate the \
+conversion of tensor equations to vector-matrix-array equations. In Tensorial \
+this is called operating in ",
+  StyleBox["dot mode",
+    FontSlant->"Italic"],
+  ". This can be used for didactic purposes and is sometimes faster because \
+",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " array operations are more efficient than tensor summations. See  ",
+  ButtonBox["Arrays & Tensors",
+    ButtonData:>{"Arrays & Tensors"},
+    ButtonStyle->"AddOnsLink"],
+  " in the Examples section for an extended discussion."
+}], "MathCaption"],
+
+Cell[TextData[{
+  "order is a list of Parts of the term. Tensor factors may be grouped into \
+one factor in the Dot product using a list of the part numbers. Example:\n",
+  Cell[BoxData[
+      \(T1\ T2\ T3\ T4 // 
+        DotTensorFactors[{{2, 3}, 4, 1}] \[Rule] \ \((T2\ T3)\) . T4 . 
+            T1\)]],
+  "."
+}], "MathCaption"],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \(DotTensorFactors\)]],
+  " must be applied individually to each term in a tensor equation because \
+each term may require its own order. If the term contains constant factors it \
+should be mapped onto just the tensor factors using ",
+  Cell[BoxData[
+      \(MapLevelParts\)]],
+  "."
+}], "MathCaption"],
+
+Cell["\<\
+When Tensorial expands arrays it is always the sort order of the indices, not \
+the slot position, that determines the levels in the arrays. The lowest sort \
+order index corresponds to the highest array level. \
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["ExpandDotArray",
+    ButtonData:>{"ExpandDotArray"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["DotOperate",
+    ButtonData:>{"DotOperate"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ToArrayValues",
+    ButtonData:>{"ToArrayValues"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ArrayExpansion",
+    ButtonData:>{"ArrayExpansion"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["EinsteinArray",
+    ButtonData:>{"EinsteinArray"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[TextData[{
+  "See also the more extended examples in ",
+  ButtonBox["ExpandDotArray",
+    ButtonData:>{"ExpandDotArray"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "Text"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the old settings.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\n", 
+    \(DeclareBaseIndices[{1, 2, 3}]\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{e, f, R}, 1}, {{R, S, T}, 2}, {S, 
+        3}]\)], "Input",
+  CellLabel->"In[4]:="],
+
+Cell[TextData[{
+  "In the following the rhs is converted to dot mode. With a normal tensor \
+expression the ",
+  Cell[BoxData[
+      \(b\)]],
+  " index does not line up properly because ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " sorts S before T. By reordering the factors and putting them in a Dot \
+product we obtain a proper matrix equation."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Rdd[a, c] \[Equal] Tdu[a, b] Sdd[b, c]\), "\[IndentingNewLine]", 
+    \(MapAt[DotTensorFactors[{2, 1}], %, 2]\)}], "Input",
+  CellLabel->"In[5]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["R", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ R, {Void, Void}, {a, c}],
+        Editable->False], "\[Equal]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", \(b  c\), 
+            RowBox[{
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ S, {Void, Void}, {b, c}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b"}]],
+          Tensor[ T, {Void, b}, {a, Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[5]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["R", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ R, {Void, Void}, {a, c}],
+        Editable->False], "\[Equal]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"a", 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "b"}]],
+          Tensor[ T, {Void, b}, {a, Void}],
+          Editable->False], ".", 
+        InterpretationBox[
+          SubsuperscriptBox["S", \(b  c\), 
+            RowBox[{
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ S, {Void, Void}, {b, c}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[6]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "The important thing here is that using sort order for the indices in each \
+factor, and lining up the indices for the term we obtain ",
+  Cell[BoxData[
+      \(a\ b\ b\ c\)]],
+  ", with the ",
+  Cell[BoxData[
+      \(b\)]],
+  "'s adjacent. We also should keep an eye on the lhs and see if those \
+indices are in the order that we want."
+}], "Text"],
+
+Cell[TextData[{
+  "In the following we have a constant in the term on the rhs. We must map to \
+only the tensor factors. The ",
+  Cell[BoxData[
+      \(e\)]],
+  " and ",
+  Cell[BoxData[
+      \(f\)]],
+  " tensors must be grouped together to make a single array."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Rd[c] == 3  eu[a] fu[b] Sddd[a, b, c]\), "\[IndentingNewLine]", 
+    \(% // MapLevelParts[
+        DotTensorFactors[{{1, 2}, 3}], {2, {2, 3, 4}}]\)}], "Input",
+  CellLabel->"In[7]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["R", "c", 
+          TagBox[
+            StyleBox["c",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ R, {Void}, {c}],
+        Editable->False], "\[Equal]", 
+      RowBox[{"3", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"],
+          Tensor[ e, {a}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["f", 
+            TagBox[
+              StyleBox["b",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "b"],
+          Tensor[ f, {b}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["S", \(a  b  c\), 
+            RowBox[{
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["b",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["c",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ S, {Void, Void, Void}, {a, b, c}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[7]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["R", "c", 
+          TagBox[
+            StyleBox["c",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ R, {Void}, {c}],
+        Editable->False], "\[Equal]", 
+      RowBox[{"3", " ", 
+        RowBox[{
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["e", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ e, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["f", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ f, {b}, {Void}],
+                Editable->False]}], ")"}], ".", 
+          InterpretationBox[
+            SubsuperscriptBox["S", \(a  b  c\), 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {Void, Void, Void}, {a, b, c}],
+            Editable->False]}]}]}]], "Output",
+  CellLabel->"Out[8]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "The  ",
+  ButtonBox["DotOperate",
+    ButtonData:>{"DotOperate"},
+    ButtonStyle->"AddOnsLink"],
+  " Help Examples will show how to evaluate this using arrays."
+}], "Text"],
+
+Cell["Restore settings.", "Text"],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{e, f, R}, 1}, {{R, S, T}, 2}, {S, 3}]\)], "Input",\
+
+  CellLabel->"In[9]:="],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(Clear[oldindices]\)}], "Input",
+  CellLabel->"In[10]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{706, 472},
+WindowMargins->{{1, Automatic}, {Automatic, -3}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 63, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1842, 56, 553, 22, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 14254, 456}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 63, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1842, 56, 553, 22, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2398, 80, 631, 15, 92, "MathCaption"],
+Cell[3032, 97, 330, 8, 82, "MathCaption"],
+Cell[3365, 107, 341, 9, 58, "MathCaption"],
+Cell[3709, 118, 242, 4, 58, "MathCaption"],
+Cell[3954, 124, 566, 22, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4545, 150, 34, 0, 39, "ExampleSection"],
+Cell[4582, 152, 176, 6, 25, "Text"],
+Cell[4761, 160, 96, 2, 29, "Input"],
+Cell[4860, 164, 38, 0, 25, "Text"],
+Cell[4901, 166, 142, 3, 49, "Input"],
+Cell[5046, 171, 127, 3, 29, "Input"],
+Cell[5176, 176, 373, 10, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[5574, 190, 168, 3, 49, "Input"],
+Cell[5745, 195, 1500, 43, 28, "Output"],
+Cell[7248, 240, 1500, 43, 28, "Output"]
+}, Open  ]],
+Cell[8763, 286, 367, 10, 42, "Text"],
+Cell[9133, 298, 274, 9, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[9432, 311, 204, 4, 49, "Input"],
+Cell[9639, 317, 1546, 44, 28, "Output"],
+Cell[11188, 363, 1749, 47, 28, "Output"]
+}, Open  ]],
+Cell[12952, 413, 192, 6, 25, "Text"],
+Cell[13147, 421, 33, 0, 25, "Text"],
+Cell[13183, 423, 119, 3, 29, "Input"],
+Cell[13305, 428, 143, 3, 49, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

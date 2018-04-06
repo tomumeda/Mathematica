@@ -1,0 +1,1233 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     35165,       1084]*)
+(*NotebookOutlinePosition[     36189,       1120]*)
+(*  CellTagsIndexPosition[     36113,       1114]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["CovariantD", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["CovariantD",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\(expr, i\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " represents the covariant derivative of the tensor expression with respect \
+to the index ",
+  Cell[BoxData[
+      \(i\)]],
+  ".\n\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        StyleBox["CovariantD",
+          "MR"], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox[\(expr, {i, j,  ... }\),
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " represents the covariant derivative of the expression with respect to the \
+list of indices."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+ Covariant derivatives undergo linear and Liebnizian expansion but are \
+otherwise inert until ExpandCovariantD is used..\
+\>", "MathCaption"],
+
+Cell["\<\
+With multiple differentiation indices, the differentiations are done left to \
+right in accordance with the usage in most texts. This convention change was \
+made to Tensorial in Nov 2006. \
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "Covariant derivatives may only be expanded on tensors. They will not be \
+expanded on expressions that contain base indices or partial derivatives. Use \
+",
+  Cell[BoxData[
+      \(ExpandCovariantD\)]],
+  " on a symbolic tensor expression and then expand to base indices."
+}], "MathCaption"],
+
+Cell[TextData[{
+  " By default the covariant derivatives are prefixed by a single semicolon \
+in the output display. The format can be changed using ",
+  Cell[BoxData[
+      \(SetDerivativeSymbols\)]],
+  ".  The display can also be changed to a subscripted \[Del] symbol using \
+SetCovariantDisplay."
+}], "MathCaption"],
+
+Cell[TextData[{
+  "The intended flavors must be on the indices in ",
+  Cell[BoxData[
+      \(CovariantD\)]],
+  "."
+}], "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["ExpandCovariantD",
+    ButtonData:>{"ExpandCovariantD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SetScalarSingleCovariantD",
+    ButtonData:>{"SetScalarSingleCovariantD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["PartialD",
+    ButtonData:>{"PartialD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["AbsoluteD",
+    ButtonData:>{"AbsoluteD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["TotalD",
+    ButtonData:>{"TotalD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SetDerivativeSymbols",
+    ButtonData:>{"SetDerivativeSymbols"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SetCovariantDisplay",
+    ButtonData:>{"SetCovariantDisplay"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the settings.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\[IndentingNewLine]", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareIndexFlavor[{red, Red}]\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{S, T}, 1}, {{S, T}, 2}]\)], "Input",
+  CellLabel->"In[6]:="],
+
+Cell["\<\
+Here is a tensor T and its covariant derivative with respect to index k. In \
+the FullForm we see that CovariantD of a single tensor is an inert \
+expression. In the display it is prefixed with a semi-colon.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Td[i]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, k]\), "\[IndentingNewLine]", 
+    \(% // FullForm\)}], "Input",
+  CellLabel->"In[7]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["T", "i", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)]],
+      Tensor[ T, {Void}, {i}],
+      Editable->False]], "Output",
+  CellLabel->"Out[7]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubscriptBox[
+        InterpretationBox[
+          SubsuperscriptBox["T", "i", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ T, {Void}, {i}],
+          Editable->False], \(\(;\)\(k\)\)],
+      CovariantD[ 
+        Tensor[ T, {Void}, {i}], k],
+      Editable->False]], "Output",
+  CellLabel->"Out[8]="],
+
+Cell[BoxData[
+    TagBox[
+      StyleBox[\(CovariantD[Tensor[T, List[Void], List[i]], k]\),
+        ShowSpecialCharacters->False,
+        ShowStringCharacters->True,
+        NumberMarks->True],
+      FullForm]], "Output",
+  CellLabel->"Out[9]//FullForm="]
+}, Open  ]],
+
+Cell["\<\
+Multiple covariant derivative indices are preceded by a single semicolon in \
+the default display.  The differentiations are performed from the left to the \
+right. This appears to be the convention in most texts. Tensorial was \
+modified in Nov 2006 to follow this convention. The b index will be \
+differentiated first and then the c index.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(CovariantD[Td[a], {b, c}]\)], "Input",
+  CellLabel->"In[10]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubscriptBox[
+        InterpretationBox[
+          SubsuperscriptBox["T", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ T, {Void}, {a}],
+          Editable->False], \(\(;\)\(b  c\)\)],
+      CovariantD[ 
+        Tensor[ T, {Void}, {a}], {b, c}],
+      Editable->False]], "Output",
+  CellLabel->"Out[10]="]
+}, Open  ]],
+
+Cell["\<\
+An alternative display mode is to use the \[Del] symbol.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetCovariantDisplay["\<DelMode\>"]\), "\[IndentingNewLine]", 
+    \(CovariantD[Td[a], {b, c}]\)}], "Input",
+  CellLabel->"In[11]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      RowBox[{\(\[Del]\_\(b  c\)\), 
+        InterpretationBox[
+          SubsuperscriptBox["T", "a", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ T, {Void}, {a}],
+          Editable->False]}],
+      CovariantD[ 
+        Tensor[ T, {Void}, {a}], {b, c}],
+      Editable->False]], "Output",
+  CellLabel->"Out[12]="]
+}, Open  ]],
+
+Cell["\<\
+If we write this as a nested differentiation and use HoldOp to prevent the \
+otherwise automatic unnesting, then we see that the indices appear in reverse \
+order in the display. But the b index is still done first and then the c \
+index according to composition.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(CovariantD[CovariantD[Td[a], b], c] // HoldOp[CovariantD]\)], "Input",
+  CellLabel->"In[13]:="],
+
+Cell[BoxData[
+    TagBox[
+      InterpretationBox[
+        RowBox[{\(\[Del]\_c\), 
+          InterpretationBox[
+            RowBox[{\(\[Del]\_b\), 
+              InterpretationBox[
+                SubsuperscriptBox["T", "a", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ T, {Void}, {a}],
+                Editable->False]}],
+            CovariantD[ 
+              Tensor[ T, {Void}, {a}], b],
+            Editable->False]}],
+        CovariantD[ 
+          Tensor[ T, {Void}, {a}], {b, c}],
+        Editable->False],
+      HoldForm]], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell["\<\
+Normal linear and Liebnizian differentiation rules are applied.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \({Su[i] + Tu[i], Su[i] Tu[j]}\), "\[IndentingNewLine]", 
+    \(\(CovariantD[#, k] &\) /@ %\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ S, {i}, {Void}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ T, {i}, {Void}],
+            Editable->False]}], ",", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ S, {i}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"],
+            Tensor[ T, {j}, {Void}],
+            Editable->False]}]}], "}"}]], "Output",
+  CellLabel->"Out[14]="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            RowBox[{\(\[Del]\_k\), 
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ S, {i}, {Void}],
+                Editable->False]}],
+            CovariantD[ 
+              Tensor[ S, {i}, {Void}], k],
+            Editable->False], "+", 
+          InterpretationBox[
+            RowBox[{\(\[Del]\_k\), 
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ T, {i}, {Void}],
+                Editable->False]}],
+            CovariantD[ 
+              Tensor[ T, {i}, {Void}], k],
+            Editable->False]}], ",", 
+        RowBox[{
+          RowBox[{
+            InterpretationBox[
+              RowBox[{\(\[Del]\_k\), 
+                InterpretationBox[
+                  SubsuperscriptBox["T", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"],
+                  Tensor[ T, {j}, {Void}],
+                  Editable->False]}],
+              CovariantD[ 
+                Tensor[ T, {j}, {Void}], k],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False]}], "+", 
+          RowBox[{
+            InterpretationBox[
+              RowBox[{\(\[Del]\_k\), 
+                InterpretationBox[
+                  SubsuperscriptBox["S", 
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "i"],
+                  Tensor[ S, {i}, {Void}],
+                  Editable->False]}],
+              CovariantD[ 
+                Tensor[ S, {i}, {Void}], k],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False]}]}]}], "}"}]], "Output",
+  CellLabel->"Out[15]="]
+}, Open  ]],
+
+Cell["Symbols and numeric quantities are not differentiated.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(2\ \[Pi]\ a\ Su[i] Tu[j]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, k]\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    RowBox[{"2", " ", "a", " ", "\[Pi]", " ", 
+      InterpretationBox[
+        SubsuperscriptBox["S", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ S, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["T", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"],
+        Tensor[ T, {j}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[16]="],
+
+Cell[BoxData[
+    RowBox[{"2", " ", "a", " ", "\[Pi]", " ", 
+      RowBox[{"(", 
+        RowBox[{
+          RowBox[{
+            InterpretationBox[
+              RowBox[{\(\[Del]\_k\), 
+                InterpretationBox[
+                  SubsuperscriptBox["T", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"],
+                  Tensor[ T, {j}, {Void}],
+                  Editable->False]}],
+              CovariantD[ 
+                Tensor[ T, {j}, {Void}], k],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False]}], "+", 
+          RowBox[{
+            InterpretationBox[
+              RowBox[{\(\[Del]\_k\), 
+                InterpretationBox[
+                  SubsuperscriptBox["S", 
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "i"],
+                  Tensor[ S, {i}, {Void}],
+                  Editable->False]}],
+              CovariantD[ 
+                Tensor[ S, {i}, {Void}], k],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False]}]}], ")"}]}]], "Output",
+  CellLabel->"Out[17]="]
+}, Open  ]],
+
+Cell["\<\
+The flavor must be on the covariant index when differentiating flavored \
+expressions.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(2\ \[Pi]\ a\)\/\(1 + \[Nu]\)\ Su[i] Tu[j] // 
+      ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, red@k]\)}], "Input",
+  CellLabel->"In[18]:="],
+
+Cell[BoxData[
+    FractionBox[
+      RowBox[{"2", " ", "a", " ", "\[Pi]", " ", 
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["i",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ S, {
+            red[ i]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["j",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["j",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ T, {
+            red[ j]}, {Void}],
+          Editable->False]}], \(1 + \[Nu]\)]], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    FractionBox[
+      RowBox[{"2", " ", "a", " ", "\[Pi]", " ", 
+        RowBox[{"(", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                RowBox[{
+                  SubscriptBox["\[Del]", 
+                    TagBox[
+                      StyleBox["k",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]], 
+                  InterpretationBox[
+                    SubsuperscriptBox["T", 
+                      TagBox[
+                        StyleBox[
+                          TagBox[
+                            StyleBox["j",
+                              FontColor->RGBColor[1, 0, 0]],
+                            (
+                            StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                          
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["j",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                    Tensor[ T, {
+                      red[ j]}, {Void}],
+                    Editable->False]}],
+                CovariantD[ 
+                  Tensor[ T, {
+                    red[ j]}, {Void}], 
+                  red[ k]],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["i",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ S, {
+                  red[ i]}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                RowBox[{
+                  SubscriptBox["\[Del]", 
+                    TagBox[
+                      StyleBox["k",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]], 
+                  InterpretationBox[
+                    SubsuperscriptBox["S", 
+                      TagBox[
+                        StyleBox[
+                          TagBox[
+                            StyleBox["i",
+                              FontColor->RGBColor[1, 0, 0]],
+                            (
+                            StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                          
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["i",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                    Tensor[ S, {
+                      red[ i]}, {Void}],
+                    Editable->False]}],
+                CovariantD[ 
+                  Tensor[ S, {
+                    red[ i]}, {Void}], 
+                  red[ k]],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["j",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["j",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ T, {
+                  red[ j]}, {Void}],
+                Editable->False]}]}], ")"}]}], \(1 + \[Nu]\)]], "Output",
+  CellLabel->"Out[19]="]
+}, Open  ]],
+
+Cell["A higher order derivative in the semicolon mode..", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetCovariantDisplay["\<SemicolonMode\>"]\), "\n", 
+    \(Su[i] Tu[j]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, {m, n}]\)}], "Input",
+  CellLabel->"In[20]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["S", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ S, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["T", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"],
+        Tensor[ T, {j}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[21]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(n\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], n],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(m\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], m],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(m\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], m],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(n\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], n],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(m  n\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], {m, n}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ S, {i}, {Void}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(m  n\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], {m, n}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j"],
+          Tensor[ T, {j}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[22]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(CovariantD[Su[i], a] Tu[j]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, {m, n}]\)}], "Input",
+  CellLabel->"In[23]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubscriptBox[
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ S, {i}, {Void}],
+            Editable->False], \(\(;\)\(a\)\)],
+        CovariantD[ 
+          Tensor[ S, {i}, {Void}], a],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["T", 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "j"],
+        Tensor[ T, {j}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[23]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(a  n\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], {a, n}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(m\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], m],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(a  m\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], {a, m}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(n\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], n],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(a\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], a],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["T", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"],
+              Tensor[ T, {j}, {Void}],
+              Editable->False], \(\(;\)\(m  n\)\)],
+          CovariantD[ 
+            Tensor[ T, {j}, {Void}], {m, n}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["S", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ S, {i}, {Void}],
+              Editable->False], \(\(;\)\(a  m  n\)\)],
+          CovariantD[ 
+            Tensor[ S, {i}, {Void}], {a, m, n}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j"],
+          Tensor[ T, {j}, {Void}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[24]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "CovariantDerivatives of expressions with base indices or partial \
+derivatives are not allowed. Instead, the covariant derivative of the \
+abstract tensor should be taken, expanded with ",
+  Cell[BoxData[
+      \(ExpandCovariantD\)]],
+  " and only then expanded to base indices."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Td[1]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, a]\), "\[IndentingNewLine]", 
+    \(% // ExpandCovariantD[{x, \[Delta], 
+          g, \[CapitalGamma]}, {i}]\)}], "Input",
+  CellLabel->"In[25]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["T", "1", 
+        TagBox[
+          StyleBox["1",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)]],
+      Tensor[ T, {Void}, {1}],
+      Editable->False]], "Output",
+  CellLabel->"Out[25]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubscriptBox[
+        InterpretationBox[
+          SubsuperscriptBox["T", "1", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ T, {Void}, {1}],
+          Editable->False], \(\(;\)\(a\)\)],
+      CovariantD[ 
+        Tensor[ T, {Void}, {1}], a],
+      Editable->False]], "Output",
+  CellLabel->"Out[26]="],
+
+Cell[BoxData[
+    RowBox[{\(ExpandCovariantD::"nottensor"\), \(\(:\)\(\ \)\), "\<\"A \
+covariant derivative , \\!\\(\\*InterpretationBox[\\(\\(\\*InterpretationBox[\
+\\(T\\_\\(1\\)\\%\\(\\*StyleBox[\\\"1\\\", Rule[ShowContents, False]]\\)\\), \
+Tensor[T, List[Void], List[1]], Rule[Editable, False]]\\)\\_\\(; \
+\\(\\(a\\)\\)\\)\\), CovariantD[Tensor[T, List[Void], List[1]], a], \
+Rule[Editable, False]]\\), cannot be expanded because Tensorial cannot assess \
+the tensor nature of the expression.\"\>"}]], "Message",
+  CellLabel->"From In[25]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[27]="]
+}, Open  ]],
+
+Cell["\<\
+Covariant derivatives of scalar tensors are converted to partial derivatives \
+when there is a single differentiation index. \
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Tensor[\[Phi]]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, i]\)}], "Input",
+  CellLabel->"In[28]:="],
+
+Cell[BoxData[
+    InterpretationBox["\[Phi]",
+      Tensor[ \[Phi]],
+      Editable->False]], "Output",
+  CellLabel->"Out[28]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubscriptBox[
+        InterpretationBox["\[Phi]",
+          Tensor[ \[Phi]],
+          Editable->False], \(\(,\)\(i\)\)],
+      PartialD[ 
+        Tensor[ \[Phi]], i],
+      Editable->False]], "Output",
+  CellLabel->"Out[29]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "See  ",
+  ButtonBox["SetScalarSingleCovariantD",
+    ButtonData:>{"SetScalarSingleCovariantD"},
+    ButtonStyle->"AddOnsLink"],
+  " for handling sequential differentiations or disabling this feature.  "
+}], "Text"],
+
+Cell["Restore settings.", "Text"],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{S, T}, 1}, {{S, T}, 2}]\)], "Input",
+  CellLabel->"In[30]:="],
+
+Cell[BoxData[{
+    \(\(DeclareBaseIndices @@ oldindices;\)\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor[oldflavors];\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors]\)}], "Input",
+  CellLabel->"In[31]:="],
+
+Cell[TextData[{
+  "See ",
+  ButtonBox["ExpandCovariantD",
+    ButtonData:>{"ExpandCovariantD"},
+    ButtonStyle->"AddOnsLink"],
+  " for more examples."
+}], "Text"]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{754, 619},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification->1,
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 57, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1836, 56, 769, 30, 56, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 35942, 1105}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 57, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1836, 56, 769, 30, 56, "Usage",
+  CellTags->"Function?"],
+Cell[2608, 88, 152, 3, 41, "MathCaption"],
+Cell[2763, 93, 220, 4, 58, "MathCaption"],
+Cell[2986, 99, 310, 7, 58, "MathCaption"],
+Cell[3299, 108, 319, 7, 58, "MathCaption"],
+Cell[3621, 117, 133, 5, 41, "MathCaption"],
+Cell[3757, 124, 800, 30, 58, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4582, 158, 34, 0, 39, "ExampleSection"],
+Cell[4619, 160, 96, 2, 29, "Input"],
+Cell[4718, 164, 34, 0, 25, "Text"],
+Cell[4755, 166, 276, 5, 89, "Input"],
+Cell[5034, 173, 104, 2, 29, "Input"],
+Cell[5141, 177, 231, 4, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[5397, 185, 161, 4, 69, "Input"],
+Cell[5561, 191, 288, 9, 27, "Output"],
+Cell[5852, 202, 460, 14, 28, "Output"],
+Cell[6315, 218, 255, 7, 41, "Output"]
+}, Open  ]],
+Cell[6585, 228, 366, 6, 59, "Text"],
+
+Cell[CellGroupData[{
+Cell[6976, 238, 83, 2, 29, "Input"],
+Cell[7062, 242, 469, 14, 29, "Output"]
+}, Open  ]],
+Cell[7546, 259, 80, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[7651, 265, 153, 3, 49, "Input"],
+Cell[7807, 270, 468, 14, 27, "Output"]
+}, Open  ]],
+Cell[8290, 287, 287, 5, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[8602, 296, 115, 2, 29, "Input"],
+Cell[8720, 300, 713, 21, 27, "Output"]
+}, Open  ]],
+Cell[9448, 324, 87, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[9560, 330, 149, 3, 49, "Input"],
+Cell[9712, 335, 1299, 37, 30, "Output"],
+Cell[11014, 374, 2801, 75, 30, "Output"]
+}, Open  ]],
+Cell[13830, 452, 70, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[13925, 456, 134, 3, 49, "Input"],
+Cell[14062, 461, 616, 18, 30, "Output"],
+Cell[14681, 481, 1834, 48, 30, "Output"]
+}, Open  ]],
+Cell[16530, 532, 110, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[16665, 539, 181, 4, 62, "Input"],
+Cell[16849, 545, 1381, 37, 47, "Output"],
+Cell[18233, 584, 4305, 103, 47, "Output"]
+}, Open  ]],
+Cell[22553, 690, 65, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[22643, 694, 183, 4, 69, "Input"],
+Cell[22829, 700, 582, 18, 30, "Output"],
+Cell[23414, 720, 3518, 100, 32, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[26969, 825, 141, 3, 49, "Input"],
+Cell[27113, 830, 764, 23, 30, "Output"],
+Cell[27880, 855, 3732, 105, 32, "Output"]
+}, Open  ]],
+Cell[31627, 963, 310, 7, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[31962, 974, 221, 5, 69, "Input"],
+Cell[32186, 981, 289, 9, 27, "Output"],
+Cell[32478, 992, 461, 14, 28, "Output"],
+Cell[32942, 1008, 548, 8, 37, "Message"],
+Cell[33493, 1018, 67, 2, 27, "Output"]
+}, Open  ]],
+Cell[33575, 1023, 149, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[33749, 1030, 124, 3, 49, "Input"],
+Cell[33876, 1035, 128, 4, 27, "Output"],
+Cell[34007, 1041, 270, 9, 28, "Output"]
+}, Open  ]],
+Cell[34292, 1053, 233, 6, 25, "Text"],
+Cell[34528, 1061, 33, 0, 25, "Text"],
+Cell[34564, 1063, 104, 2, 29, "Input"],
+Cell[34671, 1067, 300, 5, 89, "Input"],
+Cell[34974, 1074, 163, 6, 25, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

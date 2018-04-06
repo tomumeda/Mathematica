@@ -1,0 +1,2969 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     99594,       2809]*)
+(*NotebookOutlinePosition[    100601,       2844]*)
+(*  CellTagsIndexPosition[    100524,       2838]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["EinsteinSum", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        RowBox[{
+          StyleBox["EinsteinSum",
+            "MR"], 
+          StyleBox["[",
+            "MR"], 
+          StyleBox[\(base : Automatic\),
+            "TI"], 
+          StyleBox["]",
+            "MR"]}], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["expr",
+          "MR"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " will perform an Einstein summation on all pairs of matching up/down index \
+pairs.  The range of the sum is over the base list, which has the default \
+value of BaseIndices."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+ The expansion will be done on individual terms, terms in sums, on both sides \
+of an equation, and within arrays.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  " If special sets of base indices have been associated with certain flavors \
+of indices using  ",
+  ButtonBox["DeclareBaseIndices",
+    ButtonData:>{"DeclareBaseIndices"},
+    ButtonStyle->"AddOnsLink"],
+  ", then those sets will be used with the corresponding flavors."
+}], "MathCaption"],
+
+Cell[TextData[{
+  "The optional argument base gives the base indices over which each index is \
+summed. The default value is ",
+  Cell[BoxData[
+      \(Automatic\)]],
+  " and then each index is summed over the complete set of base indices for \
+the corresponding index flavor. If a list of subsets of selected base indices \
+is given then each index is summed over the corresponding selected subset \
+taken in corresponding order. If a single list of selected base indices is \
+supplied, then it will apply only to the first index. "
+}], "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["DeclareBaseIndices",
+    ButtonData:>{"DeclareBaseIndices"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ArrayExpansion",
+    ButtonData:>{"ArrayExpansion"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["SumExpansion",
+    ButtonData:>{"SumExpansion"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["EinsteinArray",
+    ButtonData:>{"EinsteinArray"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ToArrayValues",
+    ButtonData:>{"ToArrayValues"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the settings and declare base indices and flavors.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\n", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareBaseIndices[{1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ {{red, Red}, {rocket, 
+            SuperDagger}};\)\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[
+    \(DefineTensorShortcuts[{{x, y}, 1}, {{S, T}, 2}]\)], "Input",
+  CellLabel->"In[7]:="],
+
+Cell["EinsteinSum automatically extracts the summation indices.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yd[i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[8]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ x, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", "i", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {i}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[8]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "1"],
+          Tensor[ x, {1}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", "1", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {1}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox["2",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "2"],
+          Tensor[ x, {2}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", "2", 
+            TagBox[
+              StyleBox["2",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {2}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox["3",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "3"],
+          Tensor[ x, {3}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", "3", 
+            TagBox[
+              StyleBox["3",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {3}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[9]="]
+}, Open  ]],
+
+Cell["EinsteinSum will not sum improper expressions.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yu[i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[10]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ x, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ y, {i}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[10]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ x, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ y, {i}, {Void}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[11]="]
+}, Open  ]],
+
+Cell["EinsteinSum automatically handles flavored indices.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yd[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[12]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ x, {
+          red[ i]}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[12]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 1]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 1]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 2]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 2]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 3]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 3]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell["Nonmatching flavors do not sum.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yd[red@i]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ x, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[14]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "i"],
+        Tensor[ x, {i}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[15]="]
+}, Open  ]],
+
+Cell["\<\
+A partial summation can be done over a subset of the base indices. The base \
+subset is never flavored.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yd[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[{1, 3}]\)}], "Input",
+  CellLabel->"In[16]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ x, {
+          red[ i]}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[16]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 1]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 1]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 3]}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 3]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[17]="]
+}, Open  ]],
+
+Cell["\<\
+An error occurs if the base specification is not a subset of the base indices \
+for the index.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] yd[i] // ToFlavor[red]\), "\n", 
+    \(% // EinsteinSum[{1, 4}]\)}], "Input",
+  CellLabel->"In[18]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ x, {
+          red[ i]}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    \(SumArrayExpansion::"subset" \(\(:\)\(\ \)\) 
+      "\!\({1, 4}\) is not a subset of the base indices \!\({1, 2, 3}\)"\)], \
+"Message",
+  CellLabel->"From In[18]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[19]="]
+}, Open  ]],
+
+Cell["It operates on sums on both sides of an equation...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] xd[i] + Sud[i, j] xu[j] \[NotEqual] 
+      yu[i] yd[i] + Tud[i, j] yu[j]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[20]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {i, Void}, {Void, j}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"],
+            Tensor[ x, {j}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ x, {i}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", "i", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ x, {Void}, {i}],
+            Editable->False]}]}], "\[NotEqual]", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["j",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ T, {i, Void}, {Void, j}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"],
+            Tensor[ y, {j}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ y, {i}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", "i", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ y, {Void}, {i}],
+            Editable->False]}]}]}]], "Output",
+  CellLabel->"Out[20]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {i, Void}, {Void, 1}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ x, {1}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["2",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {i, Void}, {Void, 2}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ x, {2}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["3",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {i, Void}, {Void, 3}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ x, {3}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ x, {1}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", "1", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ x, {Void}, {1}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ x, {2}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", "2", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ x, {Void}, {2}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ x, {3}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["x", "3", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ x, {Void}, {3}],
+            Editable->False]}]}], "\[NotEqual]", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ T, {i, Void}, {Void, 1}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ y, {1}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["2",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ T, {i, Void}, {Void, 2}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ y, {2}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["T", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["3",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ T, {i, Void}, {Void, 3}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ y, {3}, {Void}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ y, {1}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", "1", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ y, {Void}, {1}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ y, {2}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", "2", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ y, {Void}, {2}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["y", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ y, {3}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["y", "3", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ y, {Void}, {3}],
+            Editable->False]}]}]}]], "Output",
+  CellLabel->"Out[21]="]
+}, Open  ]],
+
+Cell["It will operate on equations and expressions within arrays.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \({xu[i] xd[i] + Sud[i, j] xu[j] \[Equal] yu[i] yd[i] + Tud[i, j] yu[j], 
+      Sud[i, i] // ToFlavor[red]}\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[22]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, j}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ x, {j}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ x, {i}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "i", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {i}],
+                Editable->False]}]}], "\[Equal]", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, j}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ y, {j}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ y, {i}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "i", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {i}],
+                Editable->False]}]}]}], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ S, {
+            red[ i], Void}, {Void, 
+            red[ i]}],
+          Editable->False]}], "}"}]], "Output",
+  CellLabel->"Out[22]="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 1}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 2}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ x, {2}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 3}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ x, {3}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "1", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {1}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ x, {2}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "2", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {2}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ x, {3}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "3", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {3}],
+                Editable->False]}]}], "\[Equal]", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 1}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ y, {1}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 2}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ y, {2}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 3}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ y, {3}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ y, {1}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "1", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {1}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ y, {2}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "2", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {2}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ y, {3}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "3", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {3}],
+                Editable->False]}]}]}], ",", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["1",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+              RowBox[{
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["1",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {
+              red[ 1], Void}, {Void, 
+              red[ 1]}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["2",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+              RowBox[{
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["2",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {
+              red[ 2], Void}, {Void, 
+              red[ 2]}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["3",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+              RowBox[{
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["3",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {
+              red[ 3], Void}, {Void, 
+              red[ 3]}],
+            Editable->False]}]}], "}"}]], "Output",
+  CellLabel->"Out[23]="]
+}, Open  ]],
+
+Cell["\<\
+It sums on dot product expressions and CircleTimes expressions.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i] . yd[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[24]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ x, {
+          red[ i]}, {Void}],
+        Editable->False], ".", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[24]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 1]}, {Void}],
+          Editable->False], ".", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 1]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 2]}, {Void}],
+          Editable->False], ".", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 2]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 3]}, {Void}],
+          Editable->False], ".", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 3]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[25]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(xu[i]\[CircleTimes]yd[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[26]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["x", 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+        Tensor[ x, {
+          red[ i]}, {Void}],
+        Editable->False], "\[CircleTimes]", 
+      InterpretationBox[
+        SubsuperscriptBox["y", 
+          TagBox[
+            StyleBox["i",
+              FontColor->RGBColor[1, 0, 0]],
+            (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+          TagBox[
+            StyleBox[
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ y, {Void}, {
+          red[ i]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[26]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 1]}, {Void}],
+          Editable->False], "\[CircleTimes]", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["1",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["1",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 1]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 2]}, {Void}],
+          Editable->False], "\[CircleTimes]", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["2",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["2",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 2]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["x", 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+          Tensor[ x, {
+            red[ 3]}, {Void}],
+          Editable->False], "\[CircleTimes]", 
+        InterpretationBox[
+          SubsuperscriptBox["y", 
+            TagBox[
+              StyleBox["3",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["3",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ y, {Void}, {
+            red[ 3]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[27]="]
+}, Open  ]],
+
+Cell["\<\
+If we have declared special base indices for some flavors of indices, then \
+they are expanded on the corresponding bases.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{1, 2, 3}, {red, {A, B}}]\)], "Input",
+  CellLabel->"In[28]:="],
+
+Cell["\<\
+Now, in the previous example, the two expressions are summed on different \
+base index sets.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \({xu[i] xd[i] + Sud[i, j] xu[j] \[Equal] yu[i] yd[i] + Tud[i, j] yu[j], 
+      Sud[i, i] // ToFlavor[red]}\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[29]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, j}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ x, {j}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ x, {i}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "i", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {i}],
+                Editable->False]}]}], "\[Equal]", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, j}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ y, {j}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ y, {i}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "i", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {i}],
+                Editable->False]}]}]}], ",", 
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ S, {
+            red[ i], Void}, {Void, 
+            red[ i]}],
+          Editable->False]}], "}"}]], "Output",
+  CellLabel->"Out[29]="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 1}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 2}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ x, {2}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {i, Void}, {Void, 3}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ x, {3}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "1", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {1}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ x, {2}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "2", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {2}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ x, {3}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", "3", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ x, {Void}, {3}],
+                Editable->False]}]}], "\[Equal]", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 1}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ y, {1}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 2}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ y, {2}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["T", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"}], 
+                  RowBox[{"i", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ T, {i, Void}, {Void, 3}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ y, {3}, {Void}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ y, {1}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "1", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {1}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "2"],
+                Tensor[ y, {2}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "2", 
+                  TagBox[
+                    StyleBox["2",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {2}],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["y", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "3"],
+                Tensor[ y, {3}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["y", "3", 
+                  TagBox[
+                    StyleBox["3",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ y, {Void}, {3}],
+                Editable->False]}]}]}], ",", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["A",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["A",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+              RowBox[{
+                TagBox[
+                  StyleBox["A",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["A",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {
+              red[ A], Void}, {Void, 
+              red[ A]}],
+            Editable->False], "+", 
+          InterpretationBox[
+            SubsuperscriptBox["S", 
+              RowBox[{
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["B",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["B",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+              RowBox[{
+                TagBox[
+                  StyleBox["B",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)], 
+                TagBox[
+                  StyleBox[
+                    TagBox[
+                      StyleBox["B",
+                        FontColor->RGBColor[1, 0, 0]],
+                      (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ S, {
+              red[ B], Void}, {Void, 
+              red[ B]}],
+            Editable->False]}]}], "}"}]], "Output",
+  CellLabel->"Out[30]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Suu[a, red@b] Tdd[a, red@b]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[]\)}], "Input",
+  CellLabel->"In[31]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["S", 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["b",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{"a", 
+            TagBox[
+              StyleBox["b",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+        Tensor[ S, {a, 
+          red[ b]}, {Void, Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["T", 
+          RowBox[{"a", 
+            TagBox[
+              StyleBox["b",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["b",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ T, {Void, Void}, {a, 
+          red[ b]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[31]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {1, 
+            red[ A]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {1, 
+            red[ A]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {1, 
+            red[ B]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {1, 
+            red[ B]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {2, 
+            red[ A]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {2, 
+            red[ A]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {2, 
+            red[ B]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {2, 
+            red[ B]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"3", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {3, 
+            red[ A]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"3", 
+              TagBox[
+                StyleBox["A",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["A",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {3, 
+            red[ A]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"3", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {3, 
+            red[ B]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"3", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {3, 
+            red[ B]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[32]="]
+}, Open  ]],
+
+Cell["\<\
+We can still use selected subsets for each index but, of course, they must be \
+from the corresponding base sets.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Suu[a, red@b] Tdd[a, red@b]\), "\[IndentingNewLine]", 
+    \(% // EinsteinSum[{{1, 2}, {B}}]\)}], "Input",
+  CellLabel->"In[33]:="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["S", 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["b",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], 
+          RowBox[{"a", 
+            TagBox[
+              StyleBox["b",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+        Tensor[ S, {a, 
+          red[ b]}, {Void, Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["T", 
+          RowBox[{"a", 
+            TagBox[
+              StyleBox["b",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox[
+                TagBox[
+                  StyleBox["b",
+                    FontColor->RGBColor[1, 0, 0]],
+                  (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ T, {Void, Void}, {a, 
+          red[ b]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[33]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {1, 
+            red[ B]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"1", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {1, 
+            red[ B]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["S", 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}], 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}]],
+          Tensor[ S, {2, 
+            red[ B]}, {Void, Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["T", 
+            RowBox[{"2", 
+              TagBox[
+                StyleBox["B",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]}], 
+            RowBox[{
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["B",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ T, {Void, Void}, {2, 
+            red[ B]}],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[34]="]
+}, Open  ]],
+
+Cell["Restore the initial values...", "Text"],
+
+Cell[BoxData[
+    \(ClearTensorShortcuts[{{x, y}, 1}, {{S, T}, 2}]\)], "Input",
+  CellLabel->"In[35]:="],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors]\)}], "Input",
+  CellLabel->"In[36]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{665, 474},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 58, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1837, 56, 638, 23, 50, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 100353, 2829}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 58, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1837, 56, 638, 23, 50, "Usage",
+  CellTags->"Function?"],
+Cell[2478, 81, 145, 3, 41, "MathCaption"],
+Cell[2626, 86, 308, 7, 58, "MathCaption"],
+Cell[2937, 95, 552, 10, 92, "MathCaption"],
+Cell[3492, 107, 578, 22, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4095, 133, 34, 0, 39, "ExampleSection"],
+Cell[4132, 135, 96, 2, 29, "Input"],
+Cell[4231, 139, 71, 0, 25, "Text"],
+Cell[4305, 141, 367, 7, 109, "Input"],
+Cell[4675, 150, 104, 2, 29, "Input"],
+Cell[4782, 154, 73, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[4880, 158, 122, 3, 49, "Input"],
+Cell[5005, 163, 581, 18, 27, "Output"],
+Cell[5589, 183, 1776, 53, 27, "Output"]
+}, Open  ]],
+Cell[7380, 239, 62, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[7467, 243, 123, 3, 49, "Input"],
+Cell[7593, 248, 582, 18, 27, "Output"],
+Cell[8178, 268, 582, 18, 27, "Output"]
+}, Open  ]],
+Cell[8775, 289, 67, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[8867, 293, 140, 3, 49, "Input"],
+Cell[9010, 298, 1244, 36, 27, "Output"],
+Cell[10257, 336, 3871, 107, 27, "Output"]
+}, Open  ]],
+Cell[14143, 446, 47, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[14215, 450, 127, 3, 49, "Input"],
+Cell[14345, 455, 913, 27, 27, "Output"],
+Cell[15261, 484, 913, 27, 27, "Output"]
+}, Open  ]],
+Cell[16189, 514, 127, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[16341, 521, 146, 3, 49, "Input"],
+Cell[16490, 526, 1244, 36, 27, "Output"],
+Cell[17737, 564, 2600, 72, 27, "Output"]
+}, Open  ]],
+Cell[20352, 639, 118, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[20495, 646, 129, 3, 49, "Input"],
+Cell[20627, 651, 1244, 36, 27, "Output"],
+Cell[21874, 689, 184, 4, 20, "Message"],
+Cell[22061, 695, 67, 2, 27, "Output"]
+}, Open  ]],
+Cell[22143, 700, 67, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[22235, 704, 190, 4, 49, "Input"],
+Cell[22428, 710, 2992, 84, 30, "Output"],
+Cell[25423, 796, 8772, 244, 28, "Output"]
+}, Open  ]],
+Cell[34210, 1043, 75, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[34310, 1047, 217, 4, 69, "Input"],
+Cell[34530, 1053, 4590, 118, 30, "Output"],
+Cell[39123, 1173, 13675, 343, 50, "Output"]
+}, Open  ]],
+Cell[52813, 1519, 87, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[52925, 1525, 142, 3, 49, "Input"],
+Cell[53070, 1530, 1244, 36, 27, "Output"],
+Cell[54317, 1568, 3871, 107, 27, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[58225, 1680, 153, 3, 49, "Input"],
+Cell[58381, 1685, 1257, 36, 27, "Output"],
+Cell[59641, 1723, 3910, 107, 27, "Output"]
+}, Open  ]],
+Cell[63566, 1833, 146, 3, 25, "Text"],
+Cell[63715, 1838, 102, 2, 29, "Input"],
+Cell[63820, 1842, 116, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[63961, 1849, 217, 4, 69, "Input"],
+Cell[64181, 1855, 4590, 118, 30, "Output"],
+Cell[68774, 1975, 12384, 311, 50, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[81195, 2291, 139, 3, 49, "Input"],
+Cell[81337, 2296, 1690, 48, 28, "Output"],
+Cell[83030, 2346, 10504, 284, 28, "Output"]
+}, Open  ]],
+Cell[93549, 2633, 137, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[93711, 2640, 152, 3, 49, "Input"],
+Cell[93866, 2645, 1690, 48, 28, "Output"],
+Cell[95559, 2695, 3540, 96, 28, "Output"]
+}, Open  ]],
+Cell[99114, 2794, 45, 0, 25, "Text"],
+Cell[99162, 2796, 104, 2, 29, "Input"],
+Cell[99269, 2800, 297, 5, 89, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

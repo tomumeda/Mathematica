@@ -1,0 +1,28 @@
+Menu["My",
+	{
+
+
+
+		MenuItem["Evaluate Selection", (*Copyright Nikolay Gromov 2011*) 
+			KernelExecute[
+				OnF5NotebookRead = NotebookRead[EvaluationNotebook[]];
+				If[Not[Or[Head[OnF5NotebookRead] === String,Head[OnF5NotebookRead] === RowBox]],OnF5NotebookRead=""];
+				SetOptions[
+					EvaluationNotebook[],
+				        DockedCells->{
+					Cell[BoxData[ToBoxes[
+						Grid[{{ Button["\<\[Times]\>",SetOptions[EvaluationNotebook[],DockedCells->{}]],
+							Short[ToExpression[OnF5NotebookRead],30]}},Alignment -> {{Top}, {Top}}]
+					, TraditionalForm]], "Output", CellMargins->{{0,0},{0,3}},CellFrame->{{0, 0}, {1, 0}}]}
+				]
+			], MenuKey["F5", Modifiers->{}], MenuEvaluator -> Automatic],
+
+
+
+		MenuItem["Open/Close", CellOpen->Toggle, MenuKey["C", Modifiers->{"Control", "Shift"}]],
+		MenuItem["TeX", FrontEndExecute[{
+					FrontEnd`NotebookWrite[FrontEnd`InputNotebook[], 
+						Cell[" ", "TeX"], After]
+				}], MenuKey["Q", Modifiers->{"Control", "Shift"}]]
+
+	}]

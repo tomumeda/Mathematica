@@ -1,0 +1,276 @@
+(************** Content-type: application/mathematica **************
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[      6465,        199]*)
+(*NotebookOutlinePosition[      7223,        225]*)
+(*  CellTagsIndexPosition[      7179,        221]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Standing Waves", "Title"],
+
+Cell[TextData[{
+  StyleBox["By Renan Cabrera\nGraduate student\n",
+    FontSize->18],
+  StyleBox["Physics Dept., University of Windsor\nWindsor, ON, Canada N9B 3P4\
+\nrencabla@ceibo.entelnet.bo\ncabrer7@uwindsor.ca\nNovember/2003",
+    FontSize->14]
+}], "Subtitle"],
+
+Cell["\<\
+In this notebook we are going to discover that the superposition of plane \
+waves can lead to standing waves with some interesting properties. In \
+particular we are going to describe cases when the electric and magnetic are \
+parallel.\
+\>", "Text",
+  TextAlignment->Center,
+  TextJustification->0],
+
+Cell[BoxData[
+    \(Needs["\<TCliffordAlgebra1`TClifford`\>"]\)], "Input"],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{0, 1, 2, 3}]\)], "Input"],
+
+Cell["Initial Setting", "Text"],
+
+Cell[BoxData[{
+    \(SetCliffordBasisValueRules[\[DoubleStruckE], 
+      3]\), "\[IndentingNewLine]", 
+    \(SetParavectorBasisValues[\[DoubleStruckE], 
+      Length@BaseIndices]\), "\[IndentingNewLine]", 
+    \(\(labs = {x, \[Delta], 
+          g, \[CapitalGamma]};\)\), "\[IndentingNewLine]", 
+    \(DefineTensorShortcuts[{{x, B}, 1}, {F, 2}]\), "\[IndentingNewLine]", 
+    \(SetAttributes[c, Constant]\)}], "Input"],
+
+Cell[BoxData[{
+    \(\(Format[ap] = Subscript[a, "\<+\>"];\)\), "\[IndentingNewLine]", 
+    \(\(Format[am] = Subscript[a, "\<-\>"];\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Opposite Helicity superposition", "Section"],
+
+Cell["\<\
+Starting from the superposition of electromagnetic waves of opposite helicity \
+we get:\
+\>", "Text"],
+
+Cell[BoxData[
+    \(F = \((1 + PVector[k, 1])\) ** PVector["\<E\>", 1]*
+          Exp[I*\((\[Omega]*t - k*x)\)]/Sqrt[2] - \((1 - PVector[k, 1])\) ** 
+            PVector["\<E\>", 1]*
+          Exp[\(-I\)*\((\[Omega]*t + k*x)\)]/Sqrt[2]\)], "Input"],
+
+Cell["The Electric field is calculated taking the real part.", "Text"],
+
+Cell[BoxData[{
+    \(RealPart[F]\), "\[IndentingNewLine]", 
+    \(\((\(% // CliffordExpand\) // CliffordSimplify)\) /. 
+      PVector[k, 1] ** PVector["\<E\>", 1] \[RuleDelayed] \ 
+        I*PVector["\<k\[Cross]E\>", 1]\), "\[IndentingNewLine]", 
+    \(EF = \(ExpandRealPart[%] // ExpToTrig\) // TrigExpand\)}], "Input"],
+
+Cell["\<\
+As we see the direction of the electric field rotates as we advance in \
+time.\
+\>", "Text"],
+
+Cell["\<\
+The magnetic field (up to the constant c) is calculated taking the imaginary \
+part.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(ImaginaryPart[F]\), "\[IndentingNewLine]", 
+    \(\((\(% // CliffordExpand\) // CliffordSimplify)\) /. 
+      PVector[k, 1] ** PVector["\<E\>", 1] \[RuleDelayed] \ 
+        I*PVector["\<k\[Cross]E\>", 1]\), "\[IndentingNewLine]", 
+    \(BF = \(ExpandImaginaryPart[%] // ExpToTrig\) // TrigExpand\)}], "Input"],
+
+Cell["\<\
+In order to see if they are parallel we calculate the wedge product and \
+verify that is zero everywhere.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(EF\[Wedge]BF\), "\[IndentingNewLine]", 
+    \(% // CliffordExpand\), "\[IndentingNewLine]", 
+    \(% // SortWedge\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Equal Helicity superposition", "Section"],
+
+Cell[BoxData[
+    \(F = \((1 + PVector[k, 1])\) ** PVector["\<E\>", 1]*
+          Exp[I*\((\[Omega]*t - k*x)\)]/Sqrt[2] - \((1 - PVector[k, 1])\) ** 
+            PVector["\<E\>", 1]*
+          Exp[I*\((\[Omega]*t + k*x)\)]/Sqrt[2]\)], "Input"],
+
+Cell["The electric field is calculated from the real part of F.", "Text"],
+
+Cell[BoxData[{
+    \(RealPart[F]\), "\[IndentingNewLine]", 
+    \(\((\(% // CliffordExpand\) // CliffordSimplify)\) /. 
+      PVector[k, 1] ** PVector["\<E\>", 1] \[RuleDelayed] \ 
+        I*PVector["\<k\[Cross]E\>", 1]\), "\[IndentingNewLine]", 
+    \(EF = \(ExpandRealPart[%] // ExpToTrig\) // TrigExpand\)}], "Input"],
+
+Cell["\<\
+The direction of the electric field keeps constant as we advance in time.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(ImaginaryPart[F]\), "\[IndentingNewLine]", 
+    \(\((\(% // CliffordExpand\) // CliffordSimplify)\) /. 
+      PVector[k, 1] ** PVector["\<E\>", 1] \[RuleDelayed] \ 
+        I*PVector["\<k\[Cross]E\>", 1]\), "\[IndentingNewLine]", 
+    \(BF = \(ExpandImaginaryPart[%] // ExpToTrig\) // TrigExpand\)}], "Input"],
+
+Cell["The electric and magnetic fields are also parallel.", "Text"],
+
+Cell[BoxData[{
+    \(EF\[Wedge]BF\), "\[IndentingNewLine]", 
+    \(% // CliffordExpand\), "\[IndentingNewLine]", 
+    \(% // SortWedge\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Reference", "Section"],
+
+Cell[TextData[{
+  StyleBox["William Baylis,Electrodynamics. ",
+    FontSize->16],
+  StyleBox["A Modern Geometric Approach",
+    FontSize->16,
+    FontSlant->"Italic"],
+  StyleBox[", Birkhauser,2002.",
+    FontSize->16]
+}], "Text"]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"4.1 for Microsoft Windows",
+ScreenRectangle->{{0, 800}, {0, 527}},
+AutoGeneratedPackage->None,
+WindowToolbars->{},
+WindowSize->{792, 500},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+CellLabelAutoDelete->True,
+StyleDefinitions -> "TensorialStyle.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1727, 52, 31, 0, 76, "Title"],
+Cell[1761, 54, 265, 6, 152, "Subtitle"],
+Cell[2029, 62, 309, 7, 54, "Text"],
+Cell[2341, 71, 74, 1, 46, "Input"],
+Cell[2418, 74, 65, 1, 46, "Input"],
+Cell[2486, 77, 31, 0, 34, "Text"],
+Cell[2520, 79, 418, 8, 126, "Input"],
+Cell[2941, 89, 147, 2, 66, "Input"],
+
+Cell[CellGroupData[{
+Cell[3113, 95, 50, 0, 61, "Section"],
+Cell[3166, 97, 111, 3, 34, "Text"],
+Cell[3280, 102, 248, 4, 66, "Input"],
+Cell[3531, 108, 70, 0, 34, "Text"],
+Cell[3604, 110, 320, 5, 106, "Input"],
+Cell[3927, 117, 102, 3, 34, "Text"],
+Cell[4032, 122, 108, 3, 34, "Text"],
+Cell[4143, 127, 330, 5, 106, "Input"],
+Cell[4476, 134, 129, 3, 34, "Text"],
+Cell[4608, 139, 148, 3, 86, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[4793, 147, 47, 0, 41, "Section"],
+Cell[4843, 149, 243, 4, 66, "Input"],
+Cell[5089, 155, 73, 0, 34, "Text"],
+Cell[5165, 157, 320, 5, 106, "Input"],
+Cell[5488, 164, 97, 2, 34, "Text"],
+Cell[5588, 168, 330, 5, 106, "Input"],
+Cell[5921, 175, 67, 0, 34, "Text"],
+Cell[5991, 177, 148, 3, 86, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[6176, 185, 28, 0, 41, "Section"],
+Cell[6207, 187, 230, 8, 37, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

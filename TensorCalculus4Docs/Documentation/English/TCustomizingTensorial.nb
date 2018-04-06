@@ -1,0 +1,2359 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     71154,       2123]*)
+(*NotebookOutlinePosition[     71884,       2148]*)
+(*  CellTagsIndexPosition[     71840,       2144]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Customizing Tensorial", "Title"],
+
+Cell["David Park", "Subsubtitle"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  InitializationCell->True],
+
+Cell[BoxData[{
+    \(DefineTensorShortcuts[{{x, e, p, \[Sigma], u, v, ucrossv}, 
+        1}, {{g, \[Delta], S}, 2}, {\[Epsilon], 
+        3}]\), "\[IndentingNewLine]", 
+    \(\(labs = {x, \[Delta], g, \[CapitalGamma]};\)\)}], "Input",
+  InitializationCell->True],
+
+Cell[TextData[{
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " 4.0 has a number of features that allow a user to add novel indexed \
+structures and still use some of the index routines. It is also relatively \
+easy to write definitions for customized output formatting of various \
+structures. This notebook explains how and to what extent this can be done."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Adding a ContravariantD Derivative", "Section"],
+
+Cell[TextData[{
+  "Suppose that we wanted wanted to add a ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  " structure to work with ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  ". This would be similar to ",
+  Cell[BoxData[
+      \(CovariantD\)]],
+  " except that the differentiation indices would be considered to be up \
+instead of down. We will not show here how to fully implement such a \
+derivative but how to format the expression and how to give it access to some \
+of the index routines. A user would have to write additional special \
+routines, say to convert a ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  " to a ",
+  Cell[BoxData[
+      \(CovariantD\)]],
+  ", or to do metric simplification."
+}], "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Writing Special Output Formats", "Section"],
+
+Cell[TextData[{
+  "In working with educational material and texts it is always nice to \
+reproduce textbook notation as much as possible. In most cases there is an \
+easy way to do this using ",
+  Cell[BoxData[
+      \(MakeBoxes\)]],
+  " and ",
+  Cell[BoxData[
+      \(InterpretationBox\)]],
+  ". To illustrate a simple case, I illustrate this use for formatting ",
+  Cell[BoxData[
+      \(MatrixExp\)]],
+  " as a regular exponential."
+}], "Text"],
+
+Cell[BoxData[
+    \(MakeBoxes[MatrixExp[x_], 
+        form : StandardForm | 
+            TraditionalForm] := \(InterpretationBox[#1, #2, \
+\[IndentingNewLine]SyntaxForm \[Rule] 
+              Automatic, \[IndentingNewLine]Editable \[Rule] 
+              False] &\)\  @@ \n\ \ \ \ \
+{SuperscriptBox["\<\[ExponentialE]\>", MakeBoxes[x, form]], \ 
+          MatrixExp[x]}\)], "Input"],
+
+Cell[TextData[{
+  "For some reason, that I do not understand, ",
+  Cell[BoxData[
+      \(InterpretationBox\)]],
+  " has been given the attribute ",
+  Cell[BoxData[
+      \(HoldAllComplete\)]],
+  ". Using ",
+  Cell[BoxData[
+      \(InterpretationBox\)]],
+  " as a pure function and then applying it to the list of the two arguments \
+allows the arguments to be programmed and evaluated. The first argument gives \
+the box structure for output formatting and the second argument gives the \
+internal expression, usually a mirror of the input expression. ",
+  Cell[BoxData[
+      \(SyntaxForm\)]],
+  " gives the grouping precedence. The output expressions can be copied and \
+pasted but not edited. (If we allowed editing, it could be edited but this \
+editing would still not be reflected internally.)"
+}], "Text"],
+
+Cell[TextData[{
+  "Then, if ",
+  Cell[BoxData[
+      \(J\)]],
+  " represents a matrix, we can obtain a normal symbolic expression for ",
+  Cell[BoxData[
+      \(MatrixExp\)]],
+  " as one might see in textbooks and when a matrix is substituted for ",
+  Cell[BoxData[
+      \(J\)]],
+  " the expression is evaluated normally."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{\(MatrixExp[\[Theta]\ J]\), "\[IndentingNewLine]", 
+    RowBox[{
+      RowBox[{"%", "/.", 
+        RowBox[{"J", "\[Rule]", 
+          RowBox[{"(", GridBox[{
+                {"0", \(-1\)},
+                {"1", "0"}
+                }], ")"}]}]}], "//", "MatrixForm"}]}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[\(\[ExponentialE]\^\(J\ \[Theta]\)\),
+      MatrixExp[ 
+        Times[ J, \[Theta]]],
+      Editable->False,
+      SyntaxForm->Automatic]], "Output"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {\(Cos[\[Theta]]\), \(-Sin[\[Theta]]\)},
+            {\(Sin[\[Theta]]\), \(Cos[\[Theta]]\)}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Using ",
+  Cell[BoxData[
+      \(MakeBoxes\)]],
+  " is superior to using a ",
+  Cell[BoxData[
+      \(Format\)]],
+  " definition because the output can be always copied and pasted. You should \
+check the ",
+  Cell[BoxData[
+      \(MakeBoxes\)]],
+  " Help and especially note that any expressions used in the formatting \
+should be within their own ",
+  Cell[BoxData[
+      \(MakeBoxes\)]],
+  "."
+}], "Text"],
+
+Cell[TextData[{
+  "Without a ",
+  Cell[BoxData[
+      \(MakeBoxes\)]],
+  " definition the new expression, ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  ", has no special formatting."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \({ContravariantD[pu[a], i], ContravariantD[pu[a], {i, j}], 
+      ContravariantD[pu[a] \[Sigma]d[b], {i, j}]}\)], "Input"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{"ContravariantD", "[", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], ",", "i"}], "]"}], ",", 
+        RowBox[{"ContravariantD", "[", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], ",", \({i, j}\)}], "]"}], ",", 
+        RowBox[{"ContravariantD", "[", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ",", \({i, j}\)}], "]"}]}], 
+      "}"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The following definition creates a superscript output format for ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  ". For complex expressions we add round brackets around the first \
+argument."
+}], "Text"],
+
+Cell[BoxData[
+    RowBox[{\(MakeBoxes[ContravariantD[t_, indices_], 
+        form : StandardForm | TraditionalForm]\), ":=", 
+      RowBox[{"Module", "[", 
+        RowBox[{\({windx = Flatten[{indices}]}\), ",", 
+          RowBox[{"If", "[", 
+            RowBox[{
+              RowBox[{"MatchQ", "[", 
+                RowBox[{"t", ",", 
+                  RowBox[{\(Tensor[_, _, _]\), "|", 
+                    InterpretationBox["f_Symbol",
+                      Tensor[ 
+                        Pattern[ FE`Conversion`Private`f, 
+                          Blank[ Symbol]]],
+                      Editable->False], "|", \(CovariantD[__]\)}]}], "]"}], 
+              ",", "\[IndentingNewLine]", 
+              "\[IndentingNewLine]", \( (*\ A\ single\ factor\ *) \), 
+              "\[IndentingNewLine]", \(\((InterpretationBox[#1, #2, 
+                      Editable \[Rule] False] &)\) @@ {SuperscriptBox[
+                    MakeBoxes[t, form], 
+                    RowBox[{"\<;\>", 
+                        RowBox[\((MakeBoxes[#1, form] &)\) /@ windx]}]], 
+                  ContravariantD[t, indices]}\), ",", "\[IndentingNewLine]", 
+              "\[IndentingNewLine]", \( (*\ An\ expression\ *) \), 
+              "\[IndentingNewLine]", \(\((InterpretationBox[#1, #2, 
+                      Editable \[Rule] False] &)\) @@ {SuperscriptBox[
+                    RowBox[{"\<(\>", MakeBoxes[t, form], "\<)\>"}], 
+                    RowBox[{"\<;\>", 
+                        RowBox[\((MakeBoxes[#1, form] &)\) /@ windx]}]], 
+                  ContravariantD[t, indices]}\)}], "]"}]}], "]"}]}]], "Input"],
+
+Cell["\<\
+Now all the expressions above are automatically formatted. However, the \
+internal format is unchanged.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \({ContravariantD[pu[a], i], ContravariantD[pu[a], {i, j}], 
+      ContravariantD[pu[a] \[Sigma]d[b], {i, j}]}\), "\[IndentingNewLine]", 
+    \(First[%] // FullForm\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        InterpretationBox[
+          SuperscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], \(\(;\)\(i\)\)],
+          ContravariantD[ 
+            Tensor[ p, {a}, {Void}], i],
+          Editable->False], ",", 
+        InterpretationBox[
+          SuperscriptBox[
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], \(\(;\)\(i  j\)\)],
+          ContravariantD[ 
+            Tensor[ p, {a}, {Void}], {i, j}],
+          Editable->False], ",", 
+        InterpretationBox[
+          SuperscriptBox[
+            RowBox[{"(", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["p", 
+                    TagBox[
+                      StyleBox["a",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "a"],
+                  Tensor[ p, {a}, {Void}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["\[Sigma]", "b", 
+                    TagBox[
+                      StyleBox["b",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]],
+                  Tensor[ \[Sigma], {Void}, {b}],
+                  Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+          ContravariantD[ 
+            Times[ 
+              Tensor[ p, {a}, {Void}], 
+              Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+          Editable->False]}], "}"}]], "Output"],
+
+Cell[BoxData[
+    TagBox[
+      StyleBox[\(ContravariantD[Tensor[p, List[a], List[Void]], i]\),
+        ShowSpecialCharacters->False,
+        ShowStringCharacters->True,
+        NumberMarks->True],
+      FullForm]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Now we have formatting but there is further work to do to more fully \
+incorporate this new expression into ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  "."
+}], "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Finding and Changing Indices", "Section"],
+
+Cell[TextData[{
+  "There are two relatively low level routines in ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " that are behind many of the index routines. These are ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  ", which will find the up, down and dummy indices in a tensor term, and ",
+  Cell[BoxData[
+      \(IndexChange\)]],
+  ", which will perform index replacements without altering non-index \
+positions. However, if you introduce new structures that contain indices, ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " knows nothing about these new indices. "
+}], "Text"],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \(IndexParsingRules\)]],
+  " is a list of rules for putting new expressions in a form such that ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " will correctly extract the indices. ",
+  Cell[BoxData[
+      \(NewIndexChangePatterns\)]],
+  " provides information so that the location of indices in new expressions \
+can be found by ",
+  Cell[BoxData[
+      \(IndexChange\)]],
+  "."
+}], "Text"],
+
+Cell[TextData[{
+  "Let's start with parsing the term indices. Without guidance ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " can't find any of the indices inside ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  ". It does not look inside unknown functions."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(IndexParsingRules = {};\)\), "\[IndentingNewLine]", 
+    \(step1 = 
+      ContravariantD[pu[a] \[Sigma]d[b], {i, j}]\), "\[IndentingNewLine]", 
+    \(% // ParseTermIndices\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    \({{}, {{}, {}}, {}}\)], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "If we tried, as an example, to apply a Kronecker to this expression it \
+doesn't work because ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " knows nothing about the indices."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step2 = step1\ \[Delta]ud[k, i]\), "\[IndentingNewLine]", 
+    \(% // KroneckerAbsorb[\[Delta]]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Delta]", 
+          RowBox[{
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"}], 
+          RowBox[{"k", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ \[Delta], {k, Void}, {Void, i}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Delta]", 
+          RowBox[{
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"}], 
+          RowBox[{"k", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ \[Delta], {k, Void}, {Void, i}],
+        Editable->False]}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "We add index parsing rules that will convert the expression into a product \
+of the first argument times a tensor that has all the differentiation indices \
+up. ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  " knows the types of indices in a tensor so will parse them correctly. A \
+tensor with a unique tensor label is used so it will not inadvertently \
+combine with a similar tensor in the first argument. The resulting expression \
+is only temporarily used by ",
+  Cell[BoxData[
+      \(ParseTermIndices\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(IndexParsingRules = {};\)\), "\[IndentingNewLine]", 
+    \(\(AppendTo[IndexParsingRules, 
+        ContravariantD[t_, indices_List] \[RuleDelayed] 
+          t \((Tensor[Unique[], indices, 
+                Table[Void, {Length[
+                      indices]}]])\)];\)\), "\[IndentingNewLine]", 
+    \(AppendTo[IndexParsingRules, 
+      ContravariantD[t_, index_] \[RuleDelayed] 
+        t \((Tensor[Unique[], {index}, {Void}])\)]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[\(\((t_)\)\^\(\(;\)\(indices_List\)\)\),
+            ContravariantD[ 
+              Pattern[ t, 
+                Blank[ ]], 
+              Pattern[ indices, 
+                Blank[ List]]],
+            Editable->False], 
+          "\[RuleDelayed]", \(t\ Tensor[Unique[], indices, 
+              Table[Void, {Length[indices]}]]\)}], ",", 
+        RowBox[{
+          InterpretationBox[\(\((t_)\)\^\(\(;\)\(index_\)\)\),
+            ContravariantD[ 
+              Pattern[ t, 
+                Blank[ ]], 
+              Pattern[ index, 
+                Blank[ ]]],
+            Editable->False], "\[RuleDelayed]", 
+          RowBox[{"t", " ", 
+            InterpretationBox[
+              SubsuperscriptBox[\(Unique[]\), 
+                TagBox[
+                  StyleBox["index",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "index"],
+              Tensor[ $1, {index}, {Void}],
+              Editable->False]}]}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The following shows the result of applying these rules to the ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  " expression. It becomes a simple product of tensors with the contravariant \
+differentiation indices in the up position."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(ContravariantD[pu[a] \[Sigma]d[b], {i, j}]\), "\[IndentingNewLine]", 
+    \(% /. IndexParsingRules\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["p", 
+          TagBox[
+            StyleBox["a",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "a"],
+        Tensor[ p, {a}, {Void}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Sigma]", "b", 
+          TagBox[
+            StyleBox["b",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]],
+        Tensor[ \[Sigma], {Void}, {b}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["$2", 
+          RowBox[{
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}], \(i  j\)],
+        Tensor[ $2, {i, j}, {Void, Void}],
+        Editable->False]}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Now, ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " knows how to parse the indices in the new ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  " expressions."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(ContravariantD[pu[a] \[Sigma]d[b], {i, j}]\), "\[IndentingNewLine]", 
+    \(% // ParseTermIndices\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    \({{}, {{a, i, j}, {b}}, {}}\)], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Now, ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " makes a valiant attempt to absorb the Kronecker but fails to change the i \
+index."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step2\), "\[IndentingNewLine]", 
+    \(% // KroneckerAbsorb[\[Delta]]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Delta]", 
+          RowBox[{
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"}], 
+          RowBox[{"k", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ \[Delta], {k, Void}, {Void, i}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "This is because ",
+  Cell[BoxData[
+      \(IndexChange\)]],
+  " does not know that i is an index and so won't replace it."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step1\), "\[IndentingNewLine]", 
+    \(% // IndexChange[{i, k}]\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "We instruct ",
+  StyleBox["Tensorial",
+    FontSlant->"Italic"],
+  " that these positions in ",
+  Cell[BoxData[
+      \(ContravariantD\)]],
+  " are indeed valid indices."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(NewIndexChangePatterns = {};\)\), "\[IndentingNewLine]", 
+    \(\(AppendTo[
+        NewIndexChangePatterns, {1, {2}, 
+          ContravariantD[t_, index_]}];\)\), "\[IndentingNewLine]", 
+    \(AppendTo[
+      NewIndexChangePatterns, {2, {2, _}, 
+        ContravariantD[t_, indices_List]}]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{"{", 
+          RowBox[{"1", ",", \({2}\), ",", 
+            InterpretationBox[\(\((t_)\)\^\(\(;\)\(index_\)\)\),
+              ContravariantD[ 
+                Pattern[ t, 
+                  Blank[ ]], 
+                Pattern[ index, 
+                  Blank[ ]]],
+              Editable->False]}], "}"}], ",", 
+        RowBox[{"{", 
+          RowBox[{"2", ",", \({2, _}\), ",", 
+            InterpretationBox[\(\((t_)\)\^\(\(;\)\(indices_List\)\)\),
+              ContravariantD[ 
+                Pattern[ t, 
+                  Blank[ ]], 
+                Pattern[ indices, 
+                  Blank[ List]]],
+              Editable->False]}], "}"}]}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The Help page for ",
+  Cell[BoxData[
+      \(NewIndexChangePatterns\)]],
+  " tell how to specify this information. Each set of specifications contains \
+3 items: 1) the number of levels to drop from an index location to arrive at \
+the new indexed expression; 2) The pattern that these dropped levels must \
+match (for example above they must be the second argument in the expression); \
+and the pattern for the new expression."
+}], "Text"],
+
+Cell["\<\
+The following illustrates a detailed test using the second specification \
+above.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Print["\<Looking for index i in a ContravariantD expression\>"]\), "\
+\[IndentingNewLine]", 
+    \(step1\), "\[IndentingNewLine]", 
+    \(Print["\<Position of i\>"]\), "\[IndentingNewLine]", 
+    \(step3 = First@Position[step1, i]\), "\[IndentingNewLine]", 
+    \(Print["\<We drop 2 levels\>"]\), "\[IndentingNewLine]", 
+    \(step4 = Drop[step3, 2]\), "\[IndentingNewLine]", 
+    \(Print["\<This should give us the new ContravariantD expression. Does it \
+match the pattern?\>"]\), "\[IndentingNewLine]", 
+    \(Part[step1, Sequence @@ step4]\), "\[IndentingNewLine]", 
+    \(MatchQ[%, ContravariantD[t_, indices_List]]\), "\[IndentingNewLine]", 
+    \(Print["\<And do the dropped indices match the pattern for them?\>"]\), \
+"\[IndentingNewLine]", 
+    \(MatchQ[step3, {2, _}]\)}], "Input"],
+
+Cell[BoxData[
+    \("Looking for index i in a ContravariantD expression"\)], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    \("Position of i"\)], "Print"],
+
+Cell[BoxData[
+    \({2, 1}\)], "Output"],
+
+Cell[BoxData[
+    \("We drop 2 levels"\)], "Print"],
+
+Cell[BoxData[
+    \({}\)], "Output"],
+
+Cell[BoxData[
+    \("This should give us the new ContravariantD expression. Does it match \
+the pattern?"\)], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    \(True\)], "Output"],
+
+Cell[BoxData[
+    \("And do the dropped indices match the pattern for them?"\)], "Print"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell["So that position for i is a position of a true index.", "Text"],
+
+Cell[TextData[{
+  Cell[BoxData[
+      \(KroneckerAbsorb\)]],
+  " now works properly on the new expression."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step2\), "\[IndentingNewLine]", 
+    \(% // KroneckerAbsorb[\[Delta]]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["\[Delta]", 
+          RowBox[{
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"}], 
+          RowBox[{"k", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ \[Delta], {k, Void}, {Void, i}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(k  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {k, j}],
+      Editable->False]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "But not every routine will work. ",
+  Cell[BoxData[
+      \(MetricSimplify\)]],
+  " does not work because it is presently restricted in the expressions it \
+will work on."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step1\ gdd[a, c]\), "\[IndentingNewLine]", 
+    \(% // MetricSimplify[g]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["g", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ g, {Void, Void}, {a, c}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["g", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ g, {Void, Void}, {a, c}],
+        Editable->False]}]], "Output"]
+}, Open  ]],
+
+Cell["But we could write special rules.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(step1\ gdd[a, c]\), "\[IndentingNewLine]", 
+    \(% /. ContravariantD[t_, b_] \((g : gdd[_, _])\) \[Rule] 
+        ContravariantD[t\ g, b]\), "\[IndentingNewLine]", 
+    \(% // MetricSimplify[g]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SuperscriptBox[
+          RowBox[{"(", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["p", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ p, {a}, {Void}],
+                Editable->False], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Sigma]", "b", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]],
+                Tensor[ \[Sigma], {Void}, {b}],
+                Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+        ContravariantD[ 
+          Times[ 
+            Tensor[ p, {a}, {Void}], 
+            Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+        Editable->False], " ", 
+      InterpretationBox[
+        SubsuperscriptBox["g", \(a  c\), 
+          RowBox[{
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], 
+            TagBox[
+              StyleBox["c",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ g, {Void, Void}, {a, c}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["g", \(a  c\), 
+                RowBox[{
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["c",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]}]],
+              Tensor[ g, {Void, Void}, {a, c}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["p", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ p, {a}, {Void}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ g, {Void, Void}, {a, c}], 
+          Tensor[ p, {a}, {Void}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              SubsuperscriptBox["p", "c", 
+                TagBox[
+                  StyleBox["c",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ p, {Void}, {c}],
+              Editable->False], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Sigma]", "b", 
+                TagBox[
+                  StyleBox["b",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]],
+              Tensor[ \[Sigma], {Void}, {b}],
+              Editable->False]}], ")"}], \(\(;\)\(i  j\)\)],
+      ContravariantD[ 
+        Times[ 
+          Tensor[ p, {Void}, {c}], 
+          Tensor[ \[Sigma], {Void}, {b}]], {i, j}],
+      Editable->False]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Customizing Tensor Labels and Tensor Indices", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Tensor Labels, Cross Product", "Subsection"],
+
+Cell[TextData[{
+  "We can use the ",
+  Cell[BoxData[
+      \(TensorLabelFormat\)]],
+  " command to give special constructions to tensor labels."
+}], "Text"],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices[{1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(SetTensorValues[\[Epsilon]ddd[i, j, k], \ 
+      PermutationPseudotensor[3]]\)}], "Input"],
+
+Cell[TextData[{
+  "Suppose we want to represent the cross product of two vector, ",
+  Cell[BoxData[
+      \(u\[Cross]v\)]],
+  ", in Cartesian coordinates. We can use a tensor label ",
+  Cell[BoxData[
+      \(ucrossv\)]],
+  " but give it special formatting."
+}], "Text"],
+
+Cell[BoxData[
+    \(TensorLabelFormat[ucrossv, 
+      RowBox[{"\<(\>"\ , ToBoxes[u\[Cross]v], "\<)\>"}] // 
+        DisplayForm]\)], "Input"],
+
+Cell[TextData[{
+  "Then we could do the following calculation where we start out by writing \
+the components of the cross product in conventional book form. (The ",
+  Cell[BoxData[
+      \(HoldOp\)]],
+  " on ",
+  Cell[BoxData[
+      \(Times\)]],
+  " preserved a more normal factor order as might appear in books.)"
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(u\[Cross]v \[Equal] ucrossvd[k] eu[k] // 
+      HoldOp[Times]\), "\[IndentingNewLine]", 
+    \(% /. ucrossvd[k] \[Rule] \[Epsilon]ddd[i, j, k] uu[i] vu[j] // 
+      ReleaseHold\), "\[IndentingNewLine]", 
+    \(MapAt[\((\(# // EinsteinSum[]\) // 
+            Collect[#, eu[i] // EinsteinArray[]] &)\) &, %, 2]\)}], "Input"],
+
+Cell[BoxData[
+    RowBox[{\(u\[Cross]v\), "\[Equal]", 
+      TagBox[
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox[
+              InterpretationBox[
+                TagBox[\((u\[Cross]v)\),
+                  DisplayForm],
+                ucrossv,
+                Editable->False], "k", 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]],
+            Tensor[ ucrossv, {Void}, {k}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["e", 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "k"],
+            Tensor[ e, {k}, {Void}],
+            Editable->False]}],
+        HoldForm]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{\(u\[Cross]v\), "\[Equal]", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "k"],
+          Tensor[ e, {k}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["u", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ u, {i}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["v", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j"],
+          Tensor[ v, {j}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", \(i  j  k\), 
+            RowBox[{
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}]],
+          Tensor[ \[Epsilon], {Void, Void, Void}, {i, j, k}],
+          Editable->False]}]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{\(u\[Cross]v\), "\[Equal]", 
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["e", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ e, {3}, {Void}],
+            Editable->False], " ", 
+          RowBox[{"(", 
+            RowBox[{
+              RowBox[{
+                RowBox[{"-", 
+                  InterpretationBox[
+                    SubsuperscriptBox["u", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ u, {2}, {Void}],
+                    Editable->False]}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ v, {1}, {Void}],
+                  Editable->False]}], "+", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["u", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ u, {1}, {Void}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ v, {2}, {Void}],
+                  Editable->False]}]}], ")"}]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["e", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ e, {2}, {Void}],
+            Editable->False], " ", 
+          RowBox[{"(", 
+            RowBox[{
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["u", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"],
+                  Tensor[ u, {3}, {Void}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ v, {1}, {Void}],
+                  Editable->False]}], "-", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["u", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ u, {1}, {Void}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"],
+                  Tensor[ v, {3}, {Void}],
+                  Editable->False]}]}], ")"}]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["e", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ e, {1}, {Void}],
+            Editable->False], " ", 
+          RowBox[{"(", 
+            RowBox[{
+              RowBox[{
+                RowBox[{"-", 
+                  InterpretationBox[
+                    SubsuperscriptBox["u", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ u, {3}, {Void}],
+                    Editable->False]}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ v, {2}, {Void}],
+                  Editable->False]}], "+", 
+              RowBox[{
+                InterpretationBox[
+                  SubsuperscriptBox["u", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ u, {2}, {Void}],
+                  Editable->False], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["v", 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "3"],
+                  Tensor[ v, {3}, {Void}],
+                  Editable->False]}]}], ")"}]}]}]}]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+We can copy and paste as usual. The first line below was copied and pasted \
+from the right hand side of the first line above. We have to release the Hold \
+to expand.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    TagBox[
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox[
+            InterpretationBox[
+              TagBox[\((u\[Cross]v)\),
+                DisplayForm],
+              ucrossv,
+              Editable->False], "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ ucrossv, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "k"],
+          Tensor[ e, {k}, {Void}],
+          Editable->False]}],
+      HoldForm], "\[IndentingNewLine]", \(\(% // ReleaseHold\) // 
+      EinsteinSum[]\)}], "Input"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox[
+            InterpretationBox[
+              TagBox[\((u\[Cross]v)\),
+                DisplayForm],
+              ucrossv,
+              Editable->False], "k", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ ucrossv, {Void}, {k}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "k"],
+          Tensor[ e, {k}, {Void}],
+          Editable->False]}],
+      HoldForm]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "1"],
+          Tensor[ e, {1}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox[
+            InterpretationBox[
+              TagBox[\((u\[Cross]v)\),
+                DisplayForm],
+              ucrossv,
+              Editable->False], "1", 
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ ucrossv, {Void}, {1}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["2",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "2"],
+          Tensor[ e, {2}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox[
+            InterpretationBox[
+              TagBox[\((u\[Cross]v)\),
+                DisplayForm],
+              ucrossv,
+              Editable->False], "2", 
+            TagBox[
+              StyleBox["2",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ ucrossv, {Void}, {2}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["e", 
+            TagBox[
+              StyleBox["3",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "3"],
+          Tensor[ e, {3}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox[
+            InterpretationBox[
+              TagBox[\((u\[Cross]v)\),
+                DisplayForm],
+              ucrossv,
+              Editable->False], "3", 
+            TagBox[
+              StyleBox["3",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]],
+          Tensor[ ucrossv, {Void}, {3}],
+          Editable->False]}]}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Special Index Formatting, Spin Tensors", "Subsection"],
+
+Cell[TextData[{
+  "Sometimes we may want special formatting for base indices. The following \
+declares ",
+  Cell[BoxData[
+      \(spin\)]],
+  " as a flavor that will be used for spin up and spin down indices. We give \
+no special formatting to symbolic spin indices. (This means that we would \
+have to know by convention where we were using spin indices.)"
+}], "Text"],
+
+Cell[BoxData[
+    \(DeclareIndexFlavor[{spin, Identity}]\)], "Input"],
+
+Cell[TextData[{
+  "Then we declare base indices for spin indices as ",
+  Cell[BoxData[
+      \(SpinUp\)]],
+  " and ",
+  Cell[BoxData[
+      \(SpinDown\)]],
+  "."
+}], "Text"],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{0, 1, 2, 3}, {spin, {SpinUp, SpinDown}}]\)], "Input"],
+
+Cell["\<\
+When we enter the spin tensor it appears with normal indices even though they \
+have a spin flavor. When we expand we obtain the long names.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Sdd[i, j] // ToFlavor[spin]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // MatrixForm\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["S", \(i  j\), 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ S, {Void, Void}, {
+        spin[ i], 
+        spin[ j]}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              InterpretationBox[
+                SubsuperscriptBox["S", \(SpinUp  SpinUp\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["SpinUp",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["SpinUp",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinUp], 
+                  spin[ SpinUp]}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["S", \(SpinUp  SpinDown\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["SpinUp",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["SpinDown",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinUp], 
+                  spin[ SpinDown]}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["S", \(SpinDown  SpinUp\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["SpinDown",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["SpinUp",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinDown], 
+                  spin[ SpinUp]}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["S", \(SpinDown  SpinDown\), 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["SpinDown",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["SpinDown",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinDown], 
+                  spin[ SpinDown]}],
+                Editable->False]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The following definition will format ",
+  Cell[BoxData[
+      \(SpinUp\)]],
+  " and ",
+  Cell[BoxData[
+      \(SpinDown\)]],
+  " as up and down arrows. It is important that the definition be associated \
+with the symbol ",
+  Cell[BoxData[
+      \(spin\)]],
+  "."
+}], "Text"],
+
+Cell[BoxData[
+    \(spin /: 
+      MakeBoxes[spin[s : \((SpinUp | SpinDown)\)], 
+        form : StandardForm | 
+            TraditionalForm] := \[IndentingNewLine]Module[{sym}, \
+\[IndentingNewLine]sym = 
+          Switch[s, SpinUp, "\<\[UpArrow]\>", 
+            SpinDown, "\<\[DownArrow]\>"]; \
+\[IndentingNewLine]\(InterpretationBox[#1, #2, \[IndentingNewLine]SyntaxForm \
+\[Rule] Automatic, \[IndentingNewLine]Editable \[Rule] 
+                False] &\)\  @@ \n\ \ \ \ {sym, spin[s]}]\)], "Input"],
+
+Cell["\<\
+Now when the tensor is expanded to base indices we obtain the arrows instead \
+of the symbol names.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Sdd[i, j] // ToFlavor[spin]\), "\[IndentingNewLine]", 
+    \(\(% // EinsteinArray[]\) // MatrixForm\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["S", \(i  j\), 
+        RowBox[{
+          TagBox[
+            StyleBox["i",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["j",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}]],
+      Tensor[ S, {Void, Void}, {
+        spin[ i], 
+        spin[ j]}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    InterpretationBox["\[UpArrow]",
+                      spin[ SpinUp],
+                      Editable->False,
+                      SyntaxForm->Automatic], 
+                    InterpretationBox["\[UpArrow]",
+                      spin[ SpinUp],
+                      Editable->False,
+                      SyntaxForm->Automatic]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[UpArrow]",
+                          spin[ SpinUp],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[UpArrow]",
+                          spin[ SpinUp],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinUp], 
+                  spin[ SpinUp]}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    InterpretationBox["\[UpArrow]",
+                      spin[ SpinUp],
+                      Editable->False,
+                      SyntaxForm->Automatic], 
+                    InterpretationBox["\[DownArrow]",
+                      spin[ SpinDown],
+                      Editable->False,
+                      SyntaxForm->Automatic]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[UpArrow]",
+                          spin[ SpinUp],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[DownArrow]",
+                          spin[ SpinDown],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinUp], 
+                  spin[ SpinDown]}],
+                Editable->False]},
+            {
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    InterpretationBox["\[DownArrow]",
+                      spin[ SpinDown],
+                      Editable->False,
+                      SyntaxForm->Automatic], 
+                    InterpretationBox["\[UpArrow]",
+                      spin[ SpinUp],
+                      Editable->False,
+                      SyntaxForm->Automatic]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[DownArrow]",
+                          spin[ SpinDown],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[UpArrow]",
+                          spin[ SpinUp],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinDown], 
+                  spin[ SpinUp]}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["S", 
+                  RowBox[{
+                    InterpretationBox["\[DownArrow]",
+                      spin[ SpinDown],
+                      Editable->False,
+                      SyntaxForm->Automatic], 
+                    InterpretationBox["\[DownArrow]",
+                      spin[ SpinDown],
+                      Editable->False,
+                      SyntaxForm->Automatic]}], 
+                  RowBox[{
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[DownArrow]",
+                          spin[ SpinDown],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox[
+                        InterpretationBox["\[DownArrow]",
+                          spin[ SpinDown],
+                          Editable->False,
+                          SyntaxForm->Automatic],
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}]],
+                Tensor[ S, {Void, Void}, {
+                  spin[ SpinDown], 
+                  spin[ SpinDown]}],
+                Editable->False]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output"]
+}, Open  ]],
+
+Cell["The following clears the definition.", "Text"],
+
+Cell[BoxData[
+    \(spin /: \(MakeBoxes[spin[s : \((SpinUp | SpinDown)\)], 
+          form : StandardForm | TraditionalForm] =. \)\)], "Input"],
+
+Cell[BoxData[
+    \(DeclareBaseIndices[{1, 2, 3}]\)], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+AutoGeneratedPackage->None,
+WindowSize->{709, 715},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+Magnification->1,
+StyleDefinitions -> "TensorialStyle.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 38, 0, 74, "Title"],
+Cell[1817, 55, 33, 0, 44, "Subsubtitle"],
+Cell[1853, 57, 100, 2, 46, "Input",
+  InitializationCell->True],
+Cell[1956, 61, 262, 5, 66, "Input",
+  InitializationCell->True],
+Cell[2221, 68, 377, 7, 74, "Text"],
+
+Cell[CellGroupData[{
+Cell[2623, 79, 53, 0, 63, "Section"],
+Cell[2679, 81, 730, 21, 114, "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[3446, 107, 49, 0, 63, "Section"],
+Cell[3498, 109, 447, 13, 74, "Text"],
+Cell[3948, 124, 381, 8, 126, "Input"],
+Cell[4332, 134, 812, 19, 134, "Text"],
+Cell[5147, 155, 335, 11, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[5507, 170, 292, 7, 78, "Input"],
+Cell[5802, 179, 185, 5, 33, "Output"],
+Cell[5990, 186, 375, 10, 61, "Output"]
+}, Open  ]],
+Cell[6380, 199, 426, 16, 74, "Text"],
+Cell[6809, 217, 197, 8, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[7031, 229, 141, 2, 66, "Input"],
+Cell[7175, 233, 1624, 42, 55, "Output"]
+}, Open  ]],
+Cell[8814, 278, 223, 6, 54, "Text"],
+Cell[9040, 286, 1602, 29, 346, "Input"],
+Cell[10645, 317, 127, 3, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[10797, 324, 197, 3, 86, "Input"],
+Cell[10997, 329, 2020, 53, 37, "Output"],
+Cell[13020, 384, 225, 6, 46, "Output"]
+}, Open  ]],
+Cell[13260, 393, 197, 6, 54, "Text"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[13494, 404, 47, 0, 63, "Section"],
+Cell[13544, 406, 599, 15, 94, "Text"],
+Cell[14146, 423, 433, 14, 74, "Text"],
+Cell[14582, 439, 280, 8, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[14887, 451, 208, 4, 86, "Input"],
+Cell[15098, 457, 918, 25, 35, "Output"],
+Cell[16019, 484, 52, 1, 32, "Output"]
+}, Open  ]],
+Cell[16086, 488, 215, 6, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[16326, 498, 130, 2, 66, "Input"],
+Cell[16459, 502, 1466, 40, 35, "Output"],
+Cell[17928, 544, 1466, 40, 35, "Output"]
+}, Open  ]],
+Cell[19409, 587, 553, 13, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[19987, 604, 465, 9, 146, "Input"],
+Cell[20455, 615, 1080, 29, 79, "Output"]
+}, Open  ]],
+Cell[21550, 647, 264, 6, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[21839, 657, 133, 2, 66, "Input"],
+Cell[21975, 661, 918, 25, 35, "Output"],
+Cell[22896, 688, 1021, 30, 35, "Output"]
+}, Open  ]],
+Cell[23932, 721, 199, 8, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[24156, 733, 132, 2, 66, "Input"],
+Cell[24291, 737, 918, 25, 35, "Output"],
+Cell[25212, 764, 60, 1, 32, "Output"]
+}, Open  ]],
+Cell[25287, 768, 176, 6, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[25488, 778, 104, 2, 66, "Input"],
+Cell[25595, 782, 1466, 40, 35, "Output"],
+Cell[27064, 824, 918, 25, 35, "Output"]
+}, Open  ]],
+Cell[27997, 852, 153, 5, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[28175, 861, 98, 2, 66, "Input"],
+Cell[28276, 865, 918, 25, 35, "Output"],
+Cell[29197, 892, 918, 25, 35, "Output"]
+}, Open  ]],
+Cell[30130, 920, 201, 8, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[30356, 932, 325, 7, 106, "Input"],
+Cell[30684, 941, 735, 20, 33, "Output"]
+}, Open  ]],
+Cell[31434, 964, 459, 9, 94, "Text"],
+Cell[31896, 975, 105, 3, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[32026, 982, 813, 14, 286, "Input"],
+Cell[32842, 998, 85, 1, 25, "Print"],
+Cell[32930, 1001, 918, 25, 35, "Output"],
+Cell[33851, 1028, 48, 1, 25, "Print"],
+Cell[33902, 1031, 40, 1, 32, "Output"],
+Cell[33945, 1034, 51, 1, 25, "Print"],
+Cell[33999, 1037, 36, 1, 32, "Output"],
+Cell[34038, 1040, 118, 2, 25, "Print"],
+Cell[34159, 1044, 918, 25, 35, "Output"],
+Cell[35080, 1071, 38, 1, 32, "Output"],
+Cell[35121, 1074, 89, 1, 25, "Print"],
+Cell[35213, 1077, 38, 1, 32, "Output"]
+}, Open  ]],
+Cell[35266, 1081, 69, 0, 34, "Text"],
+Cell[35338, 1083, 119, 4, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[35482, 1091, 104, 2, 66, "Input"],
+Cell[35589, 1095, 1466, 40, 35, "Output"],
+Cell[37058, 1137, 918, 25, 35, "Output"]
+}, Open  ]],
+Cell[37991, 1165, 202, 6, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[38218, 1175, 107, 2, 66, "Input"],
+Cell[38328, 1179, 1431, 39, 35, "Output"],
+Cell[39762, 1220, 1431, 39, 35, "Output"]
+}, Open  ]],
+Cell[41208, 1262, 49, 0, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[41282, 1266, 229, 4, 86, "Input"],
+Cell[41514, 1272, 1431, 39, 35, "Output"],
+Cell[42948, 1313, 1489, 39, 35, "Output"],
+Cell[44440, 1354, 918, 25, 35, "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[45407, 1385, 63, 0, 63, "Section"],
+
+Cell[CellGroupData[{
+Cell[45495, 1389, 50, 0, 50, "Subsection"],
+Cell[45548, 1391, 156, 5, 34, "Text"],
+Cell[45707, 1398, 174, 3, 66, "Input"],
+Cell[45884, 1403, 269, 8, 54, "Text"],
+Cell[46156, 1413, 141, 3, 66, "Input"],
+Cell[46300, 1418, 326, 9, 74, "Text"],
+
+Cell[CellGroupData[{
+Cell[46651, 1431, 343, 6, 106, "Input"],
+Cell[46997, 1439, 868, 25, 33, "Output"],
+Cell[47868, 1466, 1567, 43, 35, "Output"],
+Cell[49438, 1511, 5529, 139, 33, "Output"]
+}, Open  ]],
+Cell[54982, 1653, 191, 4, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[55198, 1661, 851, 25, 66, "Input"],
+Cell[56052, 1688, 777, 24, 33, "Output"],
+Cell[56832, 1714, 2223, 67, 33, "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[59104, 1787, 60, 0, 50, "Subsection"],
+Cell[59167, 1789, 369, 8, 74, "Text"],
+Cell[59539, 1799, 69, 1, 46, "Input"],
+Cell[59611, 1802, 173, 8, 34, "Text"],
+Cell[59787, 1812, 93, 1, 46, "Input"],
+Cell[59883, 1815, 164, 3, 54, "Text"],
+
+Cell[CellGroupData[{
+Cell[60072, 1822, 134, 2, 66, "Input"],
+Cell[60209, 1826, 472, 15, 35, "Output"],
+Cell[60684, 1843, 2838, 70, 76, "Output"]
+}, Open  ]],
+Cell[63537, 1916, 293, 12, 54, "Text"],
+Cell[63833, 1930, 502, 10, 186, "Input"],
+Cell[64338, 1942, 123, 3, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[64486, 1949, 134, 2, 66, "Input"],
+Cell[64623, 1953, 472, 15, 35, "Output"],
+Cell[65098, 1970, 5738, 138, 69, "Output"]
+}, Open  ]],
+Cell[70851, 2111, 52, 0, 34, "Text"],
+Cell[70906, 2113, 143, 2, 86, "Input"],
+Cell[71052, 2117, 62, 1, 46, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

@@ -1,0 +1,4851 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[    188496,       4842]
+NotebookOptionsPosition[    186531,       4772]
+NotebookOutlinePosition[    186900,       4788]
+CellTagsIndexPosition[    186857,       4785]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "Local`QFTToolKit`"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.489711716487661*^9, 3.489711784227421*^9}, {
+   3.489711820488888*^9, 3.4897118238530817`*^9}, {3.4897118793336287`*^9, 
+   3.489711949117293*^9}, {3.489712001989938*^9, 3.489712131118928*^9}, 
+   3.489807738416485*^9, {3.489845495356928*^9, 3.489845495749955*^9}, {
+   3.489929658859439*^9, 3.4899296602568398`*^9}, {3.4904459056095552`*^9, 
+   3.490445906543283*^9}, {3.50697622614606*^9, 3.506976227230294*^9}, {
+   3.506977556015998*^9, 3.506977558900221*^9}, 3.520306674897194*^9, 
+   3.5206062123062477`*^9, {3.520607528331108*^9, 3.520607539489998*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DefineTensorShortcuts", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "U", ",", "V", ",", "X", ",", "\[EmptyDownTriangle]", ",", 
+       "\[ScriptCapitalL]", ",", "Y", ",", "\[Alpha]", ",", "\[Beta]", ",", 
+       "\[Tau]"}], "}"}], ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"Y", ",", "\[Phi]", ",", "V", ",", "L"}], "}"}], ",", "2"}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"R", ",", "S", ",", "\[Epsilon]", ",", "\[Psi]", ",", 
+       OverscriptBox["\[Psi]", "_"], ",", "\[Phi]"}], "}"}], ",", "4"}], 
+    "}"}]}], "]"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.50697756517269*^9, 3.50697756997549*^9}, {
+   3.50706578303624*^9, 3.507065783408523*^9}, {3.5074025082980824`*^9, 
+   3.507402521187002*^9}, {3.507404969864605*^9, 3.507404973499364*^9}, {
+   3.5074082368418493`*^9, 3.507408237287488*^9}, {3.507408367654076*^9, 
+   3.5074083955244513`*^9}, 3.5074084307756147`*^9, {3.507408565027169*^9, 
+   3.507408567732999*^9}, {3.5074093727232122`*^9, 3.507409373168474*^9}, {
+   3.507411544912538*^9, 3.507411555544956*^9}, 3.507420257850507*^9, {
+   3.508807775494553*^9, 3.508807811961281*^9}, {3.508810033334573*^9, 
+   3.508810036499268*^9}, {3.508810186650961*^9, 3.508810200957221*^9}, {
+   3.508810726612348*^9, 3.508810729500964*^9}, {3.5169811567925797`*^9, 
+   3.5169811719235373`*^9}, {3.516981592198992*^9, 3.516981592583199*^9}, {
+   3.516984173086598*^9, 3.5169841735458107`*^9}}],
+
+Cell["Twistor notation trial", "Text",
+ CellChangeTimes->{{3.5169807633578243`*^9, 3.51698077615734*^9}, {
+  3.516980945208921*^9, 3.516980955999604*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"DeclareIndexFlavor", "[", 
+  RowBox[{"{", 
+   RowBox[{"twistor", ",", "Orange"}], "}"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DeclareBaseIndices", "[", 
+  RowBox[{"{", 
+   RowBox[{"twistor", ",", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], "}"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Tau]0", "[", "a_", "]"}], ":=", 
+  RowBox[{"twistor", "@", 
+   RowBox[{"Tensor", "[", "a", "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Tau]1", "[", "a_", "]"}], ":=", 
+  RowBox[{"twistor", "@", 
+   RowBox[{"Tensor", "[", 
+    RowBox[{"a", ",", 
+     RowBox[{"{", "\"\<'\>\"", "}"}], ",", 
+     RowBox[{"{", "Void", "}"}]}], "]"}]}]}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.516980909288261*^9, 3.51698093837814*^9}, {
+  3.516980970817356*^9, 3.5169810482816143`*^9}, {3.517587104891121*^9, 
+  3.517587107025832*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DeclareBaseIndices", "[", 
+  RowBox[{"{", 
+   RowBox[{"twistor", ",", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], "}"}], "]"}]], "Output",
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.516981051322713*^9, {3.517587086974348*^9, 3.517587108453998*^9}, 
+   3.520174123618791*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PR1", "[", 
+   RowBox[{
+   "\"\<(3.1) notational test \>\"", ",", "NL", ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"e31", "=", 
+      RowBox[{
+       RowBox[{"Vuu", "[", 
+        RowBox[{
+         RowBox[{"\[Tau]0", "[", "A", "]"}], ",", 
+         RowBox[{"\[Tau]1", "[", "A", "]"}]}], "]"}], "->", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Vuu", "[", 
+             RowBox[{
+              RowBox[{"\[Tau]0", "[", "0", "]"}], ",", 
+              RowBox[{"\[Tau]1", "[", "0", "]"}]}], "]"}], ",", 
+            RowBox[{"Vuu", "[", 
+             RowBox[{
+              RowBox[{"\[Tau]0", "[", "0", "]"}], ",", 
+              RowBox[{"\[Tau]1", "[", "1", "]"}]}], "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Vuu", "[", 
+             RowBox[{
+              RowBox[{"\[Tau]0", "[", "1", "]"}], ",", 
+              RowBox[{"\[Tau]1", "[", "0", "]"}]}], "]"}], ",", 
+            RowBox[{"Vuu", "[", 
+             RowBox[{
+              RowBox[{"\[Tau]0", "[", "1", "]"}], ",", 
+              RowBox[{"\[Tau]1", "[", "1", "]"}]}], "]"}]}], "}"}]}], "}"}], "->",
+         "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Vu", "[", "0", "]"}], "+", 
+              RowBox[{"Vu", "[", "3", "]"}]}], ",", 
+             RowBox[{
+              RowBox[{"Vu", "[", "1", "]"}], "+", 
+              RowBox[{"I", " ", 
+               RowBox[{"Vu", "[", "2", "]"}]}]}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Vu", "[", "1", "]"}], "-", 
+              RowBox[{"I", " ", 
+               RowBox[{"Vu", "[", "2", "]"}]}]}], ",", 
+             RowBox[{
+              RowBox[{"Vu", "[", "0", "]"}], "-", 
+              RowBox[{"Vu", "[", "3", "]"}]}]}], "}"}]}], "}"}], "/", 
+         SqrtBox["2"]}]}]}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"e31", "//", "MatrixForms"}]}], ",", "\[IndentingNewLine]", "NL",
+     ",", "\"\<Property: \>\"", ",", 
+    RowBox[{"Det", "[", 
+     RowBox[{"tmp", "=", 
+      RowBox[{"HoldForm", "[", 
+       RowBox[{"e31", "[", 
+        RowBox[{"[", 
+         RowBox[{"2", ",", "2"}], "]"}], "]"}], "]"}]}], "]"}], ",", "yield", 
+    ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Det", "[", "tmp", "]"}], "//", "ReleaseHold"}], ",", 
+    "\[IndentingNewLine]", "NL", ",", "\"\<Property: For \>\"", ",", 
+    RowBox[{"tmp", "=", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"tud", "[", 
+         RowBox[{
+          RowBox[{"\[Tau]0", "[", "A", "]"}], ",", 
+          RowBox[{"\[Tau]0", "[", "B", "]"}]}], "]"}], ",", 
+        RowBox[{"tud", "[", 
+         RowBox[{
+          RowBox[{"\[Tau]1", "[", "A", "]"}], ",", 
+          RowBox[{"\[Tau]1", "[", "B", "]"}]}], "]"}]}], "}"}], "\[Element]", 
+      
+      RowBox[{"SL", "[", 
+       RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}]}]}], ",", "yield",
+     ",", "\[IndentingNewLine]", 
+    RowBox[{"tmp", "=", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"tmp", "[", 
+        RowBox[{"[", 
+         RowBox[{"1", ",", "1"}], "]"}], "]"}], ".", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"e31", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "/.", 
+         RowBox[{"A", "->", "B"}]}], ")"}], ".", 
+       RowBox[{
+        RowBox[{"tmp", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "1"}], "]"}], "]"}], "\[ConjugateTranspose]"}]}], 
+      "->", 
+      RowBox[{"(", 
+       OverscriptBox[
+        RowBox[{"e31", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "~"], ")"}]}]}], ",", 
+    "\"\< such that \>\"", ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"\[CapitalLambda]ud", "[", 
+       RowBox[{"a", ",", "b"}], "]"}], ".", 
+      RowBox[{"Vu", "[", "b", "]"}]}], "->", 
+     RowBox[{"Vu", "[", "a", "]"}]}], ",", "\"\< where \>\"", ",", 
+    RowBox[{"\[CapitalLambda]ud", "[", 
+     RowBox[{"a", ",", "b"}], "]"}], ",", 
+    "\"\< is a Lorentz transformation and the map \>\"", ",", 
+    RowBox[{
+     RowBox[{"SL", "[", 
+      RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}], "->", "L"}], ",", 
+    "\[IndentingNewLine]", "\"\< is homomorphic, into \>\"", ",", 
+    RowBox[{"Lud", "[", 
+     RowBox[{"\"\<\[UpArrow]\>\"", ",", "\"\<+\>\""}], "]"}], ",", 
+    "\"\<, with kernel \[PlusMinus]I.\>\""}], "\[IndentingNewLine]", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGCQBGIQbWdcclDa5JXj7uXHwbSEosELEK2xduV7EO20suEH
+iN7WJ84oA6S9lp1hBdG6d39LgWiHtZfkQfRV4T0KIDpuZ5w6iDYO6tMC0VVH
+lumB6E1eAQEg+sLO/lAQvaLDLwwsv3tDPIj+MasvDUR/TS/IAdEzlFfmgej7
+lx4VgWg19TeVIFrh+O06EJ39IaIBrO/Jo1YQvefrqpkg2qryxioQXeYUtA5E
+23w3PQ2i7zAkPALRHnwLXoFo/ene70D0sa2Vn0F0QorWFxC9qrrtB4guWsHL
+KAukI54YsIHokJtOYFpeWJgbROfdr1MD0aa1obogetN6ZxsQ/ehpfSqITruo
+3AKiVZXjWV2B9ORPE7lAdIvSwcvOpq8cF9oGXQXRetzRzMZWrxz3JxmwgGgA
+8matpg==
+  "]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(3.1) notational test \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["V", 
+      StyleBox[
+       RowBox[{
+        StyleBox[
+         InterpretationBox["A",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]], 
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]}],
+       StripOnInput->False,
+       ShowContents->False], 
+      StyleBox[
+       RowBox[{
+        InterpretationBox["A",
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+         Editable->False], 
+        InterpretationBox[
+         SubsuperscriptBox["A", 
+          StyleBox["\<\"'\"\>",
+           StripOnInput->False,
+           ShowContents->False], "\<\"'\"\>"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}],
+       StripOnInput->False,
+       FontColor->RGBColor[1, 0.5, 0]]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]]}, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{
+     TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+         {
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox[
+             RowBox[{
+              StyleBox[
+               InterpretationBox["0",
+                TensorCalculus4V6`Tensorial`Tensor[0],
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]], 
+              StyleBox[
+               InterpretationBox[
+                SubsuperscriptBox["0", 
+                 StyleBox["\<\"'\"\>",
+                  StripOnInput->False,
+                  ShowContents->False], "\<\"'\"\>"],
+                TensorCalculus4V6`Tensorial`Tensor[
+                0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+                BaseStyle->{AutoMultiplicationSymbol -> False},
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{
+              InterpretationBox["0",
+               TensorCalculus4V6`Tensorial`Tensor[0],
+               Editable->False], 
+              InterpretationBox[
+               SubsuperscriptBox["0", 
+                StyleBox["\<\"'\"\>",
+                 StripOnInput->False,
+                 ShowContents->False], "\<\"'\"\>"],
+               TensorCalculus4V6`Tensorial`Tensor[
+               0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[0]], 
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[
+              0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox[
+             RowBox[{
+              StyleBox[
+               InterpretationBox["0",
+                TensorCalculus4V6`Tensorial`Tensor[0],
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]], 
+              StyleBox[
+               InterpretationBox[
+                SubsuperscriptBox["1", 
+                 StyleBox["\<\"'\"\>",
+                  StripOnInput->False,
+                  ShowContents->False], "\<\"'\"\>"],
+                TensorCalculus4V6`Tensorial`Tensor[
+                1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+                BaseStyle->{AutoMultiplicationSymbol -> False},
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{
+              InterpretationBox["0",
+               TensorCalculus4V6`Tensorial`Tensor[0],
+               Editable->False], 
+              InterpretationBox[
+               SubsuperscriptBox["1", 
+                StyleBox["\<\"'\"\>",
+                 StripOnInput->False,
+                 ShowContents->False], "\<\"'\"\>"],
+               TensorCalculus4V6`Tensorial`Tensor[
+               1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[0]], 
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[
+              1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]},
+         {
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox[
+             RowBox[{
+              StyleBox[
+               InterpretationBox["1",
+                TensorCalculus4V6`Tensorial`Tensor[1],
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]], 
+              StyleBox[
+               InterpretationBox[
+                SubsuperscriptBox["0", 
+                 StyleBox["\<\"'\"\>",
+                  StripOnInput->False,
+                  ShowContents->False], "\<\"'\"\>"],
+                TensorCalculus4V6`Tensorial`Tensor[
+                0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+                BaseStyle->{AutoMultiplicationSymbol -> False},
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{
+              InterpretationBox["1",
+               TensorCalculus4V6`Tensorial`Tensor[1],
+               Editable->False], 
+              InterpretationBox[
+               SubsuperscriptBox["0", 
+                StyleBox["\<\"'\"\>",
+                 StripOnInput->False,
+                 ShowContents->False], "\<\"'\"\>"],
+               TensorCalculus4V6`Tensorial`Tensor[
+               0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[1]], 
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[
+              0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox[
+             RowBox[{
+              StyleBox[
+               InterpretationBox["1",
+                TensorCalculus4V6`Tensorial`Tensor[1],
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]], 
+              StyleBox[
+               InterpretationBox[
+                SubsuperscriptBox["1", 
+                 StyleBox["\<\"'\"\>",
+                  StripOnInput->False,
+                  ShowContents->False], "\<\"'\"\>"],
+                TensorCalculus4V6`Tensorial`Tensor[
+                1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+                BaseStyle->{AutoMultiplicationSymbol -> False},
+                Editable->False],
+               StripOnInput->False,
+               FontColor->RGBColor[1, 0.5, 0]]}],
+             StripOnInput->False,
+             ShowContents->False], 
+            StyleBox[
+             RowBox[{
+              InterpretationBox["1",
+               TensorCalculus4V6`Tensorial`Tensor[1],
+               Editable->False], 
+              InterpretationBox[
+               SubsuperscriptBox["1", 
+                StyleBox["\<\"'\"\>",
+                 StripOnInput->False,
+                 ShowContents->False], "\<\"'\"\>"],
+               TensorCalculus4V6`Tensorial`Tensor[
+               1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+               BaseStyle->{AutoMultiplicationSymbol -> False},
+               Editable->False]}],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]]],
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[1]], 
+             $CellContext`twistor[
+              TensorCalculus4V6`Tensorial`Tensor[
+              1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+            TensorCalculus4V6`Tensorial`Void, 
+             TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}
+        },
+        GridBoxAlignment->{
+         "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+        GridBoxSpacings->{"Columns" -> {
+            Offset[0.27999999999999997`], {
+             Offset[0.7]}, 
+            Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {
+            Offset[0.2], {
+             Offset[0.4]}, 
+            Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+      Function[BoxForm`e$, 
+       MatrixForm[BoxForm`e$]]], "\[Rule]", 
+     TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+         {
+          FractionBox[
+           RowBox[{
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["0",
+               StripOnInput->False,
+               ShowContents->False], "0"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False], "+", 
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["3",
+               StripOnInput->False,
+               ShowContents->False], "3"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False]}], 
+           SqrtBox["2"]], 
+          FractionBox[
+           RowBox[{
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["1",
+               StripOnInput->False,
+               ShowContents->False], "1"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False], "+", 
+            RowBox[{"\[ImaginaryI]", " ", 
+             InterpretationBox[
+              SubsuperscriptBox["V", 
+               StyleBox["2",
+                StripOnInput->False,
+                ShowContents->False], "2"],
+              
+              TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+               TensorCalculus4V6`Tensorial`Void}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False]}]}], 
+           SqrtBox["2"]]},
+         {
+          FractionBox[
+           RowBox[{
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["1",
+               StripOnInput->False,
+               ShowContents->False], "1"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False], "-", 
+            RowBox[{"\[ImaginaryI]", " ", 
+             InterpretationBox[
+              SubsuperscriptBox["V", 
+               StyleBox["2",
+                StripOnInput->False,
+                ShowContents->False], "2"],
+              
+              TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+               TensorCalculus4V6`Tensorial`Void}],
+              BaseStyle->{AutoMultiplicationSymbol -> False},
+              Editable->False]}]}], 
+           SqrtBox["2"]], 
+          FractionBox[
+           RowBox[{
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["0",
+               StripOnInput->False,
+               ShowContents->False], "0"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False], "-", 
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["3",
+               StripOnInput->False,
+               ShowContents->False], "3"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False]}], 
+           SqrtBox["2"]]}
+        },
+        GridBoxAlignment->{
+         "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+        GridBoxSpacings->{"Columns" -> {
+            Offset[0.27999999999999997`], {
+             Offset[0.7]}, 
+            Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {
+            Offset[0.2], {
+             Offset[0.4]}, 
+            Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+      Function[BoxForm`e$, 
+       MatrixForm[BoxForm`e$]]]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Property: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"Det", "[", 
+    TagBox[
+     RowBox[{"e31", "\[LeftDoubleBracket]", 
+      RowBox[{"2", ",", "2"}], "\[RightDoubleBracket]"}],
+     HoldForm], "]"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" \[LongRightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     TagBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        InterpretationBox[
+         SubsuperscriptBox["V", 
+          StyleBox["0",
+           StripOnInput->False,
+           ShowContents->False], "0"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ")"}], "2"],
+      DisplayForm]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     TagBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        InterpretationBox[
+         SubsuperscriptBox["V", 
+          StyleBox["1",
+           StripOnInput->False,
+           ShowContents->False], "1"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ")"}], "2"],
+      DisplayForm]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     TagBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        InterpretationBox[
+         SubsuperscriptBox["V", 
+          StyleBox["2",
+           StripOnInput->False,
+           ShowContents->False], "2"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ")"}], "2"],
+      DisplayForm]}], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     TagBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        InterpretationBox[
+         SubsuperscriptBox["V", 
+          StyleBox["3",
+           StripOnInput->False,
+           ShowContents->False], "3"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ")"}], "2"],
+      DisplayForm]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Property: For \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["t", 
+        RowBox[{
+         StyleBox[
+          StyleBox[
+           InterpretationBox["A",
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          ShowContents->False], 
+         StyleBox[
+          InterpretationBox["B",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+           Editable->False],
+          FontColor->RGBColor[1, 0.5, 0]]}], 
+        RowBox[{
+         StyleBox[
+          InterpretationBox["A",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+           Editable->False],
+          FontColor->RGBColor[1, 0.5, 0]], 
+         StyleBox[
+          StyleBox[
+           InterpretationBox["B",
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          ShowContents->False]}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+         TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ",", 
+      InterpretationBox[
+       SubsuperscriptBox["t", 
+        RowBox[{
+         StyleBox[
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["A", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          ShowContents->False], 
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["B", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          FontColor->RGBColor[1, 0.5, 0]]}], 
+        RowBox[{
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          FontColor->RGBColor[1, 0.5, 0]], 
+         StyleBox[
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["B", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          ShowContents->False]}]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+         $CellContext`twistor[
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}]], 
+         TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+         $CellContext`twistor[
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}]]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "}"}], "\[Element]", 
+    RowBox[{"SL", "[", 
+     RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}]}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" \[LongRightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["t", 
+       RowBox[{
+        StyleBox[
+         StyleBox[
+          InterpretationBox["A",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["B",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+          Editable->False],
+         FontColor->RGBColor[1, 0.5, 0]]}], 
+       RowBox[{
+        StyleBox[
+         InterpretationBox["A",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+          Editable->False],
+         FontColor->RGBColor[1, 0.5, 0]], 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["B",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         ShowContents->False]}]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+        TensorCalculus4V6`Tensorial`Void}, {
+       TensorCalculus4V6`Tensorial`Void, 
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], ".", 
+     InterpretationBox[
+      SubsuperscriptBox["V", 
+       StyleBox[
+        RowBox[{
+         StyleBox[
+          InterpretationBox["B",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]], 
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["B", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]]}],
+        StripOnInput->False,
+        ShowContents->False], 
+       StyleBox[
+        RowBox[{
+         InterpretationBox["B",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+          Editable->False], 
+         InterpretationBox[
+          SubsuperscriptBox["B", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}],
+        StripOnInput->False,
+        FontColor->RGBColor[1, 0.5, 0]]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]], 
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+          TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], ".", 
+     InterpretationBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        InterpretationBox[
+         SubsuperscriptBox["t", 
+          RowBox[{
+           StyleBox[
+            StyleBox[
+             InterpretationBox["A",
+              TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+              Editable->False],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]],
+            ShowContents->False], 
+           StyleBox[
+            InterpretationBox["B",
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+             Editable->False],
+            FontColor->RGBColor[1, 0.5, 0]]}], 
+          RowBox[{
+           StyleBox[
+            InterpretationBox["A",
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+             Editable->False],
+            FontColor->RGBColor[1, 0.5, 0]], 
+           StyleBox[
+            StyleBox[
+             InterpretationBox["B",
+              TensorCalculus4V6`Tensorial`Tensor[$CellContext`B],
+              Editable->False],
+             StripOnInput->False,
+             FontColor->RGBColor[1, 0.5, 0]],
+            ShowContents->False]}]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+           TensorCalculus4V6`Tensorial`Void}, {
+          TensorCalculus4V6`Tensorial`Void, 
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ")"}], "\[Dagger]"],
+      ConjugateTranspose[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+         TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}]],
+      Editable->False,
+      SyntaxForm->Automatic]}], "\[Rule]", 
+    OverscriptBox[
+     InterpretationBox[
+      SubsuperscriptBox["V", 
+       StyleBox[
+        RowBox[{
+         StyleBox[
+          InterpretationBox["A",
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]], 
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["A", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]]}],
+        StripOnInput->False,
+        ShowContents->False], 
+       StyleBox[
+        RowBox[{
+         InterpretationBox["A",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A],
+          Editable->False], 
+         InterpretationBox[
+          SubsuperscriptBox["A", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}],
+        StripOnInput->False,
+        FontColor->RGBColor[1, 0.5, 0]]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+          TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], "~"]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" such that \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["\[CapitalLambda]", 
+       RowBox[{
+        StyleBox["a",
+         StripOnInput->False,
+         ShowContents->False], "b"}], 
+       RowBox[{"a", 
+        StyleBox["b",
+         StripOnInput->False,
+         ShowContents->False]}]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[CapitalLambda], \
+{$CellContext`a, TensorCalculus4V6`Tensorial`Void}, {
+       TensorCalculus4V6`Tensorial`Void, $CellContext`b}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], ".", 
+     InterpretationBox[
+      SubsuperscriptBox["V", 
+       StyleBox["b",
+        StripOnInput->False,
+        ShowContents->False], "b"],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {$CellContext`b}, {
+       TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False]}], "\[Rule]", 
+    InterpretationBox[
+     SubsuperscriptBox["V", 
+      StyleBox["a",
+       StripOnInput->False,
+       ShowContents->False], "a"],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {$CellContext`a}, {
+      TensorCalculus4V6`Tensorial`Void}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" where \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["\[CapitalLambda]", 
+     RowBox[{
+      StyleBox["a",
+       StripOnInput->False,
+       ShowContents->False], "b"}], 
+     RowBox[{"a", 
+      StyleBox["b",
+       StripOnInput->False,
+       ShowContents->False]}]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[CapitalLambda], \
+{$CellContext`a, TensorCalculus4V6`Tensorial`Void}, {
+     TensorCalculus4V6`Tensorial`Void, $CellContext`b}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" is a Lorentz transformation and the map \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"SL", "[", 
+     RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}], "\[Rule]", "L"}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" is homomorphic, into \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["L", 
+     RowBox[{
+      StyleBox["\<\"\[UpArrow]\"\>",
+       StripOnInput->False,
+       ShowContents->False], "\<\"+\"\>"}], 
+     RowBox[{"\<\"\[UpArrow]\"\>", 
+      StyleBox["\<\"+\"\>",
+       StripOnInput->False,
+       ShowContents->False]}]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`L, {
+     "\[UpArrow]", TensorCalculus4V6`Tensorial`Void}, {
+     TensorCalculus4V6`Tensorial`Void, "+"}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\", with kernel \[PlusMinus]I.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]]}],
+  SequenceForm[
+   Style["(3.1) notational test ", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+      $CellContext`twistor[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+      $CellContext`twistor[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+        TensorCalculus4V6`Tensorial`Void}]]}, {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}] -> (
+    MatrixForm[{{
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[0]], 
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[
+           0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}], 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[0]], 
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[
+           1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}]}, {
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[1]], 
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[
+           0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}], 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[1]], 
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[
+           1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}]}}] -> 
+    MatrixForm[{{
+       2^Rational[-1, 2] (
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+           TensorCalculus4V6`Tensorial`Void}] + 
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+           TensorCalculus4V6`Tensorial`Void}]), 
+        2^Rational[-1, 2] (
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+           TensorCalculus4V6`Tensorial`Void}] + 
+         Complex[0, 1] 
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+            TensorCalculus4V6`Tensorial`Void}])}, {
+       2^Rational[-1, 2] (
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+           TensorCalculus4V6`Tensorial`Void}] + 
+         Complex[0, -1] 
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+            TensorCalculus4V6`Tensorial`Void}]), 
+        2^Rational[-1, 2] (
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+           TensorCalculus4V6`Tensorial`Void}] - 
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+          TensorCalculus4V6`Tensorial`Void}])}}]), 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Property: ", 
+    RGBColor[0, 0, 1], Larger], 
+   Det[
+    HoldForm[
+     Part[$CellContext`e31, 2, 2]]], 
+   Style[" \[LongRightArrow] ", 
+    RGBColor[0, 0, 1], Larger], 
+   Rational[1, 2] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+       TensorCalculus4V6`Tensorial`Void}]^2 + 
+   Rational[-1, 2] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+       TensorCalculus4V6`Tensorial`Void}]^2 + 
+   Rational[-1, 2] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+       TensorCalculus4V6`Tensorial`Void}]^2 + 
+   Rational[-1, 2] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+       TensorCalculus4V6`Tensorial`Void}]^2, 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Property: For ", 
+    RGBColor[0, 0, 1], Larger], 
+   Element[{
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+       TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}], 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]], 
+       TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]]}]}, 
+    $CellContext`SL[2, $CellContext`\[DoubleStruckCapitalC]]], 
+   Style[" \[LongRightArrow] ", 
+    RGBColor[0, 0, 1], Larger], Dot[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+       TensorCalculus4V6`Tensorial`Void}, {TensorCalculus4V6`Tensorial`Void, 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}], 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]], 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`B, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]]}, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}], 
+     ConjugateTranspose[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`t, {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+        TensorCalculus4V6`Tensorial`Void}, {
+       TensorCalculus4V6`Tensorial`Void, 
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`B]]}]]] -> 
+   OverTilde[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A]], 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`A, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]]}, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}]], 
+   Style[" such that ", 
+    RGBColor[0, 0, 1], Larger], Dot[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[CapitalLambda], \
+{$CellContext`a, TensorCalculus4V6`Tensorial`Void}, {
+      TensorCalculus4V6`Tensorial`Void, $CellContext`b}], 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {$CellContext`b}, {
+      TensorCalculus4V6`Tensorial`Void}]] -> 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {$CellContext`a}, {
+     TensorCalculus4V6`Tensorial`Void}], 
+   Style[" where ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[CapitalLambda], \
+{$CellContext`a, TensorCalculus4V6`Tensorial`Void}, {
+    TensorCalculus4V6`Tensorial`Void, $CellContext`b}], 
+   Style[" is a Lorentz transformation and the map ", 
+    RGBColor[0, 0, 1], Larger], $CellContext`SL[
+    2, $CellContext`\[DoubleStruckCapitalC]] -> $CellContext`L, 
+   Style[" is homomorphic, into ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`L, {
+    "\[UpArrow]", TensorCalculus4V6`Tensorial`Void}, {
+    TensorCalculus4V6`Tensorial`Void, "+"}], 
+   Style[", with kernel \[PlusMinus]I.", 
+    RGBColor[0, 0, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.517065304329239*^9, 3.517587115924313*^9, 
+  3.520174123807173*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<The boost: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"sub", "=", 
+    RowBox[{"t", "->", 
+     RowBox[{"DiagonalMatrix", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Exp", "[", 
+         RowBox[{"\[Psi]", "/", "2"}], "]"}], ",", 
+        RowBox[{"Exp", "[", 
+         RowBox[{
+          RowBox[{"-", "\[Psi]"}], "/", "2"}], "]"}]}], "}"}], "]"}]}]}], 
+   ",", "\"\< applied as: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{"t", ".", 
+     RowBox[{"e31", "[", 
+      RowBox[{"[", 
+       RowBox[{"2", ",", "2"}], "]"}], "]"}], ".", 
+     RowBox[{"Conjugate", "[", "t", "]"}]}]}], ",", "Yield", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"tmp", "/.", "sub"}], "//", 
+      RowBox[{"ConjugateCTSimplify1", "[", 
+       RowBox[{
+        RowBox[{"{", "\[Psi]", "}"}], ",", 
+        RowBox[{"{", "}"}]}], "]"}]}], "//", "Simplify"}]}]}], 
+  "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<The rotation: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"sub", "=", 
+    RowBox[{"t", "->", 
+     RowBox[{"DiagonalMatrix", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Exp", "[", 
+         RowBox[{"I", " ", 
+          RowBox[{"\[Psi]", "/", "2"}]}], "]"}], ",", 
+        RowBox[{"Exp", "[", 
+         RowBox[{
+          RowBox[{"-", "I"}], " ", 
+          RowBox[{"\[Psi]", "/", "2"}]}], "]"}]}], "}"}], "]"}]}]}], ",", 
+   "\"\< applied as: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{"t", ".", 
+     RowBox[{"e31", "[", 
+      RowBox[{"[", 
+       RowBox[{"2", ",", "2"}], "]"}], "]"}], ".", 
+     RowBox[{"Conjugate", "[", "t", "]"}]}]}], ",", "Yield", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"tmp", "/.", "sub"}], "//", 
+      RowBox[{"ConjugateCTSimplify1", "[", 
+       RowBox[{
+        RowBox[{"{", "\[Psi]", "}"}], ",", 
+        RowBox[{"{", "}"}]}], "]"}]}], "//", "Simplify"}]}]}], 
+  "\[IndentingNewLine]", "]"}]}], "Input",
+ CellChangeTimes->{{3.516980747631255*^9, 3.516980750239225*^9}, {
+   3.51698105750404*^9, 3.516981117302387*^9}, {3.5169811880206614`*^9, 
+   3.516981256736171*^9}, {3.516981294395299*^9, 3.516981463870749*^9}, {
+   3.5169815025836487`*^9, 3.516981509877421*^9}, {3.516981562960128*^9, 
+   3.516981588447534*^9}, {3.516981621211484*^9, 3.516981890509118*^9}, {
+   3.516981932491432*^9, 3.5169819384541817`*^9}, {3.5169820135228853`*^9, 
+   3.516982068456417*^9}, {3.51698211551269*^9, 3.516982133285595*^9}, {
+   3.516982167088241*^9, 3.516982223379779*^9}, {3.5169822628680573`*^9, 
+   3.516982274779348*^9}, {3.5169823190904503`*^9, 3.516982477342497*^9}, {
+   3.516982614764798*^9, 3.516982642570613*^9}, {3.51698287368643*^9, 
+   3.516983059000105*^9}, {3.5169831250017433`*^9, 3.516983154362205*^9}, {
+   3.516983195803439*^9, 3.516983201324753*^9}, {3.5169832362025957`*^9, 
+   3.516983304426812*^9}, {3.516983345527874*^9, 3.5169833460890293`*^9}, {
+   3.516983384596084*^9, 3.516983603964774*^9}, {3.516983658671534*^9, 
+   3.516983778115197*^9}, {3.516984107996812*^9, 3.5169843531193113`*^9}, {
+   3.51706525897304*^9, 3.5170653557649813`*^9}, {3.5170654026922827`*^9, 
+   3.517065406074326*^9}, {3.5170654386314507`*^9, 3.5170656021147623`*^9}, {
+   3.5170656738672943`*^9, 3.517065676194408*^9}, {3.517065961544161*^9, 
+   3.517066031586952*^9}, {3.517066067843844*^9, 3.517066086738261*^9}, {
+   3.5170661200742702`*^9, 3.517066165813349*^9}, {3.517066265530458*^9, 
+   3.517066285695154*^9}, {3.5170663311018248`*^9, 3.517066448293889*^9}, {
+   3.517066494683071*^9, 3.517066571401248*^9}, {3.517066610346437*^9, 
+   3.517066693269052*^9}, {3.5170667263904047`*^9, 3.517066803966367*^9}, 
+   3.517587134919331*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"The boost: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"t", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"\[Psi]", "/", "2"}]], ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", 
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{
+          RowBox[{"-", "\[Psi]"}], "/", "2"}]]}], "}"}]}], "}"}]}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" applied as: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"t", ".", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["0",
+             StripOnInput->False,
+             ShowContents->False], "0"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "+", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["3",
+             StripOnInput->False,
+             ShowContents->False], "3"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], 
+         SqrtBox["2"]], ",", 
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["1",
+             StripOnInput->False,
+             ShowContents->False], "1"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "+", 
+          RowBox[{"\[ImaginaryI]", " ", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["2",
+              StripOnInput->False,
+              ShowContents->False], "2"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}]}], 
+         SqrtBox["2"]]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["1",
+             StripOnInput->False,
+             ShowContents->False], "1"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "-", 
+          RowBox[{"\[ImaginaryI]", " ", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["2",
+              StripOnInput->False,
+              ShowContents->False], "2"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}]}], 
+         SqrtBox["2"]], ",", 
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["0",
+             StripOnInput->False,
+             ShowContents->False], "0"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "-", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["3",
+             StripOnInput->False,
+             ShowContents->False], "3"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], 
+         SqrtBox["2"]]}], "}"}]}], "}"}], ".", 
+    InterpretationBox[
+     SuperscriptBox["t", "*"],
+     Conjugate[$CellContext`t],
+     Editable->False,
+     SyntaxForm->Automatic]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[RightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", "\[Psi]"], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["0",
+              StripOnInput->False,
+              ShowContents->False], "0"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "+", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["3",
+              StripOnInput->False,
+              ShowContents->False], "3"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}], ")"}]}], 
+        SqrtBox["2"]], ",", 
+       FractionBox[
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["1",
+            StripOnInput->False,
+            ShowContents->False], "1"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "+", 
+         RowBox[{"\[ImaginaryI]", " ", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["2",
+             StripOnInput->False,
+             ShowContents->False], "2"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}]}], 
+        SqrtBox["2"]]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["1",
+            StripOnInput->False,
+            ShowContents->False], "1"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "-", 
+         RowBox[{"\[ImaginaryI]", " ", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["2",
+             StripOnInput->False,
+             ShowContents->False], "2"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}]}], 
+        SqrtBox["2"]], ",", 
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"-", "\[Psi]"}]], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["0",
+              StripOnInput->False,
+              ShowContents->False], "0"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "-", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["3",
+              StripOnInput->False,
+              ShowContents->False], "3"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}], ")"}]}], 
+        SqrtBox["2"]]}], "}"}]}], "}"}]}],
+  SequenceForm[
+   Style["The boost: ", 
+    RGBColor[0, 0, 1], 
+    Larger], $CellContext`t -> {{E^(Rational[1, 2] $CellContext`\[Psi]), 0}, {
+     0, E^(Rational[-1, 2] $CellContext`\[Psi])}}, 
+   Style[" applied as: ", 
+    RGBColor[0, 0, 1], Larger], 
+   Dot[$CellContext`t, {{
+     2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+         TensorCalculus4V6`Tensorial`Void}]), 
+      2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       Complex[0, 1] 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+          TensorCalculus4V6`Tensorial`Void}])}, {
+     2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       Complex[0, -1] 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+          TensorCalculus4V6`Tensorial`Void}]), 
+      2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+         TensorCalculus4V6`Tensorial`Void}] - 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+        TensorCalculus4V6`Tensorial`Void}])}}, 
+    Conjugate[$CellContext`t]], 
+   Style["\n\[RightArrow] ", 
+    RGBColor[0, 0, 1], Larger], {{
+    2^Rational[-1, 2] 
+     E^$CellContext`\[Psi] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+        TensorCalculus4V6`Tensorial`Void}]), 
+     2^Rational[-1, 2] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      Complex[0, 1] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+         TensorCalculus4V6`Tensorial`Void}])}, {
+    2^Rational[-1, 2] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      Complex[0, -1] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+         TensorCalculus4V6`Tensorial`Void}]), 2^Rational[-1, 2] 
+     E^(-$CellContext`\[Psi]) (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+        TensorCalculus4V6`Tensorial`Void}] - 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+       TensorCalculus4V6`Tensorial`Void}])}}],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.517066407403228*^9, 3.51706642127691*^9}, 
+   3.51706645251399*^9, {3.51706649664872*^9, 3.517066526925475*^9}, 
+   3.5170665748939466`*^9, 3.517066616131885*^9, {3.517066670692403*^9, 
+   3.517066694196529*^9}, {3.5170667553315983`*^9, 3.517066804881052*^9}, 
+   3.517587123536927*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"The rotation: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"t", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         FractionBox[
+          RowBox[{"\[ImaginaryI]", " ", "\[Psi]"}], "2"]], ",", "0"}], "}"}], 
+      ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", 
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{"\[ImaginaryI]", " ", "\[Psi]"}], "2"]}]]}], "}"}]}], 
+     "}"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" applied as: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"t", ".", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["0",
+             StripOnInput->False,
+             ShowContents->False], "0"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "+", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["3",
+             StripOnInput->False,
+             ShowContents->False], "3"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], 
+         SqrtBox["2"]], ",", 
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["1",
+             StripOnInput->False,
+             ShowContents->False], "1"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "+", 
+          RowBox[{"\[ImaginaryI]", " ", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["2",
+              StripOnInput->False,
+              ShowContents->False], "2"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}]}], 
+         SqrtBox["2"]]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["1",
+             StripOnInput->False,
+             ShowContents->False], "1"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "-", 
+          RowBox[{"\[ImaginaryI]", " ", 
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["2",
+              StripOnInput->False,
+              ShowContents->False], "2"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False]}]}], 
+         SqrtBox["2"]], ",", 
+        FractionBox[
+         RowBox[{
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["0",
+             StripOnInput->False,
+             ShowContents->False], "0"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False], "-", 
+          InterpretationBox[
+           SubsuperscriptBox["V", 
+            StyleBox["3",
+             StripOnInput->False,
+             ShowContents->False], "3"],
+           
+           TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+            TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False]}], 
+         SqrtBox["2"]]}], "}"}]}], "}"}], ".", 
+    InterpretationBox[
+     SuperscriptBox["t", "*"],
+     Conjugate[$CellContext`t],
+     Editable->False,
+     SyntaxForm->Automatic]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[RightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["0",
+            StripOnInput->False,
+            ShowContents->False], "0"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "+", 
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["3",
+            StripOnInput->False,
+            ShowContents->False], "3"],
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}], 
+        SqrtBox["2"]], ",", 
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"\[ImaginaryI]", " ", "\[Psi]"}]], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["1",
+              StripOnInput->False,
+              ShowContents->False], "1"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "+", 
+           RowBox[{"\[ImaginaryI]", " ", 
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["2",
+               StripOnInput->False,
+               ShowContents->False], "2"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False]}]}], ")"}]}], 
+        SqrtBox["2"]]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{
+           RowBox[{"-", "\[ImaginaryI]"}], " ", "\[Psi]"}]], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           InterpretationBox[
+            SubsuperscriptBox["V", 
+             StyleBox["1",
+              StripOnInput->False,
+              ShowContents->False], "1"],
+            
+            TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+             TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False], "-", 
+           RowBox[{"\[ImaginaryI]", " ", 
+            InterpretationBox[
+             SubsuperscriptBox["V", 
+              StyleBox["2",
+               StripOnInput->False,
+               ShowContents->False], "2"],
+             
+             TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+              TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False]}]}], ")"}]}], 
+        SqrtBox["2"]], ",", 
+       FractionBox[
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["0",
+            StripOnInput->False,
+            ShowContents->False], "0"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], "-", 
+         InterpretationBox[
+          SubsuperscriptBox["V", 
+           StyleBox["3",
+            StripOnInput->False,
+            ShowContents->False], "3"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}], 
+        SqrtBox["2"]]}], "}"}]}], "}"}]}],
+  SequenceForm[
+   Style["The rotation: ", 
+    RGBColor[0, 0, 1], Larger], $CellContext`t -> {{E^(Complex[0, 
+         Rational[1, 2]] $CellContext`\[Psi]), 0}, {0, E^(Complex[0, 
+         Rational[-1, 2]] $CellContext`\[Psi])}}, 
+   Style[" applied as: ", 
+    RGBColor[0, 0, 1], Larger], 
+   Dot[$CellContext`t, {{
+     2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+         TensorCalculus4V6`Tensorial`Void}]), 
+      2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       Complex[0, 1] 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+          TensorCalculus4V6`Tensorial`Void}])}, {
+     2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+         TensorCalculus4V6`Tensorial`Void}] + 
+       Complex[0, -1] 
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+          TensorCalculus4V6`Tensorial`Void}]), 
+      2^Rational[-1, 2] (
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+         TensorCalculus4V6`Tensorial`Void}] - 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+        TensorCalculus4V6`Tensorial`Void}])}}, 
+    Conjugate[$CellContext`t]], 
+   Style["\n\[RightArrow] ", 
+    RGBColor[0, 0, 1], Larger], {{
+    2^Rational[-1, 2] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+        TensorCalculus4V6`Tensorial`Void}]), 2^Rational[-1, 2] 
+     E^(Complex[0, 1] $CellContext`\[Psi]) (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      Complex[0, 1] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+         TensorCalculus4V6`Tensorial`Void}])}, {
+    2^Rational[-1, 2] 
+     E^(Complex[0, -1] $CellContext`\[Psi]) (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {1}, {
+        TensorCalculus4V6`Tensorial`Void}] + 
+      Complex[0, -1] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {2}, {
+         TensorCalculus4V6`Tensorial`Void}]), 
+     2^Rational[-1, 2] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {0}, {
+        TensorCalculus4V6`Tensorial`Void}] - 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {3}, {
+       TensorCalculus4V6`Tensorial`Void}])}}],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.517066407403228*^9, 3.51706642127691*^9}, 
+   3.51706645251399*^9, {3.51706649664872*^9, 3.517066526925475*^9}, 
+   3.5170665748939466`*^9, 3.517066616131885*^9, {3.517066670692403*^9, 
+   3.517066694196529*^9}, {3.5170667553315983`*^9, 3.517066804881052*^9}, 
+   3.517587123568335*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<For null vectors we can use spinors \>\"", ",", 
+   RowBox[{
+    RowBox[{"\[Alpha]u", "[", 
+     RowBox[{"\[Tau]0", "[", "a", "]"}], "]"}], "->", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\[Alpha]u", "[", 
+       RowBox[{"\[Tau]0", "[", "0", "]"}], "]"}], ",", 
+      RowBox[{"\[Alpha]u", "[", 
+       RowBox[{"\[Tau]0", "[", "1", "]"}], "]"}]}], "}"}]}], ",", 
+   "\"\< with the substitution: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"sub", "=", 
+    RowBox[{
+     RowBox[{"Vuu", "[", 
+      RowBox[{
+       RowBox[{"\[Tau]0", "[", "a_", "]"}], ",", 
+       RowBox[{"\[Tau]1", "[", "b_", "]"}]}], "]"}], "->", 
+     RowBox[{
+      RowBox[{"\[Alpha]u", "[", 
+       RowBox[{"\[Tau]0", "[", "a", "]"}], "]"}], ".", 
+      RowBox[{"\[Alpha]u", "[", 
+       RowBox[{"\[Tau]1", "[", "b", "]"}], "]"}]}]}]}], ",", "Yield", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{
+     RowBox[{"e31", "[", 
+      RowBox[{"[", 
+       RowBox[{"2", ",", "1"}], "]"}], "]"}], "/.", "sub"}]}], ",", 
+   "\"\< which has a null Det[]: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"tmp", "=", 
+    RowBox[{"Det", "[", "tmp", "]"}]}], ",", "yield", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"tmp", "/.", 
+    RowBox[{"Dot", "->", "Times"}]}]}], "\[IndentingNewLine]", "]"}]], "Input",\
+
+ CellChangeTimes->{{3.5170674632414*^9, 3.517067494124618*^9}, {
+  3.5170675389706917`*^9, 3.517067665293027*^9}, {3.517067699985531*^9, 
+  3.517067735615486*^9}, {3.517067954353146*^9, 3.5170679616948137`*^9}, {
+  3.517068420960472*^9, 3.517068663457121*^9}, {3.517068734096307*^9, 
+  3.517068757903199*^9}, {3.517110672712678*^9, 3.517110673032958*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"For null vectors we can use spinors \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["\[Alpha]", 
+      StyleBox[
+       StyleBox[
+        InterpretationBox["a",
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`a],
+         Editable->False],
+        StripOnInput->False,
+        FontColor->RGBColor[1, 0.5, 0]],
+       StripOnInput->False,
+       ShowContents->False], 
+      StyleBox[
+       InterpretationBox["a",
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`a],
+        Editable->False],
+       StripOnInput->False,
+       FontColor->RGBColor[1, 0.5, 0]]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`a]]}, {
+      TensorCalculus4V6`Tensorial`Void}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["0",
+           TensorCalculus4V6`Tensorial`Tensor[0],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["0",
+          TensorCalculus4V6`Tensorial`Tensor[0],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ",", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["1",
+           TensorCalculus4V6`Tensorial`Tensor[1],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["1",
+          TensorCalculus4V6`Tensorial`Tensor[1],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "}"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" with the substitution: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["V", 
+      StyleBox[
+       RowBox[{
+        StyleBox[
+         InterpretationBox["a_",
+          TensorCalculus4V6`Tensorial`Tensor[
+           Pattern[$CellContext`a, 
+            Blank[]]],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]], 
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["b_", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          TensorCalculus4V6`Tensorial`Tensor[
+           Pattern[$CellContext`b, 
+            Blank[]], {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]}],
+       StripOnInput->False,
+       ShowContents->False], 
+      StyleBox[
+       RowBox[{
+        InterpretationBox["a_",
+         TensorCalculus4V6`Tensorial`Tensor[
+          Pattern[$CellContext`a, 
+           Blank[]]],
+         Editable->False], 
+        InterpretationBox[
+         SubsuperscriptBox["b_", 
+          StyleBox["\<\"'\"\>",
+           StripOnInput->False,
+           ShowContents->False], "\<\"'\"\>"],
+         TensorCalculus4V6`Tensorial`Tensor[
+          Pattern[$CellContext`b, 
+           Blank[]], {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}],
+       StripOnInput->False,
+       FontColor->RGBColor[1, 0.5, 0]]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[
+         Pattern[$CellContext`a, 
+          Blank[]]]], 
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[
+         Pattern[$CellContext`b, 
+          Blank[]], {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["\[Alpha]", 
+       StyleBox[
+        StyleBox[
+         InterpretationBox["a",
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`a],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]],
+        StripOnInput->False,
+        ShowContents->False], 
+       StyleBox[
+        InterpretationBox["a",
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`a],
+         Editable->False],
+        StripOnInput->False,
+        FontColor->RGBColor[1, 0.5, 0]]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`a]]}, {
+       TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], ".", 
+     InterpretationBox[
+      SubsuperscriptBox["\[Alpha]", 
+       StyleBox[
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["b", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`b, {"'"}, {
+           TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]],
+        StripOnInput->False,
+        ShowContents->False], 
+       StyleBox[
+        InterpretationBox[
+         SubsuperscriptBox["b", 
+          StyleBox["\<\"'\"\>",
+           StripOnInput->False,
+           ShowContents->False], "\<\"'\"\>"],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`b, {"'"}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False],
+        StripOnInput->False,
+        FontColor->RGBColor[1, 0.5, 0]]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`b, {"'"}, {
+          TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\[RightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox["0",
+             TensorCalculus4V6`Tensorial`Tensor[0],
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox["0",
+            TensorCalculus4V6`Tensorial`Tensor[0],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox[
+             SubsuperscriptBox["0", 
+              StyleBox["\<\"'\"\>",
+               StripOnInput->False,
+               ShowContents->False], "\<\"'\"\>"],
+             TensorCalculus4V6`Tensorial`Tensor[
+             0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["0", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[
+            0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[
+            0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}], ",", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox["0",
+             TensorCalculus4V6`Tensorial`Tensor[0],
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox["0",
+            TensorCalculus4V6`Tensorial`Tensor[0],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox[
+             SubsuperscriptBox["1", 
+              StyleBox["\<\"'\"\>",
+               StripOnInput->False,
+               ShowContents->False], "\<\"'\"\>"],
+             TensorCalculus4V6`Tensorial`Tensor[
+             1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["1", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[
+            1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[
+            1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox["1",
+             TensorCalculus4V6`Tensorial`Tensor[1],
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox["1",
+            TensorCalculus4V6`Tensorial`Tensor[1],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox[
+             SubsuperscriptBox["0", 
+              StyleBox["\<\"'\"\>",
+               StripOnInput->False,
+               ShowContents->False], "\<\"'\"\>"],
+             TensorCalculus4V6`Tensorial`Tensor[
+             0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["0", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[
+            0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[
+            0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}], ",", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox["1",
+             TensorCalculus4V6`Tensorial`Tensor[1],
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox["1",
+            TensorCalculus4V6`Tensorial`Tensor[1],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], ".", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", 
+          StyleBox[
+           StyleBox[
+            InterpretationBox[
+             SubsuperscriptBox["1", 
+              StyleBox["\<\"'\"\>",
+               StripOnInput->False,
+               ShowContents->False], "\<\"'\"\>"],
+             TensorCalculus4V6`Tensorial`Tensor[
+             1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+             BaseStyle->{AutoMultiplicationSymbol -> False},
+             Editable->False],
+            StripOnInput->False,
+            FontColor->RGBColor[1, 0.5, 0]],
+           StripOnInput->False,
+           ShowContents->False], 
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["1", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[
+            1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+           $CellContext`twistor[
+            TensorCalculus4V6`Tensorial`Tensor[
+            1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+          TensorCalculus4V6`Tensorial`Void}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}]}], "}"}]}], "}"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" which has a null Det[]: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{
+       InterpretationBox[
+        SubsuperscriptBox["\[Alpha]", 
+         StyleBox[
+          StyleBox[
+           InterpretationBox["0",
+            TensorCalculus4V6`Tensorial`Tensor[0],
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          StripOnInput->False,
+          ShowContents->False], 
+         StyleBox[
+          InterpretationBox["0",
+           TensorCalculus4V6`Tensorial`Tensor[0],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+         TensorCalculus4V6`Tensorial`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], ".", 
+       InterpretationBox[
+        SubsuperscriptBox["\[Alpha]", 
+         StyleBox[
+          StyleBox[
+           InterpretationBox[
+            SubsuperscriptBox["1", 
+             StyleBox["\<\"'\"\>",
+              StripOnInput->False,
+              ShowContents->False], "\<\"'\"\>"],
+            TensorCalculus4V6`Tensorial`Tensor[
+            1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+            BaseStyle->{AutoMultiplicationSymbol -> False},
+            Editable->False],
+           StripOnInput->False,
+           FontColor->RGBColor[1, 0.5, 0]],
+          StripOnInput->False,
+          ShowContents->False], 
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["1", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           TensorCalculus4V6`Tensorial`Tensor[
+           1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+          $CellContext`twistor[
+           TensorCalculus4V6`Tensorial`Tensor[
+           1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+         TensorCalculus4V6`Tensorial`Void}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False]}]}], " ", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["1",
+           TensorCalculus4V6`Tensorial`Tensor[1],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["1",
+          TensorCalculus4V6`Tensorial`Tensor[1],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ".", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["0", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           TensorCalculus4V6`Tensorial`Tensor[
+           0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["0", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          TensorCalculus4V6`Tensorial`Tensor[
+          0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[
+          0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}]}], "+", 
+    RowBox[{
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["0",
+           TensorCalculus4V6`Tensorial`Tensor[0],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["0",
+          TensorCalculus4V6`Tensorial`Tensor[0],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ".", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["0", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           TensorCalculus4V6`Tensorial`Tensor[
+           0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["0", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          TensorCalculus4V6`Tensorial`Tensor[
+          0, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[
+          0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], " ", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox["1",
+           TensorCalculus4V6`Tensorial`Tensor[1],
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox["1",
+          TensorCalculus4V6`Tensorial`Tensor[1],
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ".", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox[
+         StyleBox[
+          InterpretationBox[
+           SubsuperscriptBox["1", 
+            StyleBox["\<\"'\"\>",
+             StripOnInput->False,
+             ShowContents->False], "\<\"'\"\>"],
+           TensorCalculus4V6`Tensorial`Tensor[
+           1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+           BaseStyle->{AutoMultiplicationSymbol -> False},
+           Editable->False],
+          StripOnInput->False,
+          FontColor->RGBColor[1, 0.5, 0]],
+         StripOnInput->False,
+         ShowContents->False], 
+        StyleBox[
+         InterpretationBox[
+          SubsuperscriptBox["1", 
+           StyleBox["\<\"'\"\>",
+            StripOnInput->False,
+            ShowContents->False], "\<\"'\"\>"],
+          TensorCalculus4V6`Tensorial`Tensor[
+          1, {"'"}, {TensorCalculus4V6`Tensorial`Void}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False],
+         StripOnInput->False,
+         FontColor->RGBColor[1, 0.5, 0]]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         $CellContext`twistor[
+          TensorCalculus4V6`Tensorial`Tensor[
+          1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+        TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" \[LongRightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", "0"}],
+  SequenceForm[
+   Style["For null vectors we can use spinors ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+      $CellContext`twistor[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`a]]}, {
+     TensorCalculus4V6`Tensorial`Void}] -> {
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+      TensorCalculus4V6`Tensorial`Void}], 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+      TensorCalculus4V6`Tensorial`Void}]}, 
+   Style[" with the substitution: ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`V, {
+      $CellContext`twistor[
+       TensorCalculus4V6`Tensorial`Tensor[
+        Pattern[$CellContext`a, 
+         Blank[]]]], 
+      $CellContext`twistor[
+       TensorCalculus4V6`Tensorial`Tensor[
+        Pattern[$CellContext`b, 
+         Blank[]], {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}] -> 
+   Dot[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`a]]}, {
+      TensorCalculus4V6`Tensorial`Void}], 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       $CellContext`twistor[
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`b, {"'"}, {
+         TensorCalculus4V6`Tensorial`Void}]]}, {
+      TensorCalculus4V6`Tensorial`Void}]], 
+   Style["\n\[RightArrow] ", 
+    RGBColor[0, 0, 1], Larger], {{
+     Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]], 
+     Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]]}, {
+     Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]], 
+     Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]]}}, 
+   Style[" which has a null Det[]: ", 
+    RGBColor[0, 0, 1], Larger], -Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]] Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]] + Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[0]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         0, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]] Dot[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[1]]}, {
+       TensorCalculus4V6`Tensorial`Void}], 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        $CellContext`twistor[
+         TensorCalculus4V6`Tensorial`Tensor[
+         1, {"'"}, {TensorCalculus4V6`Tensorial`Void}]]}, {
+       TensorCalculus4V6`Tensorial`Void}]], 
+   Style[" \[LongRightArrow] ", 
+    RGBColor[0, 0, 1], Larger], 0],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.517068637020809*^9, 3.51706866466721*^9}, 
+   3.5170687590083637`*^9, 3.517110675121235*^9, 3.517587140546542*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<Skew 2-index spinor: \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"sub\[Epsilon]", "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"\[Epsilon]dd", "[", 
+        RowBox[{"a_", ",", "b_"}], "]"}], 
+       RowBox[{"\[Alpha]u", "[", "a_", "]"}]}], "->", 
+      RowBox[{"\[Alpha]d", "[", "b", "]"}]}], "}"}]}]}], 
+  "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.517586790758309*^9, 3.5175870427730703`*^9}, {
+  3.517587211996003*^9, 3.5175872224604597`*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Skew 2-index spinor: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", 
+        StyleBox["a_",
+         StripOnInput->False,
+         ShowContents->False], "a_"],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         Pattern[$CellContext`a, 
+          Blank[]]}, {TensorCalculus4V6`Tensorial`Void}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{"a_", "b_"}], 
+        StyleBox[
+         RowBox[{"a_", "b_"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        
+         Pattern[$CellContext`a, 
+          Blank[]], 
+         Pattern[$CellContext`b, 
+          Blank[]]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "\[Rule]", 
+     InterpretationBox[
+      SubsuperscriptBox["\[Alpha]", "b", 
+       StyleBox["b",
+        StripOnInput->False,
+        ShowContents->False]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`b}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False]}], "}"}]}],
+  SequenceForm[
+   Style["Skew 2-index spinor: ", 
+    RGBColor[0, 0, 1], Larger], {
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        Pattern[$CellContext`a, 
+         Blank[]]}, {TensorCalculus4V6`Tensorial`Void}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        Pattern[$CellContext`a, 
+         Blank[]], 
+        Pattern[$CellContext`b, 
+         Blank[]]}] -> 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`b}]}],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.51758703152013*^9, 3.5175870442170343`*^9}, 
+   3.517587155116186*^9, 3.517587223748865*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.517589398403179*^9, 3.517589421571834*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  "\"\<(a) Show that SL[2,\[DoubleStruckCapitalC]] is simply connected.  \
+Hint: show first that t\[Element]SL[2,\[DoubleStruckCapitalC]] has a unique \
+polar decomposition t<-RU where R is a positive definite Hermitian matrix and \
+U is in SU[2]. \>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.50880746581283*^9, 3.508807516167585*^9}, {
+  3.50948233550655*^9, 3.509482430194903*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"(a) Show that SL[2,\[DoubleStruckCapitalC]] is simply \
+connected.  Hint: show first that t\[Element]SL[2,\[DoubleStruckCapitalC]] \
+has a unique polar decomposition t<-RU where R is a positive definite \
+Hermitian matrix and U is in SU[2]. \"\>",
+  StripOnInput->False,
+  LineColor->RGBColor[0, 0, 1],
+  FrontFaceColor->RGBColor[0, 0, 1],
+  BackFaceColor->RGBColor[0, 0, 1],
+  GraphicsColor->RGBColor[0, 0, 1],
+  FontSize->Larger,
+  FontColor->RGBColor[0, 0, 1]]], "Print",
+ CellChangeTimes->{3.50880781985709*^9, 3.509482431942432*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<(b) If the real bivector \>\"", ",", 
+   RowBox[{"Fdd", "[", 
+    RowBox[{"a", ",", "b"}], "]"}], ",", 
+   "\"\< corresponds to the symmetric spinor \>\"", ",", 
+   RowBox[{
+    RowBox[{"\[Phi]dd", "[", 
+     RowBox[{"A", ",", "B"}], "]"}], "->", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"\[Alpha]d", "[", "A", "]"}], 
+       RowBox[{"\[Beta]d", "[", "B", "]"}]}], "//", 
+      RowBox[{"SymmetrizeIndices", "[", 
+       RowBox[{"{", 
+        RowBox[{"A", ",", "B"}], "}"}], "]"}]}], ")"}]}], ",", 
+   "\"\< show that \>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"\[Alpha]d", "[", "A", "]"}], ".", 
+      OverscriptBox[
+       RowBox[{"\[Alpha]d", "[", "A", "]"}], "_"]}], ",", 
+     RowBox[{
+      RowBox[{"\[Beta]d", "[", "A", "]"}], ".", 
+      OverscriptBox[
+       RowBox[{"\[Beta]d", "[", "A", "]"}], "_"]}]}], "}"}], ",", 
+   "\"\< are eigenvectors of \>\"", ",", 
+   RowBox[{"Fdd", "[", 
+    RowBox[{"a", ",", "b"}], "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.50880752162442*^9, 3.5088075325109367`*^9}, {
+  3.5088075805727873`*^9, 3.50880776273316*^9}, {3.508807945055848*^9, 
+  3.508807999922632*^9}, {3.508808030511642*^9, 3.50880805671504*^9}, {
+  3.5088080911187696`*^9, 3.508808264382513*^9}, {3.509465916257148*^9, 
+  3.50946591714076*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(b) If the real bivector \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     RowBox[{"a", "b"}], 
+     StyleBox[
+      RowBox[{"a", "b"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" corresponds to the symmetric spinor \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["\[Phi]", 
+      RowBox[{"A", "B"}], 
+      StyleBox[
+       RowBox[{"A", "B"}],
+       StripOnInput->False,
+       ShowContents->False]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+      TensorCalculus4V6`Tensorial`Void, 
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", "B", 
+          StyleBox["B",
+           StripOnInput->False,
+           ShowContents->False]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Beta]", "A", 
+          StyleBox["A",
+           StripOnInput->False,
+           ShowContents->False]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}], "+", 
+       RowBox[{
+        InterpretationBox[
+         SubsuperscriptBox["\[Alpha]", "A", 
+          StyleBox["A",
+           StripOnInput->False,
+           ShowContents->False]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False], " ", 
+        InterpretationBox[
+         SubsuperscriptBox["\[Beta]", "B", 
+          StyleBox["B",
+           StripOnInput->False,
+           ShowContents->False]],
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}],
+         BaseStyle->{AutoMultiplicationSymbol -> False},
+         Editable->False]}]}], ")"}]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" show that \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Alpha]", "A", 
+        StyleBox["A",
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ".", 
+      OverscriptBox[
+       InterpretationBox[
+        SubsuperscriptBox["\[Alpha]", "A", 
+         StyleBox["A",
+          StripOnInput->False,
+          ShowContents->False]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "_"]}], ",", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Beta]", "A", 
+        StyleBox["A",
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], ".", 
+      OverscriptBox[
+       InterpretationBox[
+        SubsuperscriptBox["\[Beta]", "A", 
+         StyleBox["A",
+          StripOnInput->False,
+          ShowContents->False]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "_"]}]}], "}"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" are eigenvectors of \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     RowBox[{"a", "b"}], 
+     StyleBox[
+      RowBox[{"a", "b"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False]}],
+  SequenceForm[
+   Style["(b) If the real bivector ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+    TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}], 
+   Style[" corresponds to the symmetric spinor ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}] -> 
+   Rational[1, 2] (
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}] 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}] + 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}] 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}]), 
+   Style[" show that ", 
+    RGBColor[0, 0, 1], Larger], {
+    Dot[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}], 
+     OverBar[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}]]], 
+    Dot[
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}], 
+     OverBar[
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Beta], {
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}]]]}, 
+   Style[" are eigenvectors of ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+    TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.508808032514135*^9, 3.5088080583642797`*^9}, 
+   3.508808166940124*^9, 3.508808220050922*^9, 3.5088082713862267`*^9, 
+   3.5094681081870947`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<(c) A null bivector \>\"", ",", 
+   RowBox[{"Fdd", "[", 
+    RowBox[{"a", ",", "b"}], "]"}], ",", 
+   "\"\< is one for which the principal null directions coincide, i.e., \>\"",
+    ",", 
+   RowBox[{
+    RowBox[{"\[Phi]dd", "[", 
+     RowBox[{"A", ",", "B"}], "]"}], "->", 
+    RowBox[{
+     RowBox[{"\[Alpha]d", "[", "A", "]"}], 
+     RowBox[{"\[Alpha]d", "[", "B", "]"}]}]}], ",", "\[IndentingNewLine]", 
+   "NL", ",", "\"\<Show that a bivector \>\"", ",", 
+   RowBox[{"Fdd", "[", 
+    RowBox[{"A", ",", "B"}], "]"}], ",", 
+   "\"\< is null \[DoubleLongLeftRightArrow] \>\"", ",", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Fdd", "[", 
+      RowBox[{"a", ",", "b"}], "]"}], 
+     RowBox[{"Fuu", "[", 
+      RowBox[{"a", ",", "b"}], "]"}]}], "->", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Fdd", "[", 
+       RowBox[{"a", ",", "b"}], "]"}], 
+      RowBox[{"Dual", "[", 
+       RowBox[{"Fuu", "[", 
+        RowBox[{"a", ",", "b"}], "]"}], "]"}]}], "->", "0"}]}], ",", 
+   "\[IndentingNewLine]", "NL", ",", 
+   "\"\<Deduce that a null bivector is simple.\>\""}], "\[IndentingNewLine]", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.508808324075419*^9, 3.508808695716735*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(c) A null bivector \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     RowBox[{"a", "b"}], 
+     StyleBox[
+      RowBox[{"a", "b"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" is one for which the principal null directions coincide, \
+i.e., \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["\[Phi]", 
+      RowBox[{"A", "B"}], 
+      StyleBox[
+       RowBox[{"A", "B"}],
+       StripOnInput->False,
+       ShowContents->False]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+      TensorCalculus4V6`Tensorial`Void, 
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["\[Alpha]", "A", 
+       StyleBox["A",
+        StripOnInput->False,
+        ShowContents->False]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["\[Alpha]", "B", 
+       StyleBox["B",
+        StripOnInput->False,
+        ShowContents->False]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Show that a bivector \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["F", 
+     RowBox[{"A", "B"}], 
+     StyleBox[
+      RowBox[{"A", "B"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" is null \[DoubleLongLeftRightArrow] \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       StyleBox[
+        RowBox[{"a", "b"}],
+        StripOnInput->False,
+        ShowContents->False], 
+       RowBox[{"a", "b"}]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {$CellContext`a, \
+$CellContext`b}, {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False], " ", 
+     InterpretationBox[
+      SubsuperscriptBox["F", 
+       RowBox[{"a", "b"}], 
+       StyleBox[
+        RowBox[{"a", "b"}],
+        StripOnInput->False,
+        ShowContents->False]],
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+       TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}],
+      BaseStyle->{AutoMultiplicationSymbol -> False},
+      Editable->False]}], "\[Rule]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Dual", "[", 
+       InterpretationBox[
+        SubsuperscriptBox["F", 
+         StyleBox[
+          RowBox[{"a", "b"}],
+          StripOnInput->False,
+          ShowContents->False], 
+         RowBox[{"a", "b"}]],
+        TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {$CellContext`a, \
+$CellContext`b}, {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}],
+        
+        BaseStyle->{AutoMultiplicationSymbol -> False},
+        Editable->False], "]"}], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["F", 
+        RowBox[{"a", "b"}], 
+        StyleBox[
+         RowBox[{"a", "b"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+        TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}],
+       
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "\[Rule]", "0"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Deduce that a null bivector is simple.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]]}],
+  SequenceForm[
+   Style["(c) A null bivector ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+    TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}], 
+   Style[" is one for which the principal null directions coincide, i.e., ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+     TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}] -> 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A}] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Alpha], {
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`B}], 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Show that a bivector ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+    TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}], 
+   Style[" is null \[DoubleLongLeftRightArrow] ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {$CellContext`a, \
+$CellContext`b}, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}] 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+      TensorCalculus4V6`Tensorial`Void, 
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}] -> \
+($CellContext`Dual[
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {$CellContext`a, \
+$CellContext`b}, {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}]] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`F, {
+       TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b}] -> 
+    0), 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Deduce that a null bivector is simple.", 
+    RGBColor[0, 0, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.50880865034795*^9, 3.508808697786043*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PR1", "[", 
+    RowBox[{"\"\<(d) If \>\"", ",", 
+     RowBox[{"Rdddd", "[", 
+      RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "]"}], ",", 
+     "\"\< has the symmetries of the Riemann tensor, show that it has a \
+spinor decomposition of the form \>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Rdddd", "[", 
+       RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "]"}], "->", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Psi]dddd", "[", 
+         RowBox[{"A", ",", "B", ",", "C", ",", "D"}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{
+          SuperscriptBox["A", "+"], ",", 
+          SuperscriptBox["B", "+"]}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{
+          SuperscriptBox["C", "+"], ",", 
+          SuperscriptBox["D", "+"]}], "]"}]}], "+", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Tensor", "[", 
+         RowBox[{
+          OverscriptBox["\[Psi]", "_"], ",", 
+          RowBox[{"{", 
+           RowBox[{"Void", ",", "Void", ",", "Void", ",", "Void"}], "}"}], 
+          ",", 
+          RowBox[{"{", 
+           RowBox[{
+            SuperscriptBox["A", "+"], ",", 
+            SuperscriptBox["B", "+"], ",", 
+            SuperscriptBox["C", "+"], ",", 
+            SuperscriptBox["D", "+"]}], "}"}]}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{"A", ",", "B"}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{"C", ",", "D"}], "]"}]}], "+", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"\[Phi]dddd", "[", 
+         RowBox[{"A", ",", "B", ",", 
+          SuperscriptBox["C", "+"], ",", 
+          SuperscriptBox["D", "+"]}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{
+          SuperscriptBox["A", "+"], ",", 
+          SuperscriptBox["B", "+"]}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{"C", ",", "D"}], "]"}]}], "+", 
+       RowBox[{
+        RowBox[{"\[Phi]dddd", "[", 
+         RowBox[{
+          SuperscriptBox["A", "+"], ",", 
+          SuperscriptBox["B", "+"], ",", "C", ",", "D"}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{"A", ",", "B"}], "]"}], 
+        RowBox[{"\[Epsilon]dd", "[", 
+         RowBox[{
+          SuperscriptBox["C", "+"], ",", 
+          SuperscriptBox["D", "+"]}], "]"}]}], "+", "\[IndentingNewLine]", 
+       RowBox[{"2", " ", "\[CapitalLambda]", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{"A", ",", "C"}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{"B", ",", "D"}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{
+             SuperscriptBox["A", "+"], ",", 
+             SuperscriptBox["B", "+"]}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{
+             SuperscriptBox["C", "+"], ",", 
+             SuperscriptBox["D", "+"]}], "]"}]}], "+", 
+          RowBox[{
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{"A", ",", "B"}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{"C", ",", "D"}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{
+             SuperscriptBox["A", "+"], ",", 
+             SuperscriptBox["D", "+"]}], "]"}], 
+           RowBox[{"\[Epsilon]dd", "[", 
+            RowBox[{
+             SuperscriptBox["B", "+"], ",", 
+             SuperscriptBox["C", "+"]}], "]"}]}]}], ")"}]}]}]}], ",", 
+     "\"\< where \>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{"\[Psi]dddd", "[", 
+      RowBox[{"A", ",", "B", ",", "C", ",", "D"}], "]"}], ",", 
+     "\"\< is symmetric, \>\"", ",", 
+     RowBox[{"\[Phi]dddd", "[", 
+      RowBox[{"A", ",", "B", ",", 
+       SuperscriptBox["A", "+"], ",", 
+       SuperscriptBox["B", "+"]}], "]"}], ",", 
+     "\"\< is symmetric on each pair of indices and is Hermitian and \
+\[CapitalLambda] is real.  By taking contractions of this, find the spinor \
+equivalents of the Weyl tensor, the Ricci tensor and the Ricci scalar.\>\""}],
+     "\[IndentingNewLine]", "]"}], ";"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.508809587786193*^9, 3.5088097470386753`*^9}, {
+   3.5088098306145697`*^9, 3.508809876903205*^9}, {3.508810052809952*^9, 
+   3.508810137027402*^9}, {3.508810225428175*^9, 3.508810321015427*^9}, {
+   3.5088103605930357`*^9, 3.508810419683281*^9}, 3.508810467923727*^9, 
+   3.508810518412547*^9, {3.508810564063943*^9, 3.5088107164484377`*^9}, {
+   3.508810751489043*^9, 3.508811164560511*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(d) If \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["R", 
+     RowBox[{"a", "b", "c", "d"}], 
+     StyleBox[
+      RowBox[{"a", "b", "c", "d"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`R, {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b, \
+$CellContext`c, $CellContext`d}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" has the symmetries of the Riemann tensor, show that it has \
+a spinor decomposition of the form \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    InterpretationBox[
+     SubsuperscriptBox["R", 
+      RowBox[{"a", "b", "c", "d"}], 
+      StyleBox[
+       RowBox[{"a", "b", "c", "d"}],
+       StripOnInput->False,
+       ShowContents->False]],
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`R, {
+      TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+       TensorCalculus4V6`Tensorial`Void, 
+       TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b, \
+$CellContext`c, $CellContext`d}],
+     BaseStyle->{AutoMultiplicationSymbol -> False},
+     Editable->False], "\[Rule]", 
+    RowBox[{
+     RowBox[{"2", " ", "\[CapitalLambda]", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{"A", "B"}], 
+           StyleBox[
+            RowBox[{"A", "B"}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, \
+$CellContext`B}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{"C", "D"}], 
+           StyleBox[
+            RowBox[{"C", "D"}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {C, D}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{
+            SuperscriptBox["A", "+"], 
+            SuperscriptBox["D", "+"]}], 
+           StyleBox[
+            RowBox[{
+             SuperscriptBox["A", "+"], 
+             SuperscriptBox["D", "+"]}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {
+            SuperPlus[$CellContext`A], 
+            SuperPlus[D]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{
+            SuperscriptBox["B", "+"], 
+            SuperscriptBox["C", "+"]}], 
+           StyleBox[
+            RowBox[{
+             SuperscriptBox["B", "+"], 
+             SuperscriptBox["C", "+"]}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {
+            SuperPlus[$CellContext`B], 
+            SuperPlus[C]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}], "+", 
+        RowBox[{
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{"A", "C"}], 
+           StyleBox[
+            RowBox[{"A", "C"}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, C}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{"B", "D"}], 
+           StyleBox[
+            RowBox[{"B", "D"}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {$CellContext`B, D}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{
+            SuperscriptBox["A", "+"], 
+            SuperscriptBox["B", "+"]}], 
+           StyleBox[
+            RowBox[{
+             SuperscriptBox["A", "+"], 
+             SuperscriptBox["B", "+"]}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {
+            SuperPlus[$CellContext`A], 
+            SuperPlus[$CellContext`B]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False], " ", 
+         InterpretationBox[
+          SubsuperscriptBox["\[Epsilon]", 
+           RowBox[{
+            SuperscriptBox["C", "+"], 
+            SuperscriptBox["D", "+"]}], 
+           StyleBox[
+            RowBox[{
+             SuperscriptBox["C", "+"], 
+             SuperscriptBox["D", "+"]}],
+            StripOnInput->False,
+            ShowContents->False]],
+          
+          TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+           TensorCalculus4V6`Tensorial`Void, 
+            TensorCalculus4V6`Tensorial`Void}, {
+            SuperPlus[C], 
+            SuperPlus[D]}],
+          BaseStyle->{AutoMultiplicationSymbol -> False},
+          Editable->False]}]}], ")"}]}], "+", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{"C", "D"}], 
+        StyleBox[
+         RowBox[{"C", "D"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        C, D}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{
+         SuperscriptBox["A", "+"], 
+         SuperscriptBox["B", "+"]}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["A", "+"], 
+          SuperscriptBox["B", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        
+         SuperPlus[$CellContext`A], 
+         SuperPlus[$CellContext`B]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Phi]", 
+        RowBox[{"A", "B", 
+         SuperscriptBox["C", "+"], 
+         SuperscriptBox["D", "+"]}], 
+        StyleBox[
+         RowBox[{"A", "B", 
+          SuperscriptBox["C", "+"], 
+          SuperscriptBox["D", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, 
+         SuperPlus[C], 
+         SuperPlus[D]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "+", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{"A", "B"}], 
+        StyleBox[
+         RowBox[{"A", "B"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}],
+       
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{
+         SuperscriptBox["C", "+"], 
+         SuperscriptBox["D", "+"]}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["C", "+"], 
+          SuperscriptBox["D", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        
+         SuperPlus[C], 
+         SuperPlus[D]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Phi]", 
+        RowBox[{
+         SuperscriptBox["A", "+"], 
+         SuperscriptBox["B", "+"], "C", "D"}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["A", "+"], 
+          SuperscriptBox["B", "+"], "C", "D"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+         SuperPlus[$CellContext`A], 
+         SuperPlus[$CellContext`B], C, D}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "+", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{
+         SuperscriptBox["A", "+"], 
+         SuperscriptBox["B", "+"]}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["A", "+"], 
+          SuperscriptBox["B", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        
+         SuperPlus[$CellContext`A], 
+         SuperPlus[$CellContext`B]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{
+         SuperscriptBox["C", "+"], 
+         SuperscriptBox["D", "+"]}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["C", "+"], 
+          SuperscriptBox["D", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        
+         SuperPlus[C], 
+         SuperPlus[D]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Psi]", 
+        RowBox[{"A", "B", "C", "D"}], 
+        StyleBox[
+         RowBox[{"A", "B", "C", "D"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Psi], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, 
+         C, D}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}], "+", 
+     RowBox[{
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{"A", "B"}], 
+        StyleBox[
+         RowBox[{"A", "B"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}],
+       
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox["\[Epsilon]", 
+        RowBox[{"C", "D"}], 
+        StyleBox[
+         RowBox[{"C", "D"}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        C, D}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False], " ", 
+      InterpretationBox[
+       SubsuperscriptBox[
+        OverscriptBox["\[Psi]", "_"], 
+        RowBox[{
+         SuperscriptBox["A", "+"], 
+         SuperscriptBox["B", "+"], 
+         SuperscriptBox["C", "+"], 
+         SuperscriptBox["D", "+"]}], 
+        StyleBox[
+         RowBox[{
+          SuperscriptBox["A", "+"], 
+          SuperscriptBox["B", "+"], 
+          SuperscriptBox["C", "+"], 
+          SuperscriptBox["D", "+"]}],
+         StripOnInput->False,
+         ShowContents->False]],
+       TensorCalculus4V6`Tensorial`Tensor[
+        OverBar[$CellContext`\[Psi]], {
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+         SuperPlus[$CellContext`A], 
+         SuperPlus[$CellContext`B], 
+         SuperPlus[C], 
+         SuperPlus[D]}],
+       BaseStyle->{AutoMultiplicationSymbol -> False},
+       Editable->False]}]}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" where \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["\[Psi]", 
+     RowBox[{"A", "B", "C", "D"}], 
+     StyleBox[
+      RowBox[{"A", "B", "C", "D"}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Psi], {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, C, 
+      D}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" is symmetric, \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   InterpretationBox[
+    SubsuperscriptBox["\[Phi]", 
+     RowBox[{"A", "B", 
+      SuperscriptBox["A", "+"], 
+      SuperscriptBox["B", "+"]}], 
+     StyleBox[
+      RowBox[{"A", "B", 
+       SuperscriptBox["A", "+"], 
+       SuperscriptBox["B", "+"]}],
+      StripOnInput->False,
+      ShowContents->False]],
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, 
+      SuperPlus[$CellContext`A], 
+      SuperPlus[$CellContext`B]}],
+    BaseStyle->{AutoMultiplicationSymbol -> False},
+    Editable->False], "\[InvisibleSpace]", 
+   StyleBox["\<\" is symmetric on each pair of indices and is Hermitian and \
+\[CapitalLambda] is real.  By taking contractions of this, find the spinor \
+equivalents of the Weyl tensor, the Ricci tensor and the Ricci scalar.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]]}],
+  SequenceForm[
+   Style["(d) If ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`R, {
+    TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b, \
+$CellContext`c, $CellContext`d}], 
+   Style[" has the symmetries of the Riemann tensor, show that it has a \
+spinor decomposition of the form ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`R, {
+     TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void, 
+      TensorCalculus4V6`Tensorial`Void}, {$CellContext`a, $CellContext`b, \
+$CellContext`c, $CellContext`d}] -> 
+   2 $CellContext`\[CapitalLambda] (
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}]
+         TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}, {C, D}] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+          SuperPlus[$CellContext`A], 
+          SuperPlus[D]}] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+          SuperPlus[$CellContext`B], 
+          SuperPlus[C]}] + 
+      TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, C}] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, 
+          TensorCalculus4V6`Tensorial`Void}, {$CellContext`B, D}] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+          SuperPlus[$CellContext`A], 
+          SuperPlus[$CellContext`B]}] 
+       TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+         TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+          SuperPlus[C], 
+          SuperPlus[D]}]) + 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+       C, D}] TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        SuperPlus[$CellContext`A], 
+        SuperPlus[$CellContext`B]}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, 
+        SuperPlus[C], 
+        SuperPlus[D]}] + 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        SuperPlus[C], 
+        SuperPlus[D]}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+       
+        SuperPlus[$CellContext`A], 
+        SuperPlus[$CellContext`B], C, D}] + 
+    TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        SuperPlus[$CellContext`A], 
+        SuperPlus[$CellContext`B]}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+        SuperPlus[C], 
+        SuperPlus[D]}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Psi], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, C,
+         D}] + TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B}] 
+     TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Epsilon], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+       C, D}] TensorCalculus4V6`Tensorial`Tensor[
+       OverBar[$CellContext`\[Psi]], {
+       TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+        TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void}, {
+       
+        SuperPlus[$CellContext`A], 
+        SuperPlus[$CellContext`B], 
+        SuperPlus[C], 
+        SuperPlus[D]}], 
+   Style[" where ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Psi], {
+    TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, C, 
+     D}], 
+   Style[" is symmetric, ", 
+    RGBColor[0, 0, 1], Larger], 
+   TensorCalculus4V6`Tensorial`Tensor[$CellContext`\[Phi], {
+    TensorCalculus4V6`Tensorial`Void, TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void, 
+     TensorCalculus4V6`Tensorial`Void}, {$CellContext`A, $CellContext`B, 
+     SuperPlus[$CellContext`A], 
+     SuperPlus[$CellContext`B]}], 
+   Style[" is symmetric on each pair of indices and is Hermitian and \
+\[CapitalLambda] is real.  By taking contractions of this, find the spinor \
+equivalents of the Weyl tensor, the Ricci tensor and the Ricci scalar.", 
+    RGBColor[0, 0, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.508810718299457*^9, 3.508810735662533*^9}, 
+   3.508810825560857*^9, 3.508810961533496*^9, {3.508811155150794*^9, 
+   3.508811171489807*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  "\"\<(e) \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\), \(n\)]\) (respectively \!\(\*SuperscriptBox[\(\
+\[DoubleStruckCapitalR]\[DoubleStruckCapitalP]\), \(n\)]\)) is defined as the \
+set of one-dimensional subspaces of an n+1 dimensional complex (respectively \
+real) vector space.  Show that \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\), \(n\)]\) is a complex manifold by construction a \
+appropriate cover and coordinates.  In a similiar way, one defines a \
+Grassmann manifold G[k,n] as the set of k-dimensional subspaces of an \
+n-dimensional vector subspace.\>\"", "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.508811681436915*^9, 3.508811965909535*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"(e) \\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\\), \\(n\\)]\\) (respectively \
+\\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalR]\[DoubleStruckCapitalP]\\), \
+\\(n\\)]\\)) is defined as the set of one-dimensional subspaces of an n+1 \
+dimensional complex (respectively real) vector space.  Show that \
+\\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\\), \
+\\(n\\)]\\) is a complex manifold by construction a appropriate cover and \
+coordinates.  In a similiar way, one defines a Grassmann manifold G[k,n] as \
+the set of k-dimensional subspaces of an n-dimensional vector subspace.\"\>",
+  StripOnInput->False,
+  LineColor->RGBColor[0, 0, 1],
+  FrontFaceColor->RGBColor[0, 0, 1],
+  BackFaceColor->RGBColor[0, 0, 1],
+  GraphicsColor->RGBColor[0, 0, 1],
+  FontSize->Larger,
+  FontColor->RGBColor[0, 0, 1]]], "Print",
+ CellChangeTimes->{3.508811967335243*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{"\"\<(f) Recalling that \>\"", ",", 
+   RowBox[{
+    RowBox[{"Diag", "[", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"\[Psi]", "/", "2"}], "]"}], ",", 
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "\[Psi]"}], "/", "2"}], "]"}]}], "]"}], "\[Element]", 
+    RowBox[{"SL", "[", 
+     RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}]}], ",", 
+   "\"\< defines a boost in the O[3] plane, show that the effect of a boost \
+on the celestial sphere is to move oints towards the direction of \
+motion.\>\""}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.508811982388358*^9, 3.5088121552454777`*^9}, {
+  3.508812192286138*^9, 3.50881223122027*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(f) Recalling that \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"Diag", "[", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[Psi]", "/", "2"}]], ",", 
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{
+        RowBox[{"-", "\[Psi]"}], "/", "2"}]]}], "]"}], "\[Element]", 
+    RowBox[{"SL", "[", 
+     RowBox[{"2", ",", "\[DoubleStruckCapitalC]"}], "]"}]}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" defines a boost in the O[3] plane, show that the effect of \
+a boost on the celestial sphere is to move oints towards the direction of \
+motion.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]]}],
+  SequenceForm[
+   Style["(f) Recalling that ", 
+    RGBColor[0, 0, 1], Larger], 
+   Element[
+    $CellContext`Diag[
+    E^(Rational[1, 2] $CellContext`\[Psi]), 
+     E^(Rational[-1, 2] $CellContext`\[Psi])], 
+    $CellContext`SL[2, $CellContext`\[DoubleStruckCapitalC]]], 
+   Style[" defines a boost in the O[3] plane, show that the effect of a boost \
+on the celestial sphere is to move oints towards the direction of motion.", 
+    RGBColor[0, 0, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.5088120321681833`*^9, 3.508812039437132*^9}, 
+   3.508812080600163*^9, 3.508812235333041*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR1", "[", 
+  RowBox[{
+  "\"\<(g) This exercise is concerned with (complex) line bundles over \
+\!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\), \
+\(1\)]\).  Such a bundle, say L, may be defined in terms of the cover \>\"", 
+   ",", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["\[ScriptCapitalU]", "1"], ",", 
+     SubscriptBox["\[ScriptCapitalU]", "2"]}], "}"}], ",", 
+   "\"\< as follows: there exist local trivializations \>\"", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Xi]", ",", 
+       SubscriptBox["\[Mu]", "1"]}], "}"}], " ", "[", " ", 
+     SubscriptBox["L", 
+      SubscriptBox["\[ScriptCapitalU]", "1"]], "]"}], "->", 
+    RowBox[{"{", 
+     RowBox[{
+      SubscriptBox["\[ScriptCapitalU]", "1"], ",", 
+      "\[DoubleStruckCapitalC]"}], "}"}]}], ",", "and", ",", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Xi]", ",", 
+       SubscriptBox["\[Mu]", "2"]}], "}"}], " ", "[", " ", 
+     SubscriptBox["L", 
+      SubscriptBox["\[ScriptCapitalU]", "2"]], "]"}], "->", 
+    RowBox[{"{", 
+     RowBox[{
+      SubscriptBox["\[ScriptCapitalU]", "2"], ",", 
+      "\[DoubleStruckCapitalC]"}], "}"}]}], ",", 
+   "\"\< in terms of fibre coordinates \>\"", ",", 
+   SubscriptBox["\[Mu]", "i"], ",", "\"\< and a transition relation \>\"", 
+   ",", 
+   RowBox[{
+    SubscriptBox["\[Mu]", "2"], "->", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"fdd", "[", 
+       RowBox[{"1", ",", "2"}], "]"}], "[", "\[Xi]", "]"}], 
+     SubscriptBox["\[Mu]", "1"]}]}], ",", 
+   "\"\< in terms of a transition function \>\"", ",", 
+   RowBox[{"fdd", "[", 
+    RowBox[{"1", ",", "2"}], "]"}], ",", 
+   "\"\< which is holomorphic on \!\(\*SubscriptBox[\(\[ScriptCapitalU]\), \
+\(1\)]\) \[Intersection] \!\(\*SubscriptBox[\(\[ScriptCapitalU]\), \(2\)]\).  \
+A section of L is defined by a pair of holomorphic functions \>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      SubscriptBox["\[Mu]", "1"], "->", 
+      RowBox[{
+       SubscriptBox["S", "1"], "[", "\[Xi]", "]"}]}], ",", 
+     RowBox[{
+      SubscriptBox["\[Mu]", "2"], "->", 
+      RowBox[{
+       SubscriptBox["S", "2"], "[", "\[Xi]", "]"}]}]}], "}"}], ",", 
+   "\"\< related by the transition function on \!\(\*SubscriptBox[\(\
+\[ScriptCapitalU]\), \(1\)]\) \[Intersection] \!\(\*SubscriptBox[\(\
+\[ScriptCapitalU]\), \(2\)]\).  We may define a line bundle L over \
+\!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\), \
+\(1\)]\) by associating to a point \>\"", ",", 
+   RowBox[{"\[Pi]d", "[", 
+    SuperscriptBox["A", "+"], "]"}], ",", 
+   "\"\< in \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\), \(1\)]\) the corresponding one-dimensional \
+subspace of \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\), \(2\)]\): \>\"",
+    ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\[Lambda]", " ", 
+       RowBox[{"\[Pi]d", "[", 
+        SuperscriptBox["A", "+"], "]"}]}], ",", 
+      RowBox[{"\[Lambda]", "\[Element]", "\[DoubleStruckCapitalC]"}]}], "}"}],
+     "->", 
+    RowBox[{"\[Pi]d", "[", 
+     SuperscriptBox["A", "+"], "]"}]}], ",", "\[IndentingNewLine]", "NL", 
+   ",", "\"\<Show that in this case we may take \>\"", ",", 
+   RowBox[{
+    RowBox[{"fdd", "[", 
+     RowBox[{"1", ",", "2"}], "]"}], "->", "\[Xi]"}], ",", 
+   "\"\<  This particular L is know as \!\(\*SuperscriptBox[\(H\), \(-1\)]\) \
+or \[ScriptCapitalO][-1].  In a similar way we may define \
+\!\(\*SuperscriptBox[\(H\), \(-n\)]\) or \[ScriptCapitalO][-n] by \>\"", ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\[Lambda]", " ", 
+       RowBox[{
+        RowBox[{"\[Pi]d", "[", 
+         SuperscriptBox["A", "+"], "]"}], ".", 
+        RowBox[{"\[Pi]d", "[", 
+         SuperscriptBox["B", "+"], "]"}], ".", " ", "\[Ellipsis]"}]}], " ", 
+      "\[VerticalSeparator]", " ", 
+      RowBox[{"\[Lambda]", "\[Element]", "\[DoubleStruckCapitalC]"}]}], "}"}],
+     "->", 
+    RowBox[{"\[Pi]d", "[", 
+     SuperscriptBox["A", "+"], "]"}]}], ",", "\[IndentingNewLine]", "NL", 
+   ",", "\"\<Show that now \>\"", ",", 
+   RowBox[{
+    RowBox[{"fdd", "[", 
+     RowBox[{"1", ",", "2"}], "]"}], "->", 
+    SuperscriptBox["\[Xi]", "n"]}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.508812242625629*^9, 3.508812667326153*^9}, {
+  3.5088126988718977`*^9, 3.508812960306031*^9}, {3.5088129958652287`*^9, 
+  3.508813205972681*^9}, {3.508813281852268*^9, 3.508813581823309*^9}, {
+  3.508813613167128*^9, 3.50881388568596*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"(g) This exercise is concerned with (complex) line bundles \
+over \\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\
+\\), \\(1\\)]\\).  Such a bundle, say L, may be defined in terms of the cover \
+\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["\[ScriptCapitalU]", "1"], ",", 
+     SubscriptBox["\[ScriptCapitalU]", "2"]}], "}"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" as follows: there exist local trivializations \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Xi]", ",", 
+       SubscriptBox["\[Mu]", "1"]}], "}"}], "[", 
+     SubscriptBox["L", 
+      SubscriptBox["\[ScriptCapitalU]", "1"]], "]"}], "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      SubscriptBox["\[ScriptCapitalU]", "1"], ",", 
+      "\[DoubleStruckCapitalC]"}], "}"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" and \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Xi]", ",", 
+       SubscriptBox["\[Mu]", "2"]}], "}"}], "[", 
+     SubscriptBox["L", 
+      SubscriptBox["\[ScriptCapitalU]", "2"]], "]"}], "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      SubscriptBox["\[ScriptCapitalU]", "2"], ",", 
+      "\[DoubleStruckCapitalC]"}], "}"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\" in terms of fibre coordinates \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   SubscriptBox["\[Mu]", "i"], "\[InvisibleSpace]", 
+   StyleBox["\<\" and a transition relation \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    SubscriptBox["\[Mu]", "2"], "\[Rule]", 
+    RowBox[{
+     SubscriptBox["\[Mu]", "1"], " ", 
+     RowBox[{
+      RowBox[{"fdd", "[", 
+       RowBox[{"1", ",", "2"}], "]"}], "[", "\[Xi]", "]"}]}]}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" in terms of a transition function \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"fdd", "[", 
+    RowBox[{"1", ",", "2"}], "]"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" which is holomorphic on \\!\\(\\*SubscriptBox[\\(\
+\[ScriptCapitalU]\\), \\(1\\)]\\) \[Intersection] \\!\\(\\*SubscriptBox[\\(\
+\[ScriptCapitalU]\\), \\(2\\)]\\).  A section of L is defined by a pair of \
+holomorphic functions \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      SubscriptBox["\[Mu]", "1"], "\[Rule]", 
+      RowBox[{
+       SubscriptBox["S", "1"], "[", "\[Xi]", "]"}]}], ",", 
+     RowBox[{
+      SubscriptBox["\[Mu]", "2"], "\[Rule]", 
+      RowBox[{
+       SubscriptBox["S", "2"], "[", "\[Xi]", "]"}]}]}], "}"}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\" related by the transition function on \
+\\!\\(\\*SubscriptBox[\\(\[ScriptCapitalU]\\), \\(1\\)]\\) \[Intersection] \
+\\!\\(\\*SubscriptBox[\\(\[ScriptCapitalU]\\), \\(2\\)]\\).  We may define a \
+line bundle L over \\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\\), \\(1\\)]\\) by associating to a point \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{"\[Pi]d", "[", 
+    SuperscriptBox["A", "+"], "]"}], "\[InvisibleSpace]", 
+   StyleBox["\<\" in \\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\\), \\(1\\)]\\) the corresponding one-dimensional \
+subspace of \\!\\(\\*SuperscriptBox[\\(\[DoubleStruckCapitalC]\\), \
+\\(2\\)]\\): \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\[Lambda]", " ", 
+       RowBox[{"\[Pi]d", "[", 
+        SuperscriptBox["A", "+"], "]"}]}], ",", 
+      RowBox[{"\[Lambda]", "\[Element]", "\[DoubleStruckCapitalC]"}]}], "}"}],
+     "\[Rule]", 
+    RowBox[{"\[Pi]d", "[", 
+     SuperscriptBox["A", "+"], "]"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Show that in this case we may take \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"fdd", "[", 
+     RowBox[{"1", ",", "2"}], "]"}], "\[Rule]", "\[Xi]"}], 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\"  This particular L is know as \
+\\!\\(\\*SuperscriptBox[\\(H\\), \\(-1\\)]\\) or \[ScriptCapitalO][-1].  In a \
+similar way we may define \\!\\(\\*SuperscriptBox[\\(H\\), \\(-n\\)]\\) or \
+\[ScriptCapitalO][-n] by \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\[Lambda]", " ", 
+       RowBox[{
+        RowBox[{"\[Pi]d", "[", 
+         SuperscriptBox["A", "+"], "]"}], ".", 
+        RowBox[{"\[Pi]d", "[", 
+         SuperscriptBox["B", "+"], "]"}], ".", "\[Ellipsis]"}]}], 
+      "\[VerticalSeparator]", 
+      RowBox[{"\[Lambda]", "\[Element]", "\[DoubleStruckCapitalC]"}]}], "}"}],
+     "\[Rule]", 
+    RowBox[{"\[Pi]d", "[", 
+     SuperscriptBox["A", "+"], "]"}]}], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   StyleBox["\<\"Show that now \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0, 0, 1],
+    FrontFaceColor->RGBColor[0, 0, 1],
+    BackFaceColor->RGBColor[0, 0, 1],
+    GraphicsColor->RGBColor[0, 0, 1],
+    FontSize->Larger,
+    FontColor->RGBColor[0, 0, 1]], "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"fdd", "[", 
+     RowBox[{"1", ",", "2"}], "]"}], "\[Rule]", 
+    SuperscriptBox["\[Xi]", "n"]}]}],
+  SequenceForm[
+   Style["(g) This exercise is concerned with (complex) line bundles over \
+\!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\), \
+\(1\)]\).  Such a bundle, say L, may be defined in terms of the cover ", 
+    RGBColor[0, 0, 1], Larger], {
+    Subscript[$CellContext`\[ScriptCapitalU], 1], 
+    Subscript[$CellContext`\[ScriptCapitalU], 2]}, 
+   Style[" as follows: there exist local trivializations ", 
+    RGBColor[0, 0, 1], Larger], {$CellContext`\[Xi], 
+     Subscript[$CellContext`\[Mu], 1]}[
+     Subscript[$CellContext`L, 
+      Subscript[$CellContext`\[ScriptCapitalU], 1]]] -> {
+     Subscript[$CellContext`\[ScriptCapitalU], 
+      1], $CellContext`\[DoubleStruckCapitalC]}, 
+   Style[" and ", 
+    RGBColor[0, 0, 1], Larger], {$CellContext`\[Xi], 
+     Subscript[$CellContext`\[Mu], 2]}[
+     Subscript[$CellContext`L, 
+      Subscript[$CellContext`\[ScriptCapitalU], 2]]] -> {
+     Subscript[$CellContext`\[ScriptCapitalU], 
+      2], $CellContext`\[DoubleStruckCapitalC]}, 
+   Style[" in terms of fibre coordinates ", 
+    RGBColor[0, 0, 1], Larger], 
+   Subscript[$CellContext`\[Mu], $CellContext`i], 
+   Style[" and a transition relation ", 
+    RGBColor[0, 0, 1], Larger], Subscript[$CellContext`\[Mu], 2] -> 
+   Subscript[$CellContext`\[Mu], 1] $CellContext`fdd[
+     1, 2][$CellContext`\[Xi]], 
+   Style[" in terms of a transition function ", 
+    RGBColor[0, 0, 1], Larger], 
+   $CellContext`fdd[1, 2], 
+   Style[" which is holomorphic on \!\(\*SubscriptBox[\(\[ScriptCapitalU]\), \
+\(1\)]\) \[Intersection] \!\(\*SubscriptBox[\(\[ScriptCapitalU]\), \(2\)]\).  \
+A section of L is defined by a pair of holomorphic functions ", 
+    RGBColor[0, 0, 1], Larger], {
+   Subscript[$CellContext`\[Mu], 1] -> 
+    Subscript[$CellContext`S, 1][$CellContext`\[Xi]], 
+    Subscript[$CellContext`\[Mu], 2] -> 
+    Subscript[$CellContext`S, 2][$CellContext`\[Xi]]}, 
+   Style[" related by the transition function on \!\(\*SubscriptBox[\(\
+\[ScriptCapitalU]\), \(1\)]\) \[Intersection] \!\(\*SubscriptBox[\(\
+\[ScriptCapitalU]\), \(2\)]\).  We may define a line bundle L over \
+\!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\[DoubleStruckCapitalP]\), \
+\(1\)]\) by associating to a point ", 
+    RGBColor[0, 0, 1], Larger], 
+   $CellContext`\[Pi]d[
+    SuperPlus[$CellContext`A]], 
+   Style[" in \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\
+\[DoubleStruckCapitalP]\), \(1\)]\) the corresponding one-dimensional \
+subspace of \!\(\*SuperscriptBox[\(\[DoubleStruckCapitalC]\), \(2\)]\): ", 
+    RGBColor[0, 0, 1], Larger], {$CellContext`\[Lambda] $CellContext`\[Pi]d[
+       SuperPlus[$CellContext`A]], 
+     Element[$CellContext`\[Lambda], $CellContext`\[DoubleStruckCapitalC]]} -> \
+$CellContext`\[Pi]d[
+     SuperPlus[$CellContext`A]], 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Show that in this case we may take ", 
+    RGBColor[0, 0, 1], Larger], $CellContext`fdd[1, 2] -> $CellContext`\[Xi], 
+   
+   Style["  This particular L is know as \!\(\*SuperscriptBox[\(H\), \
+\(-1\)]\) or \[ScriptCapitalO][-1].  In a similar way we may define \
+\!\(\*SuperscriptBox[\(H\), \(-n\)]\) or \[ScriptCapitalO][-n] by ", 
+    RGBColor[0, 0, 1], Larger], {
+     VerticalSeparator[$CellContext`\[Lambda] Dot[
+        $CellContext`\[Pi]d[
+         SuperPlus[$CellContext`A]], 
+        $CellContext`\[Pi]d[
+         SuperPlus[$CellContext`B]], $CellContext`\[Ellipsis]], 
+      Element[$CellContext`\[Lambda], $CellContext`\[DoubleStruckCapitalC]]]} -> \
+$CellContext`\[Pi]d[
+     SuperPlus[$CellContext`A]], 
+   Style["\n", 
+    RGBColor[0, 0, 1], Larger], 
+   Style["Show that now ", 
+    RGBColor[0, 0, 1], Larger], $CellContext`fdd[
+    1, 2] -> $CellContext`\[Xi]^$CellContext`n],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.508812624051779*^9, 3.508812637709279*^9}, {
+   3.508812669681246*^9, 3.5088126771061773`*^9}, 3.5088131059365177`*^9, 
+   3.508813149687923*^9, {3.508813793844392*^9, 3.508813818783454*^9}, 
+   3.508813888831457*^9}]
+}, Open  ]]
+},
+WindowSize->{740, 656},
+WindowMargins->{{Automatic, 210}, {Automatic, 32}},
+FrontEndVersion->"8.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (February 23, \
+2011)",
+StyleDefinitions->"TensorialStyleSave.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 671, 10, 40, "Input",
+ InitializationCell->True],
+Cell[1231, 32, 1570, 33, 67, "Input",
+ InitializationCell->True],
+Cell[2804, 67, 154, 2, 29, "Text"],
+Cell[CellGroupData[{
+Cell[2983, 73, 895, 23, 86, "Input",
+ InitializationCell->True],
+Cell[3881, 98, 320, 9, 24, "Output",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4238, 112, 5042, 133, 243, "Input"],
+Cell[9283, 247, 43064, 1096, 225, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[52384, 1348, 3850, 84, 176, "Input"],
+Cell[56237, 1434, 11788, 314, 120, "Print"],
+Cell[68028, 1750, 12029, 318, 131, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[80094, 2073, 1708, 41, 131, "Input"],
+Cell[81805, 2116, 32824, 846, 134, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[114666, 2967, 542, 13, 71, "Input"],
+Cell[115211, 2982, 2481, 65, 33, "Print"]
+}, Open  ]],
+Cell[117707, 3050, 172, 3, 86, "Input"],
+Cell[CellGroupData[{
+Cell[117904, 3057, 420, 7, 86, "Input"],
+Cell[118327, 3066, 566, 12, 59, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[118930, 3083, 1404, 35, 101, "Input"],
+Cell[120337, 3120, 7989, 198, 62, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[128363, 3323, 1219, 33, 131, "Input"],
+Cell[129585, 3358, 8344, 214, 85, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[137966, 3577, 4565, 109, 253, "Input"],
+Cell[142534, 3688, 22990, 564, 154, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[165561, 4257, 771, 11, 147, "Input"],
+Cell[166335, 4270, 944, 17, 95, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[167316, 4292, 739, 17, 86, "Input"],
+Cell[168058, 4311, 1727, 45, 61, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[169822, 4361, 4603, 112, 347, "Input"],
+Cell[174428, 4475, 12087, 294, 304, "Print"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,4080 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[    162657,       3982]*)
+(*NotebookOutlinePosition[    163341,       4005]*)
+(*  CellTagsIndexPosition[    163297,       4001]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Maxwell Equations in the Schwarzchild Space", "Title"],
+
+Cell["\<\
+Renan Cabrera
+cabrer7@uwindsor.ca\
+\>", "Subtitle"],
+
+Cell[CellGroupData[{
+
+Cell["Initializations", "Section"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input"],
+
+Cell[TextData[{
+  "We set base indices for relativity, and define tensor shortcuts for the \
+coordinates ",
+  Cell[BoxData[
+      \(x\)]],
+  ", the 4-current ",
+  Cell[BoxData[
+      \(J\)]],
+  ", the electric field ",
+  Cell[BoxData[
+      \(\[Xi]\)]],
+  ", the metric tensor ",
+  Cell[BoxData[
+      \(g\)]],
+  ", the Maxwell tensor ",
+  Cell[BoxData[
+      \(F\)]],
+  ", the Kronecker ",
+  Cell[BoxData[
+      \(\[Delta]\)]],
+  ", and the Christoffel symbols ",
+  Cell[BoxData[
+      \(\[CapitalGamma]\)]],
+  "."
+}], "Text"],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices[{0, 1, 2, 3}]\), "\[IndentingNewLine]", 
+    \(\(labs = {x, \[Delta], 
+          g, \[CapitalGamma]};\)\), "\[IndentingNewLine]", 
+    \(DefineTensorShortcuts[{{x, J, \[Xi]}, 1}, {{g, F, \[Delta]}, 
+        2}, {\[CapitalGamma], 3}]\), "\[IndentingNewLine]", 
+    \(SetTensorValues[\[Delta]ud[i, j], IdentityMatrix[NDim]]\)}], "Input"],
+
+Cell["\<\
+The metric tensor of this space is given by the components of the following \
+matrix:\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(Attributes[M] = {Constant};\)\), "\[IndentingNewLine]", 
+    \(\((cmetric = 
+          DiagonalMatrix[{\(-\((1 - 2  M/r)\)\), 1\/\((1 - 2  M/r)\), 
+              r\^2, \(r\^2\) Sin[\[Theta]]\^2}])\) // 
+      MatrixForm\), "\[IndentingNewLine]", 
+    \(\((metric = 
+          cmetric // CoordinatesToTensors[{t, r, \[Theta], \[Phi]}])\) // 
+      MatrixForm\)}], "Input"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {\(\(-1\) + \(2\ M\)\/r\), "0", "0", "0"},
+            {"0", \(1\/\(1 - \(2\ M\)\/r\)\), "0", "0"},
+            {"0", "0", \(r\^2\), "0"},
+            {"0", "0", "0", \(r\^2\ Sin[\[Theta]]\^2\)}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output"],
+
+Cell[BoxData[
+    TagBox[
+      RowBox[{"(", "\[NoBreak]", GridBox[{
+            {
+              RowBox[{\(-1\), "+", 
+                FractionBox[\(2\ M\), 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]]}], "0", "0", "0"},
+            {"0", 
+              FractionBox["1", 
+                RowBox[{"1", "-", 
+                  FractionBox[\(2\ M\), 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]]}]], "0", "0"},
+            {"0", "0", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm], "0"},
+            {"0", "0", "0", 
+              RowBox[{
+                SuperscriptBox[
+                  RowBox[{"Sin", "[", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "2"],
+                      Tensor[ x, {2}, {Void}],
+                      Editable->False], "]"}], "2"], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]}
+            },
+          RowSpacings->1,
+          ColumnSpacings->1,
+          ColumnAlignments->{Left}], "\[NoBreak]", ")"}],
+      Function[ BoxForm`e$, 
+        MatrixForm[ BoxForm`e$]]]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Setting the values to the metric tensor and Christoffel symbol.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(MapThread[
+        SetTensorValues[#1, #2] &, {{gdd[a, b], guu[a, b]}, {metric, 
+            Inverse[metric] // Simplify}}];\)\), "\[IndentingNewLine]", 
+    \(\(MapThread[
+        SetTensorValues[#1, #2] &, {{\[CapitalGamma]ddd[a, b, 
+              c], \[CapitalGamma]udd[a, b, c]}, 
+          CalculateChristoffels[labs]}];\)\)}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Non Homogeneous Maxwell Equations", "Section"],
+
+Cell["\<\
+The following closed cell contains the Tensorial code to derive the equation \
+for the radial electric field in the Schwarzchild metric. Select the cell and \
+evaluate to obtain the derivation. (Select the cell and use Alt C R C to see \
+the code, or use Menu \[Rule] Cell \[Rule] Cell Properties \[Rule] Cell \
+Open.)\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearTensorValues[xu[i]];\)\), "\[IndentingNewLine]", 
+    \(Print["\<The Maxwell electromagnetic tensor\>"]\), \
+"\[IndentingNewLine]", 
+    \(Fuu[\[Mu], \[Nu]]\), "\[IndentingNewLine]", 
+    \(Print["\<The nonhomogeneous Maxwell equations.\>"]\), "\
+\[IndentingNewLine]", 
+    \(CovariantD[%%, \[Nu]] == Ju[\[Mu]]\), "\[IndentingNewLine]", 
+    \(Print["\<Expanding the lhs in terms of Christoffel symbols.\>"]\), "\
+\[IndentingNewLine]", 
+    \(MapAt[ExpandCovariantD[labs, a], %%, 1]\), "\[IndentingNewLine]", 
+    \(Print["\<Expanding to the array values.\>"]\), "\[IndentingNewLine]", 
+    \(ToArrayValues[] /@ %%\), "\[IndentingNewLine]", 
+    \(Print["\<Eliminating angular components.\>"]\), "\[IndentingNewLine]", 
+    \(%% /. {Fuu[2 | 3, _] \[Rule] 0, 
+        Fuu[_, 2 | 3] \[Rule] 0}\), "\[IndentingNewLine]", 
+    \(\(Print["\<First two equations\>"];\)\), "\[IndentingNewLine]", 
+    \(\(Take[#, 2] &\) /@ %%\), "\[IndentingNewLine]", 
+    \(Print["\<Setting partial derivatives with respect to time and real \
+current to zero\>"]\), "\[IndentingNewLine]", 
+    \(%% //. {\(PartialD[_]\)[_, xu[0]] \[Rule] 0, 
+        Ju[1] \[Rule] 0}\), "\[IndentingNewLine]", 
+    \(Print["\<Symmetrizing the slots of F\>"]\), "\[IndentingNewLine]", 
+    \(%% // 
+      SymmetrizeSlots[F, 2, {{\(-1\), {1, 2}}}]\), "\[IndentingNewLine]", 
+    \(Print["\<Substituting coordinate values and threading the \
+equations.\>"]\), "\[IndentingNewLine]", 
+    \(SetTensorValueRules[
+      xu[i], {t, r, \[Theta], \[Phi]}]\), "\[IndentingNewLine]", 
+    \(%%% /. TensorValueRules[x] // Thread\), "\[IndentingNewLine]", 
+    \(Print["\<Second equation involves only diagonal components of F, which \
+are zero.\>"]\), "\[IndentingNewLine]", 
+    \(%% /. Fuu[i_, i_] \[Rule] 0\), "\[IndentingNewLine]", 
+    \(First[%]\)}], "Input",
+  CellOpen->False],
+
+Cell[BoxData[
+    \("The Maxwell electromagnetic tensor"\)], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        RowBox[{
+          TagBox[
+            StyleBox["\[Mu]",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], 
+          TagBox[
+            StyleBox["\[Nu]",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)]}], \(\[Mu]  \[Nu]\)],
+      Tensor[ F, {\[Mu], \[Nu]}, {Void, Void}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    \("The nonhomogeneous Maxwell equations."\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubscriptBox[
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              RowBox[{
+                TagBox[
+                  StyleBox["\[Mu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["\[Nu]",
+                    ShowContents->False],
+                  (
+                  StyleForm[ #, ShowContents -> 
+                    False]&)]}], \(\[Mu]  \[Nu]\)],
+            Tensor[ F, {\[Mu], \[Nu]}, {Void, Void}],
+            Editable->False], \(\(;\)\(\[Nu]\)\)],
+        CovariantD[ 
+          Tensor[ F, {\[Mu], \[Nu]}, {Void, Void}], \[Nu]],
+        Editable->False], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["\[Mu]",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "\[Mu]"],
+        Tensor[ J, {\[Mu]}, {Void}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    \("Expanding the lhs in terms of Christoffel symbols."\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              RowBox[{
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["\[Nu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}], \(a  \[Nu]\)],
+            Tensor[ F, {a, \[Nu]}, {Void, Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["\[Mu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "\[Nu]", "a"}], 
+              RowBox[{"\[Mu]", 
+                TagBox[
+                  StyleBox["\[Nu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {\[Mu], Void, Void}, {Void, \[Nu], a}],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              RowBox[{
+                TagBox[
+                  StyleBox["\[Mu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}], \(\[Mu]  a\)],
+            Tensor[ F, {\[Mu], a}, {Void, Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["\[Nu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "\[Nu]", "a"}], 
+              RowBox[{"\[Nu]", 
+                TagBox[
+                  StyleBox["\[Nu]",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {\[Nu], Void, Void}, {Void, \[Nu], a}],
+            Editable->False]}], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["\[Mu]",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["\[Nu]",
+                        ShowContents->False],
+                      (
+                      StyleForm[ #, ShowContents -> 
+                        False]&)]}], \(\[Mu]  \[Nu]\)],
+                Tensor[ F, {\[Mu], \[Nu]}, {Void, Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["\[Nu]",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "\[Nu]"],
+                Tensor[ x, {\[Nu]}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ F, {\[Mu], \[Nu]}, {Void, Void}], 
+            Tensor[ x, {\[Nu]}, {Void}]],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["\[Mu]",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "\[Mu]"],
+        Tensor[ J, {\[Mu]}, {Void}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    \("Expanding to the array values."\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"{", 
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["0",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(0  2\)],
+                Tensor[ F, {0, 2}, {Void, Void}],
+                Editable->False]}], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        0\)],
+                    Tensor[ F, {0, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        2\)],
+                    Tensor[ F, {0, 2}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 2}, {Void, Void}], 
+                Tensor[ x, {2}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        3\)],
+                    Tensor[ F, {0, 3}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ x, {3}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 3}, {Void, Void}], 
+                Tensor[ x, {3}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(1  2\)],
+                Tensor[ F, {1, 2}, {Void, Void}],
+                Editable->False]}], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]], "+", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False], " ", 
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}]}], 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            RowBox[{
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(2  2\)],
+                Tensor[ F, {2, 2}, {Void, Void}],
+                Editable->False], " ", 
+              RowBox[{"(", 
+                RowBox[{"1", "-", 
+                  FractionBox[\(2\ M\), 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]]}], ")"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]}], "-", 
+            RowBox[{
+              SuperscriptBox[
+                RowBox[{"Sin", "[", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False], "]"}], "2"], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(3  3\)],
+                Tensor[ F, {3, 3}, {Void, Void}],
+                Editable->False], " ", 
+              RowBox[{"(", 
+                RowBox[{"1", "-", 
+                  FractionBox[\(2\ M\), 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]]}], ")"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]}], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        0\)],
+                    Tensor[ F, {1, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        2\)],
+                    Tensor[ F, {1, 2}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 2}, {Void, Void}], 
+                Tensor[ x, {2}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        3\)],
+                    Tensor[ F, {1, 3}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ x, {3}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 3}, {Void, Void}], 
+                Tensor[ x, {3}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(2  2\)],
+                Tensor[ F, {2, 2}, {Void, Void}],
+                Editable->False]}], "-", 
+            RowBox[{
+              RowBox[{"Cos", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              RowBox[{"Sin", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(3  3\)],
+                Tensor[ F, {3, 3}, {Void, Void}],
+                Editable->False]}], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(2  1\)],
+                  
+                  Tensor[ F, {2, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]], "+", 
+            FractionBox[
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(1  2\)],
+                Tensor[ F, {1, 2}, {Void, Void}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "+", 
+            FractionBox[
+              RowBox[{"3", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(2  1\)],
+                  
+                  Tensor[ F, {2, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(2  1\)],
+                  
+                  Tensor[ F, {2, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(2  
+                        0\)],
+                    Tensor[ F, {2, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {2, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(2  
+                        1\)],
+                    Tensor[ F, {2, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {2, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(2  
+                        2\)],
+                    Tensor[ F, {2, 2}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {2, 2}, {Void, Void}], 
+                Tensor[ x, {2}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(2  
+                        3\)],
+                    Tensor[ F, {2, 3}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ x, {3}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {2, 3}, {Void, Void}], 
+                Tensor[ x, {3}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(2  3\)],
+                Tensor[ F, {2, 3}, {Void, Void}],
+                Editable->False]}], "+", 
+            RowBox[{"2", " ", 
+              RowBox[{"Cot", "[", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "2"],
+                  Tensor[ x, {2}, {Void}],
+                  Editable->False], "]"}], " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["2",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(3  2\)],
+                Tensor[ F, {3, 2}, {Void, Void}],
+                Editable->False]}], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(3  1\)],
+                  
+                  Tensor[ F, {3, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}], " ", 
+                TagBox[
+                  SuperscriptBox[
+                    RowBox[{"(", 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False], ")"}], "2"],
+                  DisplayForm]}]], "+", 
+            FractionBox[
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["3",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(1  3\)],
+                Tensor[ F, {1, 3}, {Void, Void}],
+                Editable->False], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "+", 
+            FractionBox[
+              RowBox[{"3", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(3  1\)],
+                  
+                  Tensor[ F, {3, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(3  1\)],
+                  
+                  Tensor[ F, {3, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(3  
+                        0\)],
+                    Tensor[ F, {3, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {3, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(3  
+                        1\)],
+                    Tensor[ F, {3, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {3, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["2",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(3  
+                        2\)],
+                    Tensor[ F, {3, 2}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["2",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "2"],
+                    Tensor[ x, {2}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {3, 2}, {Void, Void}], 
+                Tensor[ x, {2}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["3",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(3  
+                        3\)],
+                    Tensor[ F, {3, 3}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["3",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "3"],
+                    Tensor[ x, {3}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {3, 3}, {Void, Void}], 
+                Tensor[ x, {3}, {Void}]],
+              Editable->False]}]}], "}"}], "\[Equal]", 
+      RowBox[{"{", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ J, {1}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ J, {2}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ J, {3}, {Void}],
+            Editable->False]}], "}"}]}]], "Output"],
+
+Cell[BoxData[
+    \("Eliminating angular components."\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"{", 
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        0\)],
+                    Tensor[ F, {0, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"2", " ", "M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False], " ", 
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}]}], 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        0\)],
+                    Tensor[ F, {1, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}], ",", "0", ",", "0"}], "}"}], "\[Equal]", 
+      RowBox[{"{", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ J, {1}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["2",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "2"],
+            Tensor[ J, {2}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["3",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "3"],
+            Tensor[ J, {3}, {Void}],
+            Editable->False]}], "}"}]}]], "Output"],
+
+Cell[BoxData[
+    \("First two equations"\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"{", 
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        0\)],
+                    Tensor[ F, {0, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"2", " ", "M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False], " ", 
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}]}], 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        0\)],
+                    Tensor[ F, {1, 0}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "0"],
+                    Tensor[ x, {0}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 0}, {Void, Void}], 
+                Tensor[ x, {0}, {Void}]],
+              Editable->False], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}]}], "}"}], "\[Equal]", 
+      RowBox[{"{", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False], ",", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ J, {1}, {Void}],
+            Editable->False]}], "}"}]}]], "Output"],
+
+Cell[BoxData[
+    \("Setting partial derivatives with respect to time and real current to \
+zero"\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"{", 
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"2", " ", "M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False], " ", 
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}]}], 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}]}], "}"}], "\[Equal]", 
+      RowBox[{"{", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False], ",", "0"}], "}"}]}]], "Output"],
+
+Cell[BoxData[
+    \("Symmetrizing the slots of F"\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"{", 
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}], ",", 
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"2", " ", "M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{
+                  RowBox[{"(", 
+                    RowBox[{"1", "-", 
+                      FractionBox[\(2\ M\), 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False]]}], ")"}], " ", 
+                  TagBox[
+                    SuperscriptBox[
+                      RowBox[{"(", 
+                        InterpretationBox[
+                          SubsuperscriptBox["x", 
+                            TagBox[
+                              StyleBox["1",
+                                ShowContents->False],
+                              (StyleForm[ #, ShowContents -> False]&)], "1"],
+                          Tensor[ x, {1}, {Void}],
+                          Editable->False], ")"}], "2"],
+                    DisplayForm]}]]}], "+", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False], " ", 
+                RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                    FractionBox[\(2\ M\), 
+                      InterpretationBox[
+                        SubsuperscriptBox["x", 
+                          TagBox[
+                            StyleBox["1",
+                              ShowContents->False],
+                            (StyleForm[ #, ShowContents -> False]&)], "1"],
+                        Tensor[ x, {1}, {Void}],
+                        Editable->False]]}], ")"}]}], 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], 
+              RowBox[{
+                RowBox[{"(", 
+                  RowBox[{\(2\ M\), "-", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]}], ")"}], " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "1"],
+                    Tensor[ x, {1}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], 
+                Tensor[ x, {1}, {Void}]],
+              Editable->False]}]}], "}"}], "\[Equal]", 
+      RowBox[{"{", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False], ",", "0"}], "}"}]}]], "Output"],
+
+Cell[BoxData[
+    \("Substituting coordinate values and threading the equations."\)], \
+"Print"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], \(\((1 - \(2\ M\)\/r)\)\ r\^2\)]}], 
+            "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], "r"], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], \(\((2\ M - r)\)\ r\)], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], \(\((2\ M - r)\)\ r\)], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], \(\[PartialD]r\)],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], r],
+              Editable->False]}], "\[Equal]", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False]}], ",", 
+        RowBox[{
+          RowBox[{
+            FractionBox[
+              RowBox[{"M", " ", \((1 - \(2\ M\)\/r)\), " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  0\)],
+                  
+                  Tensor[ F, {0, 0}, {Void, Void}],
+                  Editable->False]}], \(r\^2\)], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], \(\((1 - \(2\ M\)\/r)\)\ r\^2\)], "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], "r"], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  1\)],
+                  
+                  Tensor[ F, {1, 1}, {Void, Void}],
+                  Editable->False]}], \(\((2\ M - r)\)\ r\)], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(1  
+                        1\)],
+                    Tensor[ F, {1, 1}, {Void, Void}],
+                    Editable->False]}], \(\[PartialD]r\)],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {1, 1}, {Void, Void}], r],
+              Editable->False]}], "\[Equal]", "0"}]}], "}"}]], "Output"],
+
+Cell[BoxData[
+    \("Second equation involves only diagonal components of F, which are \
+zero."\)], "Print"],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{"-", 
+              FractionBox[
+                RowBox[{"M", " ", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], \(\((1 - \(2\ M\)\/r)\)\ r\^2\)]}], 
+            "+", 
+            FractionBox[
+              RowBox[{"2", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], "r"], "-", 
+            FractionBox[
+              RowBox[{"2", " ", "M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                  
+                  Tensor[ F, {0, 1}, {Void, Void}],
+                  Editable->False]}], \(\((2\ M - r)\)\ r\)], "-", 
+            FractionBox[
+              RowBox[{"M", " ", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    RowBox[{
+                      TagBox[
+                        StyleBox["1",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], 
+                      TagBox[
+                        StyleBox["0",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+                  
+                  Tensor[ F, {1, 0}, {Void, Void}],
+                  Editable->False]}], \(\((2\ M - r)\)\ r\)], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      RowBox[{
+                        TagBox[
+                          StyleBox["0",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)]}], \(0  
+                        1\)],
+                    Tensor[ F, {0, 1}, {Void, Void}],
+                    Editable->False]}], \(\[PartialD]r\)],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {0, 1}, {Void, Void}], r],
+              Editable->False]}], "\[Equal]", 
+          InterpretationBox[
+            SubsuperscriptBox["J", 
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "0"],
+            Tensor[ J, {0}, {Void}],
+            Editable->False]}], ",", "True"}], "}"}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{"-", 
+          FractionBox[
+            RowBox[{"M", " ", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["0",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                Tensor[ F, {0, 1}, {Void, Void}],
+                Editable->False]}], \(\((1 - \(2\ M\)\/r)\)\ r\^2\)]}], "+", 
+        FractionBox[
+          RowBox[{"2", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                RowBox[{
+                  TagBox[
+                    StyleBox["0",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+              Tensor[ F, {0, 1}, {Void, Void}],
+              Editable->False]}], "r"], "-", 
+        FractionBox[
+          RowBox[{"2", " ", "M", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                RowBox[{
+                  TagBox[
+                    StyleBox["0",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+              Tensor[ F, {0, 1}, {Void, Void}],
+              Editable->False]}], \(\((2\ M - r)\)\ r\)], "-", 
+        FractionBox[
+          RowBox[{"M", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                RowBox[{
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["0",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)]}], \(1  0\)],
+              Tensor[ F, {1, 0}, {Void, Void}],
+              Editable->False]}], \(\((2\ M - r)\)\ r\)], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  RowBox[{
+                    TagBox[
+                      StyleBox["0",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)]}], \(0  1\)],
+                Tensor[ F, {0, 1}, {Void, Void}],
+                Editable->False]}], \(\[PartialD]r\)],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ F, {0, 1}, {Void, Void}], r],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["0",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "0"],
+        Tensor[ J, {0}, {Void}],
+        Editable->False]}]], "Output"]
+}, Open  ]],
+
+Cell["We obtain a single equation for the radial electric field.", "Text"],
+
+Cell["\<\
+This result can be obtained by a second method. Taking the Divergence of the \
+electric field \[Xi], and applying similar conditions.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\[Xi]u[i]\), "\[IndentingNewLine]", 
+    \(CovariantD[%, i] == Ju[0]\), "\[IndentingNewLine]", 
+    \(MapAt[ExpandCovariantD[labs, a], %, 1]\), "\[IndentingNewLine]", 
+    \(\((\(% // EinsteinSum[]\) // 
+          EinsteinArray[])\) /. {\(PartialD[_]\)[_, xu[0 | 2 | 3]] \[Rule] 
+          0, \[Xi]u[2 | 3] \[Rule] 0}\), "\[IndentingNewLine]", 
+    \(% /. TensorValueRules[x]\)}], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["\[Xi]", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "i"],
+      Tensor[ \[Xi], {i}, {Void}],
+      Editable->False]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubscriptBox[
+          InterpretationBox[
+            SubsuperscriptBox["\[Xi]", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ \[Xi], {i}, {Void}],
+            Editable->False], \(\(;\)\(i\)\)],
+        CovariantD[ 
+          Tensor[ \[Xi], {i}, {Void}], i],
+        Editable->False], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["0",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "0"],
+        Tensor[ J, {0}, {Void}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["\[CapitalGamma]", 
+              RowBox[{
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i", "a"}], 
+              RowBox[{"i", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)]}]],
+            Tensor[ \[CapitalGamma], {i, Void, Void}, {Void, i, a}],
+            Editable->False], " ", 
+          InterpretationBox[
+            SubsuperscriptBox["\[Xi]", 
+              TagBox[
+                StyleBox["a",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "a"],
+            Tensor[ \[Xi], {a}, {Void}],
+            Editable->False]}], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Xi]", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ \[Xi], {i}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ x, {i}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Xi], {i}, {Void}], 
+            Tensor[ x, {i}, {Void}]],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["0",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "0"],
+        Tensor[ J, {0}, {Void}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{"-", 
+          FractionBox[
+            RowBox[{"M", " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Xi]", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ \[Xi], {1}, {Void}],
+                Editable->False]}], 
+            RowBox[{
+              RowBox[{"(", 
+                RowBox[{"1", "-", 
+                  FractionBox[\(2\ M\), 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False]]}], ")"}], " ", 
+              TagBox[
+                SuperscriptBox[
+                  RowBox[{"(", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["1",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "1"],
+                      Tensor[ x, {1}, {Void}],
+                      Editable->False], ")"}], "2"],
+                DisplayForm]}]]}], "+", 
+        FractionBox[
+          RowBox[{"2", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Xi]", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              Tensor[ \[Xi], {1}, {Void}],
+              Editable->False]}], 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "1"],
+            Tensor[ x, {1}, {Void}],
+            Editable->False]], "-", 
+        FractionBox[
+          RowBox[{"M", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Xi]", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              Tensor[ \[Xi], {1}, {Void}],
+              Editable->False]}], 
+          RowBox[{
+            RowBox[{"(", 
+              RowBox[{\(2\ M\), "-", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["1",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "1"],
+                  Tensor[ x, {1}, {Void}],
+                  Editable->False]}], ")"}], " ", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              Tensor[ x, {1}, {Void}],
+              Editable->False]}]], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Xi]", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ \[Xi], {1}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ x, {1}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Xi], {1}, {Void}], 
+            Tensor[ x, {1}, {Void}]],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["0",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "0"],
+        Tensor[ J, {0}, {Void}],
+        Editable->False]}]], "Output"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{"-", 
+          FractionBox[
+            RowBox[{"M", " ", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Xi]", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ \[Xi], {1}, {Void}],
+                Editable->False]}], \(\((1 - \(2\ M\)\/r)\)\ r\^2\)]}], "+", 
+        FractionBox[
+          RowBox[{"2", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Xi]", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              Tensor[ \[Xi], {1}, {Void}],
+              Editable->False]}], "r"], "-", 
+        FractionBox[
+          RowBox[{"M", " ", 
+            InterpretationBox[
+              SubsuperscriptBox["\[Xi]", 
+                TagBox[
+                  StyleBox["1",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "1"],
+              Tensor[ \[Xi], {1}, {Void}],
+              Editable->False]}], \(\((2\ M - r)\)\ r\)], "+", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["\[Xi]", 
+                  TagBox[
+                    StyleBox["1",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "1"],
+                Tensor[ \[Xi], {1}, {Void}],
+                Editable->False]}], \(\[PartialD]r\)],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ \[Xi], {1}, {Void}], r],
+          Editable->False]}], "\[Equal]", 
+      InterpretationBox[
+        SubsuperscriptBox["J", 
+          TagBox[
+            StyleBox["0",
+              ShowContents->False],
+            (StyleForm[ #, ShowContents -> False]&)], "0"],
+        Tensor[ J, {0}, {Void}],
+        Editable->False]}]], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Where we obtain the same equation provided that  ",
+  Cell[BoxData[
+      FormBox[
+        SubsuperscriptBox["\[Xi]", 
+          InterpretationBox[
+            TagBox[
+              StyleBox["1",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)],
+            SequenceForm[ 
+              StyleForm[ 1, ShowContents -> False]],
+            Editable->False], 
+          InterpretationBox["1",
+            SequenceForm[ 1],
+            Editable->False]], TraditionalForm]]],
+  "= ",
+  Cell[BoxData[
+      FormBox[
+        SubsuperscriptBox["F", 
+          InterpretationBox[
+            RowBox[{
+              TagBox[
+                StyleBox["0",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "\[InvisibleSpace]",
+               
+              TagBox[
+                StyleBox["1",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)]}],
+            SequenceForm[ 
+              StyleForm[ 0, ShowContents -> False], 
+              StyleForm[ 1, ShowContents -> False]],
+            Editable->False], 
+          InterpretationBox[\(0\[InvisibleSpace]1\),
+            SequenceForm[ 0, 1],
+            Editable->False]], TraditionalForm]]],
+  ", which is according the definition of the Maxwell tensor."
+}], "Text"]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+WindowSize->{808, 566},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+StyleDefinitions -> "TensorialStyle.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 60, 0, 74, "Title"],
+Cell[1839, 55, 61, 3, 74, "Subtitle"],
+
+Cell[CellGroupData[{
+Cell[1925, 62, 34, 0, 63, "Section"],
+Cell[1962, 64, 72, 1, 46, "Input"],
+Cell[2037, 67, 527, 24, 54, "Text"],
+Cell[2567, 93, 375, 6, 106, "Input"],
+Cell[2945, 101, 109, 3, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[3079, 108, 394, 8, 102, "Input"],
+Cell[3476, 118, 478, 12, 129, "Output"],
+Cell[3957, 132, 2801, 68, 147, "Output"]
+}, Open  ]],
+Cell[6773, 203, 87, 2, 34, "Text"],
+Cell[6863, 207, 364, 7, 106, "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7264, 219, 52, 0, 63, "Section"],
+Cell[7319, 221, 342, 6, 74, "Text"],
+
+Cell[CellGroupData[{
+Cell[7686, 231, 1861, 34, 19, "Input",
+  CellOpen->False],
+Cell[9550, 267, 69, 1, 25, "Print"],
+Cell[9622, 270, 464, 13, 33, "Output"],
+Cell[10089, 285, 72, 1, 25, "Print"],
+Cell[10164, 288, 1053, 29, 35, "Output"],
+Cell[11220, 319, 85, 1, 25, "Print"],
+Cell[11308, 322, 4159, 105, 53, "Output"],
+Cell[15470, 429, 65, 1, 25, "Print"],
+Cell[15538, 432, 53367, 1258, 468, "Output"],
+Cell[68908, 1692, 66, 1, 25, "Print"],
+Cell[68977, 1695, 18337, 433, 168, "Output"],
+Cell[87317, 2130, 54, 1, 25, "Print"],
+Cell[87374, 2133, 17729, 417, 190, "Output"],
+Cell[105106, 2552, 110, 2, 25, "Print"],
+Cell[105219, 2556, 14823, 349, 138, "Output"],
+Cell[120045, 2907, 62, 1, 25, "Print"],
+Cell[120110, 2910, 14823, 349, 138, "Output"],
+Cell[134936, 3261, 96, 2, 25, "Print"],
+Cell[135035, 3265, 7792, 184, 118, "Output"],
+Cell[142830, 3451, 108, 2, 25, "Print"],
+Cell[142941, 3455, 4112, 98, 59, "Output"],
+Cell[147056, 3555, 3577, 90, 59, "Output"]
+}, Open  ]],
+Cell[150648, 3648, 74, 0, 34, "Text"],
+Cell[150725, 3650, 157, 3, 34, "Text"],
+
+Cell[CellGroupData[{
+Cell[150907, 3657, 410, 7, 126, "Input"],
+Cell[151320, 3666, 272, 8, 33, "Output"],
+Cell[151595, 3676, 758, 22, 34, "Output"],
+Cell[152356, 3700, 2313, 61, 54, "Output"],
+Cell[154672, 3763, 4462, 116, 65, "Output"],
+Cell[159137, 3881, 2108, 55, 58, "Output"]
+}, Open  ]],
+Cell[161260, 3939, 1369, 39, 34, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

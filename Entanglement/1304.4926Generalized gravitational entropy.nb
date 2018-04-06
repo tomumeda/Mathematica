@@ -1,0 +1,1678 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     64266,       1670]
+NotebookOptionsPosition[     63196,       1628]
+NotebookOutlinePosition[     63563,       1644]
+CellTagsIndexPosition[     63520,       1641]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "Local`QFTToolKit2`"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.56864327369387*^9, 3.5686433185337973`*^9}, {
+   3.636124223447123*^9, 3.6361242241696672`*^9}, {3.640430449322165*^9, 
+   3.640430454418408*^9}, {3.6464973100744457`*^9, 3.646497314447693*^9}, {
+   3.6694279608619347`*^9, 3.6694280040414133`*^9}, 3.670117817981682*^9, {
+   3.671366579055991*^9, 3.6713666038803663`*^9}, {3.689772928097857*^9, 
+   3.689772930433343*^9}},
+ EmphasizeSyntaxErrors->True],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"defGE", "=", 
+   RowBox[{
+    RowBox[{"$def", "[", "\"\<GravitationalEntropy\>\"", "]"}], "=", 
+    RowBox[{"{", "}"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"accumGE", "=", 
+   RowBox[{"accum", "[", "\"\<GravitationalEntropy\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"selectGE", "=", 
+   RowBox[{"select", "[", "\"\<GravitationalEntropy\>\"", "]"}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6875371124310503`*^9, 3.6875372773931103`*^9}, {
+   3.6875373090642967`*^9, 3.687537350177436*^9}, 3.6875376034666367`*^9, {
+   3.68753765826827*^9, 3.68753773010957*^9}, {3.6875378267518377`*^9, 
+   3.687537978142562*^9}, {3.687538012021228*^9, 3.687538103905287*^9}, {
+   3.689207442689435*^9, 3.6892074746625967`*^9}, {3.6897728659404297`*^9, 
+   3.689772908124206*^9}, {3.691292057182053*^9, 3.6912920804848127`*^9}, {
+   3.69791366368858*^9, 3.697913691218089*^9}, {3.6987153453820353`*^9, 
+   3.698715355190918*^9}, {3.699634968125224*^9, 3.699635007160087*^9}, {
+   3.6998758302689247`*^9, 3.6998758479958467`*^9}, {3.70056910905589*^9, 
+   3.7005691513528643`*^9}, 3.700742985764784*^9, {3.700743033867771*^9, 
+   3.70074307364576*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"expandDC", "[", 
+   RowBox[{
+    RowBox[{"sub_:", 
+     RowBox[{"{", "}"}]}], ",", 
+    RowBox[{"scalar_:", 
+     RowBox[{"{", "}"}]}], ",", 
+    RowBox[{"func_:", 
+     RowBox[{"{", "}"}]}]}], "]"}], ":=", 
+  RowBox[{"tuRepeat", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"sub", ",", 
+      RowBox[{"tuOpDistribute", "[", "dotOps", "]"}], ",", 
+      RowBox[{"tuOpSimplify", "[", 
+       RowBox[{"dotOps", ",", "scalar"}], "]"}], ",", 
+      RowBox[{"tuOpSimplify", "[", 
+       RowBox[{"CircleTimes", ",", "scalar"}], "]"}], ",", 
+      RowBox[{"tuOpDistribute", "[", "CircleTimes", "]"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"tuCircleTimesSimplify", ",", "func"}], "}"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Clear", "[", "expandCom", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"expandCom", "[", 
+      RowBox[{"subs_:", 
+       RowBox[{"{", "}"}]}], "]"}], "[", "exp_", "]"}], ":=", 
+    RowBox[{"Block", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"tmp", "=", "exp"}], "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"tmp", "=", 
+        RowBox[{
+         RowBox[{"tmp", "//.", "tuCommutatorExpand"}], "//", 
+         RowBox[{"expandDC", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{
+         RowBox[{"tmp", "/.", "toxDot"}], "//.", 
+         RowBox[{"Flatten", "[", 
+          RowBox[{"{", "subs", "}"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"tmp", "//", "tuMatrixOrderedMultiply"}], "//", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"#", "/.", "toDot"}], "&"}], ")"}]}], "//", 
+         RowBox[{"expandDC", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
+       "tmp"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"$sgeneral", ":=", 
+  RowBox[{"{", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"T", "[", 
+      RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+       RowBox[{"{", "5", "}"}]}], "]"}], "\[Rule]", 
+     RowBox[{"Product", "[", 
+      RowBox[{
+       RowBox[{"T", "[", 
+        RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+         RowBox[{"{", "\[Mu]", "}"}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"\[Mu]", ",", "4"}], "}"}]}], "]"}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"T", "[", 
+       RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+        RowBox[{"{", "5", "}"}]}], "]"}], ".", 
+      RowBox[{"T", "[", 
+       RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+        RowBox[{"{", "5", "}"}]}], "]"}]}], "\[Rule]", "1"}], ",", 
+    RowBox[{
+     RowBox[{"ConjugateTranspose", "[", 
+      RowBox[{"T", "[", 
+       RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+        RowBox[{"{", "5", "}"}]}], "]"}], "]"}], "->", 
+     RowBox[{"T", "[", 
+      RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+       RowBox[{"{", "5", "}"}]}], "]"}]}], ",", 
+    RowBox[{
+     RowBox[{"CommutatorP", "[", 
+      RowBox[{
+       RowBox[{"T", "[", 
+        RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+         RowBox[{"{", "5", "}"}]}], "]"}], ",", 
+       RowBox[{"T", "[", 
+        RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+         RowBox[{"{", "\[Mu]", "}"}]}], "]"}]}], "]"}], "\[Rule]", "0"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"T", "[", 
+       RowBox[{"\"\<\[Del]\>\"", ",", "\"\<d\>\"", ",", 
+        RowBox[{"{", "_", "}"}]}], "]"}], "[", 
+      SubscriptBox["1", "n_"], "]"}], "\[Rule]", "0"}], ",", 
+    RowBox[{
+     RowBox[{"a_", " ", ".", " ", 
+      SubscriptBox["1", "n_"]}], "\[Rule]", "a"}], ",", 
+    RowBox[{
+     RowBox[{
+      SubscriptBox["1", "n_"], " ", ".", " ", "a_"}], "\[Rule]", "a"}]}], 
+   "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"$sgeneral", "//", "ColumnBar"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Clear", "[", "$symmetries", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"$symmetries", ":=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"tt", ":", 
+       RowBox[{"T", "[", 
+        RowBox[{"g", ",", "\"\<uu\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+      "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"tuIndexSwap", "[", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"tt", ":", 
+       RowBox[{"T", "[", 
+        RowBox[{"F", ",", "\"\<uu\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+      "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{
+         RowBox[{"tuIndexSwap", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}]}], 
+       "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"tt", ":", 
+       RowBox[{"T", "[", 
+        RowBox[{"F", ",", "\"\<dd\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Mu]_", ",", "\[Nu]_"}], "}"}]}], "]"}]}], 
+      "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{
+         RowBox[{"tuIndexSwap", "[", 
+          RowBox[{"{", 
+           RowBox[{"\[Mu]", ",", "\[Nu]"}], "}"}], "]"}], "[", "tt", "]"}]}], 
+       "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[Nu]", ",", "\[Mu]"}], "}"}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CommutatorM", "[", 
+       RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"CommutatorM", "[", 
+         RowBox[{"b", ",", "a"}], "]"}]}], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CommutatorP", "[", 
+       RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
+      RowBox[{
+       RowBox[{"CommutatorP", "[", 
+        RowBox[{"b", ",", "a"}], "]"}], "/;", 
+       RowBox[{"OrderedQ", "[", 
+        RowBox[{"{", 
+         RowBox[{"b", ",", "a"}], "}"}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"tt", ":", 
+       RowBox[{
+        RowBox[{"T", "[", 
+         RowBox[{"\[Gamma]", ",", "\"\<u\>\"", ",", 
+          RowBox[{"{", "\[Mu]", "}"}]}], "]"}], " ", ".", " ", 
+        RowBox[{"T", "[", 
+         RowBox[{"\[Gamma]", ",", "\"\<d\>\"", ",", 
+          RowBox[{"{", "5", "}"}]}], "]"}]}]}], " ", ":>", 
+      RowBox[{"Reverse", "[", "tt", "]"}]}]}], "\[IndentingNewLine]", "}"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"$symmetries", "//", "ColumnBar"}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6404304570785427`*^9, 3.6404304623998127`*^9}, {
+   3.640529512689515*^9, 3.640529517633898*^9}, {3.640605107079557*^9, 
+   3.640605137578652*^9}, {3.644059837388276*^9, 3.644059879166112*^9}, {
+   3.644059932056183*^9, 3.644059933425582*^9}, {3.644061210478726*^9, 
+   3.64406121251124*^9}, {3.669428051561451*^9, 3.669428135496799*^9}, {
+   3.669430181797778*^9, 3.66943018977645*^9}, {3.669472978698565*^9, 
+   3.6694730019644117`*^9}, 3.669493664658173*^9, {3.6695537068226213`*^9, 
+   3.669553712833424*^9}, 3.669739669562244*^9, {3.669739755274416*^9, 
+   3.669739758430641*^9}, {3.670111705809988*^9, 3.6701117210320063`*^9}, {
+   3.670242650831737*^9, 3.670242673915504*^9}, 3.670243062297974*^9, {
+   3.67024412467327*^9, 3.6702441296566887`*^9}, {3.670612571467114*^9, 
+   3.670612593682559*^9}, {3.6707624879712152`*^9, 3.670762492277117*^9}, {
+   3.67119759045965*^9, 3.6711975924173*^9}, {3.671366798222143*^9, 
+   3.6713668001491537`*^9}, {3.67136686070894*^9, 3.6713669943200293`*^9}, {
+   3.673610638563278*^9, 3.6736106887776318`*^9}, {3.673610792149109*^9, 
+   3.673610823162889*^9}, {3.6736108864973783`*^9, 3.67361089409048*^9}, 
+   3.67361093561063*^9, {3.673611745739005*^9, 3.673611755190402*^9}, {
+   3.679164270858122*^9, 3.6791642744814577`*^9}, {3.679164396444412*^9, 
+   3.6791644066019993`*^9}, {3.6791698448865232`*^9, 3.679169878059732*^9}, {
+   3.679773790679257*^9, 3.679773824270335*^9}, {3.681213200570828*^9, 
+   3.6812132396494493`*^9}, {3.681654446016843*^9, 3.681654453410269*^9}, {
+   3.681656185544754*^9, 3.681656229605723*^9}, {3.6820877612104397`*^9, 
+   3.6820877678698597`*^9}, {3.682689032490202*^9, 3.682689040954112*^9}, {
+   3.684169297020524*^9, 3.6841693473936987`*^9}, {3.6848575455172997`*^9, 
+   3.684857566122552*^9}, {3.6892076221494217`*^9, 3.689207626667377*^9}, {
+   3.68921283673352*^9, 3.6892128431637583`*^9}, {3.689336315865251*^9, 
+   3.689336353575262*^9}, {3.689772942030341*^9, 3.6897729500756607`*^9}, {
+   3.689775656862821*^9, 3.689775671006584*^9}, {3.6904740392611237`*^9, 
+   3.6904740636123466`*^9}, 3.691292093741396*^9, {3.692585766692383*^9, 
+   3.692585790082213*^9}, 3.692621237916707*^9, 3.6926425081910067`*^9, {
+   3.6939261550340767`*^9, 3.6939261578953247`*^9}, {3.696171766726697*^9, 
+   3.69617182588018*^9}, {3.697119579510499*^9, 3.697119580871941*^9}, 
+   3.6979136993356953`*^9, {3.69851587943631*^9, 3.698515888299553*^9}, 
+   3.698712131279449*^9, {3.6996371600376368`*^9, 3.699637172173771*^9}, {
+   3.700569163443385*^9, 3.7005691942170362`*^9}, {3.700743078876998*^9, 
+   3.700743087237546*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{"\"\<Notes for: \>\"", ",", 
+   RowBox[{"URL", "[", "\"\<https://arxiv.org/abs/1304.4926\>\"", "]"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.700576246643865*^9, 3.700576285325967*^9}, {
+  3.700743188141404*^9, 3.700743204180626*^9}, {3.70074363503095*^9, 
+  3.700743636867489*^9}, {3.700748909199333*^9, 3.700748909730673*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Notes for: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   RowBox[{"URL", "[", 
+    TemplateBox[{"\"https://arxiv.org/abs/1304.4926\""},
+     "URLArgument"], "]"}]}],
+  SequenceForm[
+   Style["Notes for: ", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   URL["https://arxiv.org/abs/1304.4926"]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.700576286676798*^9, {3.7007432647274933`*^9, 3.700743286270589*^9}, 
+   3.7007436396832867`*^9, 3.700748911188236*^9, 3.700916008346991*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PR", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"S", "\[Rule]", 
+          RowBox[{"-", 
+           RowBox[{"Tr", "[", 
+            RowBox[{"\[Rho]", " ", 
+             RowBox[{"Log", "[", "\[Rho]", "]"}]}], "]"}]}]}], ")"}], "[", 
+        RowBox[{"CG", "[", "\"\<entropy[density matrix]\>\"", "]"}], "]"}], 
+       ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "\[Beta]", "]"}], "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           SubscriptBox["S", 
+            RowBox[{"iE", ",", "grav"}]]}]}], ")"}], "[", 
+        RowBox[{"CG", "[", "\"\<Euclidian gravitational action\>\"", "]"}], 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"S", "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"\[Beta]", ".", 
+             RowBox[{"tuDPartial", "[", 
+              RowBox[{"_", ",", "\[Beta]"}], "]"}]}], "-", "1"}], ")"}], ".", 
+          
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "\[Beta]", "]"}], "]"}]}]}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+       "CG", "[", 
+        "\"\<general gravitational entropy without U[1] symmetry\>\"", "]"}], 
+       ",", "\[IndentingNewLine]", 
+       RowBox[{"$1", "=", 
+        RowBox[{"\[Rho]", "\[Rule]", 
+         RowBox[{"P", "[", 
+          RowBox[{"Exp", "[", 
+           RowBox[{"-", 
+            RowBox[{"xIntegral", "[", 
+             RowBox[{
+              RowBox[{"H", "[", "\[Tau]", "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"\[Tau]", ",", 
+                SubscriptBox["\[Tau]", "0"], ",", 
+                SubscriptBox["\[Tau]", "f"]}], "}"}]}], "]"}]}], "]"}], 
+          "]"}]}]}], ",", "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"CG", "[", 
+          RowBox[{"\"\<Replica trick: identify \>\"", ",", 
+           RowBox[{
+            SubscriptBox["\[Tau]", "f"], "\[Rule]", 
+            RowBox[{
+             SubscriptBox["\[Tau]", "0"], "+", 
+             RowBox[{"2", "\[Pi]"}]}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+         
+         RowBox[{
+          RowBox[{"H", "[", 
+           RowBox[{"\[Tau]", "+", 
+            RowBox[{"2", "\[Pi]"}]}], "]"}], "\[Rule]", 
+          RowBox[{"H", "[", "\[Tau]", "]"}]}], ",", "\[IndentingNewLine]", 
+         RowBox[{"$1", "/.", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+             SubscriptBox["\[Tau]", "0"], "\[Rule]", "0"}], ",", 
+            RowBox[{
+             SubscriptBox["\[Tau]", "f"], "\[Rule]", 
+             RowBox[{"2", "\[Pi]", " ", "n"}]}]}], "}"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Z", "[", "n", "]"}], "->", 
+          RowBox[{
+           RowBox[{"Tr", "[", 
+            SuperscriptBox["\[Rho]", "n"], "]"}], "[", 
+           RowBox[{"CG", "[", "\"\<consider n-circles\>\"", "]"}], "]"}]}], 
+         ",", "\[IndentingNewLine]", 
+         RowBox[{"S", "\[Rule]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", "n"}], " ", 
+              RowBox[{"tuDPartial", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Log", "[", "Z", "]"}], "-", 
+                 RowBox[{"n", " ", 
+                  RowBox[{"Log", "[", 
+                   RowBox[{"Z", "[", "1", "]"}], "]"}]}]}], ",", "n"}], 
+               "]"}]}], ")"}], "[", 
+            RowBox[{"CG", "[", 
+             RowBox[{"n", "->", "1"}], "]"}], "]"}], "\[Rule]", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"-", 
+               RowBox[{"Tr", "[", 
+                RowBox[{
+                 OverscriptBox["\[Rho]", "^"], " ", ".", " ", 
+                 RowBox[{"Log", "[", 
+                  OverscriptBox["\[Rho]", "^"], "]"}]}], "]"}]}], "\[Rule]", 
+              RowBox[{
+               SubscriptBox["A", "minimal"], "/", 
+               RowBox[{"(", 
+                RowBox[{"4", 
+                 SubscriptBox["G", "N"]}], ")"}]}]}], "}"}], "[", 
+            RowBox[{"CG", "[", "\"\<(1.4)Ryu-Takanayagi\>\"", "]"}], 
+            "]"}]}]}], ",", "\[IndentingNewLine]", 
+         RowBox[{
+          OverscriptBox["\[Rho]", "^"], "\[Rule]", 
+          RowBox[{"\[Rho]", "/", 
+           RowBox[{"Tr", "[", "\[Rho]", "]"}]}]}]}], "\[IndentingNewLine]", 
+        "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "n", "]"}], "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           SubscriptBox["S", "grav"]}]}], "}"}], "[", 
+        RowBox[{"CG", "[", "\"\<define\>\"", "]"}], "]"}]}], 
+      "\[IndentingNewLine]", "}"}]}], ";", 
+    RowBox[{"$", "//", 
+     RowBox[{
+      RowBox[{"ColumnForms", "[", 
+       RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}], ",", 
+   RowBox[{"accumGE", "[", "$", "]"}]}], "\[IndentingNewLine]", 
+  "]"}]], "Input",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQAWIQPdN6H9+FSa8d/61LkwDRfX73lUB0TGSCKYj+c+Kc
+E4ieknbIH0THRfwLBtGCmo8SQfRv75OpIHpLmWAOiLb7KVEAokvuXawE0Z+2
+LqgH0RM/3OsD0eXCRVNBdGriQjDd8z/gAYiWOF/yDEQzOixQvgikvZ8zq4No
+neI9hiD6mU+aMYj2UwtyAdEck8U8QPT/xXUZILqhlj8bRE/SFSkH0XzxgWDa
+vblp5W0gHcKzeTWIvmSyMPMtkPYU2loMoveIL64A0R82ra0B0Yt2OjaB6CLh
+Te0ges45gR4Q3cLiNBFEexmGvwfRbbdLwTQA4H21NA==
+  "]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   TagBox[GridBox[{
+      {
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"S", "\[Rule]", 
+          RowBox[{"-", 
+           RowBox[{"Tr", "[", 
+            RowBox[{"\[Rho]", " ", 
+             RowBox[{"Log", "[", "\[Rho]", "]"}]}], "]"}]}]}], ")"}], "[", 
+        StyleBox["\<\"entropy[density matrix]\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "\[Beta]", "]"}], "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           SubscriptBox["S", 
+            RowBox[{
+             StyleBox["\<\"E\"\>",
+              StripOnInput->False,
+              FontSlant->Italic], ",", "grav"}]]}]}], ")"}], "[", 
+        StyleBox["\<\"Euclidian gravitational action\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]},
+      {
+       RowBox[{"S", "\[Rule]", 
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"-", "1"}], "+", 
+            RowBox[{"\[Beta]", ".", 
+             InterpretationBox[
+              RowBox[{
+               SubscriptBox[
+                UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "\[Beta]"], "[", 
+               "_", "]"}],
+              $CellContext`tuDDown["\[PartialD]"][
+               Blank[], $CellContext`\[Beta]],
+              Editable->False,
+              SyntaxForm->Automatic]}]}], ")"}], ".", 
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "\[Beta]", "]"}], "]"}]}]}]}]},
+      {
+       StyleBox["\<\"general gravitational entropy without U[1] symmetry\"\>",
+        
+        StripOnInput->False,
+        LineColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        FrontFaceColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        BackFaceColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        GraphicsColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        FontSize->Larger,
+        FontColor->RGBColor[0, 
+          Rational[2, 3], 0]]},
+      {
+       RowBox[{"\[Rho]", "\[Rule]", 
+        RowBox[{"P", "[", 
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"-", 
+           
+           TemplateBox[{
+            RowBox[{"H", "[", "\[Tau]", "]"}],"\[Tau]",SubscriptBox[
+             "\[Tau]", "0"],SubscriptBox["\[Tau]", "f"]},
+            "InactiveIntegrate",
+            DisplayFunction->(RowBox[{
+               SubsuperscriptBox[
+                StyleBox["\[Integral]", "Inactive"], #3, #4], 
+               RowBox[{#, 
+                 RowBox[{
+                   StyleBox["\[DifferentialD]", "Inactive"], #2}]}]}]& ),
+            InterpretationFunction->(RowBox[{
+               RowBox[{"Inactive", "[", "Integrate", "]"}], "[", 
+               RowBox[{#, ",", 
+                 RowBox[{"{", 
+                   RowBox[{#2, ",", #3, ",", #4}], "}"}]}], "]"}]& )]}]], 
+         "]"}]}]},
+      {
+       TagBox[GridBox[{
+          {
+           StyleBox["\<\"Replica trick: identify \"\>",
+            StripOnInput->False,
+            LineColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FrontFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            BackFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            GraphicsColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FontSize->Larger,
+            FontColor->RGBColor[0, 
+              Rational[2, 3], 0]]},
+          {
+           StyleBox[
+            RowBox[{
+             SubscriptBox["\[Tau]", "f"], "\[Rule]", 
+             RowBox[{
+              RowBox[{"2", " ", "\[Pi]"}], "+", 
+              SubscriptBox["\[Tau]", "0"]}]}],
+            StripOnInput->False,
+            LineColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FrontFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            BackFaceColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            GraphicsColor->RGBColor[0, 
+              Rational[2, 3], 0],
+            FontSize->Larger,
+            FontColor->RGBColor[0, 
+              Rational[2, 3], 0]]},
+          {
+           RowBox[{
+            RowBox[{"H", "[", 
+             RowBox[{
+              RowBox[{"2", " ", "\[Pi]"}], "+", "\[Tau]"}], "]"}], "\[Rule]", 
+            
+            RowBox[{"H", "[", "\[Tau]", "]"}]}]},
+          {
+           RowBox[{"\[Rho]", "\[Rule]", 
+            RowBox[{"P", "[", 
+             SuperscriptBox["\[ExponentialE]", 
+              RowBox[{"-", 
+               
+               TemplateBox[{
+                RowBox[{"H", "[", "\[Tau]", "]"}],"\[Tau]","0",
+                 RowBox[{"2", " ", "n", " ", "\[Pi]"}]},
+                "InactiveIntegrate",
+                DisplayFunction->(RowBox[{
+                   SubsuperscriptBox[
+                    StyleBox["\[Integral]", "Inactive"], #3, #4], 
+                   RowBox[{#, 
+                    RowBox[{
+                    StyleBox["\[DifferentialD]", "Inactive"], #2}]}]}]& ),
+                InterpretationFunction->(RowBox[{
+                   RowBox[{"Inactive", "[", "Integrate", "]"}], "[", 
+                   RowBox[{#, ",", 
+                    RowBox[{"{", 
+                    RowBox[{#2, ",", #3, ",", #4}], "}"}]}], "]"}]& )]}]], 
+             "]"}]}]},
+          {
+           RowBox[{
+            RowBox[{"Z", "[", "n", "]"}], "\[Rule]", 
+            RowBox[{
+             RowBox[{"Tr", "[", 
+              SuperscriptBox["\[Rho]", "n"], "]"}], "[", 
+             StyleBox["\<\"consider n-circles\"\>",
+              StripOnInput->False,
+              LineColor->RGBColor[0, 
+                Rational[2, 3], 0],
+              FrontFaceColor->RGBColor[0, 
+                Rational[2, 3], 0],
+              BackFaceColor->RGBColor[0, 
+                Rational[2, 3], 0],
+              GraphicsColor->RGBColor[0, 
+                Rational[2, 3], 0],
+              FontSize->Larger,
+              FontColor->RGBColor[0, 
+                Rational[2, 3], 0]], "]"}]}]},
+          {
+           RowBox[{"S", "\[Rule]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"-", "n"}], " ", 
+                InterpretationBox[
+                 RowBox[{
+                  SubscriptBox[
+                   UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "n"], "[", 
+                  RowBox[{
+                   RowBox[{"Log", "[", "Z", "]"}], "-", 
+                   RowBox[{"n", " ", 
+                    RowBox[{"Log", "[", 
+                    RowBox[{"Z", "[", "1", "]"}], "]"}]}]}], "]"}],
+                 $CellContext`tuDDown["\[PartialD]"][
+                 Log[$CellContext`Z] - $CellContext`n Log[
+                    $CellContext`Z[1]], $CellContext`n],
+                 Editable->False,
+                 SyntaxForm->Automatic]}], ")"}], "[", 
+              StyleBox[
+               RowBox[{"n", "\[Rule]", "1"}],
+               StripOnInput->False,
+               LineColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               FrontFaceColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               BackFaceColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               GraphicsColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               FontSize->Larger,
+               FontColor->RGBColor[0, 
+                 Rational[2, 3], 0]], "]"}], "\[Rule]", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"-", 
+                 RowBox[{"Tr", "[", 
+                  RowBox[{
+                   OverscriptBox["\[Rho]", "^"], ".", 
+                   RowBox[{"Log", "[", 
+                    OverscriptBox["\[Rho]", "^"], "]"}]}], "]"}]}], "\[Rule]", 
+                FractionBox[
+                 SubscriptBox["A", "minimal"], 
+                 RowBox[{"4", " ", 
+                  SubscriptBox["G", "N"]}]]}], "}"}], "[", 
+              StyleBox["\<\"(1.4)Ryu-Takanayagi\"\>",
+               StripOnInput->False,
+               LineColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               FrontFaceColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               BackFaceColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               GraphicsColor->RGBColor[0, 
+                 Rational[2, 3], 0],
+               FontSize->Larger,
+               FontColor->RGBColor[0, 
+                 Rational[2, 3], 0]], "]"}]}]}]},
+          {
+           RowBox[{
+            OverscriptBox["\[Rho]", "^"], "\[Rule]", 
+            FractionBox["\[Rho]", 
+             RowBox[{"Tr", "[", "\[Rho]", "]"}]]}]}
+         },
+         AutoDelete->False,
+         FrameStyle->Directive[
+           RGBColor[0.7, 0, 1, 1], 
+           Thickness[Tiny]],
+         GridBoxAlignment->{"Columns" -> {{Left}}},
+         GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+         GridBoxItemSize->{
+          "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+        "Grid"]},
+      {
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"Z", "[", "n", "]"}], "]"}], "\[Rule]", 
+          RowBox[{"-", 
+           SubscriptBox["S", "grav"]}]}], "}"}], "[", 
+        StyleBox["\<\"define\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"], "\[InvisibleSpace]", 
+   StyleBox["\<\"\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1]}],
+  SequenceForm[
+   Grid[{{
+      ($CellContext`S -> -Tr[$CellContext`\[Rho] Log[$CellContext`\[Rho]]])[
+       Style["entropy[density matrix]", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {
+      (Log[
+        $CellContext`Z[$CellContext`\[Beta]]] -> -Subscript[$CellContext`S, 
+         Style["E", Italic], $CellContext`grav])[
+       Style["Euclidian gravitational action", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}, {$CellContext`S -> -
+       Dot[-1 + Dot[$CellContext`\[Beta], 
+           $CellContext`tuDDown["\[PartialD]"][
+            Blank[], $CellContext`\[Beta]]], 
+         Log[
+          $CellContext`Z[$CellContext`\[Beta]]]]}, {
+      Style["general gravitational entropy without U[1] symmetry", 
+       RGBColor[0, 
+        Rational[2, 3], 0], Larger]}, {$CellContext`\[Rho] -> $CellContext`P[
+       E^(-Inactive[Integrate][
+           $CellContext`H[$CellContext`\[Tau]], {$CellContext`\[Tau], 
+            Subscript[$CellContext`\[Tau], 0], 
+            Subscript[$CellContext`\[Tau], $CellContext`f]}])]}, {
+      Grid[{{
+         Style["Replica trick: identify ", 
+          RGBColor[0, 
+           Rational[2, 3], 0], Larger]}, {
+         Style[
+         Subscript[$CellContext`\[Tau], $CellContext`f] -> 
+          2 Pi + Subscript[$CellContext`\[Tau], 0], 
+          RGBColor[0, 
+           Rational[2, 3], 0], Larger]}, {$CellContext`H[
+          2 Pi + $CellContext`\[Tau]] -> \
+$CellContext`H[$CellContext`\[Tau]]}, {$CellContext`\[Rho] -> $CellContext`P[
+          E^(-Inactive[Integrate][
+              $CellContext`H[$CellContext`\[Tau]], {$CellContext`\[Tau], 0, 
+               2 $CellContext`n Pi}])]}, {$CellContext`Z[$CellContext`n] -> 
+         Tr[$CellContext`\[Rho]^$CellContext`n][
+           Style["consider n-circles", 
+            RGBColor[0, 
+             Rational[2, 3], 0], 
+            Larger]]}, {$CellContext`S -> ((-$CellContext`n \
+$CellContext`tuDDown["\[PartialD]"][Log[$CellContext`Z] - $CellContext`n Log[
+               $CellContext`Z[1]], $CellContext`n])[
+            Style[$CellContext`n -> 1, 
+             RGBColor[0, 
+              Rational[2, 3], 0], Larger]] -> {-Tr[
+               Dot[
+                OverHat[$CellContext`\[Rho]], 
+                Log[
+                 OverHat[$CellContext`\[Rho]]]]] -> 
+            Rational[1, 4] Subscript[$CellContext`A, $CellContext`minimal]/
+             Subscript[$CellContext`G, N]}[
+            Style["(1.4)Ryu-Takanayagi", 
+             RGBColor[0, 
+              Rational[2, 3], 0], Larger]])}, {
+        OverHat[$CellContext`\[Rho]] -> $CellContext`\[Rho]/
+          Tr[$CellContext`\[Rho]]}}, Dividers -> {{True}, {False}}, 
+       FrameStyle -> Directive[
+         RGBColor[0.7, 0, 1, 1], 
+         Thickness[Tiny]], Alignment -> Left]}, {
+      {Log[
+         $CellContext`Z[$CellContext`n]] -> -
+        Subscript[$CellContext`S, $CellContext`grav]}[
+       Style["define", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left], 
+   Style["", 
+    RGBColor[0.7, 0, 1, 1], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.700851472712748*^9, 3.700851563166033*^9, 3.700851663602521*^9, {
+   3.700851736891961*^9, 3.70085174446636*^9}, 3.700851776163102*^9, {
+   3.700851807628022*^9, 3.700851832938571*^9}, 3.700851887259516*^9, 
+   3.700852502108526*^9, 3.700853266559836*^9, 3.700853303407579*^9, 
+   3.700853593779048*^9, 3.7008536915363398`*^9, 3.7008537490767593`*^9, 
+   3.7008745904312696`*^9, 3.700910933106762*^9, {3.700910999388607*^9, 
+   3.700911006474702*^9}, {3.700911058175946*^9, 3.7009110781232862`*^9}, 
+   3.700911167500461*^9, 3.700911212618805*^9, 3.700911242772521*^9, 
+   3.70091199792371*^9, 3.700916008372842*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Simple example", "Subsubsection",
+ CellChangeTimes->{{3.7008762502557096`*^9, 3.700876256853627*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PR", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"$", "=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         SuperscriptBox[
+          RowBox[{"d", "[", "s", "]"}], "2"], "\[Rule]", 
+         RowBox[{
+          RowBox[{
+           SuperscriptBox[
+            RowBox[{"d", "[", "r", "]"}], "2"], "/", 
+           RowBox[{"(", 
+            RowBox[{"1", "+", 
+             SuperscriptBox["r", "2"]}], ")"}]}], "+", 
+          RowBox[{
+           SuperscriptBox["r", "2"], 
+           SuperscriptBox[
+            RowBox[{"d", "[", "\[Tau]", "]"}], "2"]}], "+", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"1", "+", 
+             SuperscriptBox["r", "2"]}], ")"}], 
+           SuperscriptBox[
+            RowBox[{"d", "[", "x", "]"}], "2"]}]}]}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+        "CG", "[", 
+         "\"\<U[1] isometry \[Tau]\[Tilde]\[Tau]+2\[Pi], x-invariant and \
+compactify of size \!\(\*SubscriptBox[\(L\), \(x\)]\)\>\"", "]"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"\[Phi]", "[", 
+           RowBox[{"CG", "[", "\"\<massless scalar field\>\"", "]"}], "]"}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"H", "[", "\[Tau]", "]"}], "\[Rule]", 
+           RowBox[{
+            RowBox[{"tuDCovariant", "[", 
+             RowBox[{"\[Phi]", ",", "\[Mu]"}], "]"}], 
+            RowBox[{"tuDCovariantu", "[", 
+             RowBox[{"\[Phi]", ",", "\[Mu]"}], "]"}]}]}]}], 
+         "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"\[Phi]", "\[Rule]", 
+           RowBox[{"\[Eta]", " ", 
+            RowBox[{"Exp", "[", 
+             RowBox[{"I", " ", "\[Tau]"}], "]"}]}]}], "}"}], "[", 
+         RowBox[{"CG", "[", "\"\<r\[LongRightArrow]\[Infinity]\>\"", "]"}], 
+         "]"}]}], "\[IndentingNewLine]", "}"}]}], ";", 
+     RowBox[{"$", "//", 
+      RowBox[{
+       RowBox[{"ColumnForms", "[", 
+        RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}], ",", 
+    "\[IndentingNewLine]", "NL", ",", "\"\<Use the equations \>\"", ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"$", "=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"$", "=", 
+         RowBox[{
+          SubscriptBox["S", "grav"], "\[Rule]", 
+          RowBox[{"xIntegral", "[", 
+           RowBox[{"\[ScriptCapitalL]", ",", 
+            RowBox[{"x", "[", 
+             RowBox[{"CG", "[", "\"\<AdS3\>\"", "]"}], "]"}]}], "]"}]}]}], 
+        ",", "\[IndentingNewLine]", 
+        RowBox[{"$sL", "=", 
+         RowBox[{"\[ScriptCapitalL]", "->", 
+          RowBox[{
+           RowBox[{"tuDCovariant", "[", 
+            RowBox[{"\[Phi]", ",", "\[Mu]"}], "]"}], 
+           RowBox[{"tuDCovariantu", "[", 
+            RowBox[{"\[Phi]", ",", "\[Mu]"}], "]"}]}]}]}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"$s", "=", 
+         RowBox[{"$", "/.", "$sL"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"$", "=", 
+         RowBox[{
+          RowBox[{"selectGE", "[", 
+           RowBox[{
+            RowBox[{"Log", "[", "_", "]"}], ",", 
+            RowBox[{"{", "n", "}"}]}], "]"}], "/.", "$s"}]}]}], 
+       "\[IndentingNewLine]", "}"}]}], ";", 
+     RowBox[{"$", "//", 
+      RowBox[{
+       RowBox[{"ColumnForms", "[", 
+        RowBox[{"#1", ",", "2"}], "]"}], "&"}]}]}], ",", 
+    "\[IndentingNewLine]", "NL", ",", 
+    RowBox[{"CR", "[", 
+     RowBox[{"\"\<From here it is unclear how they get (2.5): \>\"", ",", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"(", 
+         RowBox[{"2", "\[Pi]", " ", "n", " ", 
+          SubscriptBox["L", "x"]}], ")"}]}], 
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["r", "3"], 
+         RowBox[{"cc", "[", "\[Phi]", "]"}], 
+         RowBox[{"tuDPartial", "[", 
+          RowBox[{"\[Phi]", ",", "r"}], "]"}]}], ")"}]}], ",", 
+      "\"\<  For r\[LongRightArrow]\[Infinity] the metric becomes \>\"", ",", 
+      
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["r", "2"], 
+        SuperscriptBox[
+         RowBox[{"d", "[", "\[Tau]", "]"}], "2"]}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "+", 
+          SuperscriptBox["r", "2"]}], ")"}], 
+        SuperscriptBox[
+         RowBox[{"d", "[", "x", "]"}], "2"]}]}], ",", "\[IndentingNewLine]", 
+      "\"\< Examining terms in the Total Differential: \>\"", ",", 
+      RowBox[{
+       RowBox[{"$", "=", "$sL"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tuTotalDiffByParts", "[", 
+        RowBox[{
+         RowBox[{"$", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], ",", 
+         RowBox[{"tuDCovariant", "[", 
+          RowBox[{"\[Phi]", ",", "\[Mu]"}], "]"}]}], "]"}]}], ",", 
+      "\"\< does not give any clues.  One can assume that d[r] does not play \
+a role at r\[Rule]\[Infinity] and so we have only differentials in {\[Tau],x} \
+which in this case \[Rule] {2\[Pi]n,\!\(\*SubscriptBox[\(L\), \(x\)]\)}.  It \
+looks like that the TotalDifferential part is used and integrated over {x,{0,\
+\!\(\*SubscriptBox[\(L\), \(x\)]\)}},{\[Tau],{0,2\[Pi]n}} and there is a \
+jacobian factor of \!\(\*SuperscriptBox[\(r\), \(\(2\)\(\\\ \)\)]\)and the \
+\[Phi] is only a function of r and d[r] does not play a role.\>\""}], 
+     "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.700876239579195*^9, 3.700876347445715*^9}, {
+   3.7008763878261957`*^9, 3.700876429847045*^9}, {3.7008764653749733`*^9, 
+   3.7008765080667467`*^9}, {3.7008765653636312`*^9, 3.700876664940599*^9}, {
+   3.700911264733205*^9, 3.700911446113842*^9}, 3.7009116249352493`*^9, {
+   3.700915932346541*^9, 3.7009159753944397`*^9}, {3.700916053551264*^9, 
+   3.700916155528689*^9}, {3.700916260192999*^9, 3.7009162855424337`*^9}, {
+   3.700916337596979*^9, 3.7009163508525057`*^9}, {3.700916397919091*^9, 
+   3.7009164603041*^9}, {3.70091649384128*^9, 3.700916520280449*^9}, {
+   3.700916563175726*^9, 3.700916623050885*^9}, {3.700916740377781*^9, 
+   3.700916741040045*^9}, {3.70091678393643*^9, 3.700916823536581*^9}, {
+   3.700916935337084*^9, 3.700916943781754*^9}, {3.700918480965961*^9, 
+   3.700918542895763*^9}, {3.7009272966589203`*^9, 3.7009273616593027`*^9}, {
+   3.700934198862817*^9, 3.700934531964178*^9}, {3.700934836558586*^9, 
+   3.700934842405547*^9}, {3.7009349169718227`*^9, 3.700934982843122*^9}, {
+   3.7009350158132753`*^9, 3.7009352161272182`*^9}, {3.701008662238853*^9, 
+   3.701008684352704*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   TagBox[GridBox[{
+      {
+       RowBox[{
+        SuperscriptBox[
+         RowBox[{"d", "[", "s", "]"}], "2"], "\[Rule]", 
+        RowBox[{
+         FractionBox[
+          SuperscriptBox[
+           RowBox[{"d", "[", "r", "]"}], "2"], 
+          RowBox[{"1", "+", 
+           SuperscriptBox["r", "2"]}]], "+", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            SuperscriptBox["r", "2"]}], ")"}], " ", 
+          SuperscriptBox[
+           RowBox[{"d", "[", "x", "]"}], "2"]}], "+", 
+         RowBox[{
+          SuperscriptBox["r", "2"], " ", 
+          SuperscriptBox[
+           RowBox[{"d", "[", "\[Tau]", "]"}], "2"]}]}]}]},
+      {
+       StyleBox["\<\"U[1] isometry \[Tau]\[Tilde]\[Tau]+2\[Pi], x-invariant \
+and compactify of size \\!\\(\\*SubscriptBox[\\(L\\), \\(x\\)]\\)\"\>",
+        StripOnInput->False,
+        LineColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        FrontFaceColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        BackFaceColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        GraphicsColor->RGBColor[0, 
+          Rational[2, 3], 0],
+        FontSize->Larger,
+        FontColor->RGBColor[0, 
+          Rational[2, 3], 0]]},
+      {
+       TagBox[GridBox[{
+          {
+           RowBox[{"\[Phi]", "[", 
+            StyleBox["\<\"massless scalar field\"\>",
+             StripOnInput->False,
+             LineColor->RGBColor[0, 
+               Rational[2, 3], 0],
+             FrontFaceColor->RGBColor[0, 
+               Rational[2, 3], 0],
+             BackFaceColor->RGBColor[0, 
+               Rational[2, 3], 0],
+             GraphicsColor->RGBColor[0, 
+               Rational[2, 3], 0],
+             FontSize->Larger,
+             FontColor->RGBColor[0, 
+               Rational[2, 3], 0]], "]"}]},
+          {
+           RowBox[{
+            RowBox[{"H", "[", "\[Tau]", "]"}], "\[Rule]", 
+            RowBox[{
+             InterpretationBox[
+              RowBox[{
+               SubscriptBox[
+                UnderscriptBox["\<\"\[Del]\"\>", "_"], "\[Mu]"], "[", 
+               "\[Phi]", "]"}],
+              $CellContext`tuDDown[
+              "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+              Editable->False,
+              SyntaxForm->Automatic], " ", 
+             InterpretationBox[
+              RowBox[{
+               TemplateBox[{UnderscriptBox["\"\[Del]\"", "_"],"\[Mu]"},
+                "Superscript"], "[", "\[Phi]", "]"}],
+              $CellContext`tuDUp[
+              "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+              Editable->False,
+              SyntaxForm->Automatic]}]}]}
+         },
+         AutoDelete->False,
+         FrameStyle->Directive[
+           RGBColor[0.7, 0, 1, 1], 
+           Thickness[Tiny]],
+         GridBoxAlignment->{"Columns" -> {{Left}}},
+         GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+         GridBoxItemSize->{
+          "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+        "Grid"]},
+      {
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"\[Phi]", "\[Rule]", 
+          RowBox[{
+           SuperscriptBox["\[ExponentialE]", 
+            RowBox[{"\[ImaginaryI]", " ", "\[Tau]"}]], " ", "\[Eta]"}]}], 
+         "}"}], "[", 
+        StyleBox["\<\"r\[LongRightArrow]\[Infinity]\"\>",
+         StripOnInput->False,
+         LineColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FrontFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         BackFaceColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         GraphicsColor->RGBColor[0, 
+           Rational[2, 3], 0],
+         FontSize->Larger,
+         FontColor->RGBColor[0, 
+           Rational[2, 3], 0]], "]"}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"Use the equations \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   TagBox[GridBox[{
+      {
+       RowBox[{
+        SubscriptBox["S", "grav"], "\[Rule]", 
+        TemplateBox[{"\[ScriptCapitalL]",RowBox[{"x", "[", 
+            StyleBox["\"AdS3\"", 
+             RGBColor[0, 
+              Rational[2, 3], 0], Larger, StripOnInput -> False], "]"}]},
+         "InactiveIntegrate",
+         DisplayFunction->(RowBox[{
+            StyleBox["\[Integral]", "Inactive"], 
+            RowBox[{#, 
+              RowBox[{
+                StyleBox["\[DifferentialD]", "Inactive"], #2}]}]}]& ),
+         InterpretationFunction->(RowBox[{
+            RowBox[{"Inactive", "[", "Integrate", "]"}], "[", 
+            RowBox[{#, ",", #2}], "]"}]& )]}]},
+      {
+       RowBox[{"\[ScriptCapitalL]", "\[Rule]", 
+        RowBox[{
+         InterpretationBox[
+          RowBox[{
+           SubscriptBox[
+            UnderscriptBox["\<\"\[Del]\"\>", "_"], "\[Mu]"], "[", "\[Phi]", 
+           "]"}],
+          $CellContext`tuDDown[
+          "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+          Editable->False,
+          SyntaxForm->Automatic], " ", 
+         InterpretationBox[
+          RowBox[{
+           TemplateBox[{UnderscriptBox["\"\[Del]\"", "_"],"\[Mu]"},
+            "Superscript"], "[", "\[Phi]", "]"}],
+          $CellContext`tuDUp[
+          "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+          Editable->False,
+          SyntaxForm->Automatic]}]}]},
+      {
+       RowBox[{
+        SubscriptBox["S", "grav"], "\[Rule]", 
+        TemplateBox[{RowBox[{
+            InterpretationBox[
+             RowBox[{
+               SubscriptBox[
+                UnderscriptBox["\"\[Del]\"", "_"], "\[Mu]"], "[", "\[Phi]", 
+               "]"}], 
+             $CellContext`tuDDown[
+             "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], SyntaxForm -> 
+             Automatic, Editable -> False], " ", 
+            InterpretationBox[
+             RowBox[{
+               TemplateBox[{
+                 UnderscriptBox["\"\[Del]\"", "_"], "\[Mu]"}, "Superscript", 
+                SyntaxForm -> SuperscriptBox], "[", "\[Phi]", "]"}], 
+             $CellContext`tuDUp[
+             "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], SyntaxForm -> 
+             Automatic, Editable -> False]}],RowBox[{"x", "[", 
+            StyleBox["\"AdS3\"", 
+             RGBColor[0, 
+              Rational[2, 3], 0], Larger, StripOnInput -> False], "]"}]},
+         "InactiveIntegrate",
+         DisplayFunction->(RowBox[{
+            StyleBox["\[Integral]", "Inactive"], 
+            RowBox[{#, 
+              RowBox[{
+                StyleBox["\[DifferentialD]", "Inactive"], #2}]}]}]& ),
+         InterpretationFunction->(RowBox[{
+            RowBox[{"Inactive", "[", "Integrate", "]"}], "[", 
+            RowBox[{#, ",", #2}], "]"}]& )]}]},
+      {
+       RowBox[{
+        RowBox[{"Log", "[", 
+         RowBox[{"Z", "[", "n", "]"}], "]"}], "\[Rule]", 
+        RowBox[{"-", 
+         TemplateBox[{RowBox[{
+             InterpretationBox[
+              RowBox[{
+                SubscriptBox[
+                 UnderscriptBox["\"\[Del]\"", "_"], "\[Mu]"], "[", "\[Phi]", 
+                "]"}], 
+              $CellContext`tuDDown[
+              "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], SyntaxForm -> 
+              Automatic, Editable -> False], " ", 
+             InterpretationBox[
+              RowBox[{
+                TemplateBox[{
+                  UnderscriptBox["\"\[Del]\"", "_"], "\[Mu]"}, "Superscript", 
+                 SyntaxForm -> SuperscriptBox], "[", "\[Phi]", "]"}], 
+              $CellContext`tuDUp[
+              "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], SyntaxForm -> 
+              Automatic, Editable -> False]}],RowBox[{"x", "[", 
+             StyleBox["\"AdS3\"", 
+              RGBColor[0, 
+               Rational[2, 3], 0], Larger, StripOnInput -> False], "]"}]},
+          "InactiveIntegrate",
+          DisplayFunction->(RowBox[{
+             StyleBox["\[Integral]", "Inactive"], 
+             RowBox[{#, 
+               RowBox[{
+                 StyleBox["\[DifferentialD]", "Inactive"], #2}]}]}]& ),
+          InterpretationFunction->(RowBox[{
+             RowBox[{"Inactive", "[", "Integrate", "]"}], "[", 
+             RowBox[{#, ",", #2}], "]"}]& )]}]}]}
+     },
+     AutoDelete->False,
+     FrameStyle->Directive[
+       RGBColor[0.7, 0, 1, 1], 
+       Thickness[Tiny]],
+     GridBoxAlignment->{"Columns" -> {{Left}}},
+     GridBoxDividers->{"Columns" -> {True}, "Rows" -> {False}},
+     GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+    "Grid"], "\[InvisibleSpace]", 
+   StyleBox["\<\"\\n\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[0.7, 0, 1],
+    LineOpacity->1,
+    FrontFaceColor->RGBColor[0.7, 0, 1],
+    BackFaceColor->RGBColor[0.7, 0, 1],
+    FrontFaceOpacity->1,
+    BackFaceOpacity->1,
+    GraphicsColor->RGBColor[0.7, 0, 1],
+    Opacity->1,
+    FontSize->Larger,
+    FontColor->RGBColor[0.7, 0, 1],
+    FontOpacity->1], "\[InvisibleSpace]", 
+   StyleBox["\<\"From here it is unclear how they get (2.5): \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox[
+    RowBox[{
+     RowBox[{"-", "2"}], " ", "n", " ", "\[Pi]", " ", 
+     SuperscriptBox["r", "3"], " ", 
+     InterpretationBox[
+      SuperscriptBox["\[Phi]", "*"],
+      Conjugate[$CellContext`\[Phi]],
+      Editable->False,
+      SyntaxForm->Automatic], " ", 
+     SubscriptBox["L", "x"], " ", 
+     InterpretationBox[
+      RowBox[{
+       SubscriptBox[
+        UnderscriptBox["\<\"\[PartialD]\"\>", "_"], "r"], "[", "\[Phi]", "]"}],
+      $CellContext`tuDDown["\[PartialD]"][$CellContext`\[Phi], $CellContext`r],
+      Editable->False,
+      SyntaxForm->Automatic]}],
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox["\<\"  For r\[LongRightArrow]\[Infinity] the metric becomes \"\>",
+    
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        SuperscriptBox["r", "2"]}], ")"}], " ", 
+      SuperscriptBox[
+       RowBox[{"d", "[", "x", "]"}], "2"]}], "+", 
+     RowBox[{
+      SuperscriptBox["r", "2"], " ", 
+      SuperscriptBox[
+       RowBox[{"d", "[", "\[Tau]", "]"}], "2"]}]}],
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox["\<\" Examining terms in the Total Differential: \"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox[
+    RowBox[{
+     RowBox[{"DD", "[", 
+      InterpretationBox[
+       RowBox[{
+        SubscriptBox[
+         UnderscriptBox["\<\"\[Del]\"\>", "_"], "\[Mu]"], "[", 
+        RowBox[{"\[Phi]", " ", 
+         InterpretationBox[
+          RowBox[{
+           TemplateBox[{UnderscriptBox["\"\[Del]\"", "_"],"\[Mu]"},
+            "Superscript"], "[", "\[Phi]", "]"}],
+          $CellContext`tuDUp[
+          "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+          Editable->False,
+          SyntaxForm->Automatic]}], "]"}],
+       $CellContext`tuDDown[
+       "\[Del]"][$CellContext`\[Phi] $CellContext`tuDUp[
+         "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], $CellContext`\
+\[Mu]],
+       Editable->False,
+       SyntaxForm->Automatic], "]"}], "-", 
+     RowBox[{"\[Phi]", " ", 
+      InterpretationBox[
+       RowBox[{
+        SubscriptBox[
+         UnderscriptBox["\<\"\[Del]\"\>", "_"], "\[Mu]"], "[", 
+        InterpretationBox[
+         RowBox[{
+          TemplateBox[{UnderscriptBox["\"\[Del]\"", "_"],"\[Mu]"},
+           "Superscript"], "[", "\[Phi]", "]"}],
+         $CellContext`tuDUp["\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]],
+         Editable->False,
+         SyntaxForm->Automatic], "]"}],
+       $CellContext`tuDDown["\[Del]"][
+        $CellContext`tuDUp[
+        "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], \
+$CellContext`\[Mu]],
+       Editable->False,
+       SyntaxForm->Automatic]}]}],
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", 
+   StyleBox["\<\" does not give any clues.  One can assume that d[r] does not \
+play a role at r\[Rule]\[Infinity] and so we have only differentials in {\
+\[Tau],x} which in this case \[Rule] {2\[Pi]n,\\!\\(\\*SubscriptBox[\\(L\\), \
+\\(x\\)]\\)}.  It looks like that the TotalDifferential part is used and \
+integrated over {x,{0,\\!\\(\\*SubscriptBox[\\(L\\), \
+\\(x\\)]\\)}},{\[Tau],{0,2\[Pi]n}} and there is a jacobian factor of \
+\\!\\(\\*SuperscriptBox[\\(r\\), \\(\\(2\\)\\(\\\\ \\)\\)]\\)and the \[Phi] \
+is only a function of r and d[r] does not play a role.\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontSize->Larger,
+    FontColor->RGBColor[1, 0, 0]]}],
+  SequenceForm[
+   Grid[{{$CellContext`d[$CellContext`s]^2 -> (
+          1 + $CellContext`r^2)^(-1) $CellContext`d[$CellContext`r]^2 + (
+         1 + $CellContext`r^2) $CellContext`d[$CellContext`x]^2 + \
+$CellContext`r^2 $CellContext`d[$CellContext`\[Tau]]^2}, {
+      Style[
+      "U[1] isometry \[Tau]\[Tilde]\[Tau]+2\[Pi], x-invariant and compactify \
+of size \!\(\*SubscriptBox[\(L\), \(x\)]\)", 
+       RGBColor[0, 
+        Rational[2, 3], 0], Larger]}, {
+      Grid[{{
+         $CellContext`\[Phi][
+          Style["massless scalar field", 
+           RGBColor[0, 
+            Rational[2, 3], 0], 
+           Larger]]}, {$CellContext`H[$CellContext`\[Tau]] -> \
+$CellContext`tuDDown[
+           "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]] \
+$CellContext`tuDUp["\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]]}}, 
+       Dividers -> {{True}, {False}}, FrameStyle -> Directive[
+         RGBColor[0.7, 0, 1, 1], 
+         Thickness[Tiny]], Alignment -> Left]}, {
+      {$CellContext`\[Phi] -> 
+       E^(Complex[0, 1] $CellContext`\[Tau]) $CellContext`\[Eta]}[
+       Style["r\[LongRightArrow]\[Infinity]", 
+        RGBColor[0, 
+         Rational[2, 3], 0], Larger]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left], 
+   Style["\n", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["Use the equations ", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Grid[{{
+     Subscript[$CellContext`S, $CellContext`grav] -> 
+      Inactive[Integrate][$CellContext`\[ScriptCapitalL], 
+        $CellContext`x[
+         Style["AdS3", 
+          RGBColor[0, 
+           Rational[2, 3], 0], 
+          Larger]]]}, {$CellContext`\[ScriptCapitalL] -> $CellContext`tuDDown[
+        "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]] $CellContext`tuDUp[
+        "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]]}, {
+     Subscript[$CellContext`S, $CellContext`grav] -> 
+      Inactive[Integrate][$CellContext`tuDDown[
+         "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]] \
+$CellContext`tuDUp["\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], 
+        $CellContext`x[
+         Style["AdS3", 
+          RGBColor[0, 
+           Rational[2, 3], 0], Larger]]]}, {Log[
+        $CellContext`Z[$CellContext`n]] -> -
+       Inactive[
+        Integrate][$CellContext`tuDDown[
+          "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]] \
+$CellContext`tuDUp["\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], 
+         $CellContext`x[
+          Style["AdS3", 
+           RGBColor[0, 
+            Rational[2, 3], 0], Larger]]]}}, Dividers -> {{True}, {False}}, 
+    FrameStyle -> Directive[
+      RGBColor[0.7, 0, 1, 1], 
+      Thickness[Tiny]], Alignment -> Left], 
+   Style["\n", 
+    RGBColor[0.7, 0, 1, 1], Larger], 
+   Style["From here it is unclear how they get (2.5): ", 
+    RGBColor[1, 0, 0], Larger], 
+   Style[(-2) $CellContext`n Pi $CellContext`r^3 
+    Conjugate[$CellContext`\[Phi]] 
+    Subscript[$CellContext`L, $CellContext`x] $CellContext`tuDDown[
+     "\[PartialD]"][$CellContext`\[Phi], $CellContext`r], 
+    RGBColor[1, 0, 0], Larger], 
+   Style["  For r\[LongRightArrow]\[Infinity] the metric becomes ", 
+    RGBColor[1, 0, 0], Larger], 
+   Style[(
+      1 + $CellContext`r^2) $CellContext`d[$CellContext`x]^2 + \
+$CellContext`r^2 $CellContext`d[$CellContext`\[Tau]]^2, 
+    RGBColor[1, 0, 0], Larger], 
+   Style[" Examining terms in the Total Differential: ", 
+    RGBColor[1, 0, 0], Larger], 
+   Style[$CellContext`DD[
+      $CellContext`tuDDown[
+      "\[Del]"][$CellContext`\[Phi] $CellContext`tuDUp[
+        "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], \
+$CellContext`\[Mu]]] - $CellContext`\[Phi] $CellContext`tuDDown["\[Del]"][
+      $CellContext`tuDUp[
+      "\[Del]"][$CellContext`\[Phi], $CellContext`\[Mu]], $CellContext`\[Mu]], 
+    RGBColor[1, 0, 0], Larger], 
+   Style[" does not give any clues.  One can assume that d[r] does not play a \
+role at r\[Rule]\[Infinity] and so we have only differentials in {\[Tau],x} \
+which in this case \[Rule] {2\[Pi]n,\!\(\*SubscriptBox[\(L\), \(x\)]\)}.  It \
+looks like that the TotalDifferential part is used and integrated over {x,{0,\
+\!\(\*SubscriptBox[\(L\), \(x\)]\)}},{\[Tau],{0,2\[Pi]n}} and there is a \
+jacobian factor of \!\(\*SuperscriptBox[\(r\), \(\(2\)\(\\ \)\)]\)and the \
+\[Phi] is only a function of r and d[r] does not play a role.", 
+    RGBColor[1, 0, 0], Larger]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.7009184717040577`*^9, 3.700918533289678*^9, 3.700920746434902*^9, 
+   3.7009272979131413`*^9, 3.700927365139162*^9, {3.700934311967677*^9, 
+   3.700934339346168*^9}, 3.7009345341890287`*^9, {3.700934971788171*^9, 
+   3.700934983809263*^9}, 3.700935079562326*^9, 3.700935217283977*^9, 
+   3.701008685816016*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"selectGE", "[", 
+     RowBox[{
+      RowBox[{"Log", "[", "_", "]"}], ",", 
+      RowBox[{"{", "}"}], ",", "all"}], "]"}], "//", 
+    RowBox[{
+     RowBox[{"ColumnForms", "[", 
+      RowBox[{"#1", ",", "2"}], "]"}], "&"}]}], ";"}], 
+  "\[IndentingNewLine]"}]], "Input",
+ CellOpen->False,
+ CellChangeTimes->{{3.700876239579195*^9, 3.700876347445715*^9}, {
+   3.7008763878261957`*^9, 3.700876429847045*^9}, {3.7008764653749733`*^9, 
+   3.7008765080667467`*^9}, {3.7008765653636312`*^9, 3.700876664940599*^9}, {
+   3.700911264733205*^9, 3.700911446113842*^9}, 3.7009116249352493`*^9, {
+   3.700915932346541*^9, 3.7009159753944397`*^9}, {3.700916053551264*^9, 
+   3.700916155528689*^9}, {3.700916260192999*^9, 3.7009162855424337`*^9}, {
+   3.700916337596979*^9, 3.7009163508525057`*^9}, {3.700916397919091*^9, 
+   3.7009164603041*^9}, {3.70091649384128*^9, 3.700916520280449*^9}, {
+   3.700916563175726*^9, 3.700916623050885*^9}, {3.700916740377781*^9, 
+   3.700916741040045*^9}, {3.70091678393643*^9, 3.700916823536581*^9}, 
+   3.700916935337084*^9}],
+
+Cell[BoxData[
+ RowBox[{"\[Phi]", "\[Rule]", 
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"\[ImaginaryI]", " ", "\[Tau]"}]], " ", "\[Eta]"}]}]], "Output",
+ CellOpen->False,
+ CellChangeTimes->{{3.700915944170175*^9, 3.700915976029434*^9}, 
+   3.700916008468651*^9, 3.700916056597207*^9, {3.700916112916872*^9, 
+   3.700916157091338*^9}, 3.700916290126988*^9, 3.700916351473768*^9, 
+   3.700916462680318*^9, {3.700916495121085*^9, 3.700916520892539*^9}, {
+   3.700916573995368*^9, 3.700916623764677*^9}, {3.700916785402966*^9, 
+   3.7009168240496073`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[ScriptCapitalL]", "\[Rule]", 
+  RowBox[{
+   InterpretationBox[
+    RowBox[{
+     SubscriptBox[
+      UnderscriptBox["\<\"\[Del]\"\>", "_"], "\[Mu]"], "[", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[ImaginaryI]", " ", "\[Tau]"}]], " ", "\[Eta]"}], "]"}],
+    $CellContext`tuDDown["\[Del]"][
+    E^(Complex[
+        0, 1] $CellContext`\[Tau]) $CellContext`\[Eta], $CellContext`\[Mu]],
+    Editable->False,
+    SyntaxForm->Automatic], " ", 
+   InterpretationBox[
+    RowBox[{
+     TemplateBox[{UnderscriptBox["\"\[Del]\"", "_"],"\[Mu]"},
+      "Superscript"], "[", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[ImaginaryI]", " ", "\[Tau]"}]], " ", "\[Eta]"}], "]"}],
+    $CellContext`tuDUp["\[Del]"][
+    E^(Complex[
+        0, 1] $CellContext`\[Tau]) $CellContext`\[Eta], $CellContext`\[Mu]],
+    Editable->False,
+    SyntaxForm->Automatic]}]}]], "Output",
+ CellOpen->False,
+ CellChangeTimes->{{3.700915944170175*^9, 3.700915976029434*^9}, 
+   3.700916008468651*^9, 3.700916056597207*^9, {3.700916112916872*^9, 
+   3.700916157091338*^9}, 3.700916290126988*^9, 3.700916351473768*^9, 
+   3.700916462680318*^9, {3.700916495121085*^9, 3.700916520892539*^9}, {
+   3.700916573995368*^9, 3.700916623764677*^9}, {3.700916785402966*^9, 
+   3.7009168240534897`*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{909, 635},
+WindowMargins->{{9, Automatic}, {Automatic, 22}},
+FrontEndVersion->"11.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+21, 2016)",
+StyleDefinitions->"tuTensorialStyle.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 514, 9, 41, "Input",
+ InitializationCell->True],
+Cell[1075, 31, 1247, 25, 74, "Input",
+ InitializationCell->True],
+Cell[2325, 58, 9794, 241, 460, "Input",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[12144, 303, 377, 7, 42, "Input"],
+Cell[12524, 312, 876, 26, 47, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13437, 343, 5525, 145, 302, "Input"],
+Cell[18965, 490, 14870, 391, 321, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33872, 886, 107, 1, 42, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[34004, 891, 6528, 154, 420, "Input"],
+Cell[40535, 1047, 19575, 501, 456, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[60147, 1553, 1106, 23, 19, "Input",
+ CellOpen->False],
+Cell[61256, 1578, 570, 11, 19, "Output",
+ CellOpen->False],
+Cell[61829, 1591, 1339, 33, 19, "Output",
+ CellOpen->False]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

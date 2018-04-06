@@ -1,0 +1,1898 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     61624,       1740]*)
+(*NotebookOutlinePosition[     62632,       1775]*)
+(*  CellTagsIndexPosition[     62556,       1769]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ExpandTotalD", "ObjectName",
+  CellTags->"Function?"],
+
+Cell[TextData[{
+  "\[FilledSmallSquare] ",
+  Cell[BoxData[
+      RowBox[{
+        RowBox[{
+          StyleBox[
+            RowBox[{"Expand", 
+              StyleBox["TotalD",
+                "MR"]}]], 
+          StyleBox["[",
+            "MR"], 
+          RowBox[{
+            StyleBox[\({x, \[Delta], g, \[CapitalGamma]}\),
+              "MR"], 
+            StyleBox[",",
+              "MR"], 
+            StyleBox["a",
+              "TI"]}], 
+          StyleBox["]",
+            "MR"]}], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["expr",
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " expands total derivative expressions with coordinate label x and \
+Kronecker label \[Delta], using a as the dummy index.\n\[FilledSmallSquare] \
+",
+  Cell[BoxData[
+      RowBox[{
+        RowBox[{
+          StyleBox[
+            RowBox[{"Expand", 
+              StyleBox["TotalD",
+                "MR"]}]], 
+          StyleBox["[",
+            "MR"], 
+          RowBox[{
+            StyleBox[\({x, \[Delta], g, \[CapitalGamma]}\),
+              "MR"], 
+            StyleBox[",",
+              "MR"], 
+            StyleBox[\({a, b,  ... }\),
+              "TI"]}], 
+          StyleBox["]",
+            "MR"]}], 
+        StyleBox["[",
+          "MR"], 
+        StyleBox["expr",
+          "TI"], 
+        StyleBox["]",
+          "MR"]}]]],
+  " expands higher order derivatives."
+}], "Usage",
+  CellTags->"Function?"],
+
+Cell["\<\
+ Tensors are funtions of the coordinate positions and any variation of the \
+tensor is due to the variation of the coordiates over the parameter of \
+differentiation used.   Tensors are not allowed to depend on the parameters \
+directly but only through the coordinates.! \
+\>", "MathCaption"],
+
+Cell["\<\
+ For multiple differentiations, a dummy index for each differentiation must \
+be given.\
+\>", "MathCaption"],
+
+Cell[" The dummy indices must be in the desired flavor.", "MathCaption"],
+
+Cell[TextData[{
+  " A common set of tensor labels,",
+  Cell[BoxData[
+      \(\(\(\ \)\({x, \[Delta], g, \[CapitalGamma]}\)\)\)]],
+  ", is used in all derivatives, even though every derivative does not used \
+every label. It will often be convenient to set a variable to the list that \
+you are using in your application."
+}], "MathCaption"],
+
+Cell["ExpandTotalD is mapped over arrays, equations and sums.", "MathCaption"],
+
+Cell["\<\
+ Total derivative expressions are fully evaluated when a tensor is expanded \
+to its components.\
+\>", "MathCaption"],
+
+Cell[TextData[{
+  "See also: ",
+  ButtonBox["TotalD",
+    ButtonData:>{"TotalD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["CovariantD",
+    ButtonData:>{"CovariantD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["PartialD",
+    ButtonData:>{"PartialD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["AbsoluteD",
+    ButtonData:>{"AbsoluteD"},
+    ButtonStyle->"AddOnsLink"],
+  ", ",
+  ButtonBox["ExpandPartialD",
+    ButtonData:>{"ExpandPartialD"},
+    ButtonStyle->"AddOnsLink"],
+  "."
+}], "MathCaption"],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "ExampleSection"],
+
+Cell["We set the Euclidean metric and coordinates.", "Text"],
+
+Cell[BoxData[
+    \(Needs["\<TensorCalculus4`Tensorial`\>"]\)], "Input",
+  CellLabel->"In[1]:="],
+
+Cell["Save the settings.", "Text"],
+
+Cell[BoxData[{
+    \(\(oldindices = CompleteBaseIndices;\)\), "\[IndentingNewLine]", 
+    \(\(oldflavors = IndexFlavors;\)\), "\n", 
+    \(\(ClearIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(DeclareIndexFlavor[{red, Red}]\)}], "Input",
+  CellLabel->"In[2]:="],
+
+Cell[BoxData[{
+    \(\(labs = {x, \[Delta], 
+          g, \[CapitalGamma]};\)\), "\[IndentingNewLine]", 
+    \(DefineTensorShortcuts[{{x, F, G}, 1}, {{g, \[Delta]}, 
+        2}]\), "\[IndentingNewLine]", 
+    \(SetTensorValues[\[Delta]ud[i, j], IdentityMatrix[3]]\)}], "Input",
+  CellLabel->"In[6]:="],
+
+Cell["Here is the total derivative of a tensor F...", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[i]\), "\[IndentingNewLine]", 
+    \(TotalD[%, t]\)}], "Input",
+  CellLabel->"In[9]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "i"],
+      Tensor[ F, {i}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[9]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{"\[DifferentialD]", 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ F, {i}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ F, {i}, {Void}], t]]], "Output",
+  CellLabel->"Out[10]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "The actual meaning of ",
+  Cell[BoxData[
+      \(TotalD\)]],
+  " is..."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[i]\), "\[IndentingNewLine]", 
+    \(TotalD[%, t]\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, a]\)}], "Input",
+  CellLabel->"In[11]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox["i",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "i"],
+      Tensor[ F, {i}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[11]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{"\[DifferentialD]", 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ F, {i}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ F, {i}, {Void}], t]]], "Output",
+  CellLabel->"Out[12]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[DifferentialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ x, {a}, {Void}],
+              Editable->False]}], \(\[DifferentialD]t\)],
+        TotalD[ 
+          Tensor[ x, {a}, {Void}], t]], " ", 
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ F, {i}, {Void}],
+              Editable->False]}], 
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ x, {a}, {Void}],
+              Editable->False]}]],
+        PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+          Tensor[ F, {i}, {Void}], 
+          Tensor[ x, {a}, {Void}]],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[13]="]
+}, Open  ]],
+
+Cell["ExpandTotalD is mapped over arrays, equations and sums.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(TotalD[{Fu[i] + Gu[i], Fu[j]}, t] \[Equal] {0, 0} // 
+        Thread;\)\), "\[IndentingNewLine]", 
+    \(MapThread[#2 @@ #1 &, \ {%, \ {Equal, 
+          LessEqual}\ }]\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, a]\)}], "Input",
+  CellLabel->"In[14]:="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      TagBox[
+                        StyleBox["i",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "i"],
+                    Tensor[ F, {i}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ F, {i}, {Void}], t]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["G", 
+                      TagBox[
+                        StyleBox["i",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "i"],
+                    Tensor[ G, {i}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ G, {i}, {Void}], t]]}], "\[Equal]", "0"}], ",", 
+        RowBox[{
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[DifferentialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"],
+                  Tensor[ F, {j}, {Void}],
+                  Editable->False]}], \(\[DifferentialD]t\)],
+            TotalD[ 
+              Tensor[ F, {j}, {Void}], t]], "\[LessEqual]", "0"}]}], 
+      "}"}]], "Output",
+  CellLabel->"Out[15]="],
+
+Cell[BoxData[
+    RowBox[{"{", 
+      RowBox[{
+        RowBox[{
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {a}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["F", 
+                        TagBox[
+                          StyleBox["i",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "i"],
+                      Tensor[ F, {i}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ F, {i}, {Void}], 
+                  Tensor[ x, {a}, {Void}]],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {a}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["G", 
+                        TagBox[
+                          StyleBox["i",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "i"],
+                      Tensor[ G, {i}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ G, {i}, {Void}], 
+                  Tensor[ x, {a}, {Void}]],
+                Editable->False]}]}], "\[Equal]", "0"}], ",", 
+        RowBox[{
+          RowBox[{
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "a"],
+                    Tensor[ x, {a}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ x, {a}, {Void}], t]], " ", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"],
+                    Tensor[ F, {j}, {Void}],
+                    Editable->False]}], 
+                RowBox[{"\[PartialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["x", 
+                      TagBox[
+                        StyleBox["a",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "a"],
+                    Tensor[ x, {a}, {Void}],
+                    Editable->False]}]],
+              PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                Tensor[ F, {j}, {Void}], 
+                Tensor[ x, {a}, {Void}]],
+              Editable->False]}], "\[LessEqual]", "0"}]}], "}"}]], "Output",
+  CellLabel->"Out[16]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[i] Gu[j] \[Equal] c\), "\[IndentingNewLine]", 
+    \(TotalD[%, t]\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, a]\)}], "Input",
+  CellLabel->"In[17]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "i"],
+          Tensor[ F, {i}, {Void}],
+          Editable->False], " ", 
+        InterpretationBox[
+          SubsuperscriptBox["G", 
+            TagBox[
+              StyleBox["j",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "j"],
+          Tensor[ G, {j}, {Void}],
+          Editable->False]}], "\[Equal]", "c"}]], "Output",
+  CellLabel->"Out[17]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["G", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"],
+            Tensor[ G, {j}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[DifferentialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "i"],
+                  Tensor[ F, {i}, {Void}],
+                  Editable->False]}], \(\[DifferentialD]t\)],
+            TotalD[ 
+              Tensor[ F, {i}, {Void}], t]]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ F, {i}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[DifferentialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["G", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"],
+                  Tensor[ G, {j}, {Void}],
+                  Editable->False]}], \(\[DifferentialD]t\)],
+            TotalD[ 
+              Tensor[ G, {j}, {Void}], t]]}]}], "\[Equal]", 
+      InterpretationBox[\(\[DifferentialD]c\/\[DifferentialD]t\),
+        Dt[ c, t],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[18]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["G", 
+              TagBox[
+                StyleBox["j",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "j"],
+            Tensor[ G, {j}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[DifferentialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["a",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "a"],
+                  Tensor[ x, {a}, {Void}],
+                  Editable->False]}], \(\[DifferentialD]t\)],
+            TotalD[ 
+              Tensor[ x, {a}, {Void}], t]], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    TagBox[
+                      StyleBox["i",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "i"],
+                  Tensor[ F, {i}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["a",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "a"],
+                  Tensor[ x, {a}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ F, {i}, {Void}], 
+              Tensor[ x, {a}, {Void}]],
+            Editable->False]}], "+", 
+        RowBox[{
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ F, {i}, {Void}],
+            Editable->False], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[DifferentialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["a",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "a"],
+                  Tensor[ x, {a}, {Void}],
+                  Editable->False]}], \(\[DifferentialD]t\)],
+            TotalD[ 
+              Tensor[ x, {a}, {Void}], t]], " ", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["G", 
+                    TagBox[
+                      StyleBox["j",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "j"],
+                  Tensor[ G, {j}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["a",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "a"],
+                  Tensor[ x, {a}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ G, {j}, {Void}], 
+              Tensor[ x, {a}, {Void}]],
+            Editable->False]}]}], "\[Equal]", 
+      InterpretationBox[\(\[DifferentialD]c\/\[DifferentialD]t\),
+        Dt[ c, t],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[19]="]
+}, Open  ]],
+
+Cell["\<\
+Here is a second order differentiation. For a flavored expression, the dummy \
+indices must be in the desired flavor.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(TotalD[%, {t, t}]\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, red /@ {a, b}]\)}], "Input",
+  CellLabel->"In[20]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox[
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], 
+        TagBox[
+          StyleBox["i",
+            FontColor->RGBColor[1, 0, 0]],
+          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+      Tensor[ F, {
+        red[ i]}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[20]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{\(\[DifferentialD]\^2\), 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+            Tensor[ F, {
+              red[ i]}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ F, {
+          red[ i]}, {Void}], {t, t}],
+      Editable->False]], "Output",
+  CellLabel->"Out[21]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["a",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["a",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ a]}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {
+              red[ a]}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["b",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["b",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ b]}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {
+              red[ b]}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[PartialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["i",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ F, {
+                  red[ i]}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["b",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["b",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ b]}, {Void}],
+                Editable->False], "\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["a",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["a",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ a]}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ F, {
+              red[ i]}, {Void}], {
+            Tensor[ x, {
+              red[ b]}, {Void}], 
+            Tensor[ x, {
+              red[ a]}, {Void}]}],
+          Editable->False]}], "+", 
+      RowBox[{
+        InterpretationBox[
+          FractionBox[
+            RowBox[{\(\[DifferentialD]\^2\), 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["a",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["a",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ a]}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {
+              red[ a]}, {Void}], {t, t}],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["i",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ F, {
+                  red[ i]}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox[
+                      TagBox[
+                        StyleBox["a",
+                          FontColor->RGBColor[1, 0, 0]],
+                        (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], 
+                  TagBox[
+                    StyleBox["a",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+                Tensor[ x, {
+                  red[ a]}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ F, {
+              red[ i]}, {Void}], 
+            Tensor[ x, {
+              red[ a]}, {Void}]],
+          Editable->False]}]}]], "Output",
+  CellLabel->"Out[22]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(TotalD[Fu[i], t] TotalD[Gu[j], t] \[Equal] 0\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, {a, b}]\)}], "Input",
+  CellLabel->"In[23]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ F, {i}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ F, {i}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ G, {j}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ G, {j}, {Void}], t]]}], "\[Equal]", "0"}]], "Output",
+  CellLabel->"Out[23]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ x, {a}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {a}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[DifferentialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}], \(\[DifferentialD]t\)],
+          TotalD[ 
+            Tensor[ x, {b}, {Void}], t]], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["F", 
+                  TagBox[
+                    StyleBox["i",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "i"],
+                Tensor[ F, {i}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["a",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "a"],
+                Tensor[ x, {a}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ F, {i}, {Void}], 
+            Tensor[ x, {a}, {Void}]],
+          Editable->False], " ", 
+        InterpretationBox[
+          FractionBox[
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["G", 
+                  TagBox[
+                    StyleBox["j",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "j"],
+                Tensor[ G, {j}, {Void}],
+                Editable->False]}], 
+            RowBox[{"\[PartialD]", 
+              InterpretationBox[
+                SubsuperscriptBox["x", 
+                  TagBox[
+                    StyleBox["b",
+                      ShowContents->False],
+                    (StyleForm[ #, ShowContents -> False]&)], "b"],
+                Tensor[ x, {b}, {Void}],
+                Editable->False]}]],
+          PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+            Tensor[ G, {j}, {Void}], 
+            Tensor[ x, {b}, {Void}]],
+          Editable->False]}], "\[Equal]", "0"}]], "Output",
+  CellLabel->"Out[24]="]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\((TotalD[Fu[i], t] + TotalD[Gu[i], t])\) \((TotalD[Fu[j], t] - 
+            TotalD[Gu[j], t])\) \[Equal] 0\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, {a, b}]\)}], "Input",
+  CellLabel->"In[25]:="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      TagBox[
+                        StyleBox["i",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "i"],
+                    Tensor[ F, {i}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ F, {i}, {Void}], t]], "+", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["G", 
+                      TagBox[
+                        StyleBox["i",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "i"],
+                    Tensor[ G, {i}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ G, {i}, {Void}], t]]}], ")"}], " ", 
+        RowBox[{"(", 
+          RowBox[{
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["F", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"],
+                    Tensor[ F, {j}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ F, {j}, {Void}], t]], "-", 
+            InterpretationBox[
+              FractionBox[
+                RowBox[{"\[DifferentialD]", 
+                  InterpretationBox[
+                    SubsuperscriptBox["G", 
+                      TagBox[
+                        StyleBox["j",
+                          ShowContents->False],
+                        (StyleForm[ #, ShowContents -> False]&)], "j"],
+                    Tensor[ G, {j}, {Void}],
+                    Editable->False]}], \(\[DifferentialD]t\)],
+              TotalD[ 
+                Tensor[ G, {j}, {Void}], t]]}], ")"}]}], "\[Equal]", 
+      "0"}]], "Output",
+  CellLabel->"Out[25]="],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{
+        RowBox[{"(", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {a}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["F", 
+                        TagBox[
+                          StyleBox["i",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "i"],
+                      Tensor[ F, {i}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ F, {i}, {Void}], 
+                  Tensor[ x, {a}, {Void}]],
+                Editable->False]}], "+", 
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {a}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["G", 
+                        TagBox[
+                          StyleBox["i",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "i"],
+                      Tensor[ G, {i}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["a",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "a"],
+                      Tensor[ x, {a}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ G, {i}, {Void}], 
+                  Tensor[ x, {a}, {Void}]],
+                Editable->False]}]}], ")"}], " ", 
+        RowBox[{"(", 
+          RowBox[{
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["b",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "b"],
+                      Tensor[ x, {b}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {b}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["F", 
+                        TagBox[
+                          StyleBox["j",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "j"],
+                      Tensor[ F, {j}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["b",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "b"],
+                      Tensor[ x, {b}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ F, {j}, {Void}], 
+                  Tensor[ x, {b}, {Void}]],
+                Editable->False]}], "-", 
+            RowBox[{
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[DifferentialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["b",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "b"],
+                      Tensor[ x, {b}, {Void}],
+                      Editable->False]}], \(\[DifferentialD]t\)],
+                TotalD[ 
+                  Tensor[ x, {b}, {Void}], t]], " ", 
+              InterpretationBox[
+                FractionBox[
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["G", 
+                        TagBox[
+                          StyleBox["j",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "j"],
+                      Tensor[ G, {j}, {Void}],
+                      Editable->False]}], 
+                  RowBox[{"\[PartialD]", 
+                    InterpretationBox[
+                      SubsuperscriptBox["x", 
+                        TagBox[
+                          StyleBox["b",
+                            ShowContents->False],
+                          (StyleForm[ #, ShowContents -> False]&)], "b"],
+                      Tensor[ x, {b}, {Void}],
+                      Editable->False]}]],
+                PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+                  Tensor[ G, {j}, {Void}], 
+                  Tensor[ x, {b}, {Void}]],
+                Editable->False]}]}], ")"}]}], "\[Equal]", "0"}]], "Output",
+  CellLabel->"Out[26]="]
+}, Open  ]],
+
+Cell["\<\
+The number of dummy indices must be equal to the differentiation order. \
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[i] // ToFlavor[red]\), "\[IndentingNewLine]", 
+    \(TotalD[%, {t, t}]\), "\[IndentingNewLine]", 
+    \(% // ExpandTotalD[labs, red /@ {a, b, c}]\)}], "Input",
+  CellLabel->"In[27]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox[
+            TagBox[
+              StyleBox["i",
+                FontColor->RGBColor[1, 0, 0]],
+              (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], 
+        TagBox[
+          StyleBox["i",
+            FontColor->RGBColor[1, 0, 0]],
+          (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+      Tensor[ F, {
+        red[ i]}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[27]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{\(\[DifferentialD]\^2\), 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox[
+                  TagBox[
+                    StyleBox["i",
+                      FontColor->RGBColor[1, 0, 0]],
+                    (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)],
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], 
+              TagBox[
+                StyleBox["i",
+                  FontColor->RGBColor[1, 0, 0]],
+                (StyleForm[ #, FontColor -> RGBColor[ 1, 0, 0]]&)]],
+            Tensor[ F, {
+              red[ i]}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ F, {
+          red[ i]}, {Void}], {t, t}],
+      Editable->False]], "Output",
+  CellLabel->"Out[28]="],
+
+Cell[BoxData[
+    RowBox[{\(ExpandTotalD::"dummies"\), \(\(:\)\(\ \)\), "\<\"Number of \
+dummies \\!\\({\\*StyleBox[\\\"a\\\", Rule[FontColor, RGBColor[1, 0, 0]]], \
+\\*StyleBox[\\\"b\\\", Rule[FontColor, RGBColor[1, 0, 0]]], \\*StyleBox[\\\"c\
+\\\", Rule[FontColor, RGBColor[1, 0, 0]]]}\\) does not match number of \
+differentiation variables \\!\\({t, t}\\)\"\>"}]], "Message",
+  CellLabel->"From In[27]:="],
+
+Cell[BoxData[
+    \($Aborted\)], "Output",
+  CellLabel->"Out[29]="]
+}, Open  ]],
+
+Cell["\<\
+Here, we calculate the acceleration of a particle moving on a circular \
+path.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(SetTensorValueRules[xu[i], {Sin[t], Cos[t], 0}]\), "\n", 
+    \(TotalD[xu[i], {t, t}]\), "\n", 
+    \(% // ExpandTotalD[labs, {a, b}]\), "\n", 
+    \(% // KroneckerAbsorb[\[Delta]]\), "\n", 
+    \(% // ToArrayValues[]\)}], "Input",
+  CellLabel->"In[30]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{\(\[DifferentialD]\^2\), 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ x, {i}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ x, {i}, {Void}], {t, t}],
+      Editable->False]], "Output",
+  CellLabel->"Out[31]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        SubsuperscriptBox["\[Delta]", 
+          RowBox[{
+            TagBox[
+              StyleBox["i",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "a"}], 
+          RowBox[{"i", 
+            TagBox[
+              StyleBox["a",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)]}]],
+        Tensor[ \[Delta], {i, Void}, {Void, a}],
+        Editable->False], " ", 
+      InterpretationBox[
+        FractionBox[
+          RowBox[{\(\[DifferentialD]\^2\), 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["a",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "a"],
+              Tensor[ x, {a}, {Void}],
+              Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+        TotalD[ 
+          Tensor[ x, {a}, {Void}], {t, t}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[32]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{\(\[DifferentialD]\^2\), 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["i",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "i"],
+            Tensor[ x, {i}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t \[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ x, {i}, {Void}], {t, t}],
+      Editable->False]], "Output",
+  CellLabel->"Out[33]="],
+
+Cell[BoxData[
+    \({\(-Sin[t]\), \(-Cos[t]\), 0}\)], "Output",
+  CellLabel->"Out[34]="]
+}, Open  ]],
+
+Cell["\<\
+A total derivative of a partial derivatice of a tensor. We must expand the \
+partial derivative before taking the total derivative.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(ClearTensorValues[xu[i]]\), "\n", 
+    \(Fu[k]\), "\n", 
+    \(PartialD[%, m]\), "\n", 
+    \(\(ExpandPartialD[labs]\)[%]\), "\n", 
+    \(TotalD[%, t]\), "\n", 
+    \(\(ExpandTotalD[labs, i]\)[%]\)}], "Input",
+  CellLabel->"In[35]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox["k",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "k"],
+      Tensor[ F, {k}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[36]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubscriptBox[
+        InterpretationBox[
+          SubsuperscriptBox["F", 
+            TagBox[
+              StyleBox["k",
+                ShowContents->False],
+              (StyleForm[ #, ShowContents -> False]&)], "k"],
+          Tensor[ F, {k}, {Void}],
+          Editable->False], \(\(,\)\(m\)\)],
+      PartialD[ 
+        Tensor[ F, {k}, {Void}], m],
+      Editable->False]], "Output",
+  CellLabel->"Out[37]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{"\[PartialD]", 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "k"],
+            Tensor[ F, {k}, {Void}],
+            Editable->False]}], 
+        RowBox[{"\[PartialD]", 
+          InterpretationBox[
+            SubsuperscriptBox["x", 
+              TagBox[
+                StyleBox["m",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "m"],
+            Tensor[ x, {m}, {Void}],
+            Editable->False]}]],
+      PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+        Tensor[ F, {k}, {Void}], 
+        Tensor[ x, {m}, {Void}]],
+      Editable->False]], "Output",
+  CellLabel->"Out[38]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{"\[DifferentialD]", 
+          InterpretationBox[
+            FractionBox[
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["F", 
+                    TagBox[
+                      StyleBox["k",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "k"],
+                  Tensor[ F, {k}, {Void}],
+                  Editable->False]}], 
+              RowBox[{"\[PartialD]", 
+                InterpretationBox[
+                  SubsuperscriptBox["x", 
+                    TagBox[
+                      StyleBox["m",
+                        ShowContents->False],
+                      (StyleForm[ #, ShowContents -> False]&)], "m"],
+                  Tensor[ x, {m}, {Void}],
+                  Editable->False]}]],
+            PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+              Tensor[ F, {k}, {Void}], 
+              Tensor[ x, {m}, {Void}]],
+            Editable->False]}], \(\[DifferentialD]t\)],
+      TotalD[ 
+        PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+          Tensor[ F, {k}, {Void}], 
+          Tensor[ x, {m}, {Void}]], t]]], "Output",
+  CellLabel->"Out[39]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[DifferentialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False]}], \(\[DifferentialD]t\)],
+        TotalD[ 
+          Tensor[ x, {i}, {Void}], t]], " ", 
+      InterpretationBox[
+        FractionBox[
+          RowBox[{\(\[PartialD]\^2\), 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                TagBox[
+                  StyleBox["k",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "k"],
+              Tensor[ F, {k}, {Void}],
+              Editable->False]}], 
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False], "\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["m",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "m"],
+              Tensor[ x, {m}, {Void}],
+              Editable->False]}]],
+        PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+          Tensor[ F, {k}, {Void}], {
+          Tensor[ x, {i}, {Void}], 
+          Tensor[ x, {m}, {Void}]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[40]="]
+}, Open  ]],
+
+Cell[TextData[{
+  "If we use a partial derivative after a total derivative, the total \
+derivative must be expanded and the corresponding expanded form of ",
+  Cell[BoxData[
+      \(PartialD\)]],
+  " must be used."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(Fu[k]\), "\n", 
+    \(TotalD[%, t]\), "\n", 
+    \(% // ExpandTotalD[labs, i]\), "\n", 
+    \(\(PartialD[labs]\)[%, xu[m]]\)}], "Input",
+  CellLabel->"In[41]:="],
+
+Cell[BoxData[
+    InterpretationBox[
+      SubsuperscriptBox["F", 
+        TagBox[
+          StyleBox["k",
+            ShowContents->False],
+          (StyleForm[ #, ShowContents -> False]&)], "k"],
+      Tensor[ F, {k}, {Void}],
+      Editable->False]], "Output",
+  CellLabel->"Out[41]="],
+
+Cell[BoxData[
+    InterpretationBox[
+      FractionBox[
+        RowBox[{"\[DifferentialD]", 
+          InterpretationBox[
+            SubsuperscriptBox["F", 
+              TagBox[
+                StyleBox["k",
+                  ShowContents->False],
+                (StyleForm[ #, ShowContents -> False]&)], "k"],
+            Tensor[ F, {k}, {Void}],
+            Editable->False]}], \(\[DifferentialD]t\)],
+      TotalD[ 
+        Tensor[ F, {k}, {Void}], t]]], "Output",
+  CellLabel->"Out[42]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[DifferentialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False]}], \(\[DifferentialD]t\)],
+        TotalD[ 
+          Tensor[ x, {i}, {Void}], t]], " ", 
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                TagBox[
+                  StyleBox["k",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "k"],
+              Tensor[ F, {k}, {Void}],
+              Editable->False]}], 
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False]}]],
+        PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+          Tensor[ F, {k}, {Void}], 
+          Tensor[ x, {i}, {Void}]],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[43]="],
+
+Cell[BoxData[
+    RowBox[{
+      InterpretationBox[
+        FractionBox[
+          RowBox[{"\[DifferentialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False]}], \(\[DifferentialD]t\)],
+        TotalD[ 
+          Tensor[ x, {i}, {Void}], t]], " ", 
+      InterpretationBox[
+        FractionBox[
+          RowBox[{\(\[PartialD]\^2\), 
+            InterpretationBox[
+              SubsuperscriptBox["F", 
+                TagBox[
+                  StyleBox["k",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "k"],
+              Tensor[ F, {k}, {Void}],
+              Editable->False]}], 
+          RowBox[{"\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["m",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "m"],
+              Tensor[ x, {m}, {Void}],
+              Editable->False], "\[PartialD]", 
+            InterpretationBox[
+              SubsuperscriptBox["x", 
+                TagBox[
+                  StyleBox["i",
+                    ShowContents->False],
+                  (StyleForm[ #, ShowContents -> False]&)], "i"],
+              Tensor[ x, {i}, {Void}],
+              Editable->False]}]],
+        PartialD[ {x, \[Delta], g, \[CapitalGamma]}][ 
+          Tensor[ F, {k}, {Void}], {
+          Tensor[ x, {m}, {Void}], 
+          Tensor[ x, {i}, {Void}]}],
+        Editable->False]}]], "Output",
+  CellLabel->"Out[44]="]
+}, Open  ]],
+
+Cell["Restore the sesttings", "Text"],
+
+Cell[BoxData[{
+    \(\(ClearTensorValues /@ {xu[i], \[Delta]ud[i, 
+            j]};\)\), "\[IndentingNewLine]", 
+    \(ClearTensorShortcuts[{{x, F}, 1}, {{g, \[Delta]}, 2}]\)}], "Input",
+  CellLabel->"In[45]:="],
+
+Cell[BoxData[{
+    \(DeclareBaseIndices @@ oldindices\), "\[IndentingNewLine]", 
+    \(\(ClearIndexFlavor /@ IndexFlavors;\)\), "\[IndentingNewLine]", 
+    \(\(DeclareIndexFlavor /@ oldflavors;\)\), "\[IndentingNewLine]", 
+    \(Clear[oldindices, oldflavors]\)}], "Input",
+  CellLabel->"In[47]:="]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1680}, {0, 965}},
+ScreenStyleEnvironment->"Working",
+WindowToolbars->{},
+WindowSize->{757, 470},
+WindowMargins->{{-4, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+StyleDefinitions -> "HelpBrowser.nb"
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Function?"->{
+    Cell[1776, 53, 59, 1, 41, "ObjectName",
+      CellTags->"Function?"],
+    Cell[1838, 56, 1433, 55, 73, "Usage",
+      CellTags->"Function?"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Function?", 62384, 1760}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 59, 1, 41, "ObjectName",
+  CellTags->"Function?"],
+Cell[1838, 56, 1433, 55, 73, "Usage",
+  CellTags->"Function?"],
+Cell[3274, 113, 303, 5, 58, "MathCaption"],
+Cell[3580, 120, 118, 3, 41, "MathCaption"],
+Cell[3701, 125, 72, 0, 41, "MathCaption"],
+Cell[3776, 127, 340, 7, 58, "MathCaption"],
+Cell[4119, 136, 78, 0, 41, "MathCaption"],
+Cell[4200, 138, 127, 3, 41, "MathCaption"],
+Cell[4330, 143, 532, 22, 41, "MathCaption"],
+
+Cell[CellGroupData[{
+Cell[4887, 169, 34, 0, 39, "ExampleSection"],
+Cell[4924, 171, 60, 0, 25, "Text"],
+Cell[4987, 173, 96, 2, 29, "Input"],
+Cell[5086, 177, 34, 0, 25, "Text"],
+Cell[5123, 179, 276, 5, 89, "Input"],
+Cell[5402, 186, 301, 6, 69, "Input"],
+Cell[5706, 194, 61, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[5792, 198, 110, 3, 49, "Input"],
+Cell[5905, 203, 288, 9, 27, "Output"],
+Cell[6196, 214, 495, 14, 43, "Output"]
+}, Open  ]],
+Cell[6706, 231, 102, 5, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[6833, 240, 171, 4, 69, "Input"],
+Cell[7007, 246, 289, 9, 27, "Output"],
+Cell[7299, 257, 495, 14, 43, "Output"],
+Cell[7797, 273, 1423, 39, 46, "Output"]
+}, Open  ]],
+Cell[9235, 315, 71, 0, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[9331, 319, 290, 6, 69, "Input"],
+Cell[9624, 327, 1831, 46, 47, "Output"],
+Cell[11458, 375, 5158, 120, 50, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[16653, 500, 188, 4, 69, "Input"],
+Cell[16844, 506, 648, 19, 30, "Output"],
+Cell[17495, 527, 1885, 50, 47, "Output"],
+Cell[19383, 579, 3851, 98, 50, "Output"]
+}, Open  ]],
+Cell[23249, 680, 141, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[23415, 687, 205, 4, 69, "Input"],
+Cell[23623, 693, 602, 18, 27, "Output"],
+Cell[24228, 713, 930, 25, 44, "Output"],
+Cell[25161, 740, 7302, 181, 47, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[32500, 926, 169, 3, 49, "Input"],
+Cell[32672, 931, 1100, 29, 47, "Output"],
+Cell[33775, 962, 2970, 77, 51, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[36782, 1044, 232, 4, 49, "Input"],
+Cell[37017, 1050, 2423, 60, 53, "Output"],
+Cell[39443, 1112, 6928, 159, 53, "Output"]
+}, Open  ]],
+Cell[46386, 1274, 96, 2, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[46507, 1280, 208, 4, 69, "Input"],
+Cell[46718, 1286, 602, 18, 27, "Output"],
+Cell[47323, 1306, 930, 25, 44, "Output"],
+Cell[48256, 1333, 409, 6, 35, "Message"],
+Cell[48668, 1341, 67, 2, 27, "Output"]
+}, Open  ]],
+Cell[48750, 1346, 102, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[48877, 1353, 277, 6, 109, "Input"],
+Cell[49157, 1361, 546, 15, 44, "Output"],
+Cell[49706, 1378, 1072, 30, 44, "Output"],
+Cell[50781, 1410, 546, 15, 44, "Output"],
+Cell[51330, 1427, 88, 2, 27, "Output"]
+}, Open  ]],
+Cell[51433, 1432, 155, 3, 25, "Text"],
+
+Cell[CellGroupData[{
+Cell[51613, 1439, 255, 7, 129, "Input"],
+Cell[51871, 1448, 289, 9, 27, "Output"],
+Cell[52163, 1459, 459, 14, 29, "Output"],
+Cell[52625, 1475, 882, 25, 46, "Output"],
+Cell[53510, 1502, 1278, 32, 57, "Output"],
+Cell[54791, 1536, 1786, 48, 47, "Output"]
+}, Open  ]],
+Cell[56592, 1587, 226, 6, 42, "Text"],
+
+Cell[CellGroupData[{
+Cell[56843, 1597, 182, 5, 89, "Input"],
+Cell[57028, 1604, 289, 9, 27, "Output"],
+Cell[57320, 1615, 495, 14, 43, "Output"],
+Cell[57818, 1631, 1423, 39, 47, "Output"],
+Cell[59244, 1672, 1786, 48, 47, "Output"]
+}, Open  ]],
+Cell[61045, 1723, 37, 0, 25, "Text"],
+Cell[61085, 1725, 211, 4, 49, "Input"],
+Cell[61299, 1731, 297, 5, 89, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+
