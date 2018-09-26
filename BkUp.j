@@ -27,7 +27,7 @@ print  "======== Using: $BkUpDIR\n";
 #tar Current version
 system "cd $HOME/Mathematica; tar cvhf '$BkUpDIR/backupC.tar' . > $HOME/tmp/BkUpC.Mathematica.out 2>&1";
 
-
+die "==== NO update version\n";
 # $BkUpDIR="/Volumes/Time\ Machine/backup/Mathematica";
 #tar Update version
 #system "cd $HOME/Mathematica; tar uvhf '$BkUpDIR/backupU.tar' . > $HOME/tmp/BkUpR.Mathematica.out 2>&1";

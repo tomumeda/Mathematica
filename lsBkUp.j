@@ -1,15 +1,22 @@
 #!/usr/bin/perl
-#
 $HOME=$ENV{HOME};
-
-$BkUpDIR="/Volumes/CoolMax/backup/Mathematica";
-$BkUpDIR="/Volumes/Time\ Machine-1/backup/Mathematica";
-$BkUpDIR="$HOME/Google\ Drive";
+#
 $BkUpDIR="/Volumes/Time\ Machine\ Backups/Mathematica";
+if( !-e $BkUpDIR )
+{ $BkUpDIR="/Volumes/Time\ Machine-1/backup/Mathematica";
+}
+if( !-e $BkUpDIR )
+{ $BkUpDIR="/Volumes/Time\ Machine/backup/Mathematica";
+}
+if( !-e $BkUpDIR )
+{ die "?? NO BkUpDIR";
+}
+print "======Using $BkUpDIR\n";
+#
 
 $TARGET="$HOME/Mathematica/tmp";
 
-system "tar -tvf '$BkUpDIR/backupU.tar'  > $TARGET/ls.Mathematica.out";
+system "tar -tvf '$BkUpDIR/backupC.tar'  > $TARGET/ls.Mathematica.out";
 
 $grep="grep -i ";
 $greps=join(" | $grep ",@ARGV);
