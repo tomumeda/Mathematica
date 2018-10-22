@@ -31,6 +31,7 @@ push(@files,split(/;/,$x));
 $pat=$ARGV[0];
 
 print colored("## $opt_grep : @ARGV ########################################\n",'green');
+open L1,">files.nbfind";
 foreach $file (@files)
 { next if($file =~ /tests/);
   $file=~s/ /\\ /g;
@@ -40,6 +41,7 @@ foreach $file (@files)
   if(length($greplist)>0)
   { print colored($file,'yellow'),"\n";
     print $greplist;
+    print L1 "$file\n";
   }
 }
 
