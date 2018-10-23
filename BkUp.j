@@ -21,8 +21,9 @@ if( !-e $BkUpDIR )
 if( !-e $BkUpDIR )
 { die "?? NO BkUpDIR";
 }
-
 print  "======== Using: $BkUpDIR\n";
+
+system "(cd Applications; tar cf - Local) | tar xf -"; # copy Local for GitHub
 
 #tar Current version
 system "cd $HOME/Mathematica; tar cvhf '$BkUpDIR/backupC.tar' . > $HOME/tmp/BkUpC.Mathematica.out 2>&1";
