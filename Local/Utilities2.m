@@ -95,9 +95,11 @@ TextOver[c4,{ 1,3}]
 (**)
 tuGraphicDefs::usage="tuGraphicDefs defines functions to be used with Graphics[] *9Oct2018*";
 tuGraphicDefs:=Block[{},
-mid[i_,j_,wt_:.5]:=(wt $vx[[i]]+(1-wt)$vx[[j]]);
+mid[i_,j_,wt_:.5]:=(wt $pt[[i]]+(1-wt)$pt[[j]]);
 midline[lineN_,wt_:.5]:=(wt $line[[lineN,1]]+(1-wt)$line[[lineN,2]]);
-textstyle[txt_,size_:Small,color_:Blue]:=Style[txt,Bold,color,size];
+textstyle[txt_,size_:Small,color_:Blue,font:Bold]:=Style[txt,font,color,size];
+define$pt[n1_,n2_]:=$pt={Range[-n1,n1],Range[-n2,n2]}//Tuples;
+show$pt:=Graphics[MapIndexed[Text[Subscript[#2[[1]], Apply[Sequence,#1]],#1]&,$pt]]
 ];
 
 
@@ -155,6 +157,17 @@ $=$//DeleteCases[(Rule|RuleDelayed)[a_,a_]]//Flatten;
 $=$//DeleteCases[(Rule)[FontFamily,a_]]//Flatten;
 $//DeleteDuplicates
 ];
+(**)
+tuList0::usage="tuList0[EXP_] extracts the element from a List[] with only a single element *3Nov2018*";
+tuList0[EXP_]:=Module[{$=EXP},
+If[Head[$]===List,
+If[Length[$]==1,Flatten[$][[1]],
+$]
+]
+];
+tuRule1::usage="tuRule1[rules_,negativePower_:False,simplerArg_:True] is the equivalent to tuList0[tuRule[rules,negativePower,simplerArg]] *3Nov2018*";
+tuRule1[rules_,negativePower_:False,simplerArg_:True]:=
+tuList0[tuRule[rules,negativePower,simplerArg]];
 (**)
 tuRuleNoPower::usage="tuRuleNoPower[rules_] eliminates Power of first arguement of Rule[], e.g. \!\(\*SuperscriptBox[\(a\), \(2\)]\)\[Rule]b \[Implies] a\[Rule]Sqrt[b].  *1Feb2018*";
 tuRuleNoPower[rules_]:=Module[{$=rules,rr$},

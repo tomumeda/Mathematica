@@ -457,18 +457,19 @@ tuDsu[s_][a_,b_]:=tuDUp[s][a,b];
 tuDLie[a_,b_]:=tuDDown["\[ScriptCapitalL]"][a,b];
 tuDOps:=tuDUp[_]|tuDDown[_];
 
-tuDExpand::usage="tuDExpand[ops_,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)] Rules to Expand by name two argument differential operator ops_, e.g., tuDUp[_]|tuDDown[_], tuDPartial, tuDPartialu, tuDCovariant, tuDCovariantu. Terms that match any of list of constants are treated as constant. Leibnitz rule is applied over functions fnc_.  NOTE: seems like only tuDUp[_] and tuDDown [_] work as ops_.  *2Mar2015**27Sep2017*";
-tuDExpand[ops_,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)]:={
+tuDExpand::usage="tuDExpand[ops_:tuDOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)] Rules to Expand by name two argument differential operator ops_, e.g., tuDUp[_]|tuDDown[_], tuDPartial, tuDPartialu, tuDCovariant, tuDCovariantu. Terms that match any of list of constants are treated as constant. Leibnitz rule is applied over functions fnc_.  NOTE: seems like only tuDUp[_] and tuDDown [_] work as ops_.  *2Mar2015**27Sep2017*";
+tuDExpand[ops_:tuDOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)]:={
 ((*Liebnitz rule*)
 name:ops)[(oo:Flatten[fnc])[a_  ,b__],c__]:>oo[name[a,c],b]+oo[a ,name[oo[b],c]]/;Length[{b}]>1,
 (name:ops)[(oo:Flatten[fnc])[a_  ,b__],c__]:>oo[name[a,c],b]+oo[a ,name[b,c]]/;Length[{b}]==1,
 
 (name:ops)[a_+ c_,b_]->name[a,b]+ name[ c,b],
+(name:ops)[a_,b_ c_?NumericQ]:> name[a,b]/c,
+
 (name:ops)[Exp[a_],b_]->Exp[a] name[a,b],
 (name:ops)[Log[a_],b_]-> name[a,b]/a,
 (name:ops)[Power[a_,n_],b_]:>n Power[a,n-1] name[a,b],
 (name:ops)[a_,b_+c_]->name[a,b]+ name[ a,c],
-(name:ops)[a_,-b_]->-name[a,b],
 (name:ops)[a_,b_]:>0/;NumericQ[a] ,
 (name:ops)[a_,b_]:>0/;ListMemberQ[a,constants],
 (*(ff:(BraKet|Times|dotOps|Wedge|CircleTimes))[b__,  ConjugateTranspose[(name:DerivOps)[a_,a_]]]:>ConjugateTranspose[ff[b]],
@@ -3457,15 +3458,28 @@ tmp=tmp//.(name:\[Delta]1)[a_ +  b_]->name[a]+ name[b];
 tmp=tmp//.(name:\[Delta]1)[(oo:ProductOp)[a_  ,b__]]:>oo[name[a],b]+oo[a ,If[Length[{b}]>1,name[oo[b]],name[b]]];
 tmp=tmp//.sub;
 (*Use Mathematica Dt function \[Implies] some Rules obsolete.*)
-(*Test code to handle the hidden variables properly with Dt, i.e., Dt[f[1]]\[Rule]0 *)
+(*Cludge code to handle the hidden variables properly with Dt, i.e., Dt[f[1]]\[Rule]0 *)
+(*
+Print["0:",tmp];*)
 tmp=tmp/.(dname:\[Delta]1)[a_]:> dname[a/. h_[n_?NumberQ]->h[n,n$]];
-tmp=tmp/. \[Delta]1->Dt;
-tmp=tmp//.(dd:Dt[n$])^(n_:1) Derivative[0,1][z_][n_?NumberQ,n$]->dd^(n-1) \[Delta]1[z[n]];
-tmp=tmp/.z_[n_?NumberQ,n$]:>z[n]/.Dt->\[Delta]1;
+tmp=tmp/. \[Delta]1->Dt/.Dt->$Dt;(*
+Print["1:",$tmp=tmp];*)
+tmp=tmp//.($Dt[n$]Derivative[0,1][z_][m_?NumberQ,n$]):>\[Delta]1[z[m]];
+tmp=tmp//.($Dt[n$]^(n_:1) Derivative[0,1][z_][m_?NumberQ,n$]^(nn_:1)):>\[Delta]1[z[m]]^nn $Dt[n$]^(n-nn);(*
+Print["2:",tmp];*)
+tmp=tmp//.z_[n_?NumberQ,n$]:>z[n]/.$Dt->\[Delta]1;
+(*Print["3:",tmp];*)
 tmp=tmp/.Derivative[__][dForm][__]->0(*special for dForm*)
 ];
 tmp
 ];
+
+(**)
+tudExpandvI::usage="tudExpandvI[ops_,constants_List:{}] wrapper for tudExpand[]. Calls  tuOpIndependentVar[tudExpand,op$[ops,constants][exp]] *13Nov2018*";
+tudExpandvI[ops_,constants_List:{}][exp_]:=Module[{},
+tuOpIndependentVar[tudExpand,op$[ops,constants][exp]]
+];
+
 (**)
 tudFnc::usage="tudFnc[var_,dOp_:d,constants_:{}][exp_] apply dOp_ via tuDExpandF[dOp,constants] and then does d[exp_]->D[exp_,var] dOp_[var]. var_ can be a List of var's. Applies tuD2tuDOp[tuDPartial] to result.  *22Aug2014*13Dec2017*";
 tudFnc[var_,dOp_:d,constants_:{}][exp_]:=Module[{tmp=exp,vars=Flatten[{var}]},
@@ -4990,8 +5004,27 @@ $match=$matches[[ $i ]];  xPrint[$i,"::",$match];
 ];
 Inner[Times,$2c, $2t,Plus]
 ];
-(*Standard diffinitions*)
-tuChristoffel[g_]:=1/2 T[g,"uu",{i,m}](tuDPartial[T[g,"dd",{m,k}],l]+tuDPartial[T[g,"dd",{m,l}],k]-tuDPartial[T[g,"dd",{k,l}],m]);
+
+(*
+*)tuCoordSolidAngle::usage="tuCoordSolidAngle[n_] produces a List[] of spherical coordinate directional Cosines, \!\(\*SuperscriptBox[\(\[Omega]\), \(i\)]\), of \!\(\*SuperscriptBox[\(S\), \(n\)]\). Also, computes d[\!\(\*SubscriptBox[\(\[CapitalOmega]\), \(n\)]\)\!\(\*SuperscriptBox[\(]\), \(2\)]\). *11Nov2018*";
+tuCoordSolidAngle[n_]:=Module[{$,$0,$n=n+1},
+$0={"spherical coordinates for "[S^ToString[$n-1]],
+T[\[Omega],"u",{1}]->Cos[T[\[Theta],"d",{1}]],
+T[\[Omega],"u",{$n}]->xProduct[Sin[T[\[Theta],"d",{j}]],{j,1,$n-2}]Sin[T[\[Theta],"d",{$n-1}]]
+,
+Table[T[\[Omega],"u",{i}]->xProduct[Sin[T[\[Theta],"d",{j}]],{j,1,i-1}]Cos[T[\[Theta],"d",{i}]],
+{i,1,$n-1}]
+,
+{If[$n-2>0,{0<=T[\[Theta],"d",{"1\[LessEqual]i\[LessEqual]"<>ToString[$n-2]}]<\[Pi]}],
+0<=T[\[Theta],"d",{$n-1}]<2\[Pi]
+}
+}/.xProduct->Product//Flatten//DeleteDuplicates//DeleteCases[#,Null]&//Sort;
+$=d[Subscript[\[CapitalOmega], $n-1]]^2/.($coordSolidAngle//tuRuleSelect[{d[Subscript[\[CapitalOmega], _]]^2}])/.xSum->Sum/.tuRule[$0];
+$=d[Subscript[\[CapitalOmega], $n-1]]^2->tuOpIndependentVar[tudExpand,op$[d][$]]//Simplify;
+{$0,$}
+];
+
+$=tuCoordSolidAngle[2];(ColumnForms[#1,2]&)[$]
 
 
 (* ::Input::Initialization:: *)
