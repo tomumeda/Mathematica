@@ -1,0 +1,780 @@
+Attributes[ee$] = {Temporary}
+ 
+Attributes[error$] = {Temporary}
+ 
+evalDifferentialOps[opdef_][exp_] := Module[{$ = exp, op}, 
+     $ = $ /. dd:xDot[a__] :> Fold[op, arg, Reverse[dd]]; 
+      op[a_, b_] := b /. opdef[a]; $]
+ 
+$ = Subscript[S, BH][1]
+ 
+Attributes[Subscript] = {NHoldRest}
+ 
+Attributes[xDot] = {Flat, OneIdentity}
+ 
+Attributes[exp0$] = {Temporary}
+ 
+Attributes[exp1$] = {Temporary}
+ 
+expand2CT[ispace_Integer, ones_][exp_] := 
+    Module[{$scal, $ = exp, $1, $2 = {}, $4 = {}, $1s = ones}, 
+     $ = If[Length[$] < 2, xDot[$], $]; xPrint["exp: ", $]; 
+      $scal = tuExtractPattern[scal[_]][$]; xPrint["$scal: ", $scal]; 
+      $scal = Times @@ $scal /. scal[a_] -> a; If[$scal =!= 1, 
+       AppendTo[$2, $scal]]; $ = Select[List @@ $,  !MatchQ[#1, scal[_]] & ]; 
+      While[Length[$] > 0, {$1, $} = {$[[1]], $[[2 ;; All]]}; 
+        If[tuMemberQ[$1, {X[_]}], If[Length[$4] > 0, 
+           AppendTo[$2, xDot @@ $4]; $4 = {}]; AppendTo[$2, $1], 
+         AppendTo[$4, $1]]]; If[Length[$4] > 0, AppendTo[$2, xDot @@ $4]]; 
+      $ = (ReplacePart[$1s, ispace -> #1] & ) /@ $2 /. X[a__] -> a /. toDot; 
+      Dot @@ $]
+ 
+tuExtractPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{pos}, pos = Position[exp, pattern, {0, maxlevel}]; 
+      Extract[exp, pos]]
+ 
+tuExtractPattern /: tuExtractPattern::usage = "tuExtractPattern[pattern_,maxl\
+evel_:Infinity][exp_] extracts a List of items in exp_ that match pattern_ to \
+maxlevel_. *3Feb2014* "
+ 
+tuMemberQ[patterns_][variable_] := tuMemberQ[variable, patterns]
+ 
+tuMemberQ[variable_, patterns_] := 
+    Or @@ (MemberQ[Flatten[{variable}], #1] & ) /@ Flatten[{patterns}]
+ 
+tuMemberQ /: tuMemberQ::usage = "tuMemberQ[variable_,patterns_] True if any \
+variable_ (may be List[]) matches any in patterns_ (may be List). Equivalent \
+form: tuMemberQ[patterns_][variable_] *16May2015*"
+ 
+toDot := dotOps -> Dot
+ 
+dotOps := Dot | xDot | CenterDot | Inactive[Dot]
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+Attributes[exp$] = {Temporary}
+ 
+Attributes[eyd$] = {Temporary}
+ 
+Attributes[e$] = {Temporary}
+ 
+Attributes[$0$] = {Temporary}
+ 
+Attributes[$0$2222] = {Temporary}
+ 
+$0$2222 = {"spherical coordinates for "[S^"2"], Inequality[0, LessEqual, 
+      Tensor[\[Theta], {Void}, {2}], Less, 2*Pi], Inequality[0, LessEqual, 
+      Tensor[\[Theta], {Void}, {"1\[LessEqual]i\[LessEqual]1"}], Less, Pi], 
+     Tensor[\[Omega], {1}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {1}]], 
+     Tensor[\[Omega], {2}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {2}]]*
+       Sin[Tensor[\[Theta], {Void}, {1}]], Tensor[\[Omega], {3}, {Void}] -> 
+      Sin[Tensor[\[Theta], {Void}, {1}]]*Sin[Tensor[\[Theta], {Void}, {2}]]}
+ 
+Attributes[$0$2322] = {Temporary}
+ 
+$0$2322 = {"spherical coordinates for "[S^"2"], Inequality[0, LessEqual, 
+      Tensor[\[Theta], {Void}, {2}], Less, 2*Pi], Inequality[0, LessEqual, 
+      Tensor[\[Theta], {Void}, {"1\[LessEqual]i\[LessEqual]1"}], Less, Pi], 
+     Tensor[\[Omega], {1}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {1}]], 
+     Tensor[\[Omega], {2}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {2}]]*
+       Sin[Tensor[\[Theta], {Void}, {1}]], Tensor[\[Omega], {3}, {Void}] -> 
+      Sin[Tensor[\[Theta], {Void}, {1}]]*Sin[Tensor[\[Theta], {Void}, {2}]]}
+ 
+Attributes[$1a$] = {Temporary}
+ 
+Attributes[$1c$] = {Temporary}
+ 
+Attributes[$1s$] = {Temporary}
+ 
+Attributes[$1$] = {Temporary}
+ 
+Attributes[$2a$] = {Temporary}
+ 
+Attributes[$2b$] = {Temporary}
+ 
+Attributes[$2c$] = {Temporary}
+ 
+Attributes[$2m$] = {Temporary}
+ 
+Attributes[$2td$] = {Temporary}
+ 
+Attributes[$2t$] = {Temporary}
+ 
+Attributes[$2$] = {Temporary}
+ 
+Attributes[$4$] = {Temporary}
+ 
+Attributes[$aa$] = {Temporary}
+ 
+Attributes[$argn$] = {Temporary}
+ 
+Attributes[$arg$] = {Temporary}
+ 
+Attributes[$Arg$] = {Temporary}
+ 
+Attributes[$atHeads$] = {Temporary}
+ 
+Attributes[$a$] = {Temporary}
+ 
+Attributes[$bb$] = {Temporary}
+ 
+$blackHoleParameters = {Subscript[M, sun] -> Quantity[1.988435`7.*^30, 
+       "Kilograms"], {Subscript[r, S][SolarMass_] :> 2*G*Subscript[M, sun]*
+         (SolarMass/c^2), Subscript[r, S][SolarMass_] :> 
+        (2*c*SolarMass*Subscript[l, P]^2*Subscript[M, sun])/\[HBar]}[
+      Style["Schwarzschild radius", RGBColor[0, 2/3, 0], 
+       FontFamily -> "Helvetica"]], 
+     {Subscript[A, S][SolarMass_] :> 4*Pi*Subscript[r, S][SolarMass]^2, 
+       Subscript[A, S][SolarMass_] :> 4*Pi*(2*G*Subscript[M, sun]*
+           (SolarMass/c^2))^2, Subscript[A, S][SolarMass_] :> 
+        4*Pi*(2*((c^3*Subscript[l, P]^2)/\[HBar])*Subscript[M, sun]*
+           (SolarMass/c^2))^2}[Style["Schwarzschild horizon area", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {Subscript[T, Hawking][SolarMass_] :> 
+        (1/(8*Pi*Subscript[M, sun]*SolarMass))*(\[HBar]*
+          (c^3/(G*Subscript[k, B]))), Subscript[T, Hawking][SolarMass_] :> 
+        \[HBar]^2/(8*Pi*SolarMass*Subscript[k, B]*Subscript[l, P]^2*
+          Subscript[M, sun])}[Style["Hawking temperature", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {Subscript[t, Hawking][SolarMass_] :> 
+        1/(Subscript[T, Hawking][SolarMass]*(Subscript[k, B]/\[HBar]))}[
+      Style["Hawking time", RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {Subscript[S, BH][SolarMass_] :> Subscript[k, B]*
+         (Subscript[A, S][SolarMass]/(4*Subscript[l, P]^2)), 
+       Subscript[S, BH][SolarMass_] :> (c^3*Subscript[k, B]*
+          Subscript[A, S][SolarMass])/(4*G*\[HBar])}[
+      Style["Black hole entropy", RGBColor[0, 2/3, 0], 
+       FontFamily -> "Helvetica"]]}
+ 
+T[A_, uds_String][index0__] := Module[{tmp, ud = Characters[uds], 
+      index = {index0}}, If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T[A_, up_List, down_List] := Module[{tmp, u = up /. Null -> Void, 
+      d = down /. Null -> Void, return}, 
+     If[up == {} && down == {}, Return[Tensor[A, up, down]]]; 
+      If[up == {}, u = Table[Void, {Length[d]}]]; 
+      If[down == {}, d = Table[Void, {Length[u]}]]; 
+      If[Length[d] == Length[u] &&  !Inner[(#1 =!= Void && #2 =!= Void) || 
+            (#1 === Void && #2 === Void) & , u, d, Or], Tensor[A, u, d], 
+       Style[Tensor[A, up, down], FontColor -> Red]]]
+ 
+T[A_, uds_String, index_List] := Module[{tmp, ud = Characters[uds]}, 
+     If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T /: T::usage = "T[A_,uds_String][index0__] produces any Tensor where \
+uds_String specifies up/down position of index_, \
+e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
+\(i\)]\)\!\(\*SubscriptBox[\()\), \(jk\)]\))"
+ 
+Attributes[$b$] = {Temporary}
+ 
+Attributes[$cc$] = {Temporary}
+ 
+Attributes[$common$] = {Temporary}
+ 
+Attributes[$conserved$] = {Temporary}
+ 
+Attributes[$constants$] = {Temporary}
+ 
+Attributes[$const$] = {Temporary}
+ 
+Attributes[$c$] = {Temporary}
+ 
+Attributes[$d0$] = {Temporary}
+ 
+Attributes[$d1$] = {Temporary}
+ 
+Attributes[$d2$] = {Temporary}
+ 
+$def["/Users/Tom/Mathematica/units"] = {}
+ 
+$defID := NBname["stub"]
+ 
+NBname[type_String] := Module[{name = NotebookFileName[], 
+      dir = FileNameDrop[NotebookFileName[], -1], 
+      base = FileBaseName[NotebookFileName[]]}, Switch[type, "name", name, 
+      "dir", dir, "base", base, "stub", FileNameJoin[{dir, base}]]]
+ 
+Attributes[$deltas$] = {Temporary}
+ 
+Attributes[$dependent$] = {Temporary}
+ 
+Attributes[$dep$] = {Temporary}
+ 
+Attributes[$detg$] = {Temporary}
+ 
+Attributes[$de$] = {Temporary}
+ 
+Attributes[$dif$] = {Temporary}
+ 
+Attributes[$dm$] = {Temporary}
+ 
+Attributes[$dn$] = {Temporary}
+ 
+Attributes[$ds2$] = {Temporary}
+ 
+Attributes[$dummy$] = {Temporary}
+ 
+Attributes[$dums$] = {Temporary}
+ 
+Attributes[$dum$] = {Temporary}
+ 
+Attributes[$dvars$] = {Temporary}
+ 
+Attributes[$d$] = {Temporary}
+ 
+Attributes[$equalTerms$] = {Temporary}
+ 
+Attributes[$eulerequations$] = {Temporary}
+ 
+Attributes[$e$] = {Temporary}
+ 
+Attributes[$forms$] = {Temporary}
+ 
+Attributes[$formvar$] = {Temporary}
+ 
+Attributes[$f$] = {Temporary}
+ 
+Attributes[$gdd$] = {Temporary}
+ 
+Attributes[$generalForm$] = {Temporary}
+ 
+Attributes[$gmatrixI$] = {Temporary}
+ 
+Attributes[$gmatrix$] = {Temporary}
+ 
+Attributes[$guu$] = {Temporary}
+ 
+Attributes[$h1$] = {Temporary}
+ 
+Attributes[$hcnt$] = {Temporary}
+ 
+Attributes[$hcnt$2278] = {Temporary}
+ 
+$hcnt$2278 = 2
+ 
+Attributes[$hcnt$2360] = {Temporary}
+ 
+$hcnt$2360 = 2
+ 
+Attributes[$head$] = {Temporary}
+ 
+Attributes[$h$] = {Temporary}
+ 
+Attributes[$h$2278] = {Temporary}
+ 
+$h$2278 = Inactive[tudExpand]
+ 
+tudExpand[\[Delta]1_, constants_List:{}][exp_] := 
+    Module[{tmp = exp, sub, name, tmp0, $dum, n$, 
+      ProductOp = Flatten[BraKet | Times | dotOps | Wedge | xWedge | 
+         CircleTimes]}, 
+     sub = Flatten[{(name:\[Delta]1)[a_] :> 0 /; NumericQ[a], 
+         (name:\[Delta]1)[a_] :> 0 /; ListMemberQ[a, constants], 
+         (name:\[Delta]1)[(a_)^(n_)] :> 0 /; ListMemberQ[a, constants] && 
+            NumericQ[n], (name:\[Delta]1)[1/(a_)] :> 
+          0 /; ListMemberQ[a, constants], (name:\[Delta]1)[1/(a_)^(n_)] :> 
+          0 /; ListMemberQ[a, constants] && NumericQ[n], 
+         (name:\[Delta]1)[Conjugate[a_]] :> Conjugate[name[a]], 
+         (name:\[Delta]1)[ConjugateTranspose[a_]] :> ConjugateTranspose[
+           name[a]], (name:\[Delta]1)[Transpose[a_]] :> Transpose[name[a]], 
+         (name:\[Delta]1)[Tr[a_]] :> Tr[name[a]], (name:\[Delta]1)[a__] :> 
+          Thread[name[a]] /; Head[a] == List, 
+         (name:\[Delta]1)[(OP:DerivOps)[T_, i___]] -> OP[name[T], i], 
+         (name:\[Delta]1)[Exp[a_]] -> Exp[a]*name[a], 
+         (name:\[Delta]1)[Log[a_]] -> name[a]/a, 
+         (name:\[Delta]1)[(a_)^(n_)] :> n*name[a]*a^(n - 1), 
+         (name:\[Delta]1)[(tt:Alternatives @@ tuTrigFunc)[t_]] :> 
+          (D[tt[$dum], $dum]*name[t] /. $dum -> t), (0 & ) -> 0, 
+         (name:\[Delta]1)[(ww:Wedge | xWedge)[a_, b__]] -> 
+          ww[name[a], b] + ww[a, ww[b]]}]; While[tmp =!= tmp0, 
+       tmp0 = tmp; tmp = ExpandAll[tmp]; 
+        tmp = tmp //. (name:\[Delta]1)[(a_) + (b_)] -> name[a] + name[b]; 
+        tmp = tmp //. (name:\[Delta]1)[(oo:ProductOp)[a_, b__]] :> 
+           oo[name[a], b] + oo[a, If[Length[{b}] > 1, name[oo[b]], name[b]]]; 
+        tmp = tmp //. sub; tmp = tmp /. (dname:\[Delta]1)[a_] :> 
+           dname[a /. (h_)[(n_)?NumberQ] -> h[n, n$]]; 
+        tmp = tmp /. \[Delta]1 -> Dt /. Dt -> $Dt; 
+        tmp = tmp //. $Dt[n$]*Derivative[0, 1][z_][(m_)?NumberQ, n$] :> 
+           \[Delta]1[z[m]]; tmp = tmp //. $Dt[n$]^(n_:1)*
+            Derivative[0, 1][z_][(m_)?NumberQ, n$]^(nn_:1) :> 
+           \[Delta]1[z[m]]^nn*$Dt[n$]^(n - nn); 
+        tmp = tmp //. (z_)[(n_)?NumberQ, n$] :> z[n] /. $Dt -> \[Delta]1; 
+        tmp = tmp /. Derivative[__][dForm][__] -> 0]; tmp]
+ 
+tudExpand /: tudExpand::usage = "tudExpand[\[Delta]1_,constants_List:{}][exp_\
+] expands differential operator \[Delta]1_ using basic Liebnitz Rule[]s. \
+*29Nov2012*12Nov2017*3Sep2018*"
+ 
+Attributes[n$] = {Temporary}
+ 
+ListMemberQ[variable_, patterns_List] := tuMemberQ[variable, patterns]
+ 
+DerivOps := Flatten[DerivOpsD | DerivOpsU | tuDerivOps]
+ 
+DerivOpsD := Join[xPartialD | xCovariantD | xD[_], tuDerivOpsD]
+ 
+xPartialD[field_, var_] := tuPartialD[field, var]
+ 
+tuPartialD := tuDPartial
+ 
+tuPartialD /: tuPartialD::usage = "tuPartialD[field_,var_] displays the \
+PartialD[field,var] \[Rule] \!\(\*SubscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartial[a_, b_] := tuDDown["\[PartialD]"][a, b]
+ 
+tuDerivOpsD := tuDPartial | tuDCovariant | tuDs[_] | tuDDown[_]
+ 
+tuDCovariant[a_, b_] := tuDDown["\[Del]"][a, b]
+ 
+tuDs[s_][a_, b_] := tuDDown[s][a, b]
+ 
+DerivOpsU := Join[xPartialDu | xCovariantDu | xDu[_], tuDerivOpsU]
+ 
+xPartialDu[field_, var_] := tuPartialDu[field, var]
+ 
+tuPartialDu := tuDPartialu
+ 
+tuPartialDu /: tuPartialDu::usage = "tuPartialDu[field_,var_] displays the \
+PartialDu[field,var] \[Rule] \!\(\*SuperscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartialu[a_, b_] := tuDUp["\[PartialD]"][a, b]
+ 
+tuDerivOpsU := tuDPartialu | tuDCovariantu | tuDsu[_] | tuDUp[_]
+ 
+tuDCovariantu[a_, b_] := tuDUp["\[Del]"][a, b]
+ 
+tuDsu[s_][a_, b_] := tuDUp[s][a, b]
+ 
+tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
+ 
+tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]
+ 
+tuTrigFunc = {Cos, Sin, Tan, Tanh, Cot, Coth, Sinh, Cosh, Sec, Sech, Csc, 
+     Csch, ArcCos, ArcSin, ArcTan, ArcTanh, ArcCot, ArcCoth, ArcSinh, 
+     ArcCosh, ArcSec, ArcSech, ArcCsc, ArcCsch}
+ 
+Attributes[Derivative] = {NHoldAll, ReadProtected}
+ 
+Attributes[$h$2360] = {Temporary}
+ 
+$h$2360 = Inactive[tudExpand]
+ 
+Attributes[$ii$] = {Temporary}
+ 
+Attributes[$independent$] = {Temporary}
+ 
+Attributes[$index$] = {Temporary}
+ 
+Attributes[$indices$] = {Temporary}
+ 
+Attributes[$indList$] = {Temporary}
+ 
+Attributes[$indPos$] = {Temporary}
+ 
+Attributes[$ind$] = {Temporary}
+ 
+Attributes[$int$] = {Temporary}
+ 
+Attributes[$in$] = {Temporary}
+ 
+Attributes[$ivar0$] = {Temporary}
+ 
+Attributes[$ivar$] = {Temporary}
+ 
+Attributes[$i$] = {Temporary}
+ 
+Attributes[$j$] = {Temporary}
+ 
+Attributes[$keys$] = {Temporary}
+ 
+Attributes[$keys$2236] = {Temporary}
+ 
+$keys$2236 = {d[Subscript[\[CapitalOmega], _]]^2}
+ 
+Attributes[$keys$2336] = {Temporary}
+ 
+$keys$2336 = {d[Subscript[\[CapitalOmega], _]]^2}
+ 
+Attributes[$k$] = {Temporary}
+ 
+Attributes[$label$] = {Temporary}
+ 
+Attributes[$lagrangian$] = {Temporary}
+ 
+Attributes[$list$] = {Temporary}
+ 
+Attributes[$low$] = {Temporary}
+ 
+Attributes[$L$] = {Temporary}
+ 
+$m = Subscript[M, sun] -> Quantity[1.988435`7.*^30, "Kilograms"]
+ 
+Attributes[$matches$] = {Temporary}
+ 
+Attributes[$match$] = {Temporary}
+ 
+Attributes[$momemtum$] = {Temporary}
+ 
+Attributes[$newvar$] = {Temporary}
+ 
+Attributes[$npat$] = {Temporary}
+ 
+Attributes[$n$] = {Temporary}
+ 
+Attributes[$n$2222] = {Temporary}
+ 
+$n$2222 = 3
+ 
+Attributes[$n$2322] = {Temporary}
+ 
+$n$2322 = 3
+ 
+Attributes[$out$] = {Temporary}
+ 
+Attributes[$p0$] = {Temporary}
+ 
+Attributes[$parts$] = {Temporary}
+ 
+Attributes[$patterns$] = {Temporary}
+ 
+Attributes[$Pattern$] = {Temporary}
+ 
+Attributes[$pat$] = {Temporary}
+ 
+Attributes[$pdum$] = {Temporary}
+ 
+Attributes[$placeholder$] = {Temporary}
+ 
+$planckLengthUnits = {Quantity[1, "Kilograms"^(-1)] -> 
+      Quantity[2.21021905761218312651071001945786283`7.61174100768015*^-42, 
+       "Meters"], Quantity[1, "Kilograms"] -> 
+      Quantity[4.5244384105544408705064`7.61174100768015*^41, "Meters"^(-1)], 
+     Quantity[1, "Seconds"] -> Quantity[299792458, "Meters"], 
+     Quantity[1, "ReducedPlanckMass"] -> Quantity[1/(2*Sqrt[2*Pi]), 
+       (Sqrt["ReducedPlanckConstant"]*Sqrt["SpeedOfLight"])/
+        Sqrt["GravitationalConstant"]], Quantity[1, "ReducedPlanckMass"] -> 
+      Quantity[4.34142952512652789605415264231`4.3291525135499*^-9, 
+       "Kilograms"], Quantity[1, "ReducedPlanckMass"*"SpeedOfLight"^2] -> 
+      Quantity[2.435363378901446571`4.329039162426352*^18, 
+       "Electronvolts"*"Giga"], Quantity[1, "PlanckLength"] -> 
+      Quantity[1.61622899999999999865862`4.327689302765667*^-35, "Meters"], 
+     Quantity[1, "PlanckLength"/"SpeedOfLight"] -> 
+      Quantity[5.39115964018014`4.327689302765667*^-44, "Seconds"], 
+     Quantity[1, "PlanckTime"] -> Quantity[
+       5.39116000000001`4.316708873133642*^-44, "Seconds"]}
+ 
+$planckSymbolUnits = {\[HBar] -> Quantity[1, "ReducedPlanckConstant"], 
+     c -> Quantity[1, "SpeedOfLight"], 
+     G -> Quantity[1, "GravitationalConstant"], Subscript[k, B] -> 
+      Quantity[1, "BoltzmannConstant"], Subscript[l, P] -> 
+      Sqrt[(G*\[HBar])/c^3], Subscript[l, P] -> Quantity[1, "PlanckLength"], 
+     Subscript[m, P] -> Sqrt[(c*\[HBar])/G], Subscript[m, P] -> 
+      Quantity[1, "PlanckMass"], Subscript[Style["E", Italic], P] -> 
+      Sqrt[(c^5*\[HBar])/G], Subscript[Style["E", Italic], P] -> 
+      Quantity[1, "PlanckEnergy"], Subscript[t, P] -> 
+      \[HBar]/Subscript[Style["E", Italic], P], Subscript[t, P] -> 
+      Quantity[1, "PlanckTime"]}
+ 
+Attributes[$pm$] = {Temporary}
+ 
+Attributes[$pn$] = {Temporary}
+ 
+Attributes[$pos1$] = {Temporary}
+ 
+Attributes[$pos$] = {Temporary}
+ 
+Attributes[$pvar1$] = {Temporary}
+ 
+Attributes[$pvar$] = {Temporary}
+ 
+Attributes[$p$] = {Temporary}
+ 
+Attributes[$range$] = {Temporary}
+ 
+Attributes[$rhead$] = {Temporary}
+ 
+Attributes[$right$] = {Temporary}
+ 
+Attributes[$rp$] = {Temporary}
+ 
+$rs = Subscript[r, S][SolarMass_] :> 2*G*Subscript[M, sun]*(SolarMass/c^2)
+ 
+Attributes[$rules$] = {Temporary}
+ 
+Attributes[$rules$2236] = {Temporary}
+ 
+$rules$2236 = {}
+ 
+Attributes[$rules$2336] = {Temporary}
+ 
+$rules$2336 = {}
+ 
+Attributes[$rule$] = {Temporary}
+ 
+Attributes[$r$] = {Temporary}
+ 
+$s = Subscript[l, P]
+ 
+Attributes[$s0$] = {Temporary}
+ 
+Attributes[$s1$] = {Temporary}
+ 
+Attributes[$scal$] = {Temporary}
+ 
+Attributes[$seq$] = {Temporary}
+ 
+Attributes[$seq$2278] = {Temporary}
+ 
+$seq$2278 = Sequence[0, 0]
+ 
+Attributes[$seq$2360] = {Temporary}
+ 
+$seq$2360 = Sequence[0, 0]
+ 
+$sG = {G -> (c^3*Subscript[l, P]^2)/\[HBar]}
+ 
+Attributes[$sign$] = {Temporary}
+ 
+Attributes[$sivar$] = {Temporary}
+ 
+Attributes[$slots$] = {Temporary}
+ 
+Attributes[$sNO$] = {Temporary}
+ 
+Attributes[$sn$] = {Temporary}
+ 
+Attributes[$sort$] = {Temporary}
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+Attributes[$ss$] = {Temporary}
+ 
+Attributes[$subRules$] = {Temporary}
+ 
+Attributes[$subs$] = {Temporary}
+ 
+Attributes[$swap$] = {Temporary}
+ 
+Attributes[$sx0$] = {Temporary}
+ 
+Attributes[$symTensor$] = {Temporary}
+ 
+Attributes[$sym$] = {Temporary}
+ 
+Attributes[$s\[Delta]$] = {Temporary}
+ 
+Attributes[$s$] = {Temporary}
+ 
+Attributes[$targetForm$] = {Temporary}
+ 
+Attributes[$tensorsymbol$] = {Temporary}
+ 
+Attributes[$tensors$] = {Temporary}
+ 
+Attributes[$tensor$] = {Temporary}
+ 
+Attributes[$terms$] = {Temporary}
+ 
+Attributes[$test$] = {Temporary}
+ 
+Attributes[$tmp$] = {Temporary}
+ 
+Attributes[$t$] = {Temporary}
+ 
+Attributes[$u0$] = {Temporary}
+ 
+Attributes[$u1$] = {Temporary}
+ 
+Attributes[$u2$] = {Temporary}
+ 
+Attributes[$up$] = {Temporary}
+ 
+Attributes[$u$] = {Temporary}
+ 
+Attributes[$vars$] = {Temporary}
+ 
+Attributes[$var$] = {Temporary}
+ 
+Attributes[$without$] = {Temporary}
+ 
+Attributes[$with$] = {Temporary}
+ 
+Attributes[$xE$] = {Temporary}
+ 
+Attributes[$XX$] = {Temporary}
+ 
+Attributes[$x$] = {Temporary}
+ 
+Attributes[$X$] = {Temporary}
+ 
+Attributes[$y$] = {Temporary}
+ 
+Attributes[$\[Sigma]$] = {Temporary}
+ 
+Attributes[$$] = {Temporary}
+ 
+Attributes[$$2222] = {Temporary}
+ 
+$$2222 = d[Subscript[\[CapitalOmega], 2]]^2 -> 
+     d[Subscript[\[CapitalOmega], 2]]^2
+ 
+Attributes[$$2237] = {Temporary}
+ 
+$$2237 = {}
+ 
+Attributes[$$2238] = {Temporary}
+ 
+$$2238 = {}
+ 
+Attributes[$$2278] = {Temporary}
+ 
+$$2278 = d[Subscript[\[CapitalOmega], 2]]^2
+ 
+Attributes[$$2322] = {Temporary}
+ 
+$$2322 = d[Subscript[\[CapitalOmega], 2]]^2 -> 
+     d[Subscript[\[CapitalOmega], 2]]^2
+ 
+Attributes[$$2337] = {Temporary}
+ 
+$$2337 = {}
+ 
+Attributes[$$2338] = {Temporary}
+ 
+$$2338 = {}
+ 
+Attributes[$$2360] = {Temporary}
+ 
+$$2360 = d[Subscript[\[CapitalOmega], 2]]^2
+ 
+Attributes[$$2378] = {Temporary}
+ 
+$$2378 = {xSet$2378[Style["a", Italic], Style["a", Italic]], 
+     xSet$2378[Style["b", Italic], Style["b", Italic]], 
+     xSet$2378[Style["c", Italic], Style["c", Italic]], 
+     xSet$2378[Style["d", Italic], Style["d", Italic]], 
+     xSet$2378[Style["e", Italic], Style["e", Italic]], 
+     xSet$2378[Style["f", Italic], Style["f", Italic]], 
+     xSet$2378[Style["g", Italic], Style["g", Italic]], 
+     xSet$2378[Style["h", Italic], Style["h", Italic]], 
+     xSet$2378[Style["i", Italic], Style["i", Italic]], 
+     xSet$2378[Style["j", Italic], Style["j", Italic]], 
+     xSet$2378[Style["k", Italic], Style["k", Italic]], 
+     xSet$2378[Style["l", Italic], Style["l", Italic]], 
+     xSet$2378[Style["m", Italic], Style["m", Italic]], 
+     xSet$2378[Style["n", Italic], Style["n", Italic]], 
+     xSet$2378[Style["o", Italic], Style["o", Italic]], 
+     xSet$2378[Style["p", Italic], Style["p", Italic]], 
+     xSet$2378[Style["q", Italic], Style["q", Italic]], 
+     xSet$2378[Style["r", Italic], Style["r", Italic]], 
+     xSet$2378[Style["s", Italic], Style["s", Italic]], 
+     xSet$2378[Style["t", Italic], Style["t", Italic]], 
+     xSet$2378[Style["u", Italic], Style["u", Italic]], 
+     xSet$2378[Style["v", Italic], Style["v", Italic]], 
+     xSet$2378[Style["w", Italic], Style["w", Italic]], 
+     xSet$2378[Style["x", Italic], Style["x", Italic]], 
+     xSet$2378[Style["y", Italic], Style["y", Italic]], 
+     xSet$2378[Style["z", Italic], Style["z", Italic]], 
+     xSet$2378[Style["A", Italic], Style["A", Italic]], 
+     xSet$2378[Style["B", Italic], Style["B", Italic]], 
+     xSet$2378[Style["C", Italic], Style["C", Italic]], 
+     xSet$2378[Style["D", Italic], Style["D", Italic]], 
+     xSet$2378[Style["E", Italic], Style["E", Italic]], 
+     xSet$2378[Style["F", Italic], Style["F", Italic]], 
+     xSet$2378[Style["G", Italic], Style["G", Italic]], 
+     xSet$2378[Style["H", Italic], Style["H", Italic]], 
+     xSet$2378[Style["I", Italic], Style["I", Italic]], 
+     xSet$2378[Style["J", Italic], Style["J", Italic]], 
+     xSet$2378[Style["K", Italic], Style["K", Italic]], 
+     xSet$2378[Style["L", Italic], Style["L", Italic]], 
+     xSet$2378[Style["M", Italic], Style["M", Italic]], 
+     xSet$2378[Style["N", Italic], Style["N", Italic]], 
+     xSet$2378[Style["O", Italic], Style["O", Italic]], 
+     xSet$2378[Style["P", Italic], Style["P", Italic]], 
+     xSet$2378[Style["Q", Italic], Style["Q", Italic]], 
+     xSet$2378[Style["R", Italic], Style["R", Italic]], 
+     xSet$2378[Style["S", Italic], Style["S", Italic]], 
+     xSet$2378[Style["T", Italic], Style["T", Italic]], 
+     xSet$2378[Style["U", Italic], Style["U", Italic]], 
+     xSet$2378[Style["V", Italic], Style["V", Italic]], 
+     xSet$2378[Style["W", Italic], Style["W", Italic]], 
+     xSet$2378[Style["X", Italic], Style["X", Italic]], 
+     xSet$2378[Style["Y", Italic], Style["Y", Italic]], 
+     xSet$2378[Style["Z", Italic], Style["Z", Italic]]}
+ 
+Attributes[xSet$2378] = {Temporary}
+ 
+Attributes[$$4681] = {Temporary}
+ 
+$$4681 = {"e", "e1", "e2", "ed", "ee", "ee$", "elements", "eqn", "error", 
+     "error$", "eta", "evalDifferentialOps", "except", "exo", "exp", "exp0", 
+     "exp0$", "exp1", "exp1$", "expand2CT", "exp$", "ext", "extra", 
+     "extract", "eyd", "eyd$", "e$", "$", "$0", "$0$", "$0$2222", "$0$2322", 
+     "$1", "$1a", "$1a$", "$1c", "$1c$", "$1s", "$1s$", "$1t", "$1$", "$2", 
+     "$2a", "$2a$", "$2b", "$2b$", "$2c", "$2c$", "$2m", "$2m$", "$2t", 
+     "$2td", "$2td$", "$2t$", "$2$", "$4", "$4$", "$a", "$A", "$aa", "$aa$", 
+     "$arg", "$Arg", "$argn", "$argn$", "$arg$", "$Arg$", "$atHeads", 
+     "$atHeads$", "$a$", "$b", "$bb", "$bb$", "$blackHoleParameters", "$b$", 
+     "$c", "$cc", "$cc$", "$common", "$common$", "$conserved", "$conserved$", 
+     "$const", "$constants", "$constants$", "$const$", "$coordSolidAngle", 
+     "$c$", "$d", "$d0", "$d0$", "$d1", "$d1$", "$d2", "$d2$", "$de", "$def", 
+     "$defID", "$deltas", "$deltas$", "$dep", "$dependent", "$dependent$", 
+     "$dep$", "$detg", "$detg$", "$de$", "$dif", "$dif$", "$dm", "$dm$", 
+     "$dn", "$dn$", "$ds2", "$ds2$", "$Dt", "$dum", "$dummy", "$dummy$", 
+     "$dums", "$dums$", "$dum$", "$dvars", "$dvars$", "$d$", "$e", 
+     "$equalTerms", "$equalTerms$", "$eulerequations", "$eulerequations$", 
+     "$exp", "$e$", "$f", "$forms", "$forms$", "$formvar", "$formvar$", 
+     "$f$", "$gdd", "$gdd$", "$generalForm", "$generalForm$", "$gmatrix", 
+     "$gmatrixI", "$gmatrixI$", "$gmatrix$", "$guu", "$guu$", "$h", "$h1", 
+     "$h1$", "$hcnt", "$hcnt$", "$hcnt$2278", "$hcnt$2360", "$head", 
+     "$head$", "$h$", "$h$2278", "$h$2360", "$i", "$ii", "$ii$", "$in", 
+     "$ind", "$independent", "$independent$", "$index", "$index$", 
+     "$indices", "$indices$", "$indList", "$indList$", "$indPos", "$indPosV", 
+     "$indPos$", "$ind$", "$int", "$int$", "$in$", "$ivar", "$ivar0", 
+     "$ivar0$", "$ivar$", "$i$", "$j", "$jacob", "$j$", "$k", "$keys", 
+     "$keys$", "$keys$2236", "$keys$2336", "$k$", "$L", "$label", "$label$", 
+     "$lagrangian", "$lagrangian$", "$line", "$list", "$list$", "$low", 
+     "$low$", "$L$", "$m", "$match", "$matches", "$matches$", "$match$", 
+     "$momemtum", "$momemtum$", "$n", "$newvar", "$newvar$", "$npat", 
+     "$npat$", "$n$", "$n$2222", "$n$2322", "$options", "$out", "$out$", 
+     "$p", "$p0", "$p0$", "$parm", "$parts", "$parts$", "$pat", "$Pattern", 
+     "$patterns", "$patterns$", "$Pattern$", "$pat$", "$pdum", "$pdum$", 
+     "$placeholder", "$placeholder$", "$planckLengthUnits", 
+     "$planckSymbolUnits", "$pm", "$pm$", "$pn", "$pn$", "$pos", "$pos1", 
+     "$pos1$", "$pos$", "$pt", "$pvar", "$pvar1", "$pvar1$", "$pvar$", "$p$", 
+     "$r", "$range", "$range$", "$rhead", "$rhead$", "$right", "$right$", 
+     "$rp", "$rp$", "$rs", "$rule", "$rules", "$rules$", "$rules$2236", 
+     "$rules$2336", "$rule$", "$r$", "$s", "$s0", "$s0$", "$s1", "$s1$", 
+     "$scal", "$scal$", "$seq", "$seq$", "$seq$2278", "$seq$2360", "$sG", 
+     "$sign", "$sign$", "$sivar", "$sivar$", "$slots", "$slots$", "$sn", 
+     "$sNO", "$sNO$", "$sn$", "$sort", "$sort$", "$SpinorsPath", "$ss", 
+     "$ss$", "$string", "$subRules", "$subRules$", "$subs", "$subs$", 
+     "$swap", "$swap$", "$sx0", "$sx0$", "$sym", "$symTensor", "$symTensor$", 
+     "$sym$", "$s\[Delta]", "$s\[Delta]$", "$s$", "$t", "$targetForm", 
+     "$targetForm$", "$tensor", "$tensors", "$tensorsymbol", 
+     "$tensorsymbol$", "$tensors$", "$tensor$", "$terms", "$terms$", "$test", 
+     "$test$", "$tmp", "$tmp$", "$t$", "$u", "$u0", "$u0$", "$u1", "$u1$", 
+     "$u2", "$u2$", "$up", "$up$", "$UseTextSearchQ", "$u$", "$var", "$vars", 
+     "$vars$", "$var$", "$with", "$without", "$without$", "$with$", "$x", 
+     "$X", "$xE", "$xE$", "$XX", "$XX$", "$x$", "$X$", "$y", "$y$", 
+     "$\[Alpha]", "$\[Beta]", "$\[Sigma]", "$\[Sigma]$", "$$", "$$2222", 
+     "$$2237", "$$2238", "$$2278", "$$2322", "$$2337", "$$2338", "$$2360", 
+     "$$2378", "$$4681", "$$a", "$$b", "$$c", "$$d", "$$i", "$$m", "$$n", 
+     "$$t", "$$ten", "$$t$", "$$XX", "$$XXX"}
+ 
+Attributes[$$t$] = {Temporary}
