@@ -19,6 +19,7 @@
 
 
 
+(* ::Input::Initialization:: *)
 <<Local`QFTdefinitions`
 
 

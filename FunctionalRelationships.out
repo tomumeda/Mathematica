@@ -1,0 +1,342 @@
+e[9] = Inactive[Integrate][E^(J \[CenterDot] \[CurlyPhi] - 
+        (\[CurlyPhi] \[CenterDot] K \[CenterDot] \[CurlyPhi])/2 - 
+        V[\[CurlyPhi]]), \[CurlyPhi]] -> 
+     E^(-V[tuDDown[\[Delta]][_, J]]) \[CenterDot] 
+      E^((J \[CenterDot] K^(-1) \[CenterDot] J)/2)
+ 
+e[12] = {Inactive[Integrate][E^(I*Inactive[Integrate][
+           J[x] \[CenterDot] \[CurlyPhi][x] + (\[CurlyPhi][x] \[CenterDot] 
+              K[x] \[CenterDot] \[CurlyPhi][x])/2, x^d]), \[CurlyPhi]] -> 
+       E^(I*Inactive[Integrate][-(J[x] \[CenterDot] K[x]^(-1) \[CenterDot] 
+             J[x])/2, x^d])}[Style["e[12]", RGBColor[0, 2/3, 0], 
+      FontFamily -> "Helvetica"]]
+ 
+e[13] = {Inactive[Integrate][E^(-Inactive[Integrate][
+           J[x] \[CenterDot] \[CurlyPhi][x] + (\[CurlyPhi][x] \[CenterDot] 
+              K[x] \[CenterDot] \[CurlyPhi][x])/2, x^d]), \[CurlyPhi]] -> 
+       E^Inactive[Integrate][(J[x] \[CenterDot] K[x]^(-1) \[CenterDot] J[x])/
+          2, x^d]}[Style["e[13]", RGBColor[0, 2/3, 0], 
+      FontFamily -> "Helvetica"]]
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+Attributes[ee$] = {Temporary}
+ 
+Attributes[error$] = {Temporary}
+ 
+evalDifferentialOps[opdef_][exp_] := Module[{$ = exp, op}, 
+     $ = $ /. dd:xDot[a__] :> Fold[op, arg, Reverse[dd]]; 
+      op[a_, b_] := b /. opdef[a]; $]
+ 
+$ = Inactive[Integrate][E^(-Inactive[Integrate][
+         -(OverBar[Tensor[\[Psi], {Void}, {i}][x]] \[CenterDot] 
+            Tensor[\[Psi], {Void}, {i}][x] \[CenterDot] \[Sigma][x]) - 
+          (\[Sigma][x] \[CenterDot] g^(-2) \[CenterDot] \[Sigma][x])/2, x]), 
+      \[CurlyPhi]] -> 
+     E^(-Inactive[Integrate][OverBar[Tensor[\[Psi], {Void}, {i}][
+            x]] \[CenterDot] Tensor[\[Psi], {Void}, {i}][x] \[CenterDot] 
+          g^2 \[CenterDot] OverBar[Tensor[\[Psi], {Void}, {i}][
+            x]] \[CenterDot] Tensor[\[Psi], {Void}, {i}][x], x]/2)
+ 
+Attributes[xDot] = {Flat, OneIdentity}
+ 
+Attributes[exp0$] = {Temporary}
+ 
+Attributes[exp1$] = {Temporary}
+ 
+expand2CT[ispace_Integer, ones_][exp_] := 
+    Module[{$scal, $ = exp, $1, $2 = {}, $4 = {}, $1s = ones}, 
+     $ = If[Length[$] < 2, xDot[$], $]; xPrint["exp: ", $]; 
+      $scal = tuExtractPattern[scal[_]][$]; xPrint["$scal: ", $scal]; 
+      $scal = Times @@ $scal /. scal[a_] -> a; If[$scal =!= 1, 
+       AppendTo[$2, $scal]]; $ = Select[List @@ $,  !MatchQ[#1, scal[_]] & ]; 
+      While[Length[$] > 0, {$1, $} = {$[[1]], $[[2 ;; All]]}; 
+        If[tuMemberQ[$1, {X[_]}], If[Length[$4] > 0, 
+           AppendTo[$2, xDot @@ $4]; $4 = {}]; AppendTo[$2, $1], 
+         AppendTo[$4, $1]]]; If[Length[$4] > 0, AppendTo[$2, xDot @@ $4]]; 
+      $ = (ReplacePart[$1s, ispace -> #1] & ) /@ $2 /. X[a__] -> a /. toDot; 
+      Dot @@ $]
+ 
+tuExtractPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{pos}, pos = Position[exp, pattern, {0, maxlevel}]; 
+      Extract[exp, pos]]
+ 
+tuExtractPattern /: tuExtractPattern::usage = "tuExtractPattern[pattern_,maxl\
+evel_:Infinity][exp_] extracts a List of items in exp_ that match pattern_ to \
+maxlevel_. *3Feb2014* "
+ 
+tuMemberQ[patterns_][variable_] := tuMemberQ[variable, patterns]
+ 
+tuMemberQ[variable_, patterns_] := 
+    Or @@ (MemberQ[Flatten[{variable}], #1] & ) /@ Flatten[{patterns}]
+ 
+tuMemberQ /: tuMemberQ::usage = "tuMemberQ[variable_,patterns_] True if any \
+variable_ (may be List[]) matches any in patterns_ (may be List). Equivalent \
+form: tuMemberQ[patterns_][variable_] *16May2015*"
+ 
+toDot := dotOps -> Dot
+ 
+dotOps := Dot | xDot | CenterDot | Inactive[Dot]
+ 
+expandCom[subs_:{}][exp_] := Block[{tmp = exp}, 
+     tmp = expandDC[][tmp //. tuCommutatorExpand]; 
+      tmp = tmp /. toxDot //. Flatten[{subs}]; 
+      tmp = expandDC[][(#1 /. toDot & )[tuMatrixOrderedMultiply[tmp]]]; tmp]
+ 
+expandDC[sub_:{}, scalar_:{}, func_:{}] := 
+    tuRepeat[{sub, tuOpDistribute[dotOps], tuOpSimplify[dotOps, scalar], 
+      tuOpDistribute[CircleTimes]}, {tuCircleTimesSimplify, func}]
+ 
+tuRepeat[rules_List:{}, operations_:{}, nInterate_:100][exp_] := 
+    Module[{$IterationLimit = 20, xrule, xop, tmp = exp, tmp0, icnt = 0}, 
+     xrule = Flatten[{rules}]; xop = Flatten[{operations}]; 
+      xPrint[xrule, xop, $IterationLimit]; While[tmp0 =!= tmp, 
+       tmp0 = tmp; xPrint[icnt, tmp]; icnt++; xPrint[xop]; 
+        If[xop =!= {}, tmp = (Composition[Sequence @@ xop])[tmp]]; 
+        If[xrule =!= {}, tmp = Fold[#1 //. Sequence[#2, MaxIterations -> 
+               nInterate] & , tmp, xrule]]; xPrint[operation =!= Null]; 
+        If[icnt >= nInterate, Return[tmp]]; xPrint[$IterationLimit]; ]; tmp]
+ 
+tuRepeat /: tuRepeat::usage = "tuRepeat[rules_List:{},operations_:{},nInterat\
+e_:100][exp_] applies rules_List and operations_ (may be List) repeatedly \
+until exp_ does not change. nInterate_ sets MaxInterations in ReplaceRepeated \
+and While[] loop. *22Feb2016*"
+ 
+$IterationLimit = 4096
+ 
+tuOpDistribute[op_, over_:Plus] := 
+    {oo:(op /. Dot -> dotOps)[a1___, over[a_, ap__], a2___] :> 
+      Distribute[ExpandAll[oo], over]}
+ 
+tuOpDistribute /: tuOpDistribute::usage = "tuOpDistribute[op_,over_:Plus] \
+Rule for distributing op_ over over_. \
+EG.\na.(b-c).d/.tuOpDistribute[dotOps]->a.b.d+a.(-c).d. Works with op_s of \
+form  CommutatorM[arg__\!\(\*SubscriptBox[\(]\), \(\[Rho]\)]\) as well.  \
+*21May2015*23Jun2017*"
+ 
+tuOpSimplify[operator_, scalars_List:{}] := 
+    Flatten[{(op:operator)[a_] :> a /; MatchQ[op, dotOps], 
+      (op:operator)[a_] -> a, (op:operator)[] -> 1, 
+      (op:operator)[Longest[a___], (cc:(c_)^(n_:1))*(d_), Longest[e___]] :> 
+       cc*op[a, d, e] /; (NumericQ[c] || tuMemberQ[c, scalars]) && 
+         (NumericQ[n] || tuMemberQ[n, scalars]), 
+      (op:operator)[Longest[a___], cc:(c_)^(n_:1), Longest[d___]] :> 
+       cc*op[a, d] /; (NumericQ[c] || tuMemberQ[c, scalars]) && 
+         (NumericQ[n] || tuMemberQ[n, scalars]), 
+      Conjugate[(op:operator)[a__]] :> op @@ Thread[Conjugate[{a}]]}]
+ 
+tuOpSimplify /: tuOpSimplify::usage = "tuOpSimplify[operator_,scalars_List:{}\
+] Rule for simplifying operator[] expressions by removing NumericQ and \
+scalars_ from its arguements. NOTE: Some of these Rule[]s do not seem active \
+for some expressions. BUG: Does not catch some scalars_. \
+*26Sep2015**21Mar2018*"
+ 
+cc[a_] := Conjugate[a]
+ 
+tuCircleTimesSimplify[exp_] := Module[{$ = exp}, 
+     $ //. tuOpSimplify[CircleTimes]]
+ 
+tuCircleTimesSimplify /: tuCircleTimesSimplify::usage = "tuCircleTimesSimplif\
+y[exp_] zeros CircleTimes terms that contain 0, Moves signs of components to \
+overall expression. NOTE: tuOpSimplify[CircleTimes] may be all that is \
+needed. *14Apr2016*"
+ 
+tuCommutatorExpand := {CommutatorP -> ACommutator, CommutatorM -> MCommutator}
+ 
+tuCommutatorExpand /: tuCommutatorExpand::usage = "tuCommutatorExpand is \
+Rule[] to replace Commutator expression into Dot[]d notation. *21Mar2016*"
+ 
+ACommutator[A_, B_] := tuCommutator[Dot, 1][A, B]
+ 
+tuCommutator[op_:Dot, sign_:-1][A_, B_] := op[A, B] + sign*op[B, A]
+ 
+tuCommutator /: tuCommutator::usage = "tuCommutator[op_:Dot,sign_:-1][A_,B_] \
+expands the commutator of matrices A and B using op_ as multiplicative \
+operator. *17Feb2016*"
+ 
+MCommutator[A_, B_] := tuCommutator[Dot][A, B]
+ 
+toxDot := dotOps -> xDot
+ 
+tuMatrixOrderedMultiply[exp_] := Module[{tmp, A$, head, pos, $p, i, $n, $}, 
+     pos = tuExtractPositionPattern[dotOps][exp]; xPrint[">>", pos]; 
+      pos = tuPositionNestDelete[pos]; xPrint[">>", pos]; 
+      Do[$p = pos[[i,1]]; xPrint[$p, "<<"]; $p = If[$p[[-1]] == 0, 
+          Delete[$p, -1]]; $ = exp[[Sequence @@ $p]]; xPrint["===", $]; 
+        pos[[i,1]] = $p; If[MatchQ[head = Head[$], dotOps], 
+         tmp = MapIndexed[Map[A$[#2], #1, {2}] & , $]; 
+          tmp = tmp /. head -> Dot; tmp = tmp /. Times -> head; 
+          tmp = tmp /. A$[_][a_] -> a]; pos[[i,2]] = tmp, {i, Length[pos]}]; 
+      tuReplacePart[exp, pos]]
+ 
+tuMatrixOrderedMultiply /: tuMatrixOrderedMultiply::usage = "tuMatrixOrderedM\
+ultiply[exp_] evaluates top Level matrix expressions (Head->dotOps) using Dot \
+for actual matrix multiply but maintaining order of elements from each \
+matrix.  The matrix inputs must have the same proper form and sizes. This \
+routine is useful when matrix elements are noncommuting matrices. \
+*18Feb2016*"
+ 
+Attributes[A$] = {Temporary}
+ 
+tuExtractPositionPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{xpattern = pattern, pos, list, tmp, xList}, 
+     If[Head[xpattern] == List, xpattern = Alternatives @@ xpattern; 
+        xPrint[xHead[xpattern]]]; pos = Position[exp, xpattern, 
+        {0, maxlevel}, Heads -> True]; list = Extract[exp, pos]; 
+      tmp = Thread[pos -> list]; xPrint["X ", tmp, ", ", xpattern, ", ", 
+       list, ", ", pos]; tmp]
+ 
+tuExtractPositionPattern /: tuExtractPositionPattern::usage = "tuExtractPosit\
+ionPattern[pattern_,maxlevel_:Infinity][exp_] extracts a List of \
+{Positions,items} that match pattern_ in exp_ up to Level maxlevel_.  Returns \
+a List[ pos1->match1,pos2->match2,... ]. pattern_ may be a List or \
+Alternatives. *3Nov2016*)"
+ 
+tuPositionNestDelete[position_List] := Module[{$ = position, $p, dup, $n, $t, 
+      i}, $p = $ = (#1 & ) /@ Sort[$]; xPrint[$p]; If[$p[[1,1]] == {}, 
+       Return[{$p[[1]]}]]; Do[$t = $p[[i,1]]; $n = FirstPosition[$t, 0][[1]]; 
+        $p[[i,1]] = $t[[1 ;; If[NumericQ[$n], $n - 1, -1]]], 
+       {i, Length[$p]}]; Do[If[MemberQ[SequencePosition[$p[[$j,1]], 
+          $p[[$i,1]]], {1, ___}], $[[$j]] = dup[$i, $[[$j]]]], 
+       {$i, Length[$] - 1}, {$j, $i + 1, Length[$]}]; DeleteCases[$, dup[__]]]
+ 
+tuPositionNestDelete /: tuPositionNestDelete::usage = "tuPositionNestDelete[p\
+osition_List] reduces the result of Position\[Rule] position_List so that \
+there is only top level positions. E.G. \
+{{1,2}\[Rule]a,{1}\[Rule]r[a]}\[Rule]{{1}->r[a]}. If pointer to whole \
+expression {} exists then that alone is returned.  *11Feb2017*"
+ 
+tuReplacePart[exp_, pos_List] := Module[{$}, 
+     If[Length[$ = Cases[pos, ({} -> _) | ({} :> _)]] > 0, $[[1,2]], 
+      ReplacePart[exp, pos]]]
+ 
+tuReplacePart /: tuReplacePart::usage = "tuReplacePart[exp_,pos_List] like \
+ReplacePart[] except replaces whole exp_ when pos contains {{}->replacement} \
+in which case ReplacePart does nothing. *5Sep2015*"
+ 
+Attributes[exp$] = {Temporary}
+ 
+Attributes[eyd$] = {Temporary}
+ 
+Attributes[e$] = {Temporary}
+ 
+$def["/Users/Tom/Mathematica/FunctionalRelationships"] = {}
+ 
+$defID := NBname["stub"]
+ 
+NBname[type_String] := Module[{name = NotebookFileName[], 
+      dir = FileNameDrop[NotebookFileName[], -1], 
+      base = FileBaseName[NotebookFileName[]]}, Switch[type, "name", name, 
+      "dir", dir, "base", base, "stub", FileNameJoin[{dir, base}]]]
+ 
+$s = {J[x] -> (-OverBar[Tensor[\[Psi], {Void}, {i}][x]]) \[CenterDot] 
+       Tensor[\[Psi], {Void}, {i}][x], K[x] -> -g^(-2), 
+     \[CurlyPhi][x] -> \[Sigma][x], x^d -> x}
+ 
+$sgeneral := {T[\[Gamma], "d", {5}] -> Product[T[\[Gamma], "u", {\[Mu]}], 
+       {\[Mu], 4}], T[\[Gamma], "d", {5}] . T[\[Gamma], "d", {5}] -> 1, 
+     ConjugateTranspose[T[\[Gamma], "d", {5}]] -> T[\[Gamma], "d", {5}], 
+     CommutatorP[T[\[Gamma], "d", {5}], T[\[Gamma], "u", {\[Mu]}]] -> 0, 
+     T["\[Del]", "d", {_}][Subscript[1, n_]] -> 0, (a_) . Subscript[1, n_] -> 
+      a, Subscript[1, n_] . (a_) -> a}
+ 
+T[A_, uds_String][index0__] := Module[{tmp, ud = Characters[uds], 
+      index = {index0}}, If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T[A_, up_List, down_List] := Module[{tmp, u = up /. Null -> Void, 
+      d = down /. Null -> Void, return}, 
+     If[up == {} && down == {}, Return[Tensor[A, up, down]]]; 
+      If[up == {}, u = Table[Void, {Length[d]}]]; 
+      If[down == {}, d = Table[Void, {Length[u]}]]; 
+      If[Length[d] == Length[u] &&  !Inner[(#1 =!= Void && #2 =!= Void) || 
+            (#1 === Void && #2 === Void) & , u, d, Or], Tensor[A, u, d], 
+       Style[Tensor[A, up, down], FontColor -> Red]]]
+ 
+T[A_, uds_String, index_List] := Module[{tmp, ud = Characters[uds]}, 
+     If[Cases[ud, Except["u" | "d"]] === {} && 
+       (tmp = Which[Head[index] === List && Length[ud] == Length[index], 
+          Tensor[A, MapThread[If[#1 === "u", #2, Void] & , {ud, index}], 
+           MapThread[If[#1 === "d", #2, Void] & , {ud, index}]], 
+          ud === {"u"}, Tensor[A, {index}, {Void}], ud === {"d"}, 
+          Tensor[A, {Void}, {index}], True, -1]) =!= -1, tmp, 
+      Style[Tensor[A, uds, index], FontColor -> Red]]]
+ 
+T /: T::usage = "T[A_,uds_String][index0__] produces any Tensor where \
+uds_String specifies up/down position of index_, \
+e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
+\(i\)]\)\!\(\*SubscriptBox[\()\), \(jk\)]\))"
+ 
+Attributes[Subscript] = {NHoldRest}
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+$symmetries := {tt:T[g, "uu", {\[Mu]_, \[Nu]_}] :> 
+      tuIndexSwap[{\[Mu], \[Nu]}][tt] /; OrderedQ[{\[Nu], \[Mu]}], 
+     tt:T[F, "uu", {\[Mu]_, \[Nu]_}] :> -tuIndexSwap[{\[Mu], \[Nu]}][tt] /; 
+       OrderedQ[{\[Nu], \[Mu]}], tt:T[F, "dd", {\[Mu]_, \[Nu]_}] :> 
+      -tuIndexSwap[{\[Mu], \[Nu]}][tt] /; OrderedQ[{\[Nu], \[Mu]}], 
+     CommutatorM[a_, b_] :> -CommutatorM[b, a] /; OrderedQ[{b, a}], 
+     CommutatorP[a_, b_] :> CommutatorP[b, a] /; OrderedQ[{b, a}], 
+     tt:T[\[Gamma], "u", {\[Mu]}] . T[\[Gamma], "d", {5}] :> Reverse[tt]}
+ 
+tuIndexSwap[index1_, (index2_) | PatternSequence[]][exp_] := 
+    Module[{tmp = exp, ind1, ind2, $ii, subi, CX}, 
+     {ind1, ind2} = Flatten[{index1, index2}]; subi[i_List] := 
+       (If[#1 === ind2, CX[ind1], If[#1 === ind1, CX[ind2], #1]] & ) /@ i; 
+      tmp = tmp //. Tensor[A_, u_, d_] :> xTensor[A, subi[u], subi[d]]; 
+      tmp = tmp //. (dd:DerivOps)[A_, i_] :> CX[dd][A, ind2] /; i === ind1; 
+      tmp = tmp //. (dd:DerivOps)[A_, i_] :> CX[dd][A, ind1] /; i === ind2; 
+      tmp = tmp //. CX[a_] -> a //. xTensor -> Tensor]
+ 
+tuIndexSwap /: tuIndexSwap::usage = "tuIndexSwap[index1_,index2_][exp_] swaps \
+indexPair of Tensor's in exp_. EG: tuIndexSwap[i,j][\!\(\*SubscriptBox[\(A\), \
+\(ikj\)]\)]->\!\(\*SubscriptBox[\(A\), \(jki\)]\) .  [index1_,index2_] can be \
+input as [{index1_,index2_}].  *4Nov2014*"
+ 
+DerivOps := Flatten[DerivOpsD | DerivOpsU | tuDerivOps]
+ 
+DerivOpsD := Join[xPartialD | xCovariantD | xD[_], tuDerivOpsD]
+ 
+xPartialD[field_, var_] := tuPartialD[field, var]
+ 
+tuPartialD := tuDPartial
+ 
+tuPartialD /: tuPartialD::usage = "tuPartialD[field_,var_] displays the \
+PartialD[field,var] \[Rule] \!\(\*SubscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartial[a_, b_] := tuDDown["\[PartialD]"][a, b]
+ 
+tuDerivOpsD := tuDPartial | tuDCovariant | tuDs[_] | tuDDown[_]
+ 
+tuDCovariant[a_, b_] := tuDDown["\[Del]"][a, b]
+ 
+tuDs[s_][a_, b_] := tuDDown[s][a, b]
+ 
+DerivOpsU := Join[xPartialDu | xCovariantDu | xDu[_], tuDerivOpsU]
+ 
+xPartialDu[field_, var_] := tuPartialDu[field, var]
+ 
+tuPartialDu := tuDPartialu
+ 
+tuPartialDu /: tuPartialDu::usage = "tuPartialDu[field_,var_] displays the \
+PartialDu[field,var] \[Rule] \!\(\*SuperscriptBox[\(\[PartialD]\), \
+\(var\)]\)field. "
+ 
+tuDPartialu[a_, b_] := tuDUp["\[PartialD]"][a, b]
+ 
+tuDerivOpsU := tuDPartialu | tuDCovariantu | tuDsu[_] | tuDUp[_]
+ 
+tuDCovariantu[a_, b_] := tuDUp["\[Del]"][a, b]
+ 
+tuDsu[s_][a_, b_] := tuDUp[s][a, b]
+ 
+tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
+ 
+tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]

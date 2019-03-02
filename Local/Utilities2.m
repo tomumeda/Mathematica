@@ -129,11 +129,21 @@ To retrieve output definitions from file in current directory.
 	Get[NotebookDirectory[]<>"LectureB2011.10.10.out"]
 or   Get[$HomeDirectory<>"/Mathematica/PeskinSchroeder/FinalProject1.out"]*)
 tuSaveAllVariables::usage="tuSaveAllVariables[file_:toSaveFile] saves all Context[Global'] variables to file_. To retrieve output definitions from file_ use \[IndentingNewLine]	Get[NotebookDirectory[]<>notebook.out **";
-tuSaveAllVariables[file_:SaveFile]:=Module[{$},
-$=Names["$*"|"e*"];
-$=Select[$,Context[#]=="Global`"&];
-Inactive[Save][file,$ ]//Activate
+tuSaveAllVariables[file_:SaveFile]:=Module[{$$},
+$$=Names["$*"|"e*"];
+$$=Select[$$,Context[#]=="Global`"&& Length[StringCases[#,RegularExpression["[$]"]]]<2&];
+$$=Inactive[Save][file,$$ ];
+$$//Activate
 ];
+
+tuLoad::usage="tuLoad[filePath_] loads contents of $InitialDirectory/Mathematica/<>filePath into notebook workspace. *12Feb2019*";
+tuLoad[filePath_]:=Module[{$},
+$=$InitialDirectory<>"/Mathematica/"<>filePath;(*
+tuLoad::yes="Loaded: `1` ";
+tuLoad::no="Not Found: `1` ";*)
+Get[$]
+];
+
 
 
 (* ::Input::Initialization:: *)
@@ -142,6 +152,9 @@ toRule:={Equal->Rule};
 toEqual:={Rule->Equal};
 (*variables inbedded in any one of tuRuleIndependentVarPattern are considered independent from the variable for the purpose of tuRule[]s.*)tuRuleIndependentVarPattern:={SubPlus[_],SubMinus[_],SuperPlus[_],SuperMinus[_],Subscript[_,_],Superscript[_,_],OverBar[_],UnderBar[_],OverTilde[_],OverHat[_],SubStar[_],SuperStar[_],OverVector[_],OverDot[_],OverDot[_,1],OverDot[_,2],Derivative[1][_],Derivative[2][_],Tensor[_,_,_],Sign[_],Style[__]};
 (**)
+
+tuCommentRemove:=head_[CR[__]|CG[__]|CO[__]|CP[__]|CB[__]]->head;
+
 tuRule::usage="tuRule[rules_,negativePower_:False,simplerArg_:True] produces a List of valid Rule[]s from rules_ and forms a Flatten[]d list of Rules. Deletes imbedded comments in the form of head_[CG[__]] and other non-Rule forms. If  If negativePower_\[Rule]True then negative Power of Rule[]s are generated.  If simplerArg_\[Rule]True then Rules are transformed from -a\[Rule]b \[Rule] a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \(2\)]\)->b \[Implies] a\[Rule]Sqrt[b] . *7Aug2015*1Feb2018*";
 tuRule[rules_,negativePower_:False,simplerArg_:True]:=Module[{$=rules,rr$},
 $=$//Flatten;
@@ -347,11 +360,6 @@ tuOpIndependentVar[opname_?(Head[#]=!=List&),op_?(tuHasAnyQ[Head[#],op$]&),indep
 op/.op$->Inactive[opname]//tuOpIndependentVarActivate[independentVars]
 ];
 
-
-xRuleX[rules_,vars_,independentVars_List:{Subscript[_,_],Superscript[_,_],OverBar[_],OverTilde[_],OverHat[_],SuperStar[_]}]:=tuRuleSolve[rules,vars,independentVars];(*Compatibility*)
-
-InvertRules[rules_List,vars_List]:=tuRuleSolve[rules,vars];(*Compatibility*)
-
 Clear[tuRuleEliminate];
 tuRuleEliminate::usage:="tuRuleEliminate[pattern_List][rules_List] composes rules from rules_List of form Map[Rule[tuRuleSolve[{rule_[#]},#],pattern_]. Works for Dot[] patterns.  WARNING: The order of rules_List determines the order in which patterns are substituted back into rules_.  Try tuEliminate if this Module does not work. *18Jun2015*";
 tuRuleEliminate[pattern_][rules_]:=Module[{$r=tuRule[{rules}],$rp={},$p=Flatten[{pattern}]},
@@ -388,7 +396,16 @@ $r=DeleteCases[$r,a_->a_]//tuRule
 ];
 
 (**)
-tuEliminate::usage="tuEliminate[rules_,vars_,independentVars_List:tuRuleIndependentVarPattern] applies Eliminate[] to a list of rules_ eliminating vars_. Recognizes negative powers of vars_.  Variables Matching independentVars_ are treated independent variables. Try tuRuleEliminate if this Module does not work. *23May2014";
+tuEliminate2::usage="tuEliminate2[,vars_,independentVars_List:tuRuleIndependentVarPattern][rules_List] applies Eliminate[] to a list of rules_ eliminating vars_.  Simpler version of tuEliminate. *4Jan2019*";
+tuEliminate2[vars_,independentVars_List:tuRuleIndependentVarPattern][rules_List]:=
+Module[{$=rules},
+$=$//tuRule1;
+$=$/.toEqual;
+$=tuOpIndependentVar[Eliminate,op$[$,vars],independentVars];
+$
+]
+(**)
+tuEliminate::usage="tuEliminate[rules_,vars_,independentVars_List:tuRuleIndependentVarPattern] applies Eliminate[] to a list of rules_ eliminating vars_. Recognizes negative powers of vars_.  Variables Matching independentVars_ are treated independent variables. Try tuEliminate2 or tuRuleEliminate if this Module does not work. *23May2014";
 tuEliminate[rules_,vars_,independentVars_List:tuRuleIndependentVarPattern]:=Module[{tmp,XXXX,varlist,Xs,subX,varPat,xrules,xvars=DeleteDuplicates[Flatten[{vars}]] ,independentPos,independents,independentLab,Is,IIII,subIIII,SolveArgs,ivars,xpower},
 xpower[rule_Rule]:=Module[{pow,tmp=rule},(*eliminate negative powers in rule*)
 tmp=tmp/.Power[a,n_]:>power[a,n]/;n<0;
@@ -412,7 +429,7 @@ subX=Thread[Rule[varlist,(Xs=Array[XXXX,Length[varlist]])]];xPrint[subX];
 tmp=xrules//.subX;
 SolveArgs={tmp,Xs};
 (*independentVars need dummy labels incase unclothed independentVars is in vars_ *)
-independentPos=ExtractPositionPattern[SolveArgs,independentVars];
+independentPos=SolveArgs//tuExtractPositionPattern[independentVars];
 independents=#[[2]]&/@independentPos//DeleteDuplicates;
 independentLab=MapIndexed[#1->IIII[First[#2]]&,independents];
 subIIII=independentPos//.independentLab;
@@ -425,8 +442,6 @@ tmp=tmp//.Reverse/@independentLab;
 tmp=tmp//.Reverse/@subX//.Xpat[a_]->a;
 tmp//Flatten
 ];
-xEliminate[rules_,vars_,independentVars_List:tuRuleIndependentVarPattern]:=
-tuEliminate[rules,vars,independentVars];
 
 (*Rewrites (simple) rule_ in form  var_\[Rule] ..  .  var_ may be a pattern but must only match one item in rule.  var_ needs to be a variable that can be Solved for in rule_.  
 This Module does not work with Power or Sqrt[ ] .  Only uses first solution of Solve  *13Dec2012*)
@@ -559,6 +574,7 @@ SolveRules[rules_,vars_]:=Solve[(rules//.Rule->Equal),vars];
 (**)
 tuPatternRemove::usage="tuPatternRemove[exp_] removes Pattern[a_,Blank[]|BlankSequence[]]:>a in all of exp_ *24Nov2013";
 tuPatternRemove[exp_]:=Module[{tmp=exp,xPattern},
+tmp=tmp/.PatternTest->xPatternTest/.xPatternTest[a_,b_]->a;
 tmp=tmp//.Pattern->xPattern//.Blank->xBlank//.BlankSequence->xBlankSequence;
 tmp=tmp//.xPattern[a_,xBlank[]|xBlankSequence[]]->a;
 tmp=tmp/.xPattern->Pattern
@@ -575,7 +591,7 @@ tmp=tmp->rule[[2]]
 RulesVarPatterns[var_List][exp_] converts var_List in exp_ containing Rule to Pattern[var,Blank[]] DOES NOT RECOGNIZE ALTERNATIVE exp ARGUEMENTS *7Dec2014*)
 RulesVarPattern[var_List][exp_List|exp_Rule|exp_RuleDelayed]:=Module[{rulepos,tmp=exp},
 If[Head[exp]===List,
-rulepos=ExtractPositionPattern[{tmp},Rule[a_,b_]];
+rulepos={tmp}//tuExtractPositionPattern[Rule[a_,b_]];
 rulepos=Map[#[[1]]->RuleVarPattern[var][#[[2]]]&,rulepos];
 tmp=ReplacePart[{tmp},rulepos][[1]]
 ,
@@ -655,6 +671,16 @@ $
 (*TEST $={a (b+c)\[Rule]d a,a b c\[Rule]b c, a b \[Rule] c}
 $//tuRuleRHS0factor
 *)
+tuRuleDelayAdd::uage="tuRuleDelayAdd[rule_Rule,conditions_] changes rule_Rule into RuleDelayed with  conditions_ added *15Jan2018*";
+
+tuRuleDelayAdd[rule_Rule,conditions_]:=Module[{$,xRuleDelayed},
+$=rule/.Rule->xRuleDelayed;
+xRuleDelayed[$[[1]],$[[2]]/;conditions]/.xRuleDelayed->RuleDelayed
+](*
+TEST
+tuRuleDelayAdd[a\[Rule]b,c]*)
+tuRuleNoConditions[rules_]:=rules/.Condition->xCondition/.xCondition[a_,b_]->a;
+
 
 (*routines to accumulate and select Rules used in .nb*)
 accum[label_][item_]:=Block[{},$def[label]=tuAppendUniq[item][$def[label]];""];
@@ -672,6 +698,11 @@ selectDef:=select[$defID];
 
 
 (* ::Input::Initialization:: *)
+tuPowerFactor::usage="tuPowerFactor[exp_,sep_:CenterDot] factor summed exponential into individual terms separated by sep_, eg., \!\(\*SuperscriptBox[\(A\), \(b + c\)]\)\[Rule]\!\(\*SuperscriptBox[\(A\), \(b\)]\)\[CenterDot]\!\(\*SuperscriptBox[\(A\), \(c\)]\) *22Nov2018*";
+
+tuPowerFactor[exp_,sep_:CenterDot]:=Module[{$},
+$=exp/.pp:Power[e_,Plus[__]]:>(pp/.Plus->xPlus/.Power[e,xPlus[a__]]:>Apply[sep,e^{a}]/.xPlus->Plus)
+];
 (*
 moveOut[term_] and moveIn[term_] are examples of moving term_ outside and inside op[_ term_,_] DOESN'T match NumberQ[_].  *14Mar2014*)
 moveOut[term_]:=(op:xProduct|xSum)[a_  b_,i_]:>a op[b,i]/;ListMemberQ[a,Flatten[{term,1/#&/@{term}}]];
@@ -759,7 +790,7 @@ tmp
 (**)
 tuDistributeOp::usage="tuDistributeOp[Op_,func_:Plus][exp_] applies Distribute[Op_[],func_] on every Pattern matched by Op_[__]. EG:DistributeOp[IntegralOp[_,_]][IntegralOp[{{x}},a+b]]->IntegralOp[{{x}},a]+IntegralOp[{{x}},b] *29Jan2014*";
 tuDistributeOp[Op_,func_:Plus][exp_]:=Module[{tmp=exp,pos,i},
-pos=ExtractPositionPattern[tmp,Op];
+pos=tmp//tuExtractPositionPattern[Op];
 For[i=1,i<=Length[pos],i++,
 pos[[i,2]]=Distribute[pos[[i,2]],func]
 ];
@@ -770,7 +801,7 @@ DistributeOp[Op_][exp_]:=tuDistributeOp[Op][exp];
 (*
 ThreadOp[Op_][exp_] applies Thread on pattern Op_[_] in exp_.  Accomodates variation for IntegralOp. Must indicate arguements as Op_[_,_]. *5Sep2014*)
 ThreadOp[Op_][exp_]:=Module[{tmp={exp},pos,i,xInt,xOp},
-pos=ExtractPositionPattern[tmp,Op];
+pos=tmp//tuExtractPositionPattern[Op];
 xOp=Op;
 If[Head[Op]===IntegralOp,pos=pos/.IntegralOp[a_,b_]->xInt[a][b];xOp=xInt[_][_]];
 For[i=1,i<=Length[pos],i++,
@@ -1016,17 +1047,30 @@ If[showRule=!=Null,{$s,$/.$s},$/.$s]
 ];
 
 Clear[tuTermApplyEach];
-tuTermApplyEach::usage="tuTermApplyEach[selectPattern_List:{},noselectPattern_List:{},rules_List:{},operations_List:{},nIterations_:10][exp_] selects Level[1] Plus[] terms in expression exp_ and based upon selectPattern_List and noselectPattern_List applies rules_List, operations_List to the EACH selected terms using tuRepeat[]. It returns altered exp_.  *18May2016**1Mar2018*";
-tuTermApplyEach[selectPattern_List:{},noselectPattern_List:{},rules_List:{},operations_List:{},nIterations_:10][exp_]:=Module[{$,xfnc},
+tuTermApplyEach::usage="tuTermApplyEach[
+selectPattern_List:{},
+noselectPattern_List:{},
+rules_List:{},
+operations_List:{},
+nIterations_:10]
+[exp_]
+ selects Level[1] Plus[] terms and isolated terms in expression exp_  based upon selectPattern_List and noselectPattern_List applies rules_List, operations_List to the EACH selected terms using tuRepeat[,nIterations]. It returns altered exp_.  *18May2016**1Mar2018*10Dec2018*";
+tuTermApplyEach[selectPattern_List:{},noselectPattern_List:{},rules_List:{},operations_List:{},nIterations_:10][exp_]:=Module[{$,xfnc,zero},
 xfnc[$_]:=Module[{$s0,$s},
 $s0=$s=$//tuTermSelect[selectPattern,noselectPattern];
+xPrint[$s0];
 $s=tuRepeat[tuRule[rules],operations,nIterations]/@$s0;
+xPrint[$s];
 $s=Apply[Plus,$s];
+xPrint[$s];
 $s0=Apply[Plus,$s0];
 $+$s-$s0
 ];
 $=exp//ExpandAll;
-$/.Plus->xPlus/.xPlus[a__]:>xfnc[Plus[a]]
+(*distribute zero over exp_*)
+$=$+zero/.(rr:Rule|Equal|List)[a_,b_]+zero:>(List[a,b]+zero/.List->rr);
+$=$/.Plus->xPlus/.xPlus[a__]:>xfnc[Plus[a]];
+$/.zero->0
 ];
 
 tuRelatedElements::usage="tuRelatedElements[termlist_List,operations_:{Conjugate},reals_] is prototype routine to determine if elements of termlist_List are related to one another.  Simple tests are performed: {Ratio, Conjugate Ratio}. A list of index pairs are returned indicating what was discovered about the pairs.  If no relationship was found then the If[] statement contains the Equality test statement. *3Apr2016* ";
@@ -1122,7 +1166,7 @@ tuIndependentVar::usage="tuIndependentVar[independentVars_][exp_ ] evaluates exp
 	Evaluation of exp_ must be suspended by Inactive or Hold (depending on what works for exp_) and reactivated after tuIndependentVar.  independentVars_ can be a List of patterns. *22Feb2017*";
 tuIndependentVar[independentVars_][exp_ ]:=Module[{$=exp,$p ,independentPos,independents,independentLab,Is,IIII,subIIII,SolveArgs,ivars,xpower},
 (*independentVars need dummy labels incase unclothed independentVars is in vars_ *)
-independentPos=ExtractPositionPattern[$,independentVars];
+independentPos=$//tuExtractPositionPattern[independentVars];
 independents=#[[2]]&/@independentPos//DeleteDuplicates;
 independentLab=MapIndexed[#1->IIII[First[#2]]&,independents];
 subIIII=independentPos//.independentLab;
@@ -1169,28 +1213,45 @@ $
 ];
 (**)
 Clear[tupmConsolidate]
-tupmConsolidate::usage="tupmConsolidate[EXP_List] consolidates a pair of Rules in EXP_  which explicitly have {'-','+'} in the coefficients, Subsubscripts, and Superscripts into a single expression with {\[PlusMinus],\[MinusPlus]} labels *12Aug2018*";
-tupmConsolidate[EXP_List]:=Module[{$,$dif,$sum},
-$=EXP//Expand;
-$=$/.\!\(\*SubscriptBox[\(a_\), \("\<+\>"\)]\)->Subscript[a, pm]/.\!\(\*SubscriptBox[\(a_\), \("\<-\>"\)]\)->Subscript[a, mp];
-
-$dif=$//tuRuleSubtract//(#/.Subscript[a_, mp]->Subscript[a, pm]&);
-$dif=$dif/. Times[b_,c_]:>If[NumericQ[b]&&b<0, mp[1](-b c),pm[1](b c)];
-$dif=tuTermApplyEach[{_},{mp[1],pm[1]},{},{pm[1]#&},1]/@$dif;
-
-$sum=$//tuRuleAdd//(#/.Subscript[a_, mp]->Subscript[a, pm]&);
-$sum={$sum,$dif}//tuRuleAdd;
-$sum=#/2&/@$sum//Simplify;(*
-xPrint["$dif::",$dif];
-xPrint["$sum::",$sum];*)
-$sum
+tupmConsolidate::usage="tupmConsolidate[EXP_List] consolidates a pair of Rules in EXP_  which explicitly have {'-','+'} in the coefficients, Subsubscripts, and Superscripts into a single expression with {\[PlusMinus],\[MinusPlus]} labels.  Returns RED expression if input is inconsistent with \[PlusMinus] forms. *28Nov2018*";
+tupmConsolidate[EXP_List]:=Module[{$,$0,$1,$pm,$d,$u,$s},
+$0=$=EXP//Expand;
+xPrint[$0];
+$pm=$//tuExtractPattern[\!\(\*SubscriptBox[\(a_\), \("\<+\>"\)]\)|\!\(\*SubscriptBox[\(a_\), \("\<-\>"\)]\)]//DeleteDuplicates;
+$pm=Select[$pm,tuHasAnyQ[\!\(\*SubscriptBox[\(First[#]\), \("\<+\>"\)]\),$pm]&&tuHasAnyQ[\!\(\*SubscriptBox[\(First[#]\), \("\<-\>"\)]\),$pm]&];
+xPrint[$pm];
+$d=tuRuleSubtract[$];
+$d=$d/.aa:\!\(\*SubscriptBox[\(a_\), \("\<+\>"\)]\):>Subscript[a, pm]/;tuHasAnyQ[aa,$pm];
+$d=$d/.aa:\!\(\*SubscriptBox[\(a_\), \("\<-\>"\)]\):>Subscript[a, mp]/;tuHasAnyQ[aa,$pm];
+xPrint[$d];
+$d=tuTermApplyEach[{_},{mp,pm},{b_:>pm[1]b},{},1][$d];
+xPrint[$d];
+$s=tuRuleAdd[$];
+$s=$s/.\!\(\*SubscriptBox[\(a_\), \("\<+\>"\)]\)->Subscript[a, pm]/.\!\(\*SubscriptBox[\(a_\), \("\<-\>"\)]\)->Subscript[a, mp];
+xPrint[$d," ; ",$s];
+$=tuRuleAdd[{$d,$s}];
+$=#/2&/@$//Simplify;
+(*CHECK*)
+$u=$/.pmUp;
+$d=$/.pmDn;
+xPrint[$u={$0[[1]],$u}//tuRuleSubtract//Simplify];
+xPrint[$d={$0[[2]],$d}//tuRuleSubtract//Simplify];
+If[MatchQ[$u,Rule[0,0]]&&MatchQ[$d,Rule[0,0]],Return[$],
+Return[CR[$]]];
 ];
-(*(**)TEST1
+(*
+(**)TEST00
+$={0\[Rule]Subscript[a, "+"]+Subscript[b, "-"],0\[Rule]Subscript[a, "-"]-Subscript[b, "-"]}
+tupmConsolidate[$]
+(**)TEST1
 $={Subscript[a, "+"]\[Rule]a(*+b/2- (c+1)Subscript[a, "+"]*)(*-Subscript[a, "-"]*), Subscript[a, "-"]\[Rule]a(*-b/2+(-1+c)Subscript[a, "-"]*)(*+Subscript[a, "+"]*)}
-tupmConsolidate[$]//tuRuleSolveF[Subscript[a, pm]]
+tupmConsolidate[$]
 (**)TEST2
 $={Subscript[a, "+"]\[Rule]a+b/2(*- (c+1)Subscript[a, "+"]*)(*-Subscript[a, "-"]*), Subscript[a, "-"]\[Rule]a-b/2(*+(-1+c)Subscript[a, "-"]*)(*+Subscript[a, "+"]*)}
-tupmConsolidate[$]//tuRuleSolveF[Subscript[a, pm]]//Expand
+tupmConsolidate[$]
 (**)TEST3
 $={Subscript[a, "+"]\[Rule]a+b/2- (c+1)Subscript[a, "+"](*-Subscript[a, "-"]*), Subscript[a, "-"]\[Rule]a-b/2+(-1+c)Subscript[a, "-"](*+Subscript[a, "+"]*)}//Expand;$//Column
+$=tupmConsolidate[$]
+(**)TEST0
+$={Subscript[\[Tau], "-"]\[Rule]t-(1-\[Epsilon])r^*,Subscript[\[Tau], "+"]\[Rule]t+(1-\[Epsilon])r^*}
 tupmConsolidate[$]*)

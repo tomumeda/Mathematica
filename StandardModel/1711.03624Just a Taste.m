@@ -21,6 +21,7 @@
 
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
+tuItalics
 
 
 (* ::Input::Initialization:: *)
@@ -32,37 +33,6 @@ tuArXiv[$dID]
 
 
 (* ::Input::Initialization:: *)
-rghtA[a_]:=Superscript[a,o]
-cl[a_]:=Subscript[\[LeftAngleBracket]a\[RightAngleBracket], cl];
-clB[a_]:=Subscript[{a}, cl];
-ct[a_]:=ConjugateTranspose[a];
-cc[a_]:=Conjugate[a];
-star[a_]:=Superscript[a,"*"];
-cross[a_]:=Superscript[a,"\[Times]"];
-deg[a_]:=\[LeftBracketingBar]a\[RightBracketingBar];
-it[a_]:=Style[a,Italic]
-iD:=it[D]
-iA:=it[A]
-iB:=it[B]
-iJ:=it[J]
-iK:=it[K]
-iL:=it[L]
-iH:=it[H]
-iI:=it["I"]
-iE:=it["E"]
-iN:=it["N"]
-iO:=it["O"]
-iQ:=it["Q"]
-iU:=it["U"]
-
-il:=it["l"]
-iEE:=it["EE"]
-
-C\[Infinity]:=\!\(\*SuperscriptBox[\(C\), \("\<\[Infinity]\>"\)]\)
-aBa:="\[DoubleLongLeftRightArrow]"
-bnd:="\[PartialD]"
-pm:="\[PlusMinus]"
-
 expandDC[sub_:{},scalar_:{},func_:{}]:=tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar],tuOpDistribute[CircleTimes]},{tuCircleTimesSimplify,func}]
 Clear[expandCom]
 expandCom[subs_:{}][exp_]:=Block[{tmp=exp},
@@ -86,7 +56,6 @@ CommutatorP[a_,b_]:>CommutatorP[b,a]/;OrderedQ[{b,a}],
 tt:T[\[Gamma],"u",{\[Mu]}] . T[\[Gamma],"d",{5}] :>Reverse[tt]
 };
 $symmetries//ColumnBar;
-
 
 
 

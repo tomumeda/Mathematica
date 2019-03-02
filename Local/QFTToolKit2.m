@@ -241,14 +241,16 @@ Editable->False]& @@{RowBox[{ToBoxes["/"],AdjustmentBox[ToBoxes[symbol],BoxMargi
 Slash:=slash;
 (*
 PartialDSlash[symbol_] notation. *)
-MakeBoxes[PartialDSlash[symbol_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
+MakeBoxes[tuPartialDSlash[symbol_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
 SyntaxForm->Automatic,
-Editable->False]& @@{RowBox[{ToBoxes["/"],AdjustmentBox["\[PartialD]",BoxMargins->{{-0.8,0.0},{0.,0.}}],ToBoxes[symbol]}], PartialDSlash[symbol]};
+Editable->False]& @@{RowBox[{ToBoxes["/"],AdjustmentBox["\[PartialD]",BoxMargins->{{-0.8,0.0},{0.,0.}}],ToBoxes[symbol]}], tuPartialDSlash[symbol]};
+PartialDSlash:=tuPartialDSlash
 (*
 CovariantDSlash[symbol_] notation. *)
-MakeBoxes[CovariantDSlash[symbol_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
+MakeBoxes[tuCovariantDSlash[symbol_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
 SyntaxForm->Automatic,
-Editable->False]& @@{RowBox[{ToBoxes["\[ScriptCapitalD]"],AdjustmentBox["/",BoxMargins->{{-0.6666666666666666,-0.6666},{0.,0.}}],"[",ToBoxes[symbol],"]"}], CovariantDSlash[symbol]};
+Editable->False]& @@{RowBox[{ToBoxes["\[ScriptCapitalD]"],AdjustmentBox["/",BoxMargins->{{-0.6666666666666666,-0.6666},{0.,0.}}],"[",ToBoxes[symbol],"]"}], tuCovariantDSlash[symbol]};
+CovariantDSlash:=tuCovariantDSlash
 (*
 GammaSlash display definition.  May want to redefine it as g[a_]:=GammaSlash[a].  Perhaps the Bold is enough.*)
 MakeBoxes[GammaSlash[a_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
@@ -457,7 +459,7 @@ tuDsu[s_][a_,b_]:=tuDUp[s][a,b];
 tuDLie[a_,b_]:=tuDDown["\[ScriptCapitalL]"][a,b];
 tuDOps:=tuDUp[_]|tuDDown[_];
 
-tuDExpand::usage="tuDExpand[ops_:tuDOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)] Rules to Expand by name two argument differential operator ops_, e.g., tuDUp[_]|tuDDown[_], tuDPartial, tuDPartialu, tuDCovariant, tuDCovariantu. Terms that match any of list of constants are treated as constant. Leibnitz rule is applied over functions fnc_.  NOTE: seems like only tuDUp[_] and tuDDown [_] work as ops_.  *2Mar2015**27Sep2017*";
+tuDExpand::usage="tuDExpand[ops_:tuDOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)] Rules to Expand by name two argument differential operator ops_, e.g., tuDUp[_]|tuDDown[_], tuDPartial, tuDPartialu, tuDCovariant, tuDCovariantu. Terms that match any of list of constants are treated as constant. Leibnitz rule is applied over functions fnc_.  NOTE: seems like only tuDUp[_] and tuDDown [_] work as ops_.  *2Mar2015*27Sep2017*12Feb2019*";
 tuDExpand[ops_:tuDOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)]:={
 ((*Liebnitz rule*)
 name:ops)[(oo:Flatten[fnc])[a_  ,b__],c__]:>oo[name[a,c],b]+oo[a ,name[oo[b],c]]/;Length[{b}]>1,
@@ -468,7 +470,9 @@ name:ops)[(oo:Flatten[fnc])[a_  ,b__],c__]:>oo[name[a,c],b]+oo[a ,name[oo[b],c]]
 
 (name:ops)[Exp[a_],b_]->Exp[a] name[a,b],
 (name:ops)[Log[a_],b_]-> name[a,b]/a,
-(name:ops)[Power[a_,n_],b_]:>n Power[a,n-1] name[a,b],
+
+(name:tuDOps)[Power[a_,n_],b_]:>a^n ( Log[a]name[n,b]+n name[a,b]/a),
+
 (name:ops)[a_,b_+c_]->name[a,b]+ name[ a,c],
 (name:ops)[a_,b_]:>0/;NumericQ[a] ,
 (name:ops)[a_,b_]:>0/;ListMemberQ[a,constants],
@@ -586,13 +590,14 @@ tmp//tuDerivativeExpand[constants]
 $//tuDExpandD2[]
 *)
 Clear[tuDlHopital]
-tuDlHopital[c_,dop_:tuDPartial]:=dop[a_,b_]->dop[a,c]dop[c,b]
 (*EG:
 $=tuDPartialu[T[\[Theta],"d",{1}],\[Tau]]
-$=$/.tuDlHopital[T[\[Omega],"d",{1}],tuDPartialu]
+$=$/.tuDChain[T[\[Omega],"d",{1}],tuDPartialu]
 $=$/.T[\[Omega],"d",{1}]\[Rule]T[x,"u",{1}]/r
 %//tuDerivativeExpand[{r}]//tuDExpandD2[]//Simplify
 tuDlHopital[T[\[Omega],"d",{1}],tuDPartialu]*)
+tuDChain::usage="tuDChain[c_,dif_:tuDPartial] Rule for applying the chain rule to dif_[] with c_ as the chain variable: dif_[a_,b_]\[Rule]dif[a,c]dif[c,b]. *21Feb2019*";
+tuDChain[c_,dif_:tuDPartial]:=dif[a_,b_]->dif[a,c]dif[c,b]
 
 (*******************************************)
 Clear[tuScalarSelect]
@@ -852,7 +857,7 @@ tmp
 ];
 ruleSimpleDot[rule_List,scalar_List,constant_List,repeat_Integer:2][exp_]:=Module[{tmp=exp,tmp1,xrule=Flatten[rule],n=0},
 While[tmp=!=tmp1&&n<repeat,tmp1=tmp;n++;
-tmp=tmp/.xrule//DerivativeExpand[constant]//simpleDot3[scalar];
+tmp=tmp/.xrule//tuDerivativeExpand[constant]//simpleDot3[scalar];
 ];
 tmp
 ]
@@ -898,6 +903,30 @@ tmp1=Dot[var,tmp1];
 tmp=Delete[tmp,pos];
 tmp+tmp1/.xDot->Dot
 ];
+
+tuVarsInExp::usage="tuVarsInExp[exp_] produces a List of variables in exp_ accounting for tuRuleIndependentVarPattern. *21Feb2019*";
+tuVarsInExp[exp_]:=Module[{$},
+$=tuOpIndependentVar[Level,op$[exp,20]];
+Select[$,!NumericQ[#]&&(AtomQ[#]||!MemberQ[Attributes[Evaluate[Head[#]]],Protected])
+&]//DeleteDuplicates
+];
+(*TEST
+$=a.b c[x][y] d f T[tt,"u",{i}].Subscript[s, j]
+$//tuVarsInExp
+*)
+
+Clear[tuVarCount]
+tuVarCount::usage="tuVarCount[var_][exp_] return the Count of var_ in exp_.  exp_ is wrapped in tuOpIndependentVar before evaluation. *22Feb2019*";
+tuVarCount[var_][exp_]:=Module[{$},
+$=tuOpIndependentVar[Level,op$[exp,20]];
+Select[$,!NumericQ[#]&&(AtomQ[#]||!MemberQ[Attributes[Evaluate[Head[#]]],Protected])
+&]//Count[var]
+];
+(*
+TEST
+$=-2 \[ImaginaryI] \[CurlyEpsilon].\[Chi] \[CurlyEpsilon].Subscript[Underscript["\[PartialD]", _], \[Tau]][\[CurlyEpsilon]].\[Chi].Subsuperscript[\[Psi], \[Mu], \[Mu]] Subscript[Underscript["\[PartialD]", _], \[Tau]][Subsuperscript[X, \[Mu], \[Mu]]]
+tuVarCount[\[CurlyEpsilon]][$]
+*)
 
 tuVarCollect::usage="tuVarCollect[side_String:'LR'][exp_] collects left/right end variables of dotOps|CircleTimes terms in Plus[] expression to the left/right.  The side_String 'L','R','LR' determines the side to collect. *26May2016*";
 tuVarCollect[side_String:"LR"][exp_]:=Module[{tmp=exp,SCL,ops=Flatten[dotOps|CircleTimes]},
@@ -1035,8 +1064,10 @@ $=$/.xOP[a_]->a;
 (* Gathering over PlusRule *)(*REMOVED use tuVarCollect[].
 $s={(ca_:1) a_ \[CircleTimes]ss_+(cb_:1)b_ \[CircleTimes]ss_\[Rule](ca a+cb b)\[CircleTimes]ss,
 (ca_:1)ss_\[CircleTimes] a_ +(cb_:1)ss_\[CircleTimes]b_ \[Rule]ss\[CircleTimes](ca a+cb b)
-};*)
-$=$//tuRepeat[{ Subscript[1, n_]^(m_:1)->Subscript[1, n],ops[Subscript[1, n_]..]->Subscript[1, n],tuOpCollect[CircleTimes],tuOpSimplify[ops,{}],tuOpSimplify[CircleTimes,Flatten[{scal}]]},{Expand}];
+};*)(*
+Print[$tmp=$];*)
+$=$//tuRepeat[{ Subscript[1, n_]^(m_:1)->Subscript[1, n],ops[Subscript[1, n_]..]->Subscript[1, n]},{tuOpCollect[CircleTimes],tuOpSimplifyF[ops,{}],tuOpSimplifyF[CircleTimes,Flatten[{scal}]]},
+10];
 Return[$];
 ];
 (*TEST*)(*
@@ -1286,57 +1317,62 @@ $={d,a,b,c};
 T[\[Epsilon],"uddu",$]//tuLeviCivitaOrder*)
 Order\[Epsilon][tensor_Tensor]:=tuLeviCivitaOrder[tensor];
 OrderAll\[Epsilon]={tt:Tensor[\[Epsilon],a_,b_]:>tuLeviCivitaOrder[tt]};
-
 (*
-simple2\[Epsilon][exp_,dimension_Integer] contracts pairs of \[Epsilon] Tensors (LeviCivita)in dimension_-space.
-Limitations:,
-Converts Tensor pairs into \[Delta]-form,
-Does not handle more than 2 \[Epsilon]'s,
-Does not handle different size \[Epsilon]'s, 
-There is uncertainty over sign.  PS is negative of Wiki. Uses Wiki convention. *20Jun2013*)
-simple2\[Epsilon][exp_,dimension_Integer]:=Module[{tmp=exp,pos,up,dn,bad,i,pair,tmp1,tmp2,tmpd,u1,u2,d1,d2,$u1,$u2,$d1,$d2,ups,dns,E\[Epsilon]E,E\[Epsilon]Epat,EEterm,dummies,tindices,indices,n,m,\[Mu],\[Nu]},
+*)tuLeviCivitaReduce2::usage="tuLeviCivitaReduce2[exp_] contracts pairs of LeviCivita \[Epsilon] Tensors in exp_.
+Limitations: \[IndentingNewLine]Converts Tensor pairs into \[Delta]-form,\[IndentingNewLine]Only handles 2 \[Epsilon]'s at a time and the matching is not controlable,
+	the \[Epsilon]-Tensor must be of equal dimension,\[IndentingNewLine]there is uncertainty over sign convention. 
+*10Jan2019*";
+tuLeviCivitaReduce2[exp_]:=Module[{tmp=exp,pos,up,dn,bad,i,pair,tmp1,tmp2,tmpd,u1,u2,d1,d2,$u1,$u2,$d1,$d2,ups,dns,E\[Epsilon]E,E\[Epsilon]Epat,EEterm,dummies,tindices,indices,n,m,\[Mu],\[Nu]},
 E\[Epsilon]Epat=(EEterm:Tensor[\[Epsilon],$u1_List,$d1_List]Tensor[\[Epsilon],$u2_List,$d2_List]);
 tmp=tmp/.E\[Epsilon]Epat:>E\[Epsilon]E[EEterm];
-pos=ExtractPositionPattern[tmp,E\[Epsilon]E[___]];
-For[i=1,i<=Length[pos],i++,(*Go through all \[Epsilon] \[Epsilon] index contractions.*)
+pos=tmp//tuExtractPositionPattern[E\[Epsilon]E[_]];
+xPrint[pos];
+For[i=1,i<=Length[pos],i++,(*Go through all \[Epsilon]-pair index contractions.*)
 pair=pos[[i,2,1]];
 {dummies,{up,dn},bad}=tuIndexParser[pair];
 indices=pair/.E\[Epsilon]Epat->{$u1,$d1,$u2,$d2};
 {u1,d1,u2,d2}=indices;
-If[Length[d1]==Length[d2],(* \[Epsilon]'s must be of equal size.*)
-(*Build template*)
-n=Length[d1];m=Length[dummies]>0;
-tmp1= Product[\[Delta]@du[\[Mu][i],\[Nu][i]],{i,n}];
-tmp1=n! tmp1//AntiSymmetrizeIndices[Table[\[Mu][i],{i,n}]];
-tmp1=tmp1/.IndexChange->IndexChangeTU//Expand;(*Tensorial does not handle these types of indices.*)
+
+xPrint[indices," dummies ",dummies];
+
+If[(n=Length[d1])==Length[d2],(* \[Epsilon]'s must be of equal dimension.*)
+(*Build pair \[Delta]-template Wiki Levi-Civita symbol e[7]*)
+m=Length[dummies]>0;
+tmp1= Product[T[\[Delta],"du",{\[Mu][i],\[Nu][i]}],{i,n}];
+tmp1=n! tmp1//tuSymmetrizeSymbol[-1,Table[\[Mu][i],{i,n}]];
+(***)
+xPrint[tmp1];
 If[PeskinSchroederMode===1,tmp1=-tmp1];(*PeskinSchroeder sign differs from Wiki. *)
 tmpd=DeleteCases[Flatten[indices],Void];
 tmpd=Thread[Rule[Flatten[{Table[\[Mu][i],{i,n}],Table[\[Nu][i],{i,n}]}],tmpd]];
-(*Tensorial does not handle index functions.*)
+xPrint[tmpd];
 tmp1=tmp1/.tmpd;
-tmp1=tmp1//Expand//MetricContractAll[\[Delta],dimension];
+xPrint[tmp1," :: ",tmpd];
+tmp1=tmp1//Expand//tuKroneckerDeltaEliminate[\[Delta],{a,b}];
+xPrint[tmp1];
 ups=DeleteCases[Join[u1,u2],Void];
 dns=DeleteCases[Join[d1,d2],Void];
-tmp1=tmp1//tuIndicesLower[ups,ups]//tuIndicesLower[dns,dns];
+tmp1=tmp1//tuIndicesRaise[ups,ups]//tuIndicesLower[dns,dns];
 ];
 pos[[i,2]]=tmp1;
 ];
-tmp=ReplacePartTU[tmp,pos];
+tmp=tuReplacePart[tmp,pos];
 tmp=tmp/.E\[Epsilon]E[a_]->a
 ];
 
 (*
 simple2\[Epsilon][exp_] default for 4-dim space*)
-simple2\[Epsilon][exp_]:=simple2\[Epsilon][exp,4]
+simple2\[Epsilon][exp_,4]:=tuLeviCivitaReduce2[exp]
+simple2\[Epsilon][exp_]:=tuLeviCivitaReduce2[exp]
  
 (*Relabels \[Epsilon]-matrix indices contained in product terms to indices \[Epsilon][1],\[Epsilon][2],... *)
 Relabel\[Epsilon][exp_]:=Module[{tmp=exp,pos,ipos,tmpp,pos\[Delta],ipos\[Delta],indices,post},
 tmp=Expand[tmp];
-pos=ExtractPositionPattern[tmp,Times[a___,Tensor[\[Epsilon],_,_],b___]];
+pos=tmp//tuExtractPositionPattern[Times[a___,Tensor[\[Epsilon],_,_],b___]];
 For[ipos=1,ipos<=Length[pos],ipos++,
 tmpp=pos[[ipos,2]];
-pos\[Delta]=ExtractPositionPattern[tmpp,Tensor[\[Epsilon],_,_]];
-post=ExtractPositionPattern[tmpp,Tensor[_,_,_]];
+pos\[Delta]=tmpp//tuExtractPositionPattern[Tensor[\[Epsilon],_,_]];
+post=tmpp//tuExtractPositionPattern[Tensor[_,_,_]];
 For[ipos\[Delta]=1,ipos\[Delta]<=Length[pos\[Delta]],ipos\[Delta]++,
 indices=Apply[List,pos\[Delta][[ipos\[Delta],2]]][[2;;3]]//Flatten;
 indices=DeleteCases[indices,Void];
@@ -1354,10 +1390,10 @@ tmp=ReplacePart[tmp,pos]
 All\[Epsilon]Down[exp_]:=Module[{tmp=exp,pos,ipos,tmpp,pos\[Epsilon],ipos\[Epsilon],indices},
 tmp=Expand[tmp];
 (*Times terms with \[Epsilon]*)
-pos=ExtractPositionPattern[tmp,Times[a___,Tensor[\[Epsilon],_,_],b___]];
+pos=tmp//tuExtractPositionPattern[Times[a___,Tensor[\[Epsilon],_,_],b___]];
 For[ipos=1,ipos<=Length[pos],ipos++,
 tmpp=pos[[ipos,2]];
-pos\[Epsilon]=ExtractPositionPattern[tmpp,Tensor[\[Epsilon],_,_]];
+pos\[Epsilon]=tmpp//tuExtractPositionPattern[Tensor[\[Epsilon],_,_]];
 For[ipos\[Epsilon]=1,ipos\[Epsilon]<=Length[pos\[Epsilon]],ipos\[Epsilon]++,
 indices=pos\[Epsilon][[ipos\[Epsilon]]]  [[2,2]];
 indices=DeleteCases[indices,Void];
@@ -1402,9 +1438,9 @@ simplifyLeviCivita[4]/@%*);
 
 (*
 raiseLeviCivitaDummyIndices[term_Times|Dot|xDot] raises all indices of LeviCivita Tensor in term_Times|Dot|xDot.  *15Oct2012*)
-raiseLeviCivitaDummyIndices[term_Times|Dot|xDot]:=Module[{tmp=term,i,LCs,LCdn,dummies,dnup},
+raiseLeviCivitaDummyIndices[term_?MemberQ[Flatten[{Times,dotOps}],#]&]:=Module[{tmp=term,i,LCs,LCdn,dummies,dnup},
 dummies=tuIndexParser[tmp][[1]];
-LCs=ExtractPositionPattern[tmp,Tensor[\[Epsilon],up_List,dn_List]];
+LCs=tmp//tuExtractPositionPattern[Tensor[\[Epsilon],up_List,dn_List]];
 For[i=1,i<=1(*May want to extend to all \[Epsilon]-Tensors where the last one encountered is dominant.*),i++,
 LCdn=tuIndexParser[LCs[[i,2]]][[2,2]];
 dnup=Intersection[LCdn,dummies];
@@ -1416,7 +1452,7 @@ tmp
 antisymmetrizeLeviCivitaCoef[term_] antisymmetrizes over dummy indices the coefficient of the first LeviCivita tensor.  Symmetric coefficients are zero. UNTESTED *16Oct2012*)
 antisymmetrizeLeviCivitaCoef[term_Times]:=Module[{dum,LCs,LCind,antiInd,tmp1,tmp2,i},
 dum=tuIndexParser[term][[1]];
-LCs=ExtractPositionPattern[term,Tensor[\[Epsilon],up_List,dn_List]];
+LCs=term//tuExtractPositionPattern[Tensor[\[Epsilon],up_List,dn_List]];
 tmp1=term;tmp2=1;
 For[i=1,i<=1(*Length[LCs] complicated if there more than one such Tensor.*),i++,
 LCind=tuIndexParser[LCs[[i,2]]][[2]]//Flatten;
@@ -1430,7 +1466,7 @@ tmp2
 symmetricCoefQ[term_] determines if the coefficients of LeviCivitaTensor are symmetric over dummy sum indices. UNTESTED *16Oct2012*)
 symmetricCoefQ[term_Times]:=Module[{dum,LCs,LCind,antiInd,tmp1,tmp2,i},
 dum=tuIndexParser[term][[1]];
-LCs=ExtractPositionPattern[term,Tensor[\[Epsilon],up_List,dn_List]];
+LCs=term//tuExtractPositionPattern[Tensor[\[Epsilon],up_List,dn_List]];
 tmp1=term;tmp2=1;
 For[i=1,i<=Length[LCs],i++,
 LCind=tuIndexParser[LCs[[i,2]]][[2]]//Flatten;
@@ -1449,7 +1485,7 @@ WithIndexDown[indices_List][exp_]:=Module[{tmp},
 tuIndexChange::usage="tuIndexChange[pairs_List][exp_] replaces indices in exp_ specified in pairs_List which is of form {{a,b},{c,d}}. In this case a\[Rule]b,c\[Rule]d. This routine can handle indices used in DerivOps. *5Sep2015*";
 tuIndexChange[pairs_List][exp_]:=Module[{pos,rules,ipos,indices},
 rules=Map[Apply[Rule,#]&,Partition[Flatten[{pairs}],2]];
-pos=ExtractPositionPattern[exp,Tensor[_,_,_]|Map[#[_,_]&,DerivOps]];
+pos=exp//tuExtractPositionPattern[Tensor[_,_,_]|Map[#[_,_]&,DerivOps]];
 For[ipos=1,ipos<=Length[pos],ipos++,
 indices=tuIndexParser[pos[[ipos]]]//Flatten;
 pos[[ipos]]=pos[[ipos]]//.tuRuleSelect[rules][indices];
@@ -1486,14 +1522,14 @@ tmp
 (*Contracts \[Delta] (KroneckerDelta) indices with other expression indices. Does not respect Einstein up/down notation. KroneckerContract works better although needs up-down convention. *)
 Contract\[Delta][exp_]:=Module[{tmp=exp,pos,ipos,tmpp,pos\[Delta],ipos\[Delta],indices,post,testindices},
 tmp=Expand[tmp];
-pos=ExtractPositionPattern[tmp,Times[a___,Tensor[\[Delta],_,_],b___]];
+pos=tmp//tuExtractPositionPattern[Times[a___,Tensor[\[Delta],_,_],b___]];
 List[pos];
 For[ipos=1,ipos<=Length[pos],ipos++,
 tmpp=pos[[ipos,2]];
-pos\[Delta]=ExtractPositionPattern[tmpp,Tensor[\[Delta],_,_]];
+pos\[Delta]=tmpp//tuExtractPositionPattern[Tensor[\[Delta],_,_]];
 List[pos\[Delta]];
 tmpp=tmpp/.Tensor[\[Delta],_,_]->1;
-post=ExtractPositionPattern[tmpp,Tensor[_,_,_]];
+post=tmpp//tuExtractPositionPattern[Tensor[_,_,_]];
 For[ipos\[Delta]=1,ipos\[Delta]<=Length[pos\[Delta]],ipos\[Delta]++,
 indices=Apply[List,pos\[Delta][[ipos\[Delta],2]]][[2;;3]]//Flatten;
 indices=DeleteCases[indices,Void];
@@ -1544,7 +1580,7 @@ Tensor[a_,b_,c_].Tensor[d_,e_,f_]\[RuleDelayed]Sum[\[Eta]uu[e,e]Tensor[a,b,c].Te
 (*DotIndexSum[exp_,range_List] sums indices over range_list in Dot[] expressions in exp_.  This routine removes difficiences in NewIndexChangePatterns and EinsteinSum[].  Replaces DotSumExpand[] *)
 DotIndexSum[exp_,range_List]:=Module[{exp0=exp,tmp,onetime,list,dlist,ilist,i,DEBUG=0,mname="DotIndexSum"},
 exp0=exp/.Dot->xDot;(* Next line does not work with Dot[], needs xDot[] *)
-list=ExtractPositionPattern[exp0,xDot[__]];
+list=exp0//tuExtractPositionPattern[xDot[__]];
 IfDEBUG[mname,DEBUG>0,{list,Length[list],onetime},"list"];
 For[i=1,i<=Length[list],i++,
 dlist=list[[i,2]]/.xDot->Dot;
@@ -1799,7 +1835,7 @@ xPrint["Ks0a:",tmp];*)
 tmp=tmp//.ww:xWedge[a__]:>0/;tuHasAnyQ[ww,{0}];
 (*Distribute DerivOps*)
 tmp=tmp//.(op:DerivOps )[xWedge[a_, c__],b_]->xWedge[op[a,b],c]+ xWedge[a,op[ xWedge[c],b]];
-tmp=tmp//.dd:DerivOps [a_,b_]:>DerivativeExpand[constants][dd]/;tuHasNoneQ[a,{DF,formLabels}];
+tmp=tmp//.dd:DerivOps [a_,b_]:>tuDerivativeExpand[constants][dd]/;tuHasNoneQ[a,{DF,formLabels}];
 tmp=tmp/.difForm[a_]|dForm[a_,1]:>0/;MemberQ[constants,a];tmp=tmp/.difForm[difForm[a_ ]|dForm[a_,_]]:>0/;ListMemberQ[a,scalars];
 tmp=tmp/.difForm [a_^n_]:>xWedge[n , Apply[Sequence,Table[a^(Sign[n]1),{Abs[n-1]}]],dForm[a,1]]/;ListMemberQ[a,scalars];
 tmp=tmp//.xWedge[a_]:>a/;Length[{a}]==1;
@@ -2083,7 +2119,7 @@ integrate\[Delta]funcRule[var_]:=IntegralOp[{{var}},(other_:1)  \[Delta][func_]]
 integrate\[Delta]funcRule1[var_List][exp_] perform integration where the integrand contains \[Delta][func_].  Mathematica Integrate is used.
 var_List is integration variable with limits to distinquish the integral, e.g. {x,-\[Infinity],\[Infinity]}, in multi-integral situation. The result may need further manipulation.  Replaces integrate\[Delta]funcRule. *23Jul2014*)
 integrate\[Delta]funcRule1[var_List][exp_]:=Module[{tmp,terms},
-tmp=ExtractPositionPattern[exp,IntegralOp[{var},_]];
+tmp=exp//tuExtractPositionPattern[IntegralOp[{var},_]];
 tmp=
 tmp/.\[Delta][a_]:>DiracDelta[a]/;!FreeQ[a,var[[1]]]/.subxIntegrate/.subIntegrate;
 ReplacePartTU[exp,tmp]
@@ -2199,12 +2235,12 @@ tmp=Apply[Times,tmp]
 ];
 (*returns Position->Patterns of Tensor products *)
 ExtractTensorProducts[exp_]:=Module[{tmp},
-tmp=ExtractPositionPattern[exp,Times[a___,Tensor[___],b___]];
+tmp=exp//tuExtractPositionPattern[Times[a___,Tensor[___],b___]];
 Map[MapAt[TensorProductOnly[#]&,#,2]&,tmp]
 ];
 (*apply function_ to Tensor products in exp_.*)
 ApplyToTensorProducts[function_,exp_]:=Module[{tmp},
-tmp=ExtractPositionPattern[exp,Times[a___,Tensor[___],b___]];
+tmp=exp//tuExtractPositionPattern[Times[a___,Tensor[___],b___]];
 tmp=Map[MapAt[ApplyToTensorProductOnly[function,#]&,#,2]&,tmp];
 ReplacePart[exp,tmp]
 ];
@@ -2317,7 +2353,7 @@ tmp=MapAt[DotPatternIn1[patterns],tmp,pos]
 (*
 Solves for pattern_ in EqualExp_. Returns solution using first variable from ExtractPositionPattern[_,pattern]  *19Oct2013*)
 Solve4Pattern[EqualExp_,pattern_]:=Module[{tmp=EqualExp/.Rule->Equal,pos,posd},
-pos=ExtractPositionPattern[tmp,pattern];
+pos=tmp//tuExtractPositionPattern[pattern];
 posd=Map[#[[1]]->$$XX&,pos];
 tmp=ReplacePart[tmp,posd];
 tmp=Solve[tmp,$$XX][[1]];
@@ -2742,58 +2778,43 @@ tmp
 
 (**)
 Clear[tuDotTermLeft];
-tuDotTermLeft::usage="tuDotTermLeft[term_,block_List:{},commuteRule_List:{},scalars_List:{}][exp_] commutes term_ to the left in dotOps expressions in exp_. block_List contains terms that block the movement of term_.  commuteRule_List contains Rule[]s that are used when terms are commuted.  scalars_List lists scalars that are used in tuOpSimplify. *6Sep2018*";
-tuDotTermLeft[term_,block_List:{},commuteRule_List:{},scalars_List:{}][exp_]:=Module[{tmp=exp,tmp1,$,$atHeads,$equalTerms},
-$atHeads=#[[1]]&/@commuteRule;
-xPrint[$atHeads];
-xPrint[$equalTerms=tuRuleSelect[dotOps[a_,a_]][commuteRule]];
-While[tmp1=!=tmp,
+tuDotTermLeft::usage="tuDotTermLeft[term_,block_List:{},commuteRule_List:{},scalars_List:{}] [ exp_ ] commutes term_ to the left in dotOps expressions in exp_. block_List contains terms that block the movement of term_.  commuteRule_List contains Rule[]s that are used when terms are commuted.  scalars_List lists scalars that are used in tuOpSimplify. NOTE: all dotOps need to be the same in expressions. *6Sep2018*";
+tuDotTermLeft[term_,block_List:{},pairRule_List:{},scalars_List:{}][exp_]:=Module[{tmp=exp,tmp1,$,cnt=0,$pair,$newpair},
+While[tmp1=!=tmp&&cnt++<20,
 tmp1=tmp;
 tmp=tmp/.dd0:(dd:dotOps)[a0___,Shortest[a_] ,term,b0___] :>If[ListFreeQ[a,block],
-If[tuHasNoneQ[dd[a,term],$atHeads]&&term=!=a,
-dd[a0,term ,a,b0],
-If[tuHasAnyQ[dd[a,term],$atHeads]&&term=!=a,dd[a0,(dd[a,term]/.commuteRule),b0],
-If[tuHasAnyQ[dd[a,term],#[[1]]&/@$equalTerms],dd[a0,dd[a,term]/.$equalTerms,b0],
-dd0
-]
-]
-],
+$pair=dd[a,term];
+$newpair=$pair/.pairRule;
+If[$pair==$newpair,(*no pairRule*)
+$newpair=Reverse[$pair]];(*default*)
+dd[a0,$newpair,b0],
 dd0
 ];
-
 tmp=tmp//Expand//tuOpDistributeF[dotOps]//tuOpSimplifyF[dotOps,scalars];
-xPrint[tmp];(*
-tmp1=tmp;*)
+xPrint[tmp];
 ];
 tmp
-];(*
+];
+(*
 TEST
 $scc=tuGammaIdentities//tuRuleSelect[T[\[Gamma],"d",{a_}].T[\[Gamma],"d",{b_}],{\[Nu]}]//tuPatternRemove//(#/.\[Nu]\[Rule]k/.Dot\[Rule]CenterDot&)//tuAddPatternVariable[\[Mu]]
 T[\[Gamma],"d",{i}]\[CenterDot]T[\[Gamma],"d",{j}]\[CenterDot]T[\[Gamma],"d",{k}]\[CenterDot]T[\[Gamma],"d",{l}]
 %//tuDotTermLeft[T[\[Gamma],"d",{k}],{T[\[Gamma],"d",{i}]},$scc]*)
 Clear[tuDotTermRight]
-tuDotTermRight::usage="tuDotTermRight[term_,block_List:{},commuteRule_List:{},scalars_List:{}][exp_] commutes term_ to the right in dotOps expressions in exp_. block_List contains terms that block the movement of term_.  commuteRule_List contains Rule[]s that are used when terms are commuted.  scalars_List lists scalars that are used in tuOpSimplify. *6Sep2018*";
-tuDotTermRight[term_,block_List:{},commuteRule_List:{},scalars_List:{}][exp_]:=Module[{tmp=exp,tmp1,$,$atHeads,$equalTerms},
-$atHeads=#[[1]]&/@commuteRule;
-xPrint[$atHeads];
-xPrint[$equalTerms=tuRuleSelect[dotOps[a_,a_]][commuteRule]];
-While[tmp1=!=tmp,
+tuDotTermRight::usage="tuDotTermRight[term_,block_List:{},commuteRule_List:{},scalars_List:{}][exp_] commutes term_ to the right in dotOps expressions in exp_. block_List contains terms that block the movement of term_.  commuteRule_List contains Rule[]s that are used when terms are commuted.  scalars_List lists scalars that are used in tuOpSimplify. NOTE: all dotOps need to be the same in expressions. *6Sep2018*";
+tuDotTermRight[term_,block_List:{},pairRule_List:{},scalars_List:{}][exp_]:=Module[{tmp=exp,tmp1,$,cnt=0,$pair,$newpair},
+While[tmp1=!=tmp&&cnt++<20,
 tmp1=tmp;
 tmp=tmp/.dd0:(dd:dotOps)[a0___,term,Shortest[a_] ,b0___] :>If[ListFreeQ[a,block],
-If[tuHasNoneQ[dd[term,a],$atHeads]&&term=!=a,
-dd[a0,a,term ,b0],
-If[tuHasAnyQ[dd[term,a],#[[1]]&/@$equalTerms],dd[a0,dd[term,a]/.$equalTerms,b0],
-If[tuHasAnyQ[dd[term,a],$atHeads]&&term=!=a,dd[a0,(dd[term,a ]/.commuteRule),b0],
-dd0
-]
-]
-],
+$pair=dd[term,a];
+$newpair=$pair/.pairRule;
+If[$pair==$newpair,(*no pairRule*)
+$newpair=Reverse[$pair]];(*default*)
+dd[a0,$newpair,b0],
 dd0
 ];
-
 tmp=tmp//Expand//tuOpDistributeF[dotOps]//tuOpSimplifyF[dotOps,scalars];
-xPrint[tmp];(*
-tmp1=tmp;*)
+xPrint[tmp];
 ];
 tmp
 ];
@@ -3194,7 +3215,7 @@ tmp=tmp/.IntegralOp[a_,b_]:>(tuIntegralSimplify[b,Apply[Sequence[a]]]/.xIntegral
 IntegrandKeep[vars_List][exp_] simplifies IntegralOp's by moving integrand terms not containing any vars_List (Patterns OK) outside of IntegralOp expression. *13Jun2013*)
 IntegrandKeep[vars_List][exp_]:=Module[{tmp,pos,ipos,args,intg,vars0,integrand,terms,pick,keep,out},
 (*First IntegralOp Times terms*)
-pos=ExtractPositionPattern[exp,IntegralOp[_,_]];
+pos=exp//tuExtractPositionPattern[IntegralOp[_,_]];
 Do[
 {vars0,integrand}=Apply[List,pos[[ipos,2]]];
 xPrint[{vars0,integrand}];
@@ -3216,7 +3237,7 @@ ReplacePartTU[exp,pos]
 IntegrandWithout[vars_List] simplifies IntegralOp's by moving integrand terms containing any vars_List (Patterns OK) to outside of IntegralOp expression. Moves NumericQ[] terms outside IntegralOp.  *13Jun2013*)
 IntegrandWithout[vars_List][exp_]:=Module[{tmp,pos,ipos,args,intg,vars0,integrand,terms,pick,keep,out},
 (*First IntegralOp Times terms*)
-pos=ExtractPositionPattern[exp,IntegralOp[_,_]];
+pos=exp//tuExtractPositionPattern[IntegralOp[_,_]];
 Do[
 (*Only applies to first IntegralOp encountered.*)
 {vars0,integrand}=Apply[List,pos[[ipos,2]]];
@@ -3273,7 +3294,7 @@ switchIntegralOpVariable[dRule_Rule][exp_IntegralOp] switches integration variab
 switchIntegralOpVariable[dRule_Rule][exp_IntegralOp]:=Module[{tmp,tmp1,varlist,var1,var2,jacob},
 tmp=exp;
 var1=dRule[[1,1]];
-tmp1=ExtractPositionPattern[dRule[[2]], d[_]];
+tmp1=dRule[[2]]//tuExtractPositionPattern[ d[_]];
 var2=tmp1[[1,2,1]];
 jacob=Delete[dRule[[2]],tmp1[[1,1]]];
 tmp=tmp/.IntegralOp[{a0___,a_,a1___},b_]:>IntegralOp[{a0,{var2},a1},b jacob]/;a==={var1};
@@ -3323,7 +3344,7 @@ formIntegralOpVar:=IntegralOp[var_List,grand_]:>IntegralOp[Sort[Flatten[{#}]&/@v
 (*
 TotalDiffByParts[productexp_, derivative_] generates a expression generated by differentiating by parts where productexp_ is the expression to be converted into a sum of two expressions \[Rule] TotalDerivative - Derivative[term-derivative_] derivative_. 
 derivative_ defines the differential used for conversion.  Handles Times|Dot|xDot productexp_'s. *15Jul2014*)
-tuTotalDiffByParts::usage="tuTotalDiffByParts[productexp_,derivative_] generates a expression generated by differentiating productexp_ by parts. productexp_ is converted into a sum of two expressions: DD[TotalDerivative] - Derivative[productexp_[without derivative_]] derivative_.  The differential operator in derivative_ is used for the resulting expression.  Handles Times|Dot|xDot|CenterDot productexp_'s. EG: tuTotalDiffByParts[a tuDPartial[b,x]] \[LongRightArrow] DD[tuDPartial[a b, x]] - b tuDPartial[a,x].  *15Jul2014*";
+tuTotalDiffByParts::usage="tuTotalDiffByParts[productexp_,derivative_] generates a expression generated by differentiating productexp_ by parts. productexp_ is converted into a sum of two expressions: DD[TotalDerivative] - Derivative[productexp_[without derivative_]] derivative_.  The differential operator in derivative_ is used for the resulting expression.  Handles Times|Dot|xDot|CenterDot productexp_'s. EG: tuTotalDiffByParts[a tuDPartial[b,x], tuDPartial[,x]] \[LongRightArrow] DD[tuDPartial[a b, x]] - b tuDPartial[a,x].  *15Jul2014*";
 tuTotalDiffByParts[productexp_, derivative_]:=Module[{tmp=productexp,var,f1,tmp2,tmp3,dHead=Head[derivative],OP=Times|Dot|xDot|CenterDot,xOP,$s,$placeholder},
 {f1,var}=Apply[List,derivative];(*break out derivative arguements*)
 tmp=tmp/.op:OP->xOP[op];(*Freeze OPs ordering*)
@@ -3332,13 +3353,18 @@ tmp2=tmp/.$s;
 $s=derivative->$placeholder/.op:OP->xOP[op];
 tmp3=tmp/.$s;
 tmp3=dHead[tmp3,var]//.xOP[op_]->op;
-tmp3=tmp3//DerivativeExpand[{$placeholder}];
+tmp3=tmp3//tuDerivativeExpand[{$placeholder}];
 tmp3=tmp3/.$placeholder->f1;
 tmp2=dHead[tmp2,var]//.xOP[op_]->op;(*Replace OPs*)
 Return[DD[tmp2]- tmp3];
 ];
-TotalDiffByParts:=tuTotalDiffByParts;
-TotalDiffByParts1:=tuTotalDiffByParts;(*Compatibility*)
+(**)
+tuTotalDiffByPartsConvert::usage="tuTotalDiffByPartsConvert[productexp_, derivative_] converts a product expression productexp_ by tuTotalDiffByParts[] applied to derivative_ term within productexp_.  Returns Rule[] productexp_ \[Rule] (equivalent expression where DD[] identifies the total derivative term). *22Feb2019*";
+tuTotalDiffByPartsConvert[productexp_, derivative_]:=Module[{$},
+$=productexp/.derivative->derivative[[1]];
+$=tuTotalDiffByParts[$,derivative]->0;
+tuRuleSolve[$,productexp]
+];
 
 tuTotalDiffByParts0::usage="tuTotalDiffByParts[productexp_,derivative_] generates an equivalent expression for productexp_ which is generated by differentiating by parts. productexp_ is the expression to be converted into a sum of two expressions: {TotalDerivative-Derivative[coefficient of derivative_] derivative_}. \[IndentingNewLine]derivative_ defines the differential used for conversion.  Handles Times|Dot|xDot|CenterDot productexp_'s. Power[derivative_,_] expressions result in xDot[] expressions. The DD[] term is the total derivative.  *23Dec2016*";
 tuTotalDiffByParts0[productexp_, derivative_]:=Module[{tmp=productexp,var,f1,tmp2,tmp3,dHead=Head[derivative],OP=Times|Dot|xDot|CenterDot,xOP,$s,$p,$p0,totD},
@@ -3384,7 +3410,7 @@ If[!FreeQ[tmp1,dLocCheck],
 tmp3=tmp1/.(op:OP)[a___,dLocCheck,b___]->xOP[op];
 tmp3=ExtractPattern[xOP[_]][tmp3][[1]];xPrint["tmp3: ","  >>",tmp3,"<< "];
 tmp3=tmp3[[1]][dHead[tmp1,var]];xPrint["tmp3: ","  >>",tmp3,"<< "];
-tmp3=tmp3//DerivativeExpand[{dLocCheck}];xPrint["tmp3: ","  >>",tmp3,"<< "];
+tmp3=tmp3//tuDerivativeExpand[{dLocCheck}];xPrint["tmp3: ","  >>",tmp3,"<< "];
 tmp3=tmp3/.dLocCheck->f1;xPrint["tmp3: ",f1," : ",tmp1,"  >>",tmp3,"<< "];
 tmp=dHead[tmp2,var]-tmp3//simpleDot3[{}];(*
 If[DEBUG>0,Print[">>f1 ",tmp,":",tmp1,":",tmp2,":",f1]];*)
@@ -3422,13 +3448,6 @@ Multiple differential expansion Rule  *)
 ExpandDerivDvar:={(head:tuDExpand)[a_,b_List]:>head[head[a,First[b]],Rest[b]]/;Length[b]>1,(head:DerivOps)[a_,b_List]:>head[a,b[[1]]]/;Length[b]==1};
 
 (**)
-tuDerivativeExpand::usage="tuDerivativeExpand[constants_List][exp_] Expands exp_ with Leibnitz like rules over functions: Flatten[Times|dotOps|Wedge|CircleTimes].  Constants_List may be specified.  e.g., tuDerivativeExpand[{constants}][exp_]. *16August2012";
-tuDerivativeExpand[constants_List:{}][exp_]:=
-Module[{tmp=exp,ops=DerivOps},(*Expansion for multiple tuOOps *)
-tmp=tmp//.tuDExpandMultiVar;
-tmp=tmp//.tuDExpand[ops,constants]
-];
-DerivativeExpand[constants_List][exp_]:=tuDerivativeExpand[constants][exp]
 (**)
 tudExpand::usage="tudExpand[\[Delta]1_,constants_List:{}][exp_] expands differential operator \[Delta]1_ using basic Liebnitz Rule[]s. *29Nov2012*12Nov2017*3Sep2018*";
 tudExpand[\[Delta]1_,constants_List:{}][exp_]:=Module[{tmp=exp,sub,name,tmp0,$dum,n$,ProductOp=Flatten[BraKet|Times|dotOps|Wedge|xWedge|CircleTimes]},
@@ -3532,7 +3551,7 @@ IncludeConstantxPartial[constant_List][exp_]:=Module[{tmp,ops=xTimes,xP=xPartial
 SetAttributes[xTimes,{Flat,Listable,OneIdentity,Orderless,Protected}];
 cpat=Apply[Alternatives,constant];
 tmp=exp//.(cp:cpat)(xp: xP)[a_,b_]:>xp[xTimes[cp, a],b];
-pat=ExtractPositionPattern[tmp,xTimes[__]];
+pat=tmp//tuExtractPositionPattern[xTimes[__]];
 For[i=1,i<=Length[pat],i++,
 If[FreeQ[Apply[List,pat[[i,2]]],ops],(*simple ops only*)
 xPrint[pat[[i]]];
@@ -3544,6 +3563,22 @@ SetAttributes[xTimes,{}];
 ReplacePartTU[tmp,newpat]/.xTimes->Times
 ];
 
+Clear[tuDotOpsNest];
+tuDotOpsNest::usage:="tuDotOpsNest[dotOp_:Dot][exp_] reforms a dotOps operator into nested functional form, e.g., tuDotOpsNest[][ (\!\(\*SubscriptBox[\(\[Delta]\), \(1\)]\).\!\(\*SubscriptBox[\(\[Delta]\), \(2\)]\)-\!\(\*SubscriptBox[\(\[Delta]\), \(2\)]\).\!\(\*SubscriptBox[\(\[Delta]\), \(1\)]\))[fn,f2] ]\[Rule]\!\(\*SubscriptBox[\(\[Delta]\), \(1\)]\)[\!\(\*SubscriptBox[\(\[Delta]\), \(2\)]\)[fn,f2]]-\!\(\*SubscriptBox[\(\[Delta]\), \(2\)]\)[\!\(\*SubscriptBox[\(\[Delta]\), \(1\)]\)[fn,f2]].  dotOp_ defines the dot operator forming the dot expression. tuDotOpsNest does nothing if the Head[exp_] does not contain dotOp_.
+*20Feb2019*";
+tuDotOpsNest[dotOp_:Dot][exp_]:=Module[{$0=exp,$1,$,$argn,$Arg,$head,xBlank,$right},
+$=Head[$0];
+If[FreeQ[$,dotOp],Return[exp]];
+xPrint[$=dotOp [$ , Apply[$Arg,$0]]];
+xPrint[$=$//tuRepeat[{tuOpDistribute[dotOps],tuOpSimplify[dotOps],(dd:dotOps)[a___,b_,aa:c_]:>dd[a,b[aa]]/;!FreeQ[aa,$Arg]},{},5]
+];
+$=$/.$Arg[a__]:>Sequence[a];
+$
+];
+(*TEST
+(Subscript[\[Delta], 1].Subscript[\[Delta], 2]-Subscript[\[Delta], 2].Subscript[\[Delta], 1])[fn,f2]
+%//tuDotOpsNest[]
+*)
 Clear[tuOperatorDot2Nest];
 tuOperatorDot2Nest::usage="tuOperatorDot2Nest[exp_] replaces Dot|xDot operator expressions in exp_ with nested expression, i.e.,  xDot[op1[_],op2[_],op3[_]]\[Rule]op1[op2[op3[_]]].  The arguement of each operator is expressed as Blank[].  *13Nov2015*";
 tuOperatorDot2Nest[exp_]:=Module[{$0=exp,$1,$argn,$Arg,$head,xBlank,$right},
@@ -3574,8 +3609,8 @@ derivativeSummedIndices[varPat_,var_,index_,constants_List][exp_] differentiates
 derivativeSummedIndices[var_,index_,dummy_List,constants_List][exp_]:=Module[{varPat,tmp,ipos},
 tmp=UniqueDummyIndices[dummy][exp];
 tmp=xPartialD[tmp,var];
-tmp=tmp//DerivativeExpand[constants];
-ipos=ExtractPositionPattern[var,index];
+tmp=tmp//tuDerivativeExpand[constants];
+ipos=var//tuExtractPositionPattern[index];
 ipos[[1,2]]=vv__;
 varPat=ReplacePartTU[var,ipos];
 tmp=tmp/.pp:xPartialD[varPat,var]:>DD[derivativeToDelta[index][pp]]//Expand//simpleDot3[{DD[_]}];
@@ -3677,32 +3712,38 @@ Fold[Symmetrize1[#2][#1]&,tmp,tensorindex]
 symmetrize[vars_List][exp_] symmetrizes exp_ wrt vars_List by summing permutations over vars_List.  NOTE: check for unusual results!! *16Dec2013*)
 symmetrize[vars_List][exp_]:=Module[{tmp=exp},
 tmp=tmp//ExpandAll;
-tmp=Distribute[Hold[symmetrizeSub][1,vars][tmp]];(*Hold to stop evaluation before Distribute.*)
+tmp=Distribute[Hold[tuSymmetrizeSymbol][1,vars][tmp]];(*Hold to stop evaluation before Distribute.*)
 tmp//ReleaseHold
 ];
 (*
 antisymmetrize[vars_List][exp_] antisymmetrizes exp_ wrt vars_List by summing permutations over vars_List.  *16Dec2013*)
 antisymmetrize[vars_List][exp_]:=Module[{tmp=exp},
 tmp=tmp//ExpandAll;
-tmp=Distribute[Hold[symmetrizeSub][-1,vars][tmp]];(*Hold to stop evaluation before Distribute.*)
+tmp=Distribute[Hold[tuSymmetrizeSymbol][-1,vars][tmp]];(*Hold to stop evaluation before Distribute.*)
 tmp//ReleaseHold
 ];
-symmetrizeSub[sign_,vars_List][exp_]:=Module[{tmp=exp,tmp1,sum=0,pos,posp,is,vs,cycle,perms,nperm,perm},
+
+tuSymmetrizeSymbol::usage="tuSymmetrizeSymbol[sign_,vars_List][exp_] (anti)symmetrizes exp_ over vars_ with sign_ used as factor for antisymmetric(-1) or symmetric(1) operation. The result is divided by the number of resulting terms. *10Jan2019*";
+tuSymmetrizeSymbol[sign_,vars_List][exp_]:=Module[{tmp=exp,tmp1,sum=0,pos,posp,is,vs,cycle,perms,nperm,perm},
 xPrint["vars,tmp : ",vars,tmp];
-pos=ExtractPositionPattern[tmp,vars];
+pos=tmp//tuExtractPositionPattern[vars];
 is=Map[#[[1]]&,pos]; 
 vs=Map[#[[2]]&,pos]; If[Length[vs]===0,Return[exp]];
 perms=Permutations[vs];
 nperm=Length[perms];
-xPrint[pos,perms];
+xPrint[pos,",",perms];
 Do[
 posp=Thread[Rule[is,perms[[$$i]]]];
 xPrint[posp];
-sum=sum+(sign)^($$i-1)ReplacePartTU[tmp,posp],
+sum=sum+(sign)^($$i-1)tuReplacePart[tmp,posp],
 {$$i,nperm}
 ];
 Return[ sum/nperm]
 ];
+(*
+TEST
+T[A,"ddd",{a,e,d}]\[CenterDot]T[B,"ddd",{a,b,c}]//tuSymmetrizeSymbol[-1,{c,b}]
+f[A,B]//tuSymmetrizeSymbol[-1,{A,B}]*)
 
 (*OrderSymmetricTensor[tensor_Tensor] Canonical orders all slots of tensor_Tensor.  May be useful in simplifying Tensor expressions. 
 *)
@@ -3810,7 +3851,7 @@ While[tmp=!=test,
 test=tmp;
 dummy=tuIndexParser[tmp] [[1]];(*
 Print["test: ",test,dummy];*)
-pos=ExtractPositionPattern[tmp,Tensor[\[Delta],_,_]];
+pos=tmp//tuExtractPositionPattern[Tensor[\[Delta],_,_]];
 For[i=1,i<=Length[pos],i++,
 gindex=tuIndexParser[pos[[i,2]]] [[2]];(*
 Print["gindex:",gindex];*)
@@ -3843,7 +3884,7 @@ tmp/denom
 Replaced *1Mar2013.*)
 ContractUpDn[\[Delta]_][exp_]:=Module[{tmp=exp(*Do ExpandAll to Reduce complexity. But may generate inconsistent dummy indices.*),pos,tmp1,indices,sub,up,dn,test,dummy,contract,i,gindex,contractindex},
 (*Extract Times[\[Delta],...]*)
-pos=ExtractPositionPattern[tmp,Tensor[\[Delta],a_,b_] c_];(* BUG does not find straight Times term *)
+pos=tmp//tuExtractPositionPattern[Tensor[\[Delta],a_,b_] c_];(* BUG does not find straight Times term *)
 pos=Map[#[[1]]->ContractMetric[\[Delta]][#[[2]]]&,pos];
 tmp=ReplacePartTU[tmp,pos]
 ];
@@ -4205,16 +4246,16 @@ MetricContractGexp[g_][exp_]:=Module[{exp1=exp,tmp,tmp1,tmp2,pos,ipos,tmpp,tmpp1
 (*First do simple g contractions*)
 exp1=Expand[exp1]//MetricContractG;
 (*extract g_ products assuming g's are not embedded.*)
-pos=ExtractPositionPattern[exp1,Times[a___,Tensor[g,_,_],b___]];
+pos=exp1//tuExtractPositionPattern[Times[a___,Tensor[g,_,_],b___]];
 For[ipos=1,ipos<=Length[pos],ipos++,
 tmpp1=tmpp=pos[[ipos,2]];
-posg=ExtractPositionPattern[tmpp,Tensor[g,_,_]];
+posg=tmpp//tuExtractPositionPattern[Tensor[g,_,_]];
 (* Go through and contract each g Tensor in product tmpp  *)
 For[iposg=1,iposg<=Length[posg],iposg++,
 (*eliminate one g and test for possible summing Tensors(may include other g's)*)
 tmpp1=tmpp1/.Last[ posg[[iposg]] ]->1;
 (*Examine remaining Tensors(possibly imbedded)*)
-post=ExtractPositionPattern[tmpp1,Tensor[_,_,_]];
+post=tmpp1//tuExtractPositionPattern[Tensor[_,_,_]];
 List["post:",post];
 gUsed=posg;
 For[ipost=1,ipost<=Length[post],ipost++,
@@ -4310,7 +4351,7 @@ tmp=tmp/.g->\[Eta]
 timespaceindex[index_List][exp_] replaces all indices \[Element] index_List in exp_ to timespace@indices.  *11Jul2013*)
 timespaceindex[index_List][exp_]:=Module[{tmp,tmp0=exp,pos,sub,UDrules,$i,$in},
 sub=Map[#->timespace@#&,DeleteDuplicates[index]];
-pos=ExtractPositionPattern[tmp0,IndexVarPatterns];
+pos=tmp0//tuExtractPositionPattern[IndexVarPatterns];
 For[$i=1,$i<=Length[pos],$i++,
 xPrint[pos[[$i,2]],$in=Flatten[tuIndexParser[pos[[$i,2]]]]];
 If[ListMemberQ[$in,index],pos[[$i,2]]= pos[[$i,2]]/.sub];
@@ -4525,15 +4566,15 @@ tmp,
 Derivative[Apply[Sequence,dslot]][var][updnseq]](*Do nothing return*)
 ];
 
-(*Eliminate next arguement in exp_ 
-Usage: EliminateArguments[{A[a_], B[a_]}][exp_ with A[a][b] B[d][e] ]->A[a]B[d]
-Needs named patterns, e.g., a_   
- 12Apr2012 *)
-EliminateArguments[var_List][exp_]:=Module[{sub={},tmp=exp,XXX},
+tuArgRemove::usage:="tuArgRemove[var_List][exp_]
+eliminates arguements of Head[] patterns in var_List, e.g., A[a][b] B[d][e] ]->A[a]B[d] *12Apr2012*";
+tuArgRemove[var_List][exp_]:=Module[{sub={},tmp=exp,XXX},
 sub=MapIndexed[Append[sub,#1[arg__]->XXX[#2,RemovePatterns[#1]]]&,var]//Flatten;
 tmp=exp//.sub;
 tmp=tmp//.XXX[n_,A_]->A
 ];
+EliminateArguments[var_List][exp_]:=tuArgRemove[var][exp];
+
 (**)
 tuEulerEquation::usage="tuEulerEquation[dependent_,independent_][lagrangian_] converts the lagrangian_ into an expression that is appropriate for EulerEquations[].  The input lagrangian_ expression has dependent variables without arguements which are added by specifying dependent_ and independent_.  The tuDerivOps are converted to Mathematica derivatives by tuDerivOps2D[]. EulerEquations[] is applied and the return value is: {xEulerEquations[]expression, EulerEquation output, EulerEquation output after application of tuD2tuDOp[tuDPartial]}. *13Sep2018*";
 tuEulerEquation[dependent_,independent_][lagrangian_]:=Module[{$L=lagrangian,$dependent=Flatten[{dependent}],$independent=Flatten[{independent}],$dummy,i,$,$s,$s1,$xE,$1,$2},
@@ -5006,6 +5047,9 @@ Inner[Times,$2c, $2t,Plus]
 ];
 
 (*
+*)
+
+ (*
 *)tuCoordSolidAngle::usage="tuCoordSolidAngle[n_] produces a List[] of spherical coordinate directional Cosines, \!\(\*SuperscriptBox[\(\[Omega]\), \(i\)]\), of \!\(\*SuperscriptBox[\(S\), \(n\)]\). Also, computes d[\!\(\*SubscriptBox[\(\[CapitalOmega]\), \(n\)]\)\!\(\*SuperscriptBox[\(]\), \(2\)]\). *11Nov2018*";
 tuCoordSolidAngle[n_]:=Module[{$,$0,$n=n+1},
 $0={"spherical coordinates for "[S^ToString[$n-1]],
@@ -5023,7 +5067,6 @@ $=d[Subscript[\[CapitalOmega], $n-1]]^2/.($coordSolidAngle//tuRuleSelect[{d[Subs
 $=d[Subscript[\[CapitalOmega], $n-1]]^2->tuOpIndependentVar[tudExpand,op$[d][$]]//Simplify;
 {$0,$}
 ];
-
 $=tuCoordSolidAngle[2];(ColumnForms[#1,2]&)[$]
 
 
@@ -5321,83 +5364,6 @@ subWeyl={Transpose[\[Alpha]].A.\[Beta]->-Transpose[\[Beta]].Transpose[A].\[Alpha
 
 
 (* ::Input::Initialization:: *)
-MassUnits={length->1/m,Subscript[m, planck]->1/Sqrt[G],Lagrangian->m^dim,CrossSection[\[Sigma]]->m^2,ScatteringAmplitude[\[ScriptCapitalM]]->1}
-
-
-(* ::Input::Initialization:: *)
-IncludeUnits[]:=Module[{},
-PR[CG["eV units conversion:"],
-NL,"Rule[Kilogram -> ElectronVolt]",NL,
-Kg2eV={Newton->(Kilogram Meter/Second^2),Kilogram->Convert[Kilogram,Joule/SpeedOfLight^2]SpeedOfLight^2,Joule->Convert[Joule, ElectronVolt]},NL,
-"Example of the conversion of gravitational constant to Planck mass starting with ",
-tmpMpl2=tmp=HoldForm[Subscript[m, pl]^2->PlanckConstantReduced SpeedOfLight /GravitationalConstant],yield,
-tmpMpl=tmp=ReleaseHold[tmp],yield,
-tmp=(tmpMpl//.Kg2eV),yield,tmp=Map[Sqrt[# ]&,tmp],yield,
-tmp=MapAt[# SpeedOfLight&,tmp,{2}]//PowerExpand,NL,
-CG["Convert2eVRule"],NL,
-Convert2eVRule=Kg2eV;
-sub=HoldForm[Solve[PlanckConstant==1,{Second}]/.Kg2eV],yield,AppendTo[Convert2eVRule,ReleaseHold[sub]],NL,
-tmp=HoldForm[Solve[SpeedOfLight==1,{Meter}]],yield,
-AppendTo[Convert2eVRule,ReleaseHold[tmp]],NL,
-tmp={Barn->Convert[Barn,Meter^2],
-TeV->Tera ElectronVolt,
-GeV->Giga ElectronVolt,
-MeV->Mega ElectronVolt,
-KeV->Kilo ElectronVolt,
-Sec->Second,
-Giga->Convert[Giga,1],
-Mega->Convert[Mega,1],
-Tera->Convert[Tera,1],
-Kilo->Convert[Kilo,1],
-Kelvin->Kelvin BoltzmannConstant
-},yield,
-AppendTo[Convert2eVRule,tmp],
-NL,
-Imply,
-Convert2eVRule=Convert2eVRule//Flatten
-];
-(*Function definitions*)
-Convert2eV[exp_]:=Module[{},MKS[exp]//.Convert2eVRule];
-(*Converts exp_ in ElectronVolt to Meters (simple case).  *)
-Convert2Meter[exp_]:=Module[{tmp=Convert2eV[exp]},
-tmp=tmp/.a_ ElectronVolt->(ElectronVolt/(PlanckConstant SpeedOfLight a) //MKS);
-tmp=tmp/.(a_ /ElectronVolt)->((a PlanckConstant SpeedOfLight)/ElectronVolt//MKS)
-];
-(*Approximate conversion from Exp[a_] to Power[10,b] *)
-E2Base10Approximate=E^b_:>(10^(b/Log[10]//N//Expand)/.a_Real:>Round[a]);
-(*Approximates Times exp with Power[10,] *)
-ApproximateExp10[exp__]:=Module[{tmp=exp},
-tmp=tmp/.Times->xTimes;
-tmp=tmp/.xTimes[a__]:>Exp[PowerExpand[Log[Times[a]]]]/.xTimes->Times//PowerExpand//ExpandAll;
-tmp/.E2Base10Approximate
-];
-];
-
-IncludeUnitsExamples[]:=Module[{},
-IncludeUnits[];
-PR["Sometimes difficult to use Units, e.g. Coulomb force between 2 charges in terms of Newtons: ",
-tmp= qd[1]qd[2]/(4\[Pi] \[Epsilon]d[0]r^2),yield,
-tmp=tmp/.qd[_]->ElectronCharge/.\[Epsilon]d[0]->VacuumPermittivity,NL,
-"Using MKS does not change expression: ",yield,
-tmp=tmp//MKS,NL,
-"But must substitute for MKS units: ",
-sub={Ampere ->Coulomb/Second,Coulomb->Newton Meter/Volt},Imply,
-tmp=tmp//.sub,NL,
-tmp=Hold[Convert2eV[Gram]],yield,
-ReleaseHold[tmp],NL,
-"Example of approximately converting Power[E,b_]->Power[10,b]: ",
-tmp=(E^(17+58/(2+n)) ElectronVolt Tera)/1000000000000,yield,
-tmp/.E^b_:>10^(b/Log[10]//N//Expand)/.a_Real:>Round[a],yield,
-tmp/.E2Base10Approximate,NL,
-
-"Example of the conversion of gravitational constant to Planck mass starting with ",
-tmpMpl2=tmp=HoldForm[Md[pl]^2->PlanckConstantReduced SpeedOfLight /GravitationalConstant],yield,
-subMpl=Map[Sqrt[#]&,ReleaseHold[tmp]//Convert2eV]//PowerExpand
-];
-];
-
-
-(* ::Input::Initialization:: *)
 (*Pauli and Gamma matrix identities*)
 tuGammaList::usage:="tuGammaList[indices_List,dot_:Dot] returns dot_'d \[Gamma](up)'s with indices_List.  *18Jan2013*";
 tuGammaList[indices_List,dot_:Dot]:=Table[T[\[Gamma],"u",{i}],{i,indices}]//Apply[dot,#]&;
@@ -5443,8 +5409,15 @@ T[\[Gamma],"u",{5}].T[\[Gamma],"u",{5}]->Subscript[1, 4],
 tuGammaList[{0,5,0}]->T[\[Gamma],"u",{5}],
 $=ConjugateTranspose[T[\[Gamma],"u",{\[Mu]_}]]->tuGammaList[{0,\[Mu],0}],
 $//tuIndicesLower[{\[Mu],\[Mu]_}],
-$=CommutatorP[T[\[Gamma],"u",{\[Mu]_?(#!=5&)}],T[\[Gamma],"u",{5}]]->0,
-$/.tuCommutatorExpand,
+
+$=CommutatorP[T[\[Gamma],"u",{\[Mu]}],T[\[Gamma],"u",{5}]]->0;
+$//tuAddPatternVariable[\[Mu]],
+$=$/.tuCommutatorExpand;
+tuRuleDelayAdd[$,\[Mu]!=5]//tuAddPatternVariable[\[Mu]],
+$1=$[[1,1]]->$[[2]]-$[[1,2]];
+tuRuleDelayAdd[$1,\[Mu]!=5]//tuAddPatternVariable[\[Mu]],
+$1=$[[1,2]]->$[[2]]-$[[1,1]];
+tuRuleDelayAdd[$1,\[Mu]!=5]//tuAddPatternVariable[\[Mu]],
 
 T[\[Gamma],"u",{a_}].T[\[Gamma],"d",{a_}]->4 Subscript[1, 4],
 

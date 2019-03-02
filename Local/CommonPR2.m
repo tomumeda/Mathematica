@@ -142,7 +142,19 @@ lpos=Position[exp,List[{___}...]];
 MapAt[Grid[#,option]&,exp,lpos]
 ];
 
-ColumnSumExp[exp_]:=exp/.pp:(Plus|Inactive[Plus]|xPlus)[a__]:>"\[Sum]"[ColumnBar[{a}]];
+Clear[ColumnSumExpN]
+ColumnSumExpN::usage="ColumnSumExpN[level_:1][exp_] return Plus expressions with \[CapitalSigma]-symbol[ColumnBar[terms]] down to level level_ of exp_. Primary for display purposes. *22Feb2019*";
+ColumnSumExpN[level_:1][exp_]:=
+Module[{i,$},
+For[
+i=0;$=exp,
+i<level,
+i++,
+$=$/.pp:(Plus|Inactive[Plus]|xPlus)[a__]:>"\[Sum]"[ColumnBar[{a}]]
+];
+$
+]
+ColumnSumExp[exp_]:=ColumnSumExpN[1][exp];
 
 FramedColumn[items_]:=If[Head[items]===List,Framed[Column[items]],Framed[items]];
 (**)
