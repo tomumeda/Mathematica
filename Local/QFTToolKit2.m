@@ -176,18 +176,6 @@ AddBaseIndex[{family,{1,2,3}}];
 CompleteBaseIndices
 ];
 
-(*DefineTensor[
-\[CurlyPhi],\[Psi],m,k,x,y,z,dx,\[Xi],b,c,r,\[Phi],\[Psi]c,J,K,P,a,k,l,e,p,q,dp,dq,j,A,B,\[Gamma],G,n,\[Sigma],h,\[Chi],\[Theta],\[Zeta],x,k,g,\[Delta] ,\[Sigma],\[Omega],\[Omega]1,\[Omega]2,\[Omega]s,\[Omega]a,\[Eta],\[CapitalLambda],A,B,M,\[Delta]\[Omega],\[Delta]\[Alpha],q,p,R,T,S,F,W,J,\[CapitalGamma],f,W,J,\[Epsilon]
-];
-
-labels = {x,\[Delta],g, \[CapitalGamma]};
-SetTensorValues[\[Eta]@uu[i,j],DiagonalMatrix[{1,-1,-1,-1}]]
-SetTensorValues[\[Eta]@dd[i,j],DiagonalMatrix[{1,-1,-1,-1}]]
-Tr\[Eta]=Tr[DiagonalMatrix[{1,-1,-1,-1}]]
-SetTensorValues[\[Eta]@dd[timespace@i,timespace@j],DiagonalMatrix[{1,-1}]]
-SetTensorValues[\[Eta]@uu[timespace@i,timespace@j],DiagonalMatrix[{1,-1}]]
-SetTensorValues[\[Delta]@ud[i,j],IdentityMatrix[4]]
-*)
 (* Add index pattern for xPartialD. *)
 indexspecs1={
 {1,{2},xPartialD[_,index_/;Head[index]=!=List]},
@@ -430,7 +418,7 @@ Editable->False]& @@{SubscriptBox[RowBox[{"[",ToBoxes[a],",",ToBoxes[b],"]"}],"-
 CommutatorP display definition.*)
 MakeBoxes[CommutatorP[a_,b__],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
 SyntaxForm->Automatic,
-Editable->False]& @@{SubscriptBox[RowBox[{"{",ToBoxes[a],",",ToBoxes[b],"}"}],"+"], CommutatorP[a,b]};
+Editable->False]& @@{SubscriptBox[RowBox[{"[",ToBoxes[a],",",ToBoxes[b],"]"}],"+"], CommutatorP[a,b]};
 (*
 HodgeStar display definition*)
 MakeBoxes[HodgeStar[a_],form:StandardForm|TraditionalForm]:=InterpretationBox[#1,#2,
@@ -506,13 +494,16 @@ tuDDown[Dn][ConjugateTranspose[a b  ]e d,b]
 
 (**)
 tuDExpandF::usage="tuDExpandF[ops_,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)][exp_]Expands terms with two argument differential operator ops_, e.g., tuDUp[_]|tuDDown[_], tuDPartial, tuDPartialu, tuDCovariant, tuDCovariantu. Terms that match any of list of constants are treated as constant. Leibnitz rule is applied over functions fnc_. Applies Mathematica function Dt[]. NOTE: Works with single argumennt differential operator, but does not as Liebnitz rule. WARNING: Does not work with nested ops_. *2Mar2015**27Sep2017*8May2018*";
-tuDExpandF[ops_,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)][exp_]:=Module[{sub,tmp=exp,tmp0
+tuDExpandF[ops_:DerivOps,constants_List:{},fnc_:(BraKet|Times|dotOps|Wedge|CircleTimes)][exp_]:=Module[{sub,tmp=exp,tmp0
 },
 While[tmp=!=tmp0,
-tmp0=tmp;xPrint[tmp];
-tmp=tmp//ExpandAll;(*
+tmp0=tmp;
+xPrint[tmp];
+tmp=tmp//Expand;
+xPrint["0::",tmp];(*
 tmp=tmp//.(name:ops)[a_ +  b_]\[Rule]name[a]+ name[b];*)
-tmp=tmp//.(name:ops)[(oo:ProductOp)[a_  ,b__]]:>oo[name[a],b]+oo[a ,If[Length[{b}]>1,name[oo[b]],name[b]]];
+tmp=tmp//.(name:ops)[(oo:productOps)[a_  ,b__]]:>oo[name[a],b]+oo[a ,If[Length[{b}]>1,name[oo[b]],name[b]]];
+xPrint["1::",tmp];
 tmp=tmp//.tuDExpand[ops,constants,fnc];
 (*work around for Dt[a[2]] like terms*)
 tmp=tmp/.dd:ops[a_]:>hideDtIntArg[dd];
@@ -709,18 +700,7 @@ $=$//.(ooA:op1a)[(ooB:op2a)[a_,b___],c___]->ooB[ooA[a,c],b]
 ];
 
 tuOpNestGather::usage="tuOpNestGather[op_,product_:Times][exp_] gathers nested operators op_ into an expression with one op_. Product operator product_ may be specified.,  e.g., xSum[aa[i]\[CenterDot]xSum[bb[k],{k,3},{m,4}],{i,2},{j,3}]//tuOpNestGather[xSum,CenterDot] \[LongRightArrow] xSum[aa[i]\[CenterDot]bb[k],{k,3},{m,4},{i,2},{j,3}]. WARNING: Does not work with Sum, Switch to Inactive[Sum]. *19Oct2015*";
-(*tuOpNestGather[op_,product_:Times][exp_]:=Module[{$=exp,$0},
-While[$0=!=$,
-$0=$;
-$=$//.op[ op[b_,c___],d___]\[Rule]op[b,c,d];
-$=$//.op[a_,b___]+op[c_,b___]\[Rule]op[a+c,b];
-$=$//.(pp:product)[op[a_,d___]  ,op[b_,c___]]\[Rule]op[pp[a, b],c,d];
-$=$//.(pp:product)[a_,op[b_,c___]]\[Rule]op[pp[a,b],c];
-$=$//.(pp:product)[op[b_,c___],a_]\[Rule]op[pp[b,a],c];
-$=$//.op[(pp:product)[a_ , op[b_,c___]],d___]\[Rule]op[pp[a, b],c,d];
-];
-$
-];*)
+
 tuOpNestGather[op_,product_:Times][exp_]:=Module[{$=exp,$0,iproduct=Inactive[product]},
 $=$/.product->iproduct;
 While[$0=!=$,
@@ -737,8 +717,7 @@ tuOpDistribute::usage="tuOpDistribute[op_,over_:Plus] Rule for distributing op_ 
 a.(b-c).d/.tuOpDistribute[dotOps]->a.b.d+a.(-c).d. Works with op_s of form  CommutatorM[arg__\!\(\*SubscriptBox[\(]\), \(\[Rho]\)]\) as well.  *21May2015*23Jun2017*";
 tuOpDistribute[op_,over_:Plus]:={oo:(op/.Dot->dotOps)[a1___,over[a_,ap__],a2___]:>Distribute[ExpandAll[oo],over]
 };
-(*TEST*)
-(*
+(*TEST
 $=a.(b+c.(d+e))
 $//.tuOpDistribute[Dot]
 $=fn[fn[c,n+m]+fn[a+b,1],2]
@@ -758,8 +737,9 @@ a.((b+c)/2).d/. tuOpDistribute[Dot]
 %//tuOpDistributeF[Dot]
 *)
 (****)
-tuOpSimplify::usage="tuOpSimplify[operator_,scalars_List:{}] Rule for simplifying operator[] expressions by removing NumericQ and scalars_ from its arguements. NOTE: Some of these Rule[]s do not seem active for some expressions. BUG: Does not catch some scalars_. *26Sep2015**21Mar2018*";
+tuOpSimplify::usage="tuOpSimplify[operator_,scalars_List:{}] Rule for simplifying operator[] expressions by removing NumericQ and scalars_ from its arguements. NOTE: Some of these Rule[]s do not seem active for some expressions. BUG: Does not catch some scalars_. *26Sep2015**21Mar2018**12Mar2019*";
 tuOpSimplify[operator_,scalars_List:{}]:=Flatten[{
+(op:operator)[c___, (op:operator)[a__] b_,d___]->op[c,a,d]b,
 (op:operator)[a_]:>a/;MatchQ[op,dotOps],
 (op:operator)[a_]->a,(*1Apr2017*)
 (op:operator)[]->1,
@@ -796,6 +776,17 @@ arg=$[[1]];
 head=head/.xBlank[]->arg
 ];
 
+(**)
+tuOpCoefficientInclude[op_]::usage="tuOpCoefficientInclude[op_] Rule for including coefficient of op_ into its first arguement. *9Mar2019*";tuOpCoefficientInclude[op_]:=(dd:Times|dotOps)[a__, op[b_,c___]]->op[dd[a,b],c]
+(*
+*)
+expandDot::usage="expandDot[sub_:{},scalar_:{},func_:{},iterate_:20] functional definition equivalent to tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar]},{func},iterate]. This definition serves as an example of how to collect several repeated operations into one statement.  *22Mar2019*";
+
+expandDot[sub_:{},scalar_:{},func_:{},iterate_:20][exp_]:=tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar]},{func},iterate][exp];
+
+expandDC[sub_:{},scalar_:{},func_:{},iterate_:20]:=expandDot[sub,scalar,func,iterate];(* compatibility: expandDC label used in many old situations *)
+
+(************)
 (*
 Rules for simplifying dotOps with NumericQ and Conjugates *10Sep2012*)
 simpleDot:={
@@ -2122,7 +2113,7 @@ integrate\[Delta]funcRule1[var_List][exp_]:=Module[{tmp,terms},
 tmp=exp//tuExtractPositionPattern[IntegralOp[{var},_]];
 tmp=
 tmp/.\[Delta][a_]:>DiracDelta[a]/;!FreeQ[a,var[[1]]]/.subxIntegrate/.subIntegrate;
-ReplacePartTU[exp,tmp]
+tuReplacePart[exp,tmp]
 ];
 
 tuIntegrate\[Delta]func::usage="tuIntegrate\[Delta]func[var_]exp_?(tuMemberQ[#,{xIntegral[_,_],tuIntegral[_,_]}]&) 'integrates' exp_ over var_ if var_ is contained in \[Delta][] by Solve[]ing the integrand at Arguement[\[Delta][]]->0. NOTE: does not check for valid range of var_. Typical use: exp/.ii:xIntegral[_,_]:>integrate\[Delta]func[\!\(\*SubscriptBox[\(x\), \(3\)]\)][ii] *6Jan2017*";
@@ -2194,8 +2185,8 @@ tuExtractPattern::usage="tuExtractPattern[pattern_,maxlevel_:Infinity][exp_] ext
 tuExtractPattern[pattern_,maxlevel_:Infinity][exp_]:=Module[{pos},
 pos=Position[exp,pattern,{0,maxlevel}];
 Extract[exp,pos]
-];
-ExtractPattern:=tuExtractPattern
+];(*
+ExtractPattern:=tuExtractPattern*)
 
 (*
 ExtractPatternXpat[pattern_][exp_] extracts pattern_ or pattern_List from exp_ and outputs lists of matches to {Xpat[pattern_]} and {exp_} where Xpat[pattern_] was found.  Avoids the Times[] difficulty with Position[].  *26Jul2013*)
@@ -2714,7 +2705,15 @@ tuCommutatorForm::usage="tuCommutatorForm Rules for combining sum of two terms i
 tuCommutatorForm:={
 tt:((sa_:1) a_ .a1_+(sb_:1) a1_ .a_) :>If[sa==-sb,(sa a.a1 +sb (CommutatorM[a1,a] +a.a1)),If[sa==sb,(sa a.a1 +sb (CommutatorP[a1,a] -a.a1)),tt]]
 };
-
+(*
+*)
+expandCom::usage="expandCom[subs_:{}][exp_] expands Commutator expressions *22Mar2019*";
+expandCom[subs_:{}][exp_]:=Block[{tmp=exp},
+tmp=tmp//.tuCommutatorExpand//expandDot[subs];
+tmp=tmp/.toxDot;
+tmp=tmp//tuMatrixOrderedMultiply//expandDot[toDot];
+tmp
+];
 (*
 jacobiID[a_,b_,c_] generates Jacobi identity form from a_,b_,c_. *25Nov2013*)
 jacobiID[a_,b_,c_]:=Module[{$aa,$bb,$cc,$p,$t},
@@ -3162,23 +3161,40 @@ If[FreeQ[tmp,Integrate],
 ExtractIntegrandP:=tuExtractIntegrand;
 
 (**)Clear[tuIntegralSimplify]
-tuIntegralSimplify::usage="tuIntegralSimplify[keep_:{}][exp_] applies tuIntegralSimplify0[,] to all xIntegral's in exp_ which removes from integrand_ of xIntegral[] terms that are not functions of the integration variables. keep_ is an optional list of variables to keep inside the integral. EG: exp//tuIntegralSimplify  *8Mar2016*" ;
+tuIntegralSimplify::usage="tuIntegralSimplify[keep_:{}][exp_] applies tuIntegralSimplify0[,] to all xIntegral's in exp_ which removes from integrand_ of xIntegral[] terms that are not functions of the integration variables. keep_ is an optional list of variables to keep inside the integral. EG: exp//tuIntegralSimplify  *8Mar2016*1Apr2019*" ;
 tuIntegralSimplify[keep_:{}][exp_]:=Module[{tmp=exp}, 
-tmp=tmp/.xIntegral[a_,b__]:>tuIntegralSimplify0[a,b,keep]
+tmp=tmp/.xIntegral[a_,b__]:>tuIntegralSimplify0[a,b,keep];
+tmp=tmp//.xIntegral[-a_,b__]:>-xIntegral[a,b];
+tmp=tmp/.xIntegral[-1,b__]->-xIntegral[1,b];(*??*)(*
+tmp=tmp//tuOpSimplifyFirst[xIntegral];*)
+tmp
 ];
-tuIntegralSimplify0[integrand_,vars0__,extra_:{}]:=Module[{vars,terms,pick,keep,out,ret},
+tuIntegralSimplify0[integrand_,vars0__,extra_:{}]:=Module[{vars,terms,$,pick,keep,out,ret,$head,xfnc,one,sign,xsign},
 (*Make list of integration variables where vars is List of Lists.*)
-vars=Map[If[Head[#]===List,First[#],#]&,{vars0}];xPrint[vars];
+vars=Map[If[Head[#]===List,First[#],#]&,{vars0}];
 (*Integrand must be a Product of terms to be factorable.*)
-ret=If[Head[integrand]===Times,
-terms=Apply[List,integrand];xPrint[terms];
-pick=Map[tuFreeQ[#,Flatten[{vars,extra}]]&,terms];xPrint[pick];
-keep=Apply[Times,Pick[terms,pick,False]];xPrint[keep];
-out=Apply[Times,Pick[terms,pick]];xPrint[out];
-out xIntegral[keep,vars0],
-xIntegral[integrand,vars0]
+
+$=integrand/.-1 i$_->i$;
+If[$===integrand,sign=1,sign=-1];
+$head=Head[$];  xPrint[$head];
+
+$=$head[xsign ,one, $]/.ff:Power->xfnc[ff];
+(*add one for routine to work*)
+xPrint[$,"::",vars,"::",sign];
+(*DOES NOT RETAIN ORDER OF TERMS, needs left,right keep*)
+ret=If[tuHasAnyQ[$head,{Times,dotOps}],
+terms=Apply[List,$];
+xPrint[terms];
+pick=Map[tuFreeQ[#,Flatten[{vars,extra,one,xsign}]]&,terms];xPrint[pick];
+keep=Apply[$head,Pick[terms,pick,False]];xPrint[keep];
+out=Apply[$head,Pick[terms,pick]];
+xPrint[out];
+$head[out, xIntegral[keep,vars0]],
+
+xIntegral[$,vars0](*No Change return*)
 ];
-ret/.xIntegral[0,_]->0
+ret=ret/.xfnc[ff_]->ff/.$head[one,a___]->$head[a]/.one->1/.xsign->sign//tuOpSimplifyF[$head];
+ret/.$[0,_]->0
 ];
 
 tuOpMerge::usage="tuOpMerge[op_:xIntegral] Rule for merge nested operator into one *8Mar2016*";
@@ -3230,7 +3246,7 @@ pos[[ipos,2]]=out IntegralOp[vars0,keep]
 xPrint[{vars0,pos[[ipos,2]]}];
 ,{ipos,Length[pos]}
 ];
-ReplacePartTU[exp,pos]
+tuReplacePart[exp,pos]
 ];
 
 (*
@@ -3252,7 +3268,7 @@ pos[[ipos,2]]=out IntegralOp[vars0,keep]
 xPrint[{vars0,pos[[ipos,2]]}];
 ,{ipos,Length[pos]}
 ];
-ReplacePartTU[exp,pos]
+tuReplacePart[exp,pos]
 ];
 
 (**)
@@ -3484,7 +3500,11 @@ tmp=tmp/.(dname:\[Delta]1)[a_]:> dname[a/. h_[n_?NumberQ]->h[n,n$]];
 tmp=tmp/. \[Delta]1->Dt/.Dt->$Dt;(*
 Print["1:",$tmp=tmp];*)
 tmp=tmp//.($Dt[n$]Derivative[0,1][z_][m_?NumberQ,n$]):>\[Delta]1[z[m]];
-tmp=tmp//.($Dt[n$]^(n_:1) Derivative[0,1][z_][m_?NumberQ,n$]^(nn_:1)):>\[Delta]1[z[m]]^nn $Dt[n$]^(n-nn);(*
+tmp=tmp//.($Dt[n$]^(n_:1) Derivative[0,1][z_][m_?NumberQ,n$]^(nn_:1)):>\[Delta]1[z[m]]^nn $Dt[n$]^(n-nn);
+
+tmp=tmp//.(fn_[$Dt[n$]^(n_:1)]fn_[Derivative[0,1][z_][m_?NumberQ,n$]^(nn_:1)]):>fn[\[Delta]1[z[m]]^nn $Dt[n$]^(n-nn)];
+
+(*
 Print["2:",tmp];*)
 tmp=tmp//.z_[n_?NumberQ,n$]:>z[n]/.$Dt->\[Delta]1;
 (*Print["3:",tmp];*)
@@ -3494,7 +3514,7 @@ tmp
 ];
 
 (**)
-tudExpandvI::usage="tudExpandvI[ops_,constants_List:{}] wrapper for tudExpand[]. Calls  tuOpIndependentVar[tudExpand,op$[ops,constants][exp]] *13Nov2018*";
+tudExpandvI::usage="tudExpandvI[ops_,constants_List:{}] wrapper for tudExpand[]. Calls  tuOpIndependentVar[tudExpand,op$[ops,constants][exp]].  NOTE: does not handle IndependentVars in constants_List. *13Nov2018*";
 tudExpandvI[ops_,constants_List:{}][exp_]:=Module[{},
 tuOpIndependentVar[tudExpand,op$[ops,constants][exp]]
 ];
@@ -3560,7 +3580,7 @@ AppendTo[newpat,pat[[i]]];
 ];
 ];
 SetAttributes[xTimes,{}];
-ReplacePartTU[tmp,newpat]/.xTimes->Times
+tuReplacePart[tmp,newpat]/.xTimes->Times
 ];
 
 Clear[tuDotOpsNest];
@@ -3612,7 +3632,7 @@ tmp=xPartialD[tmp,var];
 tmp=tmp//tuDerivativeExpand[constants];
 ipos=var//tuExtractPositionPattern[index];
 ipos[[1,2]]=vv__;
-varPat=ReplacePartTU[var,ipos];
+varPat=tuReplacePart[var,ipos];
 tmp=tmp/.pp:xPartialD[varPat,var]:>DD[derivativeToDelta[index][pp]]//Expand//simpleDot3[{DD[_]}];
 xPrint["KK",tmp];
 tmp=tmp/.b__  DD[a_]:>ContractUpDn[\[Delta],{a[[2,1]]}][b a[[1]]];(*CHECK only product of Tensor*)
@@ -3856,7 +3876,7 @@ For[i=1,i<=Length[pos],i++,
 gindex=tuIndexParser[pos[[i,2]]] [[2]];(*
 Print["gindex:",gindex];*)
 If[gindex[[1]]===gindex[[2]],(*Self contraction?*)
-(*tmp=ReplacePartTU[tmp,{pos[[i,1]]->NDim}];*)
+(*tmp=tuReplacePart[tmp,{pos[[i,1]]->NDim}];*)
 (*Leave Tr[g] to be determined<-depends on dimension.*)
 Break[]
 ,(*else*)
@@ -3886,7 +3906,7 @@ ContractUpDn[\[Delta]_][exp_]:=Module[{tmp=exp(*Do ExpandAll to Reduce complexit
 (*Extract Times[\[Delta],...]*)
 pos=tmp//tuExtractPositionPattern[Tensor[\[Delta],a_,b_] c_];(* BUG does not find straight Times term *)
 pos=Map[#[[1]]->ContractMetric[\[Delta]][#[[2]]]&,pos];
-tmp=ReplacePartTU[tmp,pos]
+tmp=tuReplacePart[tmp,pos]
 ];
 (* [\[Delta]_,index_List][exp_] Einstein like contraction (up/dn) of terms in exp_ using \[Delta]_ as metric variable. The contraction uses indices ONLY in index_List.  Does nothing if exp_ indices in error, only the presence of \[Delta] indices as symbol in exp_. 
 \[Delta]_ is Tensor of rank 2.  Expanded to handle ops at Level 1.  *19Sep2014.*)
@@ -3929,7 +3949,7 @@ tuIndicesLower[dn[[2]],dn[[1]]][noEta]]
 ];
 
 Clear[tuIndexContractUpDn];
-tuIndexContractUpDn::usage="tuIndexContractUpDn[\[Delta]_,index_List][exp_] Einstein contracts over index_List for Tensor[\[Delta]_,_,_] contained in exp_(a contractable term: {Times, dotOps}). Only works on expressions with valid index combinations. e.g., exp/. pp: productOps[a_,b__]\[RuleDelayed]tuIndexContractUpDn[g,{d}][pp] *11Nov2015*";
+tuIndexContractUpDn::usage="tuIndexContractUpDn[\[Delta]_,index_List] [exp_] Einstein contracts over index_List for Tensor[\[Delta]_,_,_] contained in exp_(a contractable term: {Times, dotOps}). Only works on expressions with valid index combinations. e.g., exp/. pp: productOps[a_,b__]\[RuleDelayed]tuIndexContractUpDn[g,{d}][pp] *11Nov2015*";
 tuIndexContractUpDn[\[Delta]_,index_List][exp_]:=Module[{$=exp,doIt,$test,dummy,error,updn,tensors,$deltas,$pos,$a},(*terms are product of these operators*)
 {dummy,updn,error}=tuIndexParser[$];xPrint["00: ",$,":",{dummy,updn,error},":",index];
 If[Intersection[dummy,index]=={}||error!={},Return[$]];(*No proper dummy index*)
@@ -4357,7 +4377,7 @@ xPrint[pos[[$i,2]],$in=Flatten[tuIndexParser[pos[[$i,2]]]]];
 If[ListMemberQ[$in,index],pos[[$i,2]]= pos[[$i,2]]/.sub];
 ];
 xPrint[pos];
-ReplacePartTU[tmp0,pos]
+tuReplacePart[tmp0,pos]
 ];
 
 (*
@@ -4642,18 +4662,18 @@ indexDeriv_List(*index variables taking part in EL calculation, includes xPartia
 Needs["VariationalMethods`"];*)
 (*modified inputs(indices) to be compatible. Field index_List indices all lower.*)
 xfield=field/.Pattern->xPattern;xPrint[xfield];
-indexPattern=ExtractPattern[xPattern[i_,_]][xfield]//DeleteDuplicates;
+indexPattern=tuExtractPattern[xPattern[i_,_]][xfield]//DeleteDuplicates;
 fieldLow=Fold[tuIndicesLower[#2,#2][#1]&,xfield,indexPattern];
 subLower=DeleteCases[Flatten[{Thread[xfield==fieldLow]}],True]/.Equal->Rule;xPrint[xfield,fieldLow,subLower];
 subLower=Map[MapAt[#/.xPattern[i_,_]->i&,#,2]&,subLower]/.xPattern->Pattern;
 fieldLow=fieldLow/.xPattern->Pattern;
 xPrint["NEW subLower:",subLower];xReturn[];
-fieldLag=Map[ExtractPattern[#][Lagrangian]&,field]/.subLower//Flatten//DeleteDuplicates;xPrint["fieldLag:",fieldLag];xReturn[];
+fieldLag=Map[tuExtractPattern[#][Lagrangian]&,field]/.subLower//Flatten//DeleteDuplicates;xPrint["fieldLag:",fieldLag];xReturn[];
 (*build variables for functional: f\[Rule]f[vars]. up,dn indices are treated as independent index variables.*)
 Map[AppendTo[vars,{#[up],#[dn]}]&,indexDeriv];
 vars=Flatten[vars];xPrint["vars:",vars];xReturn[];
 (*add vars to field\[Rule]field[vars] Rule.*)
-fieldVar=Map[Apply[RemovePatterns[#],vars]&,fieldLag];xPrint["fieldVar:",fieldVar];
+fieldVar=Map[Apply[tuPatternRemove[#],vars]&,fieldLag];xPrint["fieldVar:",fieldVar];
 subvar=Thread[Rule[fieldLag,fieldVar]];xPrint["subvar:",subvar];xReturn[];
 lagrangianLower=Lagrangian/.subLower;xPrint["L: ",lagrangianLower];xReturn[];
 tmp=lagrangianLower//xPartialD2Dupdn[indexDeriv,fieldLow];
@@ -4677,8 +4697,8 @@ tmp=tmp/.$pvar1;
 Apply EulerEquations*)
 xPrint[">>",tmp,";",indexDeriv,";",fieldLow];xReturn[];
 fieldVar=DeleteDuplicates[fieldVar];
-xPrint["EulerEquations[",tmp,",\n",fieldVar,",\n:",vars,"\n]"];xReturn[];
-xEulerEquations[tmp,fieldVar,vars];
+xPrint["EulerEquations[",tmp,",\n",fieldVar,",\n:",vars,"\n]"];(*xReturn[];*)(*
+xEulerEquations[tmp,fieldVar,vars];*)
 tmp=EulerEquations[tmp,fieldVar,vars];
 xPrint[">>",tmp,"\n:",fieldVar,"\n:",vars];xReturn[];
 (*Convert D to xPartialD*)
@@ -4686,7 +4706,7 @@ tmp=tmp//tuDupdn2tuPartial;
 xfield=xfield/.xPattern->Pattern;(*Is this compatible?*)
 xPrint["xfield",xfield,", ",tmp];
 tmp=xEliminateArguments[xfield][tmp];
-tmp=tmp/.xEliminateArguments->EliminateArguments;
+tmp=tmp/.xEliminateArguments->tuArgRemove;
 tmp
 ];
 (*
@@ -4718,15 +4738,23 @@ Print[{tmp\[LongRightArrow]((tmp0=tuEulerLagrangeTensor[$L,$var,{t}]//Flatten)//
 Print["Added together: ",Framed[tmp0//AddRules//Expand//tuIndicesRaise[k,k]]];
 ];
 };
+Clear[tuLagrangianPrepare]
+tuLagrangianPrepare::usage="tuLagrangianPrepare[tensorsymbol_List][lagrangian_] symmetrizes UpDn indices for Tensors with tensorsymbol_'s in lagrangian_.  Returns: {lagrangian[symmetrized], Tensor_variables, Tensor_indices, Derivative_variables}.  These results can be used as inputs to tuEulerLagrangeTensor.  One may need to modify Tensor_indices, Derivative_variables based upon particular needs.  The results of tuEulerLagrangeTensor[] will contains redundant solutions due to the symmetrization of the indices. *8Mar2019*";
 
-(*
-PrepareLagrangian[tensorsymbol_List][lagrangian_] prepares lagrangian_ expression for use in EulerLagrangeTensor[]. tensorsymbol_List is a list of Tensor symbols to be evaluated in the EL equations.  Returns {modified Lagrangian, field_List, dummy_List} where field_List are the Tensors found in lagrangian_ and dummy_List is a list of indices that are extracted for EL variables.  One may need to modify dummy_List and field_List based upon particular needs. The lagrangian_ is modified by up/dn  symmetrizing the indices of tensorsymbol_List.  The result of EulerLagrangeTensor[] contains redundant solutions due to the symmetrization of the indices. *6Jan2014*)
-PrepareLagrangian[tensorsymbol_List][lagrangian_]:=Module[{$L=lagrangian,$tensorsymbol=tensorsymbol,$var,$dummy,i},
-$var=Map[{ExtractPattern[T[#,"u"][i_]][$L],ExtractPattern[T[#,"d"][i_]][$L]}&,$tensorsymbol]//Flatten//DeleteDuplicates//Sort;
-$dummy=$var//tuIndexParser//First;
-Do[$L=Expand[($L+(UpDownIndexSwap[$dummy[[i]]][$L]))/2];xPrint[$L],{i,Length[$dummy]}];
-{$L,$var,$dummy}
-]
+tuLagrangianPrepare[tensorsymbol_List][lagrangian_]:=Module[{$L=lagrangian,$tensorsymbol=tensorsymbol,$var,$tensorIndex,i,$pdvar},
+$L=$L/.Rule[a_,b_]->b;(* change \[ScriptCapitalL]\[Rule]expression \[LongRightArrow] expression *)
+$var=Map[{tuExtractPattern[Tensor[#,_,_]][$L]}&,$tensorsymbol]//Flatten//DeleteDuplicates//Sort;
+$tensorIndex=$var//tuIndexParser//First;
+$pdvar=$L//tuExtractPattern[tuDPartial[_,a_]|tuDPartialu[_,a_]];
+$pdvar=$pdvar/.tuDPartial[_,a_]|tuDPartialu[_,a_]->a//DeleteDuplicates;
+(*symmetrize UpDn indices*)
+Do[$L=Expand[($L+(tuIndexSwapUpDown[$tensorIndex[[i]]][$L]))/2];xPrint[$L],{i,Length[$tensorIndex]}];
+(**)
+{$L,$var,$tensorIndex,$pdvar}
+];
+
+PrepareLagrangian[tensorsymbol_List][lagrangian_]:=tuLagrangianPrepare[tensorsymbol][lagrangian];(* compatibility *)
+
 (*testEulerLagrangeTensor*)
 (*
 LowerTensorIndexByG[tensor_List,G_][exp_] lower indices of Tensor variables in exp_ (by assuming the metric, G_, lowers indices) specified in tensor_List of only the indices specified as patterns. The result is the tensor_List variables Dotted with the metric, G_, and the specified indices lowered.  The summed indices are specified by dum[] indices.  The purpose of this routine is allow for the differential of expressions that have variables that differ by a metric index change.  eg., the TEST below generates
@@ -4833,35 +4861,71 @@ Clear[tuIndexOrderPairs]
 tuIndexOrderPairs::usage="tuIndexOrderPairs is Rule for canonically ordering two dotOps[]d  identical Tensor[]s which may have different indices. *17May2016*";
 tuIndexOrderPairs:=(op:dotOps)[a___,t1:Tensor[B_,_,_] , t2:Tensor[B_,_,_],b___]:>op[a,t2,t1,b]/;OrderedQ[{t2,t1}];
 (**)
-tuIndexDummyOrdered::usage="tuIndexDummyOrdered[exp_] orders Dummy indices of term in Plus[] expression in exp_[]. Includes up/down ordering. *2Jan2016**2Jan2018*";
-tuIndexDummyOrdered[exp_]:=Module[{tmp=exp,order},
-(**)
-order[term_]:=Module[{$t,$index,$pdum,$dums,$dum,$0,$i,$,$ind},
+
+
+tuIndexUpDnOrder//Clear
+tuIndexUpDnOrder::usage="tuIndexUpDnOrder[indices_:{}][exp_] orders Dummy indices in exp_.  Only indices specified by indices_ are ordered if specified and if not specified then all dummy indices are used. NOTE: this routine is designed to operate on exp_ that have unique UpDn dummy indices as in product-like expressions. *6Mar2019*";
+tuIndexUpDnOrder[index_:{}][exp_]:=
+Module[{$indices,$index,$pdum,$dums,$dum,$i,$out,$term,$replace={}},
+$indices={index}//Flatten;
 (*Order index labels*)
-$dums=term//tuIndexParser//First;
-$pdum=term//tuExtractPositionPattern[Apply[Alternatives,$dums]];
-$index=Last[#]&/@$pdum//DeleteDuplicates;
-$index=Thread[$index->$dums];
-$t=term/.$index;
-(*Order up/down indices*)
-$0=$t/.Times|dotOps->xTimes;
-While[Length[$dums]>0,
-$dum=$dums[[1]];$dums=Rest[$dums];xPrint[$dum];
-For[$i=1,$i<Length[$0],$i++,
-$ind=tuIndexParser[$0[[$i]]];xPrint[$ind];
-If[tuHasAnyQ[$ind[[2,2]],$dum],$t=tuIndexSwapUpDown[$dum][$t]];
-]
+$dums=exp//tuIndexParser//First;
+If[Length[$indices]>0,
+$dums=Intersection[$indices,$dums]
+];(*
+Print[$dums];*)
+$pdum=exp//tuExtractPositionPattern[Apply[Alternatives,$dums]];(*
+Print[exp," ",$pdum," ",$dums];*)
+$out=exp;
+For[$i=1,$i<=Length[$dums],$i++,
+$index=$dums[[$i]];
+$dum=Select[$pdum,tuHasAnyQ[#[[2]],$index]&];
+If[Length[$dum]==2,
+(*
+Print["0: ",$dum, $dum[[1,2]],$dum[[2,2]]];*)
+$term=Part[$out,Apply[Sequence,Most[$dum[[1,1]]]]];
+(*
+Print["0a: ",$term];*)
+If[MatchQ[$term,tuDerivOpsD[__]],
+$out=$out//tuIndexSwapUpDown[$dum[[1,2]]];(*Print["Swap1 ",$dum[[1,2]]]*)
+,
+If[!MatchQ[$term,tuDerivOpsU[__]]&&$dum[[1,1,-2]]==3,(*Tensor[Down]*)
+$out=$out//tuIndexSwapUpDown[$dum[[1,2]]](*;Print["Swap2 ",$dum[[1,2]]]*)
+](*NOTE this may change the order of terms.*)
 ];
-$t
 ];
+];
+$out
+];
+
+(*
+TEST
+tuIndexUpDnOrder[{j,k}][fn[fn[T[A,"ud",{i,j}] .T[C,"du",{i,j}](*+T[A,"d",{i}].T[B,"u",{i}]*)]]]*)
+
+tuIndexDummyOrdered::usage="tuIndexDummyOrdered[indices_:{}][exp_] UpDn orders Dummy indices_ of each term found in Plus[] expressions of exp_.  If indicies_ are not specified then all dummy indices are used.  *2Jan2016**2Jan2018**6Mar2019*";
+tuIndexDummyOrdered[indices_:{}][exp_]:=Module[{tmp=exp},
 (**)
 tmp=tmp//Expand;
-tmp=tmp/.Plus->xPlus/.pp:xPlus[a__]:>Map[order[#]&,pp]/.xPlus->Plus;
+tmp=tmp/.Plus->xPlus;
+If[tuHasAnyQ[tmp,xPlus],
+tmp=tmp/.pp:xPlus[a__]:>(tuIndexUpDnOrder[indices][#]&/@pp);
+tmp=tmp/.xPlus->Plus,
+tmp=tuIndexUpDnOrder[indices][tmp]
+];
 Return[tmp];
 ];
-OrderTensorDummyIndices[exp_]:=tuIndexDummyOrdered[exp];(*Compatibility*)
+(*
+TEST
+$=fn[fn[T[A,"ud",{i,j}] .T[C,"du",{i,j}]+T[A,"d",{i}].T[B,"u",{i}]]]
+$//tuIndexUpDnDummyOrdered[]
+$//ColumnSumExp;
+*)(*
+$tmp//Select[#,tuHasAnyQ[#,\[Alpha]]&]&
+%[[3;;4]]/.Times\[Rule]Dot
+%//tuIndexUpDnDummyOrdered[\[Alpha]]*)
 
 (**)
+
 Clear[tuIndexOrderDummy]
 tuIndexOrderDummy::usage="tuIndexOrderDummy[symTensor_List][exp_]
 canonically orders terms in exp_ containing symmetric Tensor[]s whose symbols are specified in symTensor_List. Tensor[]s in symTensor_List are Ordered. *1Mr2018*";
@@ -5002,12 +5066,21 @@ $=$//Activate;
 $
 ];
 (**)
-tuSumIndexUnique::usage:="tuSumIndexUnique[exp_] replaces Sum|xSum|Inactive[Sum] indices in exp_ with Unique[] indices. *15Jan2016*";
-tuSumIndexUnique[exp_]:=Module[{$=exp,indices={},sums},
-sums=$//tuExtractPositionPattern[{(Sum|xSum|Inactive[Sum])[__]}];
-indices=Map[#->Unique[i][#]&/@Apply[List,#[[2,2;;-1]]]&,sums];
-sums=MapIndexed[First[#1/.indices[[#2]]]&,sums];
-$=tuReplacePart[$,sums]
+tuSumIndexUnique::usage:="tuSumIndexUnique[exp_] replaces Sum|xSum|Inactive[Sum] indices in exp_ with Unique[] indices. *15Jan2016*28Mar2019*";
+tuSumIndexUnique[exp_]:=Module[{$,indices={},sums,$sums,i$,xList,
+head=Sum|xSum|Inactive[Sum]},
+sums=exp//tuExtractPositionPattern[{head[__]}];
+xPrint[sums];
+$sums=sums/.head->xList;xPrint[$];
+For[i$=1,i$<=Length[$sums],i$++,
+$=indices=$sums[[i$]]//tuExtractPattern[xList[__]]//First;
+$=First[Flatten[{#}]]&/@(Rest[$]);
+$=Map[#->Unique[n][#]&,$]/.xList->List;
+xPrint[i$," ",sums[[i$]]=sums[[i$]]/.$," ",$];
+];
+xPrint[sums];
+
+$=tuReplacePart[exp,sums]
 ];
 (**)
 tuTensorSimplify::usage="tuTensorSimplify[exp_Plus] simplifies Plus[] Tensor expression, exp_, by reindexing Dummy indices.  Works with Tensor and tuDerivOps expressions. *11Sep2015*";
@@ -5135,14 +5208,30 @@ CombineDeriv Rules for combining sum and differences of Deriv s*31August2012*)
 CombineDeriv:={(op:DerivOps)[a_,b_]+(op:DerivOps)[c_,b_]->op[a+c,b],(op:DerivOps)[a_,b_]-(op:DerivOps)[c_,b_]->op[a-c,b],
 (op:DerivOps)[a_,b_]c_+(op:DerivOps)[c_,b_]a_->op[a c,b](*inverse chain rule*)
 }
-(*
-lagrangexPartialD Rules[]s simplify expressions that often occur in derivation using Lagrangians.  *22Apr2014*)
-lagrangexPartialD={xPartialD[(xPartialDu|xPartialD)[a_,b_],(xPartialDu|xPartialD)[c_,d_]]:>0/;a=!=c,
-xPartialD[xPartialDu[a_,b_],xPartialDu[a_,d_]]:>T[\[Delta],"ud"][b,d],
-xPartialD[xPartialDu[a_,b_],xPartialD[a_,d_]]:>T[\[Delta],"uu"][b,d],
-xPartialD[xPartialD[a_,b_],xPartialDu[a_,d_]]:>T[\[Delta],"dd"][b,d],
-xPartialD[a_,(xPartialDu|xPartialD)[b_,d_]]:>0/;FreeQ[a,(xPartialDu|xPartialD)]
+
+tuEulerPartials::usage="tuEulerPartials are Rule[]s that handle tuDPartial's that result from tuEulerLagrangeTensor which are not handled properly, e.g., ConjugateTranspose[] that result from work with EulerLagrange equations.  *2Apr2014* *7Mar2019*";
+tuEulerPartials:={
+tuDPartial[tuDPartial[T[s_,"d",{a_}],b_],tuDPartial[T[s_,"d",{c_}],b_]]:>T[\[Delta],"du"][a,c],
+tuDPartial[tuDPartial[T[s_,"u",{a_}],b_],tuDPartial[T[s_,"u",{c_}],b_]]:>T[\[Delta],"ud"][a,c],
+tuDPartial[tuDPartialu[T[s_,"d",{a_}],b_],tuDPartialu[T[s_,"d",{c_}],b_]]:>T[\[Delta],"du"][a,c],
+tuDPartial[tuDPartialu[T[s_,"u",{a_}],b_],tuDPartialu[T[s_,"u",{c_}],b_]]:>T[\[Delta],"ud"][a,c],
+
+tuDPartial[tuDPartialu[a_,b_],tuDPartialu[a_,d_]]:>T[\[Delta],"ud"][b,d],
+tuDPartial[tuDPartialu[a_,b_],tuDPartial[a_,d_]]:>T[\[Delta],"uu"][b,d],
+tuDPartial[tuDPartial[a_,b_],tuDPartialu[a_,d_]]:>T[\[Delta],"dd"][b,d],
+tuDPartial[tuDPartial[a_,b_],tuDPartial[a_,d_]]:>T[\[Delta],"du"][b,d],
+
+tuDPartial[tuDPartialu[a_,b_],tuDPartial[c_,d_]]:>0/;a=!=c,
+tuDPartial[tuDPartial[a_,b_],tuDPartial[c_,d_]]:>0/;a=!=c,
+tuDPartial[tuDPartialu[a_,b_],tuDPartialu[c_,d_]]:>0/;a=!=c,
+tuDPartial[tuDPartial[a_,b_],tuDPartialu[c_,d_]]:>0/;a=!=c,
+tuDPartial[a_,tuDPartial[b_,d_]|tuDPartialu[b_,d_]]:>0/;tuHasNoneQ[a,{tuDUp["\[PartialD]"][__],tuDDown["\[PartialD]"][__]}],
+tuDPartialu[a_,tuDPartial[b_,d_]|tuDPartialu[b_,d_]]:>0/;tuHasNoneQ[a,{tuDUp["\[PartialD]"][__],tuDDown["\[PartialD]"][__]}],
+
+tuDPartial[a_,b_]tuDPartialu[ccc:ConjugateTranspose|Det,a_]->tuDPartial[ccc[a],b],
+tuDPartialu[ccc:ConjugateTranspose|Det,a_]->ccc[Subscript[1, dim]]
 };
+lagrangexPartialD:=tuEulerPartials(*compatibility*)
 
 
 (* ::Input::Initialization:: *)

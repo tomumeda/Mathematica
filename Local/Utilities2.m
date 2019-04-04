@@ -128,10 +128,28 @@ or Save[SaveFile,variable_List];
 To retrieve output definitions from file in current directory.
 	Get[NotebookDirectory[]<>"LectureB2011.10.10.out"]
 or   Get[$HomeDirectory<>"/Mathematica/PeskinSchroeder/FinalProject1.out"]*)
-tuSaveAllVariables::usage="tuSaveAllVariables[file_:toSaveFile] saves all Context[Global'] variables to file_. To retrieve output definitions from file_ use \[IndentingNewLine]	Get[NotebookDirectory[]<>notebook.out **";
+tuSaveAllVariables::usage="tuSaveAllVariables[file_: toSaveFile] saves all Context[Global'] variables to file_. To retrieve output definitions from file_ use \[IndentingNewLine]	Get[NotebookDirectory[]<>notebook.out **";
 tuSaveAllVariables[file_:SaveFile]:=Module[{$$},
 $$=Names["$*"|"e*"];
 $$=Select[$$,Context[#]=="Global`"&& Length[StringCases[#,RegularExpression["[$]"]]]<2&];
+$$=Inactive[Save][file,$$ ];
+$$//Activate
+];
+
+
+tuSaveVariables::usage="tuSaveVariables[ list_Hold ,file_: toSaveFile] saves list_ of variables in the form Hold[list_of_variables] (for all Context[Global'] variables if list_ is not specified)  to file_.   To retrieve output definitions from file_ use Get[NotebookDirectory[]<>notebook.out *10Mar2019*";
+tuSaveVariables[list_:{},file_:SaveFile]:=Module[{$$},
+xPrint[list];
+If[Length[list]==0,
+$$=Names["$*"|"e*"];
+$$=Select[$$,Context[#]=="Global`"&& Length[StringCases[#,RegularExpression["[$]"]]]<2&],
+
+$$={list}//Flatten;
+$$=Thread[$$];
+$$=ToString/@$$;
+$$=StringReplace[$$,{"Hold["~~a_->a,b_~~"]"->b}];
+];
+xPrint[$$];
 $$=Inactive[Save][file,$$ ];
 $$//Activate
 ];
@@ -191,10 +209,11 @@ tuRulePositiveNegativePower[rules_]:=Module[{$=rules,rr$},
 $=$/.(rr:Rule|RuleDelayed)[Power[a_,b_],c_]:>(rr$[Power[a,-b],Power[c,-1]]/.rr$->rr)
 ];
 (**)
-tuRuleAll::usage="tuRuleAll[rules_,simplerArg_:False] extracts all possible rules from tuRule[rules_] by extracting nested Rule[]s and combining with Reverse[Rules[]]. If simplerArg_\[Rule]True then Rules are reformed so -a\[Rule]b -> a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \(2\)]\)->b \[Implies] a\[Rule]Sqrt[b]. *22Jul2017*1Feb2018*";
-tuRuleAll[rules_,simplerArg_:True]:=Module[{$=rules},
+tuRuleAll::usage="tuRuleAll[rules_,simplerArg_:False,threadOverList_:False,allVar_:False] extracts all possible rules from tuRule[rules_] by extracting nested Rule[]s and combining with Reverse[Rules[]]. If simplerArg_\[Rule]True then Rules are reformed so -a\[Rule]b -> a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \(2\)]\)->b \[Implies] a\[Rule]Sqrt[b]. *22Jul2017*1Feb2018*";
+tuRuleAll[rules_,simplerArg_:True,threadOverList_:False,allVar_:False]:=Module[{$=rules},
+$={$,1/#&/@#&/@$};(*1/Rule[]*)
 $=tuRule[$];
-$=tuRuleSeparate[#,simplerArg]&/@$//Flatten;
+$=tuRuleSeparate[#,simplerArg,threadOverList,allVar]&/@$//Flatten;
 $//DeleteDuplicates
 ];
 (**)
@@ -205,9 +224,9 @@ $=$/.xRule->Rule
 ];
 (**)
 Clear[tuRuleSeparate]
-tuRuleSeparate::usage="tuRuleSeparate[exp_Rule,simplerArg_:False,threadOverList_:False] separate string of Rule[]s, e.g., a\[Rule]b\[Rule]c, into a List[] of separate Permuted Rule[]s, e.g., {a\[Rule]b,b\[Rule]c,b->a,c->b,c->a}. If simplerArg_\[Rule]True then Rules are reformed so -a\[Rule]b -> a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \(2\)]\)->b \[Implies] a\[Rule]Sqrt[b]. If threadOverList_\[Rule]True then exp_ like a\[Rule]{b,c} are treated as a\[Rule]b\[Rule]c. *30Aug2017*1Feb2018*22Feb2018*";
-tuRuleSeparate[exp_Rule,simplerArg_:False,threadOverList_:False]:=Module[{$=exp,xList},
-$=If[threadOverList,Thread[$],$/.List->xList];
+tuRuleSeparate::usage="tuRuleSeparate[exp_Rule,simplerArg_:False,threadOverList_:False,allVar_:False] separate string of Rule[]s, e.g., a\[Rule]b\[Rule]c, into a List[] of separate Permuted Rule[]s, e.g., {a\[Rule]b,b\[Rule]c,b->a,c->b,c->a}. If simplerArg_\[Rule]True then Rules are reformed so -a\[Rule]b -> a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \(2\)]\)->b \[Implies] a\[Rule]Sqrt[b]. If threadOverList_\[Rule]True then exp_ like a\[Rule]{b,c} are treated as a\[Rule]b\[Rule]c. *30Aug2017*1Feb2018*22Feb2018*";
+tuRuleSeparate[exp_Rule,simplerArg_:False,threadOverList_:False,allVar_:False]:=Module[{$=exp,$0,xList,$vars,$1},
+$0=$=If[threadOverList,Thread[$],$/.List->xList];
 (*a\[Rule]b->c Condition*)
 If[tuHasNoneQ[$,xList],$=$/.Rule|RuleDelayed->List];
 $=$//Flatten//DeleteDuplicates;xPrint[$];
@@ -218,6 +237,15 @@ $=$/. Rule[-a_,b_]->Rule[a,-b];
 $=$/. Rule[cc_ a_,b_]:>Rule[a,b/cc]/;NumericQ[cc];
 $={$,$//tuRuleNoPower}//Flatten
 ];
+If[allVar,
+(*Add tuRuleSolve for all variables*)
+$vars=tuVarsInExp[$0];
+$1=Map[tuRuleSolve[First[Flatten[{$0}]],#]&,$vars];(*Not the best technique. USE WITH CARE*)
+$1=$1/.xList->List;
+xPrint[$0," :: ",$vars," ",$1];
+$=Append[$,$1]//Flatten;
+];
+
 $=DeleteCases[$,(Rule|RuleDelayed)[a_,a_]]//DeleteDuplicates
 ];
 (**)
@@ -230,6 +258,9 @@ $rules=Cases[$rules,(Rule|RuleDelayed)[#,_]]&/@$keys//Flatten;
 $rules=Select[$rules,tuHasAllQ[#,Flatten[{with}]]&];
 $rules=Select[$rules,tuHasNoneQ[#,Flatten[{without}]]&]
 ];
+tuRuleSelectvI[key_,with_:{},without_:Null][rules_]:=tuOpIndependentVar[tuRuleSelect,op$[key,with,without][rules]];
+
+
 tuRuleSelectReverse[rules_List][key_]:=tuRuleSelect[key][rules];(*compatible*)
 
 (**)
@@ -298,6 +329,7 @@ xPrint[SolveArgs,":",tmp];
 tmp=tmp//RemovePatterns;xPrint[tmp];
 tmp=tmp//.Reverse/@independentLab;
 tmp=tmp//.Reverse/@subX//.Xpat[a_]->a;
+
 tmp//Flatten
 ];
 (**)
@@ -581,6 +613,13 @@ tmp=tmp/.xPattern->Pattern
 ];
 RemovePatterns[exp_]:=tuPatternRemove[exp];(*Compatibility*)
 
+tuPatternAll::usage="tuPatternAll[patt_] returns List[patt_, 1/patt_], i.e., the original patt_ and its reciprocal.  *29Mar2019*";
+tuPatternAll[patt_]:=Module[{$,$0},
+$0=Flatten[{patt}];
+$=1/#&/@$0;
+Flatten[{$0,$}]
+];
+
 (*
 RuleVarPattern[var_List][rule_Rule] converts var in Rule to Pattern[var,Blank[]]*)
 RuleVarPattern[var_List][rule_Rule|rule_RuleDelayed]:=Module[{tmp=rule[[1]]},
@@ -794,7 +833,7 @@ pos=tmp//tuExtractPositionPattern[Op];
 For[i=1,i<=Length[pos],i++,
 pos[[i,2]]=Distribute[pos[[i,2]],func]
 ];
-ReplacePartTU[tmp,pos]
+tuReplacePart[tmp,pos]
 ];
 DistributeOp[Op_][exp_]:=tuDistributeOp[Op][exp];
 
@@ -808,7 +847,7 @@ For[i=1,i<=Length[pos],i++,
 pos[[i,2]]=pos[[i,2]]//.ii:xOp:>Thread[ii];
 ];
 If[Head[Op]===IntegralOp,pos=pos/.xInt[a_][b_]->IntegralOp[a,b]];
-ReplacePartTU[tmp,pos]//First
+tuReplacePart[tmp,pos]//First
 ];
 
 (**)
@@ -926,7 +965,9 @@ If[op===Log,
 tmp=tmp//.a_ Log[b_]->Log[b^a];xPrint[tmp];
 tmp=tmp//.Log[a_]+Log[b_]->Log[a b];xPrint[tmp],
 If[op===Sqrt,
-tmp=tmp//.{c___ Sqrt[a_] Sqrt[b_]->c Sqrt[a b],c___ Sqrt[a_]/Sqrt[b_]->c Sqrt[a /b]};
+tmp=tmp//.{c___ Sqrt[a_] Sqrt[b_]->c Sqrt[a b],c___ Sqrt[a_]/Sqrt[b_]->c Sqrt[a /b]},
+(*default*)
+tmp=tmp//.(pp:productOps)[c1___,op[a1_,p1___],op[a2_,p2___],c2___]->pp[c1,op[pp[a1,a2],p1,p2],c2];
 ];
 ];
 tmp
@@ -1025,10 +1066,12 @@ $=$//tuPositionNestDelete;(*top most Plus*)
 $=Map[MapAt[Apply[List,#]&,#,2]&,$];
 $=Select[Flatten[$[[1,2]]],tuHasAllQ[#,Flatten[{patterns}]]&];
 $=Select[$,tuHasNoneQ[#,Flatten[{nopattern}]]&];
+$=$/.xIntegral->xxIntegral;(*Do not Activate*)
 $=$//Activate;
 If[withPositions,
 $=exp//tuExtractPositionPattern[$];
 ];
+$=$/.xxIntegral->xIntegral;
 $
 ];
 (**)
@@ -1047,14 +1090,7 @@ If[showRule=!=Null,{$s,$/.$s},$/.$s]
 ];
 
 Clear[tuTermApplyEach];
-tuTermApplyEach::usage="tuTermApplyEach[
-selectPattern_List:{},
-noselectPattern_List:{},
-rules_List:{},
-operations_List:{},
-nIterations_:10]
-[exp_]
- selects Level[1] Plus[] terms and isolated terms in expression exp_  based upon selectPattern_List and noselectPattern_List applies rules_List, operations_List to the EACH selected terms using tuRepeat[,nIterations]. It returns altered exp_.  *18May2016**1Mar2018*10Dec2018*";
+tuTermApplyEach::usage="tuTermApplyEach[ selectPattern_List:{}, noselectPattern_List:{}, rules_List:{}, operations_List:{}, nIterations_:10] [exp_] selects Level[1] Plus[] terms and isolated terms in expression exp_  based upon selectPattern_List and noselectPattern_List applies rules_List, operations_List to the EACH selected terms using tuRepeat[,nIterations]. It returns altered exp_.  *18May2016**1Mar2018*10Dec2018*";
 tuTermApplyEach[selectPattern_List:{},noselectPattern_List:{},rules_List:{},operations_List:{},nIterations_:10][exp_]:=Module[{$,xfnc,zero},
 xfnc[$_]:=Module[{$s0,$s},
 $s0=$s=$//tuTermSelect[selectPattern,noselectPattern];
