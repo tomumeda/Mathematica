@@ -738,14 +738,14 @@ a.((b+c)/2).d/. tuOpDistribute[Dot]
 *)
 (****)
 tuOpSimplify::usage="tuOpSimplify[operator_,scalars_List:{}] Rule for simplifying operator[] expressions by removing NumericQ and scalars_ from its arguements. NOTE: Some of these Rule[]s do not seem active for some expressions. BUG: Does not catch some scalars_. *26Sep2015**21Mar2018**12Mar2019*";
-tuOpSimplify[operator_,scalars_List:{}]:=Flatten[{
-(op:operator)[c___, (op:operator)[a__] b_,d___]->op[c,a,d]b,
+tuOpSimplify[operator_,scalars_List:{}]:=Flatten[{(*
+(op:operator)[c___, (op:operator)[a__] b_,d___]\[Rule]op[c,a,d]b, This is incorrect.*)(*??BUG Flatten like Attribute but Order ambiguous. Assumes b is scalar.*)
 (op:operator)[a_]:>a/;MatchQ[op,dotOps],
-(op:operator)[a_]->a,(*1Apr2017*)
+(op:operator)[a_]->a,(*OneIdentity 1Apr2017*)
 (op:operator)[]->1,
 (op:operator)[Longest[a___],(cc:c_^(n_:1)) d_,Longest[e___]]:>cc op[a,d,e]/;((NumericQ[c])||tuMemberQ[c,scalars])&&((NumericQ[n])||tuMemberQ[n,scalars]),
 (op:operator)[Longest[a___],(cc:c_^(n_:1))  ,Longest[d___]]:>cc op[a,d]/;(((NumericQ[c])||tuMemberQ[c,scalars])&&((NumericQ[n])||tuMemberQ[n,scalars])),
-Conjugate[(op:operator)[a__]]:>Apply[op,Thread[Conjugate[{a}]]]
+Conjugate[(op:operator)[a__]]:>Apply[op,Thread[Conjugate[{a}]]]  (*Does not belong here.*)
 }];
 (**)
 tuOpSimplifyF::usage="tuOpSimplifyF[operator_,scalars_List:{}] [exp_] simplifies operator[] expressions by removing NumericQ and scalars_ from its arguements. operator_ may be somewhat complex in that operators like CommutatorM[arg__\!\(\*SubscriptBox[\(]\), \(\[Rho]\)]\) may be specified.  arg__ is needed to specify position of the arguement. NOTE: Applies tuOpSimplify Rule[]s above. *10Feb2016*";
@@ -1279,8 +1279,26 @@ $list[n]=$;
 
 Table[$list[i],{i,0,dim}]/.i$->up/.j$->dn
 ];
+(***)
+tuLeviCivitaExpand1//Clear
+tuLeviCivitaExpand1::usage="tuLeviCivitaExpand1[symbol_List:{},index_List:{0,1,2,3}][exp_] expands exp_ LeviCivita terms by summing over symbol_List (if provided) or all indices in the LeviCivita tensor using the index values provided by index_List. Metric factor is not yet accounted; assumes all positive values. *16Apr2019*";
+tuLeviCivitaExpand1[symbol_List:{},index_List:{0,1,2,3}][exp_]:=Module[{tmp,terms,indices,$index},
+tmp=Expand[exp];
+terms=tmp//tuExtractPositionPattern[a_ Tensor[\[Epsilon],_,_]];
+For[iterm=1,iterm<=Length[terms],iterm++,
+$index=tuExtractPattern[Tensor[\[Epsilon],_,_]][terms[[iterm,2]]];
+indices=$index[[1,2]];
+If[Length[symbol]==0,
+indices=Select[indices,!NumberQ[#]&],
+indices=symbol];
+indices=Map[{#,index}&,indices];
+terms[[1,2]]=xSum[terms[[iterm,2]],Apply[Sequence,indices]]/.xSum->Sum;
+terms[[iterm,2]]=terms[[iterm,2]]/.tt:Tensor[\[Epsilon],_,_]:>tuLeviCivitaNumeric[index][tt];
+];
+tuReplacePart[tmp,terms]
+];
 
-
+(**)
 tuLeviCivitaExpand::usage="tuLeviCivitaExpand[index_List,dimension_List:{1,2,3,4}][exp_] Sum[]s LeviCivita terms in exp_ over index_List for dimension_List. *14Jun2017*";
 tuLeviCivitaExpand[index_List,dimension_List:{1,2,3,4}][exp_]:=Module[{tmp=exp,rangelist,$test},
 tmp=tmp//tuIndexSum[index,dimension];(*
@@ -1409,23 +1427,23 @@ tmp
 ];
 simplifyLeviCivita[dimension_Integer][exp_]:=tuLeviCivitaSimplify[dimension][exp];
 
-(*
-numericLeviCivita[metric_List][exp_Tensor]computes the numerical value of Levi-Civita tensor with all numeric indices.  metric_List are the values of the diagonal for the metric tensor referenced by {up|dn}->{0,1,...}. 
-exp_Tensor is the Levi-Civita Tensor. *24July2013*)
-numericLeviCivita[metric_List][exp_Tensor]:=Module[{tmp=exp,sym,up,dn,indices,allnumeric},
-{sym,up,dn}=Apply[List,tmp];
+tuLeviCivitaNumeric::usage="tuLeviCivitaNumeric[metric_List][exp_Tensor]  evalates LeviCivita exp_Tensor. The metric_List specifies the diagonal of the metric, e.g., {-1,1,1,1} for this application and are used for raising indices of exp_Tensor. Assumes that indices begin with 0.  *16Apr2019*";
+tuLeviCivitaNumeric[metric_List][exp_Tensor]:=Module[{tmp=exp,sym,up,dn,indices,allnumeric},
+{sym,up,dn}=Apply[List,exp];
 indices=(up+dn)/.Void->0;
 allnumeric=!MemberQ[(NumericQ/@indices),False];
-If[allnumeric&&Max[indices]<Length[metric],(*Test indicies to see if they are within range of dimension. There is confusion with meaning of \[Epsilon][0,3,2], apply same algorithm. But it is a PROBLEM since there are cases where \[Epsilon] is used with fewer indices then there are dimensions. Maybe we should pass the metric signature.*)
-(*Apply metric factors for Raising index. The first index is always 0 for the time.*)
+If[allnumeric&&Max[indices]<Length[metric],(*Test indicies to see if they are within range of dimension.*)
+(*Apply metric factors for Raising index. The first index is always 0 for the time being.*)
 tmp=Map[metric[[#+1]]&,DeleteCases[dn,Void]];
 tmp=Apply[Times,Append[tmp,1]];
 tmp=tmp Signature[indices];
 ];
 tmp
-];(*TESTS
-{\[Epsilon]@dd[3,2],\[Epsilon]@ddd[1,2,3],\[Epsilon]@uuu[1,2,3]}
-simplifyLeviCivita[4]/@%*);
+];
+(*
+TEST
+T[\[Epsilon],"du",{0,2}]//numericLeviCivita[{-1,1,1,1}]*)
+numericLeviCivita:=tuLeviCivitaNumeric;
 
 (*
 raiseLeviCivitaDummyIndices[term_Times|Dot|xDot] raises all indices of LeviCivita Tensor in term_Times|Dot|xDot.  *15Oct2012*)
@@ -1652,6 +1670,30 @@ If[Length[#]==1,#//First,Id[d]]
 SetAttributes[Wedge,Attributes[Dot]];
 (*TEST removed Attributes to be compatible with diffgeo.m*)
 
+Clear/@{tuWedgeSimplify1};
+tuWedgeSimplify1::usage="tuWedgeSimplify1[keep_List:{difForm[_]}][exp_] Distributes Wedge exp_ over Plus expression and retains terms whose patterns are on the keep_List in the Wedge[] expression. The variables that are not on the keep_List are become coefficients of the Wedge[] as Dot[]d expression in order of appearance in the original Wedge expression. This is an alternative to tuWedgeSimplify. *12Apr2019*.";
+tuWedgeSimplify1[keep_List:{difForm[_]}][exp_]:=
+Module[{$0=exp,$,$1,$vars,$scal,$keep,$keepv},
+$=$0//expandDot[{tuOpDistribute[Wedge]}]//Expand;
+$vars=$//tuVarsInExp;
+$scal=$vars//Select[#,tuHasNoneQ[#,keep]&]&;
+$scal=SortBy[$scal,Depth]//Reverse;
+$keep=$vars//Select[#,tuHasAnyQ[#,keep]&]&;
+$keepv=tuVarsInExp[$keep];
+$scal=Select[$scal,!tuMemberQ[#,$keepv]&];
+$scal=Thread[$scal->1];
+$keep=Thread[$keep->1];
+$=$/.ww:Wedge[__]:>(ww/.$keep/.Wedge->Dot).(ww/.$scal)//tuOpSimplifyF[dotOps];
+$=$//.Wedge[a___,-b_,c___]->-Wedge[a,b,c]//.tuOpSimplify[Wedge];
+$=
+$//tuOpSimplifyF[dotOps]
+];
+(*
+TEST
+A. Wedge[a,b,Wedge[c,d+e]]
+%//tuWedgeSimplify1[{a,b,d}]
+*)
+
 (**)
 Clear[tuWedgeSimplify];
 tuWedgeSimplify::usage="tuWedgeSimplify[scalar_List:{},product_:Times|dotOps,order_:NotOrdered][exp_] removes term in scalar_List from Wedge expressions in exp_. The scalar terms are product_ed together with the simplified Wedge expression. In the event that there is an isolated scalar in a Wedge expression it will be brought out of the expression. order_ \[Rule]Ordered canonically orders the Wedge[](for 1-forms only).  NOTE: The routine does not assume asymmetry of Wedge arguements. Inverse of scalars must be specified explicitly. *3Feb2016,22July2017*9May2018**5July2018*";
@@ -1838,6 +1880,29 @@ xBreak[];*)
 ];
 tmp//.xWedge->Wedge
 ];
+
+(**)
+
+tuDifFormBasis//Clear
+tuDifFormBasis::usage="tuDifFormBasis[basis_List][exp_] expands the difForm[]s in exp_ into basis components: difForm[A]\[Rule]Sum[tuDPartial[A,a].difForm[a],{a,basis}] *17Apr2019*";
+
+tuDifFormBasis[basis_List][exp_]:=Module[{$},$=exp/.dd:difForm[a_]:>If[tuHasNoneQ[a,basis],Sum[tuDPartial[a,i].difForm[i],{i,basis}],dd];
+$
+];
+(*
+TEST
+B difForm[A]\[Wedge]difForm[a]//tuDifFormBasis[{a,b,c}]*)
+(*
+TEST
+B difForm[A]\[Wedge]difForm[a]//tuDifFormBasis[{a,b,c}]*)
+(**)
+tuDifFormSimplify1::usage=="tuDifFormSimplify1[forms_List:{difForm[_]}][exp_] simplifies difForm expression exp_ by first applying tuWedgeSimplify1[forms] and canonically ordering the Wedge term accounting for sign changes *12Apr2019*";
+tuDifFormSimplify1[forms_List:{difForm[_]}][exp_]:=Module[{$0,$},
+$=exp//tuWedgeSimplify1[forms];
+$=$/.ww:Wedge[a__]:>Signature[ww]Sort[ww]/;tuHasNoneQ[ww,difForm[_,_](*extended form*)];
+$//.tuOpSimplify[dotOps]
+];
+
 (**)
 Clear[tuDifFormSimplify]
 tuDifFormSimplify::usage="tuDifFormSimplify[constants_List:{},scalars_List:{},forms_List:{},flags_List:{}][exp_] puts difForm[] expressions into standard form where 0-Forms are to the left of the other terms. ProductOp's between n-Forms are considered Wedge[] products.  constants_List,scalars_List,forms_List are inputs that determine how terms are manipulated.  forms_List are in a form {f1\[Rule]n1,f2\[Rule]n2} where f1,f2 are labels to n1,n2-Forms in expressions, respectively. Functions specified by form fn[arg] in flags_List are expanded by difForm \[PartialD] . Other flags: {NoSymmetric->zeros symmetric Wedge[]s, }. xPartialD[difForm[a_],a_]\[Rule]0 Rule[] is considered. Results include CenterDot[] In Development. *22Jan2016";tuDifFormSimplify[constants_List:{},scalars_List:{},forms_List:{},flags_List:{}][exp_]:=Module[{tmp=exp,tmp0,pos,xdForm,dForms,ProductOp=Flatten[Times|dotOps|Wedge],DF={dForm,difForm},formLabels=Map[#[[1]]&,forms],loopcnt=0},
@@ -2467,8 +2532,8 @@ tmp
 
 (* ::Input::Initialization:: *)
 Unprotect[Transpose];
-Transpose[(dd:dotOps)[a_,b_]]:=dd[Transpose[b],Transpose[a]]
-Transpose[Times[c_,(dd:dotOps)[a_,b_]]]:=c dd[Transpose[b],Transpose[a]]/;FreeQ[c,dotOps]
+Transpose[(dd:dotOps)[a_,b__]]:=dd[Transpose[dd[b]],Transpose[a]]
+Transpose[Times[c_,(dd:dotOps)[a_,b__]]]:=c dd[Transpose[dd[b]],Transpose[a]]/;FreeQ[c,dotOps]
 Transpose[Times[c_,a_]]:=c Transpose[a]/;NumericQ[c]
 Transpose[Transpose[a_]]:=a
 Transpose[a_+b_]:=Transpose[a]+Transpose[b]
@@ -3016,7 +3081,7 @@ tmp=exp
 ];
 tmp
 ];
-tuSumGatherR::usage="tuSumGatherR Rules for consolidating Sum,xSum expressions.  Returns expression with all Sum[]s replaced by xSum[]s. *27Aug2018*";
+tuSumGatherR::usage="tuSumGatherR Rules for consolidating Sum,xSum expressions.  Returns expression with all Sum[]s replaced by xSum[]s. *27Aug201825Apr2019*";
 tuSumGatherR:={Sum->xSum,
 xSum[xSum[a_,b__],c__]:>xSum[a,Apply[Sequence,Sort[{b,c}]]],
 d_ xSum[a_,b__]:>xSum[Expand[d a],b],
@@ -3162,41 +3227,50 @@ ExtractIntegrandP:=tuExtractIntegrand;
 
 (**)Clear[tuIntegralSimplify]
 tuIntegralSimplify::usage="tuIntegralSimplify[keep_:{}][exp_] applies tuIntegralSimplify0[,] to all xIntegral's in exp_ which removes from integrand_ of xIntegral[] terms that are not functions of the integration variables. keep_ is an optional list of variables to keep inside the integral. EG: exp//tuIntegralSimplify  *8Mar2016*1Apr2019*" ;
-tuIntegralSimplify[keep_:{}][exp_]:=Module[{tmp=exp}, 
+tuIntegralSimplify[keep_:{},nokeep_:{}][exp_]:=Module[{tmp=exp}, 
+tmp=tmp//tuOpSimplifyFirst[xIntegral,nokeep];
+xPrint[tmp];
+tmp=tmp/.xIntegral[0,b__]->0;
 tmp=tmp/.xIntegral[a_,b__]:>tuIntegralSimplify0[a,b,keep];
 tmp=tmp//.xIntegral[-a_,b__]:>-xIntegral[a,b];
 tmp=tmp/.xIntegral[-1,b__]->-xIntegral[1,b];(*??*)(*
 tmp=tmp//tuOpSimplifyFirst[xIntegral];*)
 tmp
 ];
+tuIntegralSimplify0//Clear
 tuIntegralSimplify0[integrand_,vars0__,extra_:{}]:=Module[{vars,terms,$,pick,keep,out,ret,$head,xfnc,one,sign,xsign},
 (*Make list of integration variables where vars is List of Lists.*)
 vars=Map[If[Head[#]===List,First[#],#]&,{vars0}];
 (*Integrand must be a Product of terms to be factorable.*)
-
-$=integrand/.-1 i$_->i$;
-If[$===integrand,sign=1,sign=-1];
-$head=Head[$];  xPrint[$head];
-
-$=$head[xsign ,one, $]/.ff:Power->xfnc[ff];
+$=integrand;(*
+$=$/.ff:Power\[Rule]xfnc[ff];*)
+$=If[tuHasAnyQ[Head[$],{productOps}],$ ,one $];
+$head=Head[$];
 (*add one for routine to work*)
-xPrint[$,"::",vars,"::",sign];
+xPrint[$,"::",vars,"::",$head];
 (*DOES NOT RETAIN ORDER OF TERMS, needs left,right keep*)
-ret=If[tuHasAnyQ[$head,{Times,dotOps}],
+ret=If[tuHasAnyQ[$head,{productOps}],
 terms=Apply[List,$];
 xPrint[terms];
-pick=Map[tuFreeQ[#,Flatten[{vars,extra,one,xsign}]]&,terms];xPrint[pick];
-keep=Apply[$head,Pick[terms,pick,False]];xPrint[keep];
+pick=Map[tuFreeQ[#,Flatten[{vars,extra,one}]]&,terms];xPrint[pick];
+keep=Apply[$head,Pick[terms,pick,False]];
+xPrint[keep];
 out=Apply[$head,Pick[terms,pick]];
 xPrint[out];
-$head[out, xIntegral[keep,vars0]],
-
+$=$head[out, xIntegral[keep,vars0]];
+$,
+xPrint[$];
 xIntegral[$,vars0](*No Change return*)
 ];
-ret=ret/.xfnc[ff_]->ff/.$head[one,a___]->$head[a]/.one->1/.xsign->sign//tuOpSimplifyF[$head];
-ret/.$[0,_]->0
+xPrint["ret::: ",ret];
+ret=ret/.one->1/.xfnc[ff_]->ff;
+xPrint["ret::: ",ret];
+ret
 ];
-
+(*TEST
+xIntegral[iP p^2,\[Sigma]]
+%//tuIntegralSimplify[{iP,iX}];
+*)
 tuOpMerge::usage="tuOpMerge[op_:xIntegral] Rule for merge nested operator into one *8Mar2016*";
 tuOpMerge[op_:xIntegral]:={op[op[a_,b__],c__]->op[a,c,b]};
 
@@ -5227,9 +5301,17 @@ tuDPartial[tuDPartialu[a_,b_],tuDPartialu[c_,d_]]:>0/;a=!=c,
 tuDPartial[tuDPartial[a_,b_],tuDPartialu[c_,d_]]:>0/;a=!=c,
 tuDPartial[a_,tuDPartial[b_,d_]|tuDPartialu[b_,d_]]:>0/;tuHasNoneQ[a,{tuDUp["\[PartialD]"][__],tuDDown["\[PartialD]"][__]}],
 tuDPartialu[a_,tuDPartial[b_,d_]|tuDPartialu[b_,d_]]:>0/;tuHasNoneQ[a,{tuDUp["\[PartialD]"][__],tuDDown["\[PartialD]"][__]}],
-
-tuDPartial[a_,b_]tuDPartialu[ccc:ConjugateTranspose|Det,a_]->tuDPartial[ccc[a],b],
+(**)
+tuDPartial[a_,b_]tuDPartialu[ccc:ConjugateTranspose|Det|OverBar,a_]->tuDPartial[ccc[a],b],
 tuDPartialu[ccc:ConjugateTranspose|Det,a_]->ccc[Subscript[1, dim]]
+
+};
+
+tuEulerPartialsDot::usage="tuEulerPartialsDot are Rules that fix the EulerLagrange output when the tuDPartialu[ConjugateTranspose|Det|OverBar,_] terms appears in Dot[]ed term. May need to apply twice since the order of Replacement is ambiguous. *19Apr20-19*";
+tuEulerPartialsDot:={(pp:productOps)[a___,b: tuDPartialu[ccc:ConjugateTranspose|Det|OverBar,ii_],c___]:>(pp[a,First[tuExtractPattern[tuDPartial[ii,_]][{a,c}]]/.tuDPartial[ii,s_]->xx$[tuDPartial[ccc[ii],s]],
+c]),
+(pp:productOps)[a___, xx$[bb:(tuDPartial[(ccc:ConjugateTranspose|Det|OverBar)[b_],s_])],
+c___]:>(pp[a,bb,c]/.tuDPartial[b,s]->1)
 };
 lagrangexPartialD:=tuEulerPartials(*compatibility*)
 

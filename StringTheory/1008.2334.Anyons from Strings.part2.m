@@ -22,20 +22,11 @@
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
 tuItalics
+tuLoad["StringTheory/1008.2334.Anyons from Strings.out"];
 
-$order\[Mu]\[Mu]:={dd:Dot[a_,b_]:>If[tuHasAllQ[{a,b},\[Mu]]&&OrderedQ[{b,a}],Reverse[dd],
-dd],
-dd:Dot[a_,b_]:>If[tuHasAllQ[{a,b},\[Mu]]&&tuHasAnyQ[{b},T[X,"d",{\[Mu]}]],tuIndexSwapUpDown[\[Mu]][dd],
-dd],
-dd:Dot[a_,b_]:>If[tuHasAllQ[{a,b},\[Mu]]&&tuHasAnyQ[{b},T[P,"u",{\[Mu]}]],tuIndexSwapUpDown[\[Mu]][dd],
-dd]
-};
-$sumBreakUp:={xSum[a_,{n1_,-\[Infinity],\[Infinity]}]:>xSum[a,{n1,1,\[Infinity]}]+(xSum[a,{-n1,1,\[Infinity]}]/.n1->-n1),
-xSum[a_,{n1_,-\[Infinity],\[Infinity]},{n2_,-\[Infinity],\[Infinity]}]:>xSum[a,{n1,1,\[Infinity]},{n2,1,\[Infinity]}]+(xSum[a,{n1,1,\[Infinity]},{-n2,1,\[Infinity]}]/.n2->-n2)+
-(xSum[a,{-n1,1,\[Infinity]},{n2,1,\[Infinity]}]/.n1->-n1)+
-(xSum[a,{-n1,1,\[Infinity]},{-n2,1,\[Infinity]}]/.n1->-n1/.n2->-n2)};
-$sumGather:=(s1_:1)xSum[a_,c__]+ (s2_:1)xSum[b_,c__]->xSum[s1 a+s2  b,c];
-
+tuLightCone//Clear
+tuLightCone//Clear
+tuLightCone//Clear
 tuLightCone[level_:1][exp_]:=Module[{$,$s,$st,$g,$s0,$p,$x,$s1,$s2,$slightcone},
 If[level==1,(*expand Matrix expressions for \[CapitalTheta] and \[CapitalGamma] *)
 $st=e[26]//tuRuleSelect[\!\(\*OverscriptBox[\(T[\[CapitalTheta], "\<\>", {}]\), \(_\)]\)];
@@ -75,14 +66,22 @@ $x={T[iX,"u",{"-"}],T[iX,"",{}]};
 $x=tuRuleInTermsOf[{x,iX},#,{T,xIntegral}][e[4]]&/@$x;
 $s1={$x,$p}//tuRule;
 $s2=e[4]//tuRuleSelect[T[iX,"u",{"+"}]];
-$slightcone={$s0,$s1,$s2,\[Theta]1->0,\[Theta]2->\[Theta] factor\[Theta],a_[\[Tau]]->a}//tuRule;
-$=exp/.$slightcone//expandDot[{},{T},{tuDerivativeExpand[{factor\[Theta]}]},3];
+$slightcone={$s1,$s2,\[Theta]1->0,\[Theta]2->\[Theta] factor\[Theta],$s0,a_[\[Tau]]->a}//tuRule;
+
+$=exp//expandDot[{$slightcone},{T},{tuDerivativeExpand[{factor\[Theta]}]},1(*CHECK for all cases*)];
 
 $=$//expandDot[{Dot[]->1,a_[\[Tau]]->a},{factor\[Theta],T,\[Tau],x,p,\[Zeta],Tensor[p,_,_],Tensor[x,_,_]},{tuOpDistributeF[xIntegral],tuIntegralSimplify[{iX,iP,\[Theta]}]},3]//expandDot[];
 $s=e[4,1]//tuRule//Select[#,tuHasAnyQ[#,xIntegral]&]&;
 $s=tuRuleSolve[#,xIntegral[__]]&/@$s//tuRule;
 
-$=$//expandDot[{$s,tuRuleSelect[tuDPartial[_,_]][e[4,1]]},{tuDPartial[\[Zeta],_]},{tuDerivativeExpand[{factor\[Theta]}]},4];
+$=$//expandDot[{$s,tuRuleSelect[tuDPartial[_,_]][e[4,1]](*,$factor\[Theta]*)},{tuDPartial[\[Zeta],_],T[p,"d",{_}]},{tuDerivativeExpand[{factor\[Theta]}]},4];
+];
+
+If[level==3.1,(*expand/simplify integrals*)
+$=exp//expandDot[{Dot[]->1,a_[\[Tau]]->a,xIntegral[tuDPartial[_,\[Sigma]],\[Sigma]]->0,
+xIntegral[1,\[Sigma]]->2\[Pi],
+tuDPartial[xx_,\[Sigma]]:>0/;tuHasAnyQ[xx,{x,p,\[Tau],\[Alpha],\[Zeta]}]
+},{factor\[Theta],T,\[Tau],x,p,\[Zeta],Tensor[p,_,_],Tensor[x,_,_]},{tuOpDistributeF[xIntegral],tuIntegralSimplify[{iX,iP,\[Theta]}]},5]//expandDot[{},{},{},2]
 ];
 
 If[level==4,(*Fourier decomposition*)
@@ -95,7 +94,7 @@ If[level==5,(*Integrate over \[Sigma]*)
 $=exp/.a_[\[Tau]]->a;
 $=$//expandDot[{},{T,p,Exp[_],Tensor[p,_,_]},{Simplify},3];
 $=$//(*tuOpSwitch[tuDPartial,xSum]//*)tuDerivativeExpand[{n,n1,n2,T}]//expandDot[{
-tuDPartial[xx_,\[Sigma]]:>0/;tuHasAnyQ[xx,{x,p,\[Tau],\[Alpha],\[Theta]}],tuDPartial[x_,\[Tau]]:>0/;MatchQ[x,\[Sigma]]
+tuDPartial[xx_,\[Sigma]]:>0/;tuHasAnyQ[xx,{x,p,\[Tau],\[Alpha],\[Theta],\[Zeta]}],tuDPartial[x_,\[Tau]]:>0/;MatchQ[x,\[Sigma]]
 },{},{},1];
 $=$/. Dot[xSum[a_,b_],xSum[a1_,b1_],xSum[a2_,b2_]]:>Dot[xSum[a,b],xSum[a1,b1]/.n->n1,xSum[a2,b2]/.n->n2]/.Dot[(c_:1)xSum[a_,b_],(c1_:1)xSum[a1_,b1_]]:>Dot[c xSum[a,b],c1 xSum[a1,b1]/.n->n1]/.Dot[xSum[a_,b_,c_],xSum[a1_,b1_]]:>Dot[xSum[a,b,c]/.n->n2,xSum[a1,b1]]/.Dot[xSum[a_,b_],xSum[a1_,b1_,c1_]]:>Dot[xSum[a,b],xSum[a1,b1,c1]/.n->n2];
 
@@ -103,7 +102,7 @@ $=$//expandDot[{},{T,p,Exp[_],Tensor[p,_,_]
 },{tuOpDistributeF[xSum],Simplify,tuSumSimplify[{u,Subscript[u, 0],T,p,Tensor[p,_,_]}]},6];
 
 $=$//expandDot[{tuOpDistribute[xSum],tuSumGatherR},{n,n1,n2,Exp[_],T},{},3];
-$=$//Simplify//tuSumSimplify[{u,Subscript[u, 0],T,p,Tensor[p,_,_]}];
+$=$//Simplify//tuSumSimplify[{u,Subscript[u, 0],T,p,\[Zeta],Tensor[p,_,_]}];
 ];
 
 If[level==6,(*Manipulate Sum,xIntegral for integration*)
@@ -118,15 +117,22 @@ $=$/.(Exp[2I \[Pi] a_]-1)->a 2\[Pi] \[Delta][a]/.\[Delta][a_+b__:0]->T[\[Delta],
 
 If[level==8 ,(*Break up \[CapitalSigma]'s {n,-\[Infinity],\[Infinity]}\[Rule]{n,1,\[Infinity]} 
 order \[Alpha]'s, remove single \[Alpha]-type*)
-$=exp/.$sumBreakUp//.$sumGather//Simplify;
-$=$//.dd:Dot[Tensor[\[Theta],_,_],Tensor[\[Alpha],_,_]]:>Reverse[dd];
+$=exp//.$sumBreakUp//.$sumGather//Simplify;
+
 $=$/.dd:Dot[T[a_,"d",{n1_}],T[a1_,"d",{n2_}]]:>Reverse[dd]/;OrderedQ[{n2,n1}]&&Length[dd]==2;
+
 $=$/.dd:Dot[T[_,"d",{n1_}],T[_,"d",{n2_}],T[_,"d",{n3_}]]:>0/;Count[tuExtractPattern[\[Alpha]][dd],\[Alpha]]==3&&(Count[tuExtractPattern[\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\)][dd],\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\)]!=3&&Count[tuExtractPattern[\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\)][dd],\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\)]!=0
 );
 $=$/.Dot[T[a_,"d",{n1_}],T[a_,"d",{n2_}],T[a_,"d",{n3_}]]:>Apply[Dot,Map[T[a,"d",{#}]&,SortBy[{n1,n2,n3},-(Count[#/.Plus->List/.Times->List//Flatten,-1](.6-.1Depth[#]))&]]];
+
+$=$//.dd:Dot[Tensor[\[Theta],_,_],Tensor[\[Alpha],_,_]]:>Reverse[dd];
+$=$//.dd:Dot[Tensor[\[Theta],_,_],Tensor[\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\),_,_]]:>Reverse[dd];
+
 ];
 $
 ];
+(**)
+
 
 
 

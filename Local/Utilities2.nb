@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[    326401,       7956]
-NotebookOptionsPosition[    324969,       7927]
-NotebookOutlinePosition[    325342,       7943]
-CellTagsIndexPosition[    325299,       7940]
+NotebookDataLength[    334487,       8152]
+NotebookOptionsPosition[    333055,       8123]
+NotebookOutlinePosition[    333428,       8139]
+CellTagsIndexPosition[    333385,       8136]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -2051,6 +2051,59 @@ changed to include more Solve parameters *23Mar2016*\>\""}], ";"}],
     ";"}], "\[IndentingNewLine]", 
    RowBox[{"(*", "*)"}], "\[IndentingNewLine]", 
    RowBox[{
+    RowBox[{"tuRuleInTermsOf", "//", "Clear"}], ";"}], "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{
+     RowBox[{"tuRuleInTermsOf", "::", "usage"}], "=", 
+     "\"\<tuRuleInTermsOf[var_List,target_,ignore_List:{}][exp_] attempts to \
+solve for target_ given a List of Rules in exp_ selecting Rules which match \
+all Patterns in var_List.  ignore_List contains Patterns that eliminates \
+Rules in exp_. *17Apr2019*\>\""}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"tuRuleInTermsOf", "[", 
+       RowBox[{"var_List", ",", "target_", ",", 
+        RowBox[{"ignore_List:", 
+         RowBox[{"{", "}"}]}]}], "]"}], "[", "exp_", "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"$", ",", "$0"}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"$", "=", 
+         RowBox[{"tuRule", "[", "exp", "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"$0", "=", 
+         RowBox[{"$", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"$", ",", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"tuHasAllQ", "[", 
+               RowBox[{"#", ",", 
+                RowBox[{"Flatten", "[", 
+                 RowBox[{"{", 
+                  RowBox[{"var", ",", "target"}], "}"}], "]"}]}], "]"}], "&&", 
+              RowBox[{"tuHasNoneQ", "[", 
+               RowBox[{"#", ",", "ignore"}], "]"}]}], "&"}]}], "]"}]}]}], ";",
+         "\[IndentingNewLine]", 
+        RowBox[{"xPrint", "[", "$0", "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"$", "=", 
+         RowBox[{"tuRuleSolve", "[", 
+          RowBox[{"$", ",", "target"}], "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "[", "$", "]"}], "\[Equal]", "0"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Message", "[", 
+           RowBox[{
+            RowBox[{"tuRuleInTermsOf", "::", "Rules"}], ",", "$0"}], "]"}], 
+          ",", "\[IndentingNewLine]", "$"}], "\[IndentingNewLine]", "]"}]}]}],
+       "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
     RowBox[{
      RowBox[{"tuRuleDSolve", "::", "usage"}], "=", 
      "\"\<tuRuleDSolve[var_,independents_][eqn_] converts eqn_ from \
@@ -2289,42 +2342,43 @@ considered independent of the calculation (e.g. subscripts).  \
          "subIIII"}], "}"}], ",", "\[IndentingNewLine]", 
        RowBox[{
         RowBox[{
-         RowBox[{"tuOpIndependentVarActivate", "::", "independents"}], "=", 
-         "\"\<Independents: `1` \>\""}], ";", "\[IndentingNewLine]", 
-        RowBox[{"(*", 
          RowBox[{
-         "independentVars", " ", "need", " ", "dummy", " ", "labels"}], 
-         "*)"}], "\[IndentingNewLine]", 
-        RowBox[{"independentPos", "=", 
-         RowBox[{"$", "//", 
+          RowBox[{"tuOpIndependentVarActivate", "::", "independents"}], "=", 
+          "\"\<Independents: `1` \>\""}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
           RowBox[{
-          "tuExtractPositionPattern", "[", "independentVars", "]"}]}]}], ";", 
-        "\[IndentingNewLine]", 
-        RowBox[{"independents", "=", 
-         RowBox[{
+          "independentVars", " ", "need", " ", "dummy", " ", "labels"}], 
+          "*)"}], "\[IndentingNewLine]", 
+         RowBox[{"independentPos", "=", 
+          RowBox[{"$", "//", 
+           RowBox[{
+           "tuExtractPositionPattern", "[", "independentVars", "]"}]}]}], ";",
+          "\[IndentingNewLine]", 
+         RowBox[{"independents", "=", 
           RowBox[{
            RowBox[{
-            RowBox[{"#", "[", 
-             RowBox[{"[", "2", "]"}], "]"}], "&"}], "/@", "independentPos"}], 
-          "//", "DeleteDuplicates"}]}], ";", "\[IndentingNewLine]", 
-        RowBox[{"independentLab", "=", 
-         RowBox[{"MapIndexed", "[", 
-          RowBox[{
+            RowBox[{
+             RowBox[{"#", "[", 
+              RowBox[{"[", "2", "]"}], "]"}], "&"}], "/@", "independentPos"}],
+            "//", "DeleteDuplicates"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"independentLab", "=", 
+          RowBox[{"MapIndexed", "[", 
            RowBox[{
-            RowBox[{"#1", "->", 
-             RowBox[{"IIII", "[", 
-              RowBox[{"First", "[", "#2", "]"}], "]"}]}], "&"}], ",", 
-           "independents"}], "]"}]}], ";", "\[IndentingNewLine]", 
-        RowBox[{"Message", "[", 
-         RowBox[{
-          RowBox[{"tuOpIndependentVarActivate", "::", "independents"}], ",", 
-          "independents"}], "]"}], ";", "\[IndentingNewLine]", 
-        RowBox[{"subIIII", "=", 
-         RowBox[{"independentPos", "//.", "independentLab"}]}], ";", 
-        "\[IndentingNewLine]", 
-        RowBox[{"$", "=", 
-         RowBox[{"ReplacePart", "[", 
-          RowBox[{"$", ",", "subIIII"}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"#1", "->", 
+              RowBox[{"IIII", "[", 
+               RowBox[{"First", "[", "#2", "]"}], "]"}]}], "&"}], ",", 
+            "independents"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Message", "[", 
+          RowBox[{
+           RowBox[{"tuOpIndependentVarActivate", "::", "independents"}], ",", 
+           "independents"}], "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"subIIII", "=", 
+          RowBox[{"independentPos", "//.", "independentLab"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"$", "=", 
+          RowBox[{"ReplacePart", "[", 
+           RowBox[{"$", ",", "subIIII"}], "]"}]}], ";"}], 
         RowBox[{"(*", 
          RowBox[{"Print", "[", 
           RowBox[{
@@ -3143,7 +3197,7 @@ tuRuleEliminate if this Module does not work. *23May2014\>\""}], ";"}],
             RowBox[{"x_", ",", "b_"}], "]"}], "->", "x"}]}]}], ";", 
         "\[IndentingNewLine]", 
         RowBox[{"tmp", "//", "Flatten"}]}]}], "\[IndentingNewLine]", "]"}]}], 
-    ";"}], "\[IndentingNewLine]", "\n", 
+    ";"}], "\n", "\[IndentingNewLine]", 
    RowBox[{"(*", "\[IndentingNewLine]", 
     RowBox[{
     "Applies", " ", "RuleX", " ", "converting", " ", "patternvar_", " ", "on",
@@ -3180,8 +3234,7 @@ tuRuleEliminate if this Module does not work. *23May2014\>\""}], ";"}],
            RowBox[{
             RowBox[{"{", "rules", "}"}], ",", "var"}], "]"}], ",", "  ", 
           "patternvar"}], "  ", "]"}], "//", "Flatten"}]}], 
-      "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
-   "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", "\n", 
    RowBox[{"(*", " ", 
     RowBox[{
      RowBox[{
@@ -3190,7 +3243,7 @@ tuRuleEliminate if this Module does not work. *23May2014\>\""}], ";"}],
      RowBox[{
      "hand", " ", "part", " ", "of", " ", "rules_", " ", "to", " ", "Pattern",
        " ", "as", " ", "specified", " ", "by", " ", "patternvars_"}]}], "  ", 
-    "*)"}], "\n", 
+    "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
      RowBox[{"tuAddPatternVariable", "::", "usage"}], "=", 
@@ -3250,9 +3303,8 @@ be a Lists. *24Dec2014*\>\""}], ";"}], "\[IndentingNewLine]",
         RowBox[{"tmp", "=", 
          RowBox[{"tmp", "//.", 
           RowBox[{"xRule", "->", "RuleDelayed"}]}]}]}]}], 
-      "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
-   "\[IndentingNewLine]", 
-   RowBox[{"(*", "*)"}], "\n", 
+      "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
      RowBox[{"tuRuleFromTable", "::", "usage"}], "=", 
@@ -3300,9 +3352,8 @@ tuRuleFromTable[table][var2]\[Rule]{A->a2,B->b2} *9Mar2016*\>\""}], ";"}],
           RowBox[{"Thread", "[", 
            RowBox[{"Rule", "[", 
             RowBox[{"head", ",", "row"}], "]"}], "]"}], ",", "1"}], "]"}]}]}],
-       "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
-   "\[IndentingNewLine]", 
-   RowBox[{"(*", "*)"}], "\n", 
+       "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
      RowBox[{"tuRuleOp", "::", "usage"}], "=", 
@@ -4230,7 +4281,7 @@ selection is modified by with_ and without_ specifications.  If without_ \
                   RowBox[{"Flatten", "[", 
                    RowBox[{"{", "without", "}"}], "]"}]}], "]"}], "&"}]}], 
               "]"}]}], "]"}], "&"}]}]}]}]}], "\[IndentingNewLine]", "]"}]}], 
-    ";"}], "\[IndentingNewLine]", "\n", 
+    ";"}], "\n", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"$defID", ":=", 
      RowBox[{"NBname", "[", "\"\<stub\>\"", "]"}]}], ";"}], "\n", 
@@ -4458,7 +4509,10 @@ selection is modified by with_ and without_ specifications.  If without_ \
    3.762956410854204*^9, {3.76295645783947*^9, 3.76295646991537*^9}, {
    3.7629570900094767`*^9, 3.7629570997310762`*^9}, {3.763000080057405*^9, 
    3.763000120242353*^9}, 3.763000364618772*^9, {3.76300039750037*^9, 
-   3.763000420283044*^9}},ExpressionUUID->"9a48861d-1083-4676-92dc-\
+   3.763000420283044*^9}, {3.7630410931505547`*^9, 3.763041112573944*^9}, {
+   3.764589894849042*^9, 3.764589918419497*^9}, 3.7645900659125557`*^9, {
+   3.764596293579789*^9, 
+   3.7645963070421124`*^9}},ExpressionUUID->"9a48861d-1083-4676-92dc-\
 a74078babfb0"],
 
 Cell["Miscellaneous routines", "Text",
@@ -4578,16 +4632,16 @@ c\)]\)\[Rule]\!\(\*SuperscriptBox[\(A\), \
    "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"independentOf", "::", "usage"}], "=", "\[IndentingNewLine]", 
-   "\"\<independentOf[pattern_List][exp_] removes elements dependent on \
-pattern_List in the FreeQ sense. *3Mar2013*\>\""}], 
+   RowBox[{"tuIndependentTerms", "::", "usage"}], "=", "\[IndentingNewLine]", 
+   "\"\<independentOf[pattern_List][exp_] removes elements of exp_ dependent \
+on pattern_List in the tuHasNoneQ sense. *3Mar2013**22Apr2019*\>\""}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
     RowBox[{
-     RowBox[{"independentOf", "[", "pattern_List", "]"}], "[", "exp_", "]"}], 
-    ":=", 
+     RowBox[{"tuIndependentTerms", "[", "pattern_List", "]"}], "[", "exp_", 
+     "]"}], ":=", 
     RowBox[{"Module", "[", 
      RowBox[{
       RowBox[{"{", 
@@ -4604,39 +4658,19 @@ pattern_List in the FreeQ sense. *3Mar2013*\>\""}],
           RowBox[{"tmp", "=", 
            RowBox[{"Apply", "[", 
             RowBox[{"List", ",", "exp"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"Map", "[", 
-            RowBox[{
+          RowBox[{"keep", "=", 
+           RowBox[{"Select", "[", 
+            RowBox[{"tmp", ",", 
              RowBox[{
-              RowBox[{"ListFreeQ", "[", 
-               RowBox[{"#", ",", "pattern"}], "]"}], "&"}], ",", "tmp"}], 
-            "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"Map", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{"!", 
-                 RowBox[{"TF", "[", 
-                  RowBox[{"[", "#", "]"}], "]"}]}], ",", 
-                RowBox[{"{", "#", "}"}]}], "]"}], "&"}], ",", 
-             RowBox[{"Range", "[", 
-              RowBox[{"Length", "[", "TF", "]"}], "]"}]}], "]"}]}], ";", 
+              RowBox[{"tuHasNoneQ", "[", 
+               RowBox[{"#", ",", "pattern"}], "]"}], "&"}]}], "]"}]}], ";", 
           "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"DeleteCases", "[", 
-            RowBox[{"TF", ",", "Null"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          
-          RowBox[{"TF", "=", 
-           RowBox[{"Delete", "[", 
-            RowBox[{"tmp", ",", "TF"}], "]"}]}], ";", "\[IndentingNewLine]", 
           RowBox[{"If", "[", 
            RowBox[{
             RowBox[{
-             RowBox[{"Length", "[", "TF", "]"}], ">", "0"}], ",", 
+             RowBox[{"Length", "[", "keep", "]"}], ">", "0"}], ",", 
             RowBox[{"Apply", "[", 
-             RowBox[{"head", ",", "TF"}], "]"}], ",", 
+             RowBox[{"head", ",", "keep"}], "]"}], ",", 
             RowBox[{"If", "[", 
              RowBox[{
               RowBox[{"head", " ", "===", "Plus"}], ",", "0", ",", "1"}], 
@@ -4644,91 +4678,62 @@ pattern_List in the FreeQ sense. *3Mar2013*\>\""}],
          RowBox[{"(*", "else", "*)"}], "\[IndentingNewLine]", 
          RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"ListFreeQ", "[", 
+           RowBox[{"tuHasAnyQ", "[", 
             RowBox[{"exp", ",", "pattern"}], "]"}], ",", "exp", ",", "1"}], 
           "]"}]}], "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
-     "]"}]}], ";"}], "\[IndentingNewLine]", 
-  RowBox[{"(*", "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{
-     RowBox[{"dependentOn", "[", "pattern_List", "]"}], "[", "exp_", "]"}], 
-    " ", "Removes", " ", "Level", " ", "0", " ", "terms", " ", "that", " ", 
-    "are", " ", "independent", " ", 
-    RowBox[{"(", 
-     RowBox[{"in", " ", "the", " ", "FreeQ", " ", "sense"}], ")"}], " ", "of",
-     " ", "elements", " ", "in", " ", 
-    RowBox[{"pattern_List", "."}], " ", "*", "3", "Mar2013"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
+     "]"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"dependentOn", "::", "usage"}], "=", "\[IndentingNewLine]", 
-   "\"\<dependentOn[pattern_List][exp_] removes elements independent of \
-pattern_List in the FreeQ sense. *3Mar2013*\>\""}], 
+   RowBox[{"tuDependentTerms", "::", "usage"}], "=", "\[IndentingNewLine]", 
+   "\"\<dependentOn[pattern_List][exp_] removes elements of exp_ independent \
+of pattern_List in the tuHasAnyQ sense. *3Mar2013**23Apr2019*\>\""}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
+    RowBox[{"tuDependentTerms", "[", "pattern_List", "]"}], "[", "exp_", 
+    "]"}], ":=", 
+   RowBox[{"Module", "[", 
     RowBox[{
-     RowBox[{"dependentOn", "[", "pattern_List", "]"}], "[", "exp_", "]"}], ":=", 
-    RowBox[{"Module", "[", 
+     RowBox[{"{", 
+      RowBox[{"head", ",", "tmp", ",", "keep", ",", "TF"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
      RowBox[{
-      RowBox[{"{", 
-       RowBox[{"head", ",", "tmp", ",", "TF"}], "}"}], ",", 
-      "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"head", "=", 
-        RowBox[{"Head", "[", "exp", "]"}]}], ";", "\[IndentingNewLine]", 
-       RowBox[{"If", "[", 
+      RowBox[{"head", "=", 
+       RowBox[{"Head", "[", "exp", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"head", " ", "=!=", " ", "Symbol"}], ",", 
+        "\[IndentingNewLine]", 
         RowBox[{
-         RowBox[{"head", " ", "=!=", " ", "Symbol"}], ",", 
+         RowBox[{"tmp", "=", 
+          RowBox[{"Apply", "[", 
+           RowBox[{"List", ",", "exp"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         
+         RowBox[{"keep", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"tmp", ",", 
+            RowBox[{
+             RowBox[{"tuHasAnyQ", "[", 
+              RowBox[{"#", ",", "pattern"}], "]"}], "&"}]}], "]"}]}], ";", 
          "\[IndentingNewLine]", 
-         RowBox[{
-          RowBox[{"tmp", "=", 
-           RowBox[{"Apply", "[", 
-            RowBox[{"List", ",", "exp"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"Map", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"ListFreeQ", "[", 
-               RowBox[{"#", ",", "pattern"}], "]"}], "&"}], ",", "tmp"}], 
-            "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"Map", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"If", "[", 
-               RowBox[{
-                RowBox[{"TF", "[", 
-                 RowBox[{"[", "#", "]"}], "]"}], ",", 
-                RowBox[{"{", "#", "}"}]}], "]"}], "&"}], ",", 
-             RowBox[{"Range", "[", 
-              RowBox[{"Length", "[", "TF", "]"}], "]"}]}], "]"}]}], ";", 
-          "\[IndentingNewLine]", 
-          RowBox[{"TF", "=", 
-           RowBox[{"DeleteCases", "[", 
-            RowBox[{"TF", ",", "Null"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          
-          RowBox[{"TF", "=", 
-           RowBox[{"Delete", "[", 
-            RowBox[{"tmp", ",", "TF"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"Length", "[", "TF", "]"}], ">", "0"}], ",", 
-            RowBox[{"Apply", "[", 
-             RowBox[{"head", ",", "TF"}], "]"}], ",", 
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{"head", " ", "===", "Plus"}], ",", "0", ",", "1"}], 
-             "]"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
-         RowBox[{"(*", "else", "*)"}], "\[IndentingNewLine]", 
          RowBox[{"If", "[", 
           RowBox[{
-           RowBox[{"ListFreeQ", "[", 
-            RowBox[{"exp", ",", "pattern"}], "]"}], ",", "1", ",", "exp"}], 
-          "]"}]}], "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
-     "]"}]}], ";"}], "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Length", "[", "keep", "]"}], ">", "0"}], ",", 
+           RowBox[{"Apply", "[", 
+            RowBox[{"head", ",", "keep"}], "]"}], ",", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"head", " ", "===", "Plus"}], ",", "0", ",", "1"}], 
+            "]"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"(*", "else", "*)"}], "\[IndentingNewLine]", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"tuHasNoneQ", "[", 
+           RowBox[{"exp", ",", "pattern"}], "]"}], ",", "1", ",", "exp"}], 
+         "]"}]}], "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", 
   RowBox[{"(*", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
@@ -4747,8 +4752,9 @@ outside xSum[], and return a xSum[] expressions.  \
     RowBox[{
      RowBox[{"{", 
       RowBox[{
-       RowBox[{"tmp", "=", "exp"}], ",", "tmp1"}], "}"}], ",", 
-     "\[IndentingNewLine]", 
+       RowBox[{"tmp", "=", "exp"}], ",", "tmp1", ",", 
+       RowBox[{"indep", "=", 
+        RowBox[{"{", "}"}]}]}], "}"}], ",", "\[IndentingNewLine]", 
      RowBox[{
       RowBox[{"tmp", "=", 
        RowBox[{"tmp", "/.", 
@@ -4759,14 +4765,21 @@ outside xSum[], and return a xSum[] expressions.  \
         RowBox[{
          RowBox[{"tmp1", "=", "tmp"}], ";", "\[IndentingNewLine]", 
          RowBox[{"tmp", "=", 
-          RowBox[{"tmp", "//.", 
-           RowBox[{"tuOpDistribute", "[", "xSum", "]"}]}]}], ";", 
+          RowBox[{"tmp", "//", 
+           RowBox[{"tuOpDistributeF", "[", "xSum", "]"}]}]}], ";", 
          "\[IndentingNewLine]", 
          RowBox[{"tmp", "=", 
-          RowBox[{"tmp", "//", 
-           RowBox[{"tuOpSimplifyFirst", "[", 
-            RowBox[{"xSum", ",", "independent"}], "]"}]}]}], ";", 
-         "\[IndentingNewLine]", 
+          RowBox[{"tmp", "/.", 
+           RowBox[{
+            RowBox[{"ss", ":", 
+             RowBox[{"xSum", "[", 
+              RowBox[{"a_", ",", "b__"}], "]"}]}], ":>", 
+            RowBox[{
+             RowBox[{"tuOpSimplifyFirst", "[", 
+              RowBox[{"xSum", ",", 
+               RowBox[{"Flatten", "[", 
+                RowBox[{"{", "independent", "}"}], "]"}]}], "]"}], "[", "ss", 
+             "]"}]}]}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"tmp", "=", 
           RowBox[{"tmp", "//.", 
            RowBox[{
@@ -4780,27 +4793,14 @@ outside xSum[], and return a xSum[] expressions.  \
               RowBox[{"NumericQ", "[", "a", "]"}]}], ")"}]}]}]}], ";", 
          "\[IndentingNewLine]", 
          RowBox[{"tmp", "=", 
-          RowBox[{"tmp", "/.", 
-           RowBox[{
-            RowBox[{"xSum", "[", 
-             RowBox[{"0", ",", "b__"}], "]"}], "->", "0"}]}]}], ";", 
-         "\[IndentingNewLine]", 
-         RowBox[{"tmp", "=", 
-          RowBox[{"tmp", "/.", 
-           RowBox[{
-            RowBox[{"xSum", "[", 
-             RowBox[{"a_", ",", "b__"}], "]"}], "\[RuleDelayed]", 
+          RowBox[{
+           RowBox[{"tmp", "/.", 
             RowBox[{
-             RowBox[{
-              RowBox[{"dependentOn", "[", "independent", "]"}], "[", "a", 
-              "]"}], 
-             RowBox[{"xSum", "[", " ", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"independentOf", "[", "independent", "]"}], "[", "a", 
-                "]"}], ",", "b"}], "]"}]}]}]}]}], ";"}]}], 
-       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", "tmp"}]}], 
-    "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+             RowBox[{"xSum", "[", 
+              RowBox[{"0", ",", "b__"}], "]"}], "->", "0"}]}], "//", 
+           "Simplify"}]}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+      "\[IndentingNewLine]", "tmp"}]}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -4851,51 +4851,165 @@ expressions. *6Dec2017*\>\""}], ";"}], "\[IndentingNewLine]",
  RowBox[{
   RowBox[{
    RowBox[{"tuSumKroneckerDelta", "::", "usage"}], "=", 
-   "\"\<tuSumKroneckerDelta[refine_:{},sym_:\[Delta]][exp_] applies (1) \
-tuSumSimplify[] to exp_, (2) replaces Tensor[sym_,_,_] \[Rule] \
-KroneckerDelta[_,_], (3) replaces xSum\[Rule]Sum so Mathematica can do the \
-work, (4) applies Refine[_,refine_] *13Oct2017*\>\""}], 
+   "\"\<tuSumKroneckerDelta[sym_:\[Delta]][exp_] applies (1) tuSumSimplify[] \
+to exp_, (2) expands compact xSum[]s to nested xSum[]s, (3) replaces \
+appropriate \[Delta]-function index in argument of xSum[] (Does not check \
+limits of xSum[].) (4) applies Refine[_,refine_] *15Apr2019*\>\""}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
     RowBox[{
      RowBox[{"tuSumKroneckerDelta", "[", 
-      RowBox[{
-       RowBox[{"refine_:", 
-        RowBox[{"{", "}"}]}], ",", 
-       RowBox[{"sym_:", "\[Delta]"}]}], "]"}], "[", "exp_", "]"}], ":=", 
+      RowBox[{"sym_:", "\[Delta]"}], "]"}], "[", "exp_", "]"}], ":=", 
     RowBox[{"Module", "[", 
      RowBox[{
       RowBox[{"{", 
-       RowBox[{"$", "=", "exp"}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"$", "=", "exp"}], ",", "$test"}], "}"}], ",", 
+      "\[IndentingNewLine]", 
       RowBox[{
+       RowBox[{"$", "=", 
+        RowBox[{"$", "//.", 
+         RowBox[{"Sum", "\[Rule]", "xSum"}]}]}], ";", "\[IndentingNewLine]", 
        RowBox[{"$", "=", 
         RowBox[{"$", "//", 
          RowBox[{"tuSumSimplify", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
        
        RowBox[{"$", "=", 
+        RowBox[{"$", "//.", 
+         RowBox[{
+          RowBox[{"xSum", "[", 
+           RowBox[{"A_", ",", "i1_", ",", "i2__"}], "]"}], ":>", 
+          RowBox[{"xSum", "[", 
+           RowBox[{
+            RowBox[{"xSum", "[", 
+             RowBox[{"A", ",", "i2"}], "]"}], ",", "i1"}], "]"}]}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"xPrint", "[", "$", "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"$", "=", 
         RowBox[{"$", "/.", 
          RowBox[{
-          RowBox[{"Tensor", "[", 
-           RowBox[{"sym", ",", "up_", ",", "dn_"}], "]"}], "\[RuleDelayed]", 
-          RowBox[{"KroneckerDelta", "[", 
-           RowBox[{"Apply", "[", 
-            RowBox[{"Sequence", ",", 
-             RowBox[{"DeleteCases", "[", 
-              RowBox[{
-               RowBox[{"Flatten", "[", 
+          RowBox[{"xSum", "[", 
+           RowBox[{
+            RowBox[{"a_", "  ", 
+             RowBox[{"dd", ":", 
+              RowBox[{"T", "[", 
+               RowBox[{"sym", ",", "\"\<dd\>\"", ",", 
                 RowBox[{"{", 
-                 RowBox[{"up", ",", "dn"}], "}"}], "]"}], ",", "Void"}], 
-              "]"}]}], "]"}], "]"}]}]}]}], ";", "\[IndentingNewLine]", 
-       RowBox[{"$", "=", 
-        RowBox[{"$", "/.", 
-         RowBox[{"xSum", "\[Rule]", "Sum"}]}]}], ";", "\[IndentingNewLine]", 
-       RowBox[{"$", "=", 
-        RowBox[{"Refine", "[", 
-         RowBox[{"$", ",", "refine"}], "]"}]}], ";", "\[IndentingNewLine]", 
-       "$"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
+                 RowBox[{"i1_", ",", "i2_"}], "}"}]}], "]"}]}]}], ",", "b_"}],
+            "]"}], "\[RuleDelayed]", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"ComplexInfinity", "===", 
+             RowBox[{"(", 
+              RowBox[{"$test", "=", 
+               RowBox[{"a", "/.", 
+                RowBox[{"tuRuleSolve", "[", 
+                 RowBox[{
+                  RowBox[{"{", 
+                   RowBox[{"i1", "->", "i2"}], "}"}], ",", 
+                  RowBox[{"First", "[", "b", "]"}]}], "]"}]}]}], ")"}]}], ",", 
+            RowBox[{"xLimit", "[", 
+             RowBox[{"a", ",", 
+              RowBox[{
+               RowBox[{"First", "[", "b", "]"}], "->", 
+               RowBox[{"First", "[", 
+                RowBox[{"DeleteCases", "[", 
+                 RowBox[{
+                  RowBox[{"{", 
+                   RowBox[{"i1", ",", "i2"}], "}"}], ",", 
+                  RowBox[{"First", "[", "b", "]"}]}], "]"}], "]"}]}]}], "]"}],
+             ",", "\[IndentingNewLine]", "$test"}], "]"}]}]}]}], ";", 
+       "\[IndentingNewLine]", "$"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
   "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"TEST", "\[IndentingNewLine]", 
+     RowBox[{"xSum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"tuDPartial", "[", 
+         RowBox[{
+          RowBox[{"a", "[", "i", "]"}], ",", "\[Tau]"}], "]"}], " ", 
+        RowBox[{"T", "[", 
+         RowBox[{"\[Delta]", ",", "\"\<dd\>\"", ",", 
+          RowBox[{"{", 
+           RowBox[{"n", ",", "i"}], "}"}]}], "]"}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", 
+         RowBox[{"-", "\[Infinity]"}], ",", "\[Infinity]"}], "}"}]}], "]"}], 
+     "\[IndentingNewLine]", "%"}], "/.", 
+    RowBox[{
+     RowBox[{"xSum", "[", 
+      RowBox[{
+       RowBox[{"a_", "  ", 
+        RowBox[{"dd", ":", 
+         RowBox[{"T", "[", 
+          RowBox[{"\[Delta]", ",", "\"\<dd\>\"", ",", 
+           RowBox[{"{", 
+            RowBox[{"i1_", ",", "i2_"}], "}"}]}], "]"}]}]}], ",", "b_"}], 
+      "]"}], "\[RuleDelayed]", 
+     RowBox[{"(", 
+      RowBox[{"a", "/.", 
+       RowBox[{"tuRule", "[", 
+        RowBox[{
+         RowBox[{"First", "[", "b", "]"}], "\[Rule]", 
+         RowBox[{"First", "[", 
+          RowBox[{"DeleteCases", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"i1", ",", "i2"}], "}"}], ",", 
+            RowBox[{"First", "[", "b", "]"}]}], "]"}], "]"}]}], "]"}]}], 
+      ")"}]}]}], "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"tuSumKroneckerDelta", "::", "usage"}], "=", 
+     "\"\<tuSumKroneckerDelta[refine_:{},sym_:\[Delta]][exp_] applies (1) \
+tuSumSimplify[] to exp_, (2) replaces Tensor[sym_,_,_] \[Rule] \
+KroneckerDelta[_,_], (3) replaces xSum\[Rule]Sum so Mathematica can do the \
+work, (4) applies Refine[_,refine_] *13Oct2017*\>\""}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"tuSumKroneckerDelta", "[", 
+       RowBox[{
+        RowBox[{"refine_:", 
+         RowBox[{"{", "}"}]}], ",", 
+        RowBox[{"sym_:", "\[Delta]"}]}], "]"}], "[", "exp_", "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"$", "=", "exp"}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"$", "=", 
+         RowBox[{"$", "//", 
+          RowBox[{"tuSumSimplify", "[", "]"}]}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"$", "=", 
+         RowBox[{"$", "/.", 
+          RowBox[{
+           RowBox[{"Tensor", "[", 
+            RowBox[{"sym", ",", "up_", ",", "dn_"}], "]"}], "\[RuleDelayed]", 
+           
+           RowBox[{"KroneckerDelta", "[", 
+            RowBox[{"Apply", "[", 
+             RowBox[{"Sequence", ",", 
+              RowBox[{"DeleteCases", "[", 
+               RowBox[{
+                RowBox[{"Flatten", "[", 
+                 RowBox[{"{", 
+                  RowBox[{"up", ",", "dn"}], "}"}], "]"}], ",", "Void"}], 
+               "]"}]}], "]"}], "]"}]}]}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"$", "=", 
+         RowBox[{"$", "/.", 
+          RowBox[{"xSum", "\[Rule]", "Sum"}]}]}], ";", "\[IndentingNewLine]", 
+        
+        RowBox[{"$", "=", 
+         RowBox[{"Refine", "[", 
+          RowBox[{"$", ",", "refine"}], "]"}]}], ";", "\[IndentingNewLine]", 
+        "$"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]",
+    "*)"}], "\[IndentingNewLine]", 
   RowBox[{"(*", 
    RowBox[{"Distribute", " ", "xSum", " ", "over", " ", 
     RowBox[{"ExpandAll", "[", "sumand", "]"}], " ", "of", " ", 
@@ -5495,20 +5609,17 @@ Equivalent form: tuFreeQ[items_][exp_]  *18Jun2015*\>\""}],
     RowBox[{"exp", ",", "items"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{
-    RowBox[{"ListFreeQ", "[", 
-     RowBox[{"exp_", ",", "items_List"}], "]"}], ":=", 
-    RowBox[{"tuFreeQ", "[", 
-     RowBox[{"exp", ",", "items"}], "]"}]}], ";"}], 
-  RowBox[{"(*", "Compatibility", "*)"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
+   RowBox[{"ListFreeQ", "[", 
+    RowBox[{"exp_", ",", "items_List"}], "]"}], ":=", 
+   RowBox[{"tuFreeQ", "[", 
+    RowBox[{"exp", ",", "items"}], "]"}]}], ";", 
+  RowBox[{"(*", "Compatibility", "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
   RowBox[{"(*", "*)"}], 
   RowBox[{
-   RowBox[{
-    RowBox[{"tuHasAnyQ", "::", "usage"}], "=", 
-    "\"\<tuHasAnyQ[exp_,items_List] returns True if exp_ has any item(FreeQ) \
-in items_List. *18Jul2015*\>\""}], ";"}]}], "\[IndentingNewLine]", 
+   RowBox[{"tuHasAnyQ", "::", "usage"}], "=", 
+   "\"\<tuHasAnyQ[exp_,items_List] returns True if exp_ has any item(FreeQ) \
+in items_List. *18Jul2015*\>\""}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"tuHasAnyQ", "[", 
@@ -5625,14 +5736,12 @@ tuMemberQ[patterns_][variable_] *16May2015*\>\""}],
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{
-    RowBox[{"ListMemberQ", "[", 
-     RowBox[{"variable_", ",", "patterns_List"}], "]"}], ":=", 
-    RowBox[{"tuMemberQ", "[", 
-     RowBox[{"variable", ",", "patterns"}], "]"}]}], ";"}], 
-  RowBox[{"(*", "Compatibility", "*)"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
+   RowBox[{"ListMemberQ", "[", 
+    RowBox[{"variable_", ",", "patterns_List"}], "]"}], ":=", 
+   RowBox[{"tuMemberQ", "[", 
+    RowBox[{"variable", ",", "patterns"}], "]"}]}], ";", 
+  RowBox[{"(*", "Compatibility", "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{"disjointQ", "::", "usage"}], "=", 
    "\"\<disjointQ[b_,c_,free_List:{u,d,e,\[Nu],L,R}] return True if both b_, \
@@ -5730,15 +5839,20 @@ any in patterns_List.\>\""}], ";"}], "\[IndentingNewLine]",
  RowBox[{
   RowBox[{
    RowBox[{"tuOpGather", "::", "usage"}], "=", 
-   "\"\<tuOpGather[op_][exp_] gathers combination of operators op_ in exp_ \
-,Log: a Log[b]+c Log[d]\[Rule]Log[\!\(\*SuperscriptBox[\(b\), \
-\(a\)]\)\!\(\*SuperscriptBox[\(d\), \(b\)]\)], Sqrt: \
-\!\(\*SqrtBox[\(a_\)]\)\!\(\*SqrtBox[\(b_\)]\)->\!\(\*SqrtBox[\(a\\\ b\)]\)\
-\[IndentingNewLine]*18Jul2016*\>\""}], ";"}], "\[IndentingNewLine]", 
+   "\"\<tuOpGather[op_,includeCoef_:True][exp_] gathers combination of \
+operators op_{Log,Sqrt,xSum,ProductOps} in exp_ ,Log: a Log[b]+c \
+Log[d]\[Rule]Log[\!\(\*SuperscriptBox[\(b\), \(a\)]\)\!\(\*SuperscriptBox[\(d\
+\), \(b\)]\)], Sqrt: \
+\!\(\*SqrtBox[\(a_\)]\)\!\(\*SqrtBox[\(b_\)]\)->\!\(\*SqrtBox[\(a\\\\b\)]\), \
+includeCoef_ specifies if the coefficients of op_ are to be included(xSum \
+only). \[IndentingNewLine]*18Jul2016*26Apr2019*\>\""}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
-    RowBox[{"tuOpGather", "[", "op_", "]"}], "[", "exp_", "]"}], ":=", 
+    RowBox[{"tuOpGather", "[", 
+     RowBox[{"op_", ",", 
+      RowBox[{"includeCoef_:", "True"}]}], "]"}], "[", "exp_", "]"}], ":=", 
    RowBox[{"Module", "[", 
     RowBox[{
      RowBox[{"{", 
@@ -5763,56 +5877,131 @@ any in patterns_List.\>\""}], ";"}], "\[IndentingNewLine]",
              RowBox[{"Log", "[", "a_", "]"}], "+", 
              RowBox[{"Log", "[", "b_", "]"}]}], "->", 
             RowBox[{"Log", "[", 
-             RowBox[{"a", " ", "b"}], "]"}]}]}]}], ";", 
-         RowBox[{"xPrint", "[", "tmp", "]"}]}], ",", "\[IndentingNewLine]", 
+             RowBox[{"a", " ", "b"}], "]"}]}]}]}]}]}], "\[IndentingNewLine]", 
+       "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"op", "===", "Sqrt"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"tmp", "=", 
+         RowBox[{"tmp", "//.", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"c___", " ", 
+              SqrtBox["a_"], 
+              SqrtBox["b_"]}], "\[Rule]", 
+             RowBox[{"c", 
+              SqrtBox[
+               RowBox[{"a", " ", "b"}]]}]}], ",", 
+            RowBox[{
+             RowBox[{"c___", " ", 
+              RowBox[{
+               SqrtBox["a_"], "/", 
+               SqrtBox["b_"]}]}], "\[Rule]", 
+             RowBox[{"c", 
+              SqrtBox[
+               RowBox[{"a", " ", "/", "b"}]]}]}]}], "}"}]}]}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"op", "===", "xSum"}], ",", "\[IndentingNewLine]", 
         RowBox[{
+         RowBox[{"tmp", "=", 
+          RowBox[{"tmp", "//.", 
+           RowBox[{
+            RowBox[{"xSum", "[", 
+             RowBox[{
+              RowBox[{"xSum", "[", 
+               RowBox[{"a_", ",", "c__"}], "]"}], ",", "d__"}], "]"}], ":>", 
+            RowBox[{"xSum", "[", 
+             RowBox[{"a", ",", 
+              RowBox[{"Apply", "[", 
+               RowBox[{"Sequence", ",", 
+                RowBox[{"Sort", "[", 
+                 RowBox[{"{", 
+                  RowBox[{"c", ",", "d"}], "}"}], "]"}]}], "]"}]}], 
+             "]"}]}]}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{"op", "===", "Sqrt"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"includeCoef", ",", "\[IndentingNewLine]", 
            RowBox[{"tmp", "=", 
             RowBox[{"tmp", "//.", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"c___", " ", 
-                 SqrtBox["a_"], 
-                 SqrtBox["b_"]}], "\[Rule]", 
-                RowBox[{"c", 
-                 SqrtBox[
-                  RowBox[{"a", " ", "b"}]]}]}], ",", 
-               RowBox[{
-                RowBox[{"c___", " ", 
-                 RowBox[{
-                  SqrtBox["a_"], "/", 
-                  SqrtBox["b_"]}]}], "\[Rule]", 
-                RowBox[{"c", 
-                 SqrtBox[
-                  RowBox[{"a", " ", "/", "b"}]]}]}]}], "}"}]}]}], ",", 
-           "\[IndentingNewLine]", 
-           RowBox[{"(*", "default", "*)"}], "\[IndentingNewLine]", 
-           RowBox[{
-            RowBox[{"tmp", "=", 
-             RowBox[{"tmp", "//.", 
+             RowBox[{
               RowBox[{
                RowBox[{
                 RowBox[{"(", 
-                 RowBox[{"pp", ":", "productOps"}], ")"}], "[", 
-                RowBox[{"c1___", ",", 
-                 RowBox[{"op", "[", 
-                  RowBox[{"a1_", ",", "p1___"}], "]"}], ",", 
-                 RowBox[{"op", "[", 
-                  RowBox[{"a2_", ",", "p2___"}], "]"}], ",", "c2___"}], "]"}],
-                "\[Rule]", 
-               RowBox[{"pp", "[", 
-                RowBox[{"c1", ",", 
-                 RowBox[{"op", "[", 
-                  RowBox[{
-                   RowBox[{"pp", "[", 
-                    RowBox[{"a1", ",", "a2"}], "]"}], ",", "p1", ",", "p2"}], 
-                  "]"}], ",", "c2"}], "]"}]}]}]}], ";"}]}], 
-          "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}],
-       ";", "\[IndentingNewLine]", "tmp"}]}], "\[IndentingNewLine]", "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+                 RowBox[{"s1_:", "1"}], ")"}], 
+                RowBox[{"xSum", "[", 
+                 RowBox[{"a_", ",", "c__"}], "]"}]}], "+", " ", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"s2_:", "1"}], ")"}], 
+                RowBox[{"xSum", "[", 
+                 RowBox[{"b_", ",", "c__"}], "]"}]}]}], "\[Rule]", 
+              RowBox[{"xSum", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"s1", " ", "a"}], "+", 
+                 RowBox[{"s2", "  ", "b"}]}], ",", "c"}], "]"}]}]}]}], ",", 
+           "\[IndentingNewLine]", 
+           RowBox[{"tmp", "=", 
+            RowBox[{"tmp", "//.", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"s1_:", "1"}], ")"}], 
+                RowBox[{"xSum", "[", 
+                 RowBox[{"a_", ",", "c__"}], "]"}]}], "+", " ", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"s2_:", "1"}], ")"}], 
+                RowBox[{"xSum", "[", 
+                 RowBox[{"b_", ",", "c__"}], "]"}]}]}], ":>", 
+              RowBox[{
+               RowBox[{"xSum", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"s1", " ", "a"}], "+", 
+                  RowBox[{"s2", " ", "b"}]}], ",", "c"}], "]"}], "/;", 
+               RowBox[{
+                RowBox[{"tuHasAnyQ", "[", 
+                 RowBox[{"s1", ",", 
+                  RowBox[{"{", 
+                   RowBox[{"1", ",", 
+                    RowBox[{"-", "1"}]}], "}"}]}], "]"}], "&&", 
+                RowBox[{"tuHasAnyQ", "[", 
+                 RowBox[{"s2", ",", 
+                  RowBox[{"{", 
+                   RowBox[{"1", ",", 
+                    RowBox[{"-", "1"}]}], "}"}]}], "]"}]}]}]}]}]}]}], 
+          "]"}]}]}], "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]",
+       "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"op", "===", "productOps"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"tmp", "=", 
+          RowBox[{"tmp", "//.", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"pp", ":", "productOps"}], ")"}], "[", 
+             RowBox[{"c1___", ",", 
+              RowBox[{"op", "[", 
+               RowBox[{"a1_", ",", "p1___"}], "]"}], ",", 
+              RowBox[{"op", "[", 
+               RowBox[{"a2_", ",", "p2___"}], "]"}], ",", "c2___"}], "]"}], 
+            "\[Rule]", 
+            RowBox[{"pp", "[", 
+             RowBox[{"c1", ",", 
+              RowBox[{"op", "[", 
+               RowBox[{
+                RowBox[{"pp", "[", 
+                 RowBox[{"a1", ",", "a2"}], "]"}], ",", "p1", ",", "p2"}], 
+               "]"}], ",", "c2"}], "]"}]}]}]}], ";"}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", "tmp"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"gatherLog", "[", "exp_", "]"}], ":=", 
@@ -7922,7 +8111,14 @@ forms. *28Nov2018*\>\""}], ";"}], "\[IndentingNewLine]",
    3.756047955114801*^9, 3.756047959347454*^9}, {3.756048067901451*^9, 
    3.756048098986532*^9}, {3.7607134585420237`*^9, 3.760713483917927*^9}, {
    3.76088406639509*^9, 3.7608840664376802`*^9}, 3.762796144486002*^9, 
-   3.763039684161965*^9},ExpressionUUID->"bbef5bda-8b7b-4d97-8d39-\
+   3.763039684161965*^9, {3.7642919845129547`*^9, 3.764291998104957*^9}, 
+   3.764292035362892*^9, 3.764776779665082*^9, 3.765021714853528*^9, {
+   3.7650276809002113`*^9, 3.765027701016663*^9}, {3.765027733500197*^9, 
+   3.765027878671051*^9}, {3.765027945699266*^9, 3.765027952846084*^9}, {
+   3.765375272925317*^9, 3.765375335865971*^9}, 3.765634179846259*^9, 
+   3.765716973119712*^9, 3.7657172900953007`*^9, 3.7657175295341797`*^9, {
+   3.7657178045858297`*^9, 
+   3.765717804732202*^9}},ExpressionUUID->"bbef5bda-8b7b-4d97-8d39-\
 07e3bac152ca"]
 },
 WindowSize->{808, 655},
@@ -7953,10 +8149,10 @@ Cell[30060, 772, 271, 6, 29, "Text",ExpressionUUID->"906fc8eb-b0e3-4f02-a2f1-7c0
 Cell[30334, 780, 12267, 269, 1113, "Input",ExpressionUUID->"f09b1a8a-d58e-4dfe-94dc-50442c68141e",
  InitializationCell->True],
 Cell[42604, 1051, 109, 1, 29, "Text",ExpressionUUID->"bf9a8856-5d81-42aa-9cf6-ff282f30c862"],
-Cell[42716, 1054, 143037, 3407, 11745, "Input",ExpressionUUID->"9a48861d-1083-4676-92dc-a74078babfb0",
+Cell[42716, 1054, 145474, 3461, 12001, "Input",ExpressionUUID->"9a48861d-1083-4676-92dc-a74078babfb0",
  InitializationCell->True],
-Cell[185756, 4463, 108, 1, 29, "Text",ExpressionUUID->"f801da7f-ecd6-41f2-b7d0-0f52d7e1ab9c"],
-Cell[185867, 4466, 139098, 3459, 11654, "Input",ExpressionUUID->"bbef5bda-8b7b-4d97-8d39-07e3bac152ca",
+Cell[188193, 4517, 108, 1, 29, "Text",ExpressionUUID->"f801da7f-ecd6-41f2-b7d0-0f52d7e1ab9c"],
+Cell[188304, 4520, 144747, 3601, 12042, "Input",ExpressionUUID->"bbef5bda-8b7b-4d97-8d39-07e3bac152ca",
  InitializationCell->True]
 }
 ]

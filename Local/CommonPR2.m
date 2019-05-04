@@ -150,7 +150,7 @@ For[
 i=0;$=exp,
 i<level,
 i++,
-$=$/.pp:(Plus|Inactive[Plus]|xPlus)[a__]:>"\[Sum]"[ColumnBar[{a}]]
+$=$/.pp:(Plus|Inactive[Plus]|xPlus)[a__]:>Style["\[Sum]",RGBColor[.7,0,1,1]][ColumnBar[{a}]]
 ];
 $
 ]

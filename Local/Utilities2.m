@@ -333,6 +333,19 @@ tmp=tmp//.Reverse/@subX//.Xpat[a_]->a;
 tmp//Flatten
 ];
 (**)
+tuRuleInTermsOf//Clear;
+tuRuleInTermsOf::usage="tuRuleInTermsOf[var_List,target_,ignore_List:{}][exp_] attempts to solve for target_ given a List of Rules in exp_ selecting Rules which match all Patterns in var_List.  ignore_List contains Patterns that eliminates Rules in exp_. *17Apr2019*";
+tuRuleInTermsOf[var_List,target_,ignore_List:{}][exp_]:=Module[{$,$0},
+$=tuRule[exp];
+$0=$=Select[$,tuHasAllQ[#,Flatten[{var,target}]]&&tuHasNoneQ[#,ignore]&];
+xPrint[$0];
+$=tuRuleSolve[$,target];
+If[Length[$]==0,
+Message[tuRuleInTermsOf::Rules,$0],
+$
+]
+];
+(**)
 tuRuleDSolve::usage="tuRuleDSolve[var_,independents_][eqn_] converts eqn_ from tuDerivative notation to Mathematica-D-notation and applies DSolve. var_ indicates ALL variables that are functions of independents_ by onverting var_ to var_[independents_].  Only single equations in eqn_ are handled reliably. Currently only the first var_ is solved for in DSolve[eqn_,var_,independents_]. PROTOTYPE. *11Jan2018*22Sep2018*";
 tuRuleDSolve[var_,independents_][eqn_]:=Module[{$0=eqn,$,$s,$s1},
 $s=Map[#->#[Apply[Sequence,Flatten[{independents}]]]&,Flatten[{var}]];
@@ -749,49 +762,41 @@ moveIn[term_]:=a_ (op:xProduct|xSum)[b_,i_]:>op[a b,i]/;ListMemberQ[a,Flatten[{t
 
 (*
 independentOf[pattern_List][exp_] Removes elements dependent of pattern_List in the FreeQ sense.*3Mar2013*)
-independentOf::usage=
-"independentOf[pattern_List][exp_] removes elements dependent on pattern_List in the FreeQ sense. *3Mar2013*";
-independentOf[pattern_List][exp_]:=Module[{head,tmp,TF},
+tuIndependentTerms::usage=
+"independentOf[pattern_List][exp_] removes elements of exp_ dependent on pattern_List in the tuHasNoneQ sense. *3Mar2013**22Apr2019*";
+tuIndependentTerms[pattern_List][exp_]:=Module[{head,tmp,TF},
 head=Head[exp];
 If[head =!= Symbol,
 tmp=Apply[List,exp];
-TF=Map[ListFreeQ[#,pattern]&,tmp];
-TF=Map[If[!TF[[#]],{#}]&,Range[Length[TF]]];
-TF=DeleteCases[TF,Null];
-TF=Delete[tmp,TF];
-If[Length[TF]>0,Apply[head,TF],If[head ===Plus,0,1]],
+keep=Select[tmp,tuHasNoneQ[#,pattern]&];
+If[Length[keep]>0,Apply[head,keep],If[head ===Plus,0,1]],
 (*else*)
-If[ListFreeQ[exp,pattern],exp,1]
+If[tuHasAnyQ[exp,pattern],exp,1]
 ]
 ];
-(*
-dependentOn[pattern_List][exp_] Removes Level 0 terms that are independent (in the FreeQ sense) of elements in pattern_List. *3Mar2013*)
-dependentOn::usage=
-"dependentOn[pattern_List][exp_] removes elements independent of pattern_List in the FreeQ sense. *3Mar2013*";
-dependentOn[pattern_List][exp_]:=Module[{head,tmp,TF},
+
+tuDependentTerms::usage=
+"dependentOn[pattern_List][exp_] removes elements of exp_ independent of pattern_List in the tuHasAnyQ sense. *3Mar2013**23Apr2019*";
+tuDependentTerms[pattern_List][exp_]:=Module[{head,tmp,keep,TF},
 head=Head[exp];
 If[head =!= Symbol,
 tmp=Apply[List,exp];
-TF=Map[ListFreeQ[#,pattern]&,tmp];
-TF=Map[If[TF[[#]],{#}]&,Range[Length[TF]]];
-TF=DeleteCases[TF,Null];
-TF=Delete[tmp,TF];
-If[Length[TF]>0,Apply[head,TF],If[head ===Plus,0,1]],
+keep=Select[tmp,tuHasAnyQ[#,pattern]&];
+If[Length[keep]>0,Apply[head,keep],If[head ===Plus,0,1]],
 (*else*)
-If[ListFreeQ[exp,pattern],1,exp]
+If[tuHasNoneQ[exp,pattern],1,exp]
 ]
-];
+]
 (**)
 tuSumSimplify::usage="tuSumSimplify[independent_List][exp_] converts Sum[]\[Rule]xSum[], move terms within xSum[] of exp_. Moves patterns in independent_List to outside xSum[], and return a xSum[] expressions.  *20Oct2013**15Oct2017*";
-tuSumSimplify[independent_List:{}][exp_]:=Module[{tmp=exp,tmp1},
+tuSumSimplify[independent_List:{}][exp_]:=Module[{tmp=exp,tmp1,indep={}},
 tmp=tmp/.Sum->xSum;
 While[tmp =!=tmp1,
 tmp1=tmp;
-tmp=tmp//.tuOpDistribute[xSum];
-tmp=tmp//tuOpSimplifyFirst[xSum,independent];
+tmp=tmp//tuOpDistributeF[xSum];
+tmp=tmp/.ss:xSum[a_,b__]:>tuOpSimplifyFirst[xSum,Flatten[{independent}]][ss];
 tmp=tmp//.xSum[a_ ,b__]:>(a  xSum[1,b]/;NumericQ[a]);
-tmp=tmp/.xSum[0,b__]->0;
-tmp=tmp/.xSum[a_,b__]:>dependentOn[independent][a]xSum[ independentOf[independent][a],b];
+tmp=tmp/.xSum[0,b__]->0//Simplify
 ];
 tmp
 ];
@@ -805,15 +810,30 @@ $=$/.Sum->xSum/.$parts
 ];
 (**)
 Clear[tuSumKroneckerDelta]
+tuSumKroneckerDelta::usage="tuSumKroneckerDelta[sym_:\[Delta]][exp_] applies (1) tuSumSimplify[] to exp_, (2) expands compact xSum[]s to nested xSum[]s, (3) replaces appropriate \[Delta]-function index in argument of xSum[] (Does not check limits of xSum[].) (4) applies Refine[_,refine_] *15Apr2019*";
+tuSumKroneckerDelta[sym_:\[Delta]][exp_]:=Module[{$=exp,$test},
+$=$//.Sum->xSum;
+$=$//tuSumSimplify[];
+$=$//.xSum[A_,i1_,i2__]:>xSum[xSum[A,i2],i1];
+xPrint[$];
+$=$/.xSum[a_  dd:T[sym,"dd",{i1_,i2_}],b_]:>If[ComplexInfinity===($test=a/.tuRuleSolve[{i1->i2},First[b]]),xLimit[a,First[b]->First[DeleteCases[{i1,i2},First[b]]]],
+$test];
+$
+];
+(*TEST
+xSum[tuDPartial[a[i],\[Tau]] T[\[Delta],"dd",{n,i}],{i,-\[Infinity],\[Infinity]}]
+%/.xSum[a_  dd:T[\[Delta],"dd",{i1_,i2_}],b_]\[RuleDelayed](a/.tuRule[First[b]\[Rule]First[DeleteCases[{i1,i2},First[b]]]])
+*)
+(*
 tuSumKroneckerDelta::usage="tuSumKroneckerDelta[refine_:{},sym_:\[Delta]][exp_] applies (1) tuSumSimplify[] to exp_, (2) replaces Tensor[sym_,_,_] \[Rule] KroneckerDelta[_,_], (3) replaces xSum\[Rule]Sum so Mathematica can do the work, (4) applies Refine[_,refine_] *13Oct2017*";
 tuSumKroneckerDelta[refine_:{},sym_:\[Delta]][exp_]:=Module[{$=exp},
 $=$//tuSumSimplify[];
-$=$/.Tensor[sym,up_,dn_]:>KroneckerDelta[Apply[Sequence,DeleteCases[Flatten[{up,dn}],Void]]];
-$=$/.xSum->Sum;
+$=$/.Tensor[sym,up_,dn_]\[RuleDelayed]KroneckerDelta[Apply[Sequence,DeleteCases[Flatten[{up,dn}],Void]]];
+$=$/.xSum\[Rule]Sum;
 $=Refine[$,refine];
 $
 ];
-
+*)
 (*Distribute xSum over ExpandAll[sumand] of Sum[].  Returns xSum[]. 
 3.1.2010*)
 DistributeSum[exp_]:=Module[{tmp,tmp1=NULL,DEBUG=0},
@@ -959,16 +979,26 @@ tmp=Append[tmp,to]
 ];
 
 (**)
-tuOpGather::usage="tuOpGather[op_][exp_] gathers combination of operators op_ in exp_ ,Log: a Log[b]+c Log[d]\[Rule]Log[\!\(\*SuperscriptBox[\(b\), \(a\)]\)\!\(\*SuperscriptBox[\(d\), \(b\)]\)], Sqrt: \!\(\*SqrtBox[\(a_\)]\)\!\(\*SqrtBox[\(b_\)]\)->\!\(\*SqrtBox[\(a\\\ b\)]\)\[IndentingNewLine]*18Jul2016*";
-tuOpGather[op_][exp_]:=Module[{tmp=exp},
+tuOpGather::usage="tuOpGather[op_,includeCoef_:True][exp_] gathers combination of operators op_{Log,Sqrt,xSum,ProductOps} in exp_ ,Log: a Log[b]+c Log[d]\[Rule]Log[\!\(\*SuperscriptBox[\(b\), \(a\)]\)\!\(\*SuperscriptBox[\(d\), \(b\)]\)], Sqrt: \!\(\*SqrtBox[\(a_\)]\)\!\(\*SqrtBox[\(b_\)]\)->\!\(\*SqrtBox[\(a\\\\b\)]\), includeCoef_ specifies if the coefficients of op_ are to be included(xSum only). \[IndentingNewLine]*18Jul2016*26Apr2019*";
+tuOpGather[op_,includeCoef_:True][exp_]:=Module[{tmp=exp},
 If[op===Log,
 tmp=tmp//.a_ Log[b_]->Log[b^a];xPrint[tmp];
-tmp=tmp//.Log[a_]+Log[b_]->Log[a b];xPrint[tmp],
-If[op===Sqrt,
-tmp=tmp//.{c___ Sqrt[a_] Sqrt[b_]->c Sqrt[a b],c___ Sqrt[a_]/Sqrt[b_]->c Sqrt[a /b]},
-(*default*)
-tmp=tmp//.(pp:productOps)[c1___,op[a1_,p1___],op[a2_,p2___],c2___]->pp[c1,op[pp[a1,a2],p1,p2],c2];
+tmp=tmp//.Log[a_]+Log[b_]->Log[a b]
 ];
+
+If[op===Sqrt,
+tmp=tmp//.{c___ Sqrt[a_] Sqrt[b_]->c Sqrt[a b],c___ Sqrt[a_]/Sqrt[b_]->c Sqrt[a /b]}
+];
+
+If[op===xSum,
+tmp=tmp//.xSum[xSum[a_,c__],d__]:>xSum[a,Apply[Sequence,Sort[{c,d}]]];
+If[includeCoef,
+tmp=tmp//.(s1_:1)xSum[a_,c__]+ (s2_:1)xSum[b_,c__]->xSum[s1 a+s2  b,c],
+tmp=tmp//.(s1_:1)xSum[a_,c__]+ (s2_:1)xSum[b_,c__]:>xSum[s1 a+s2 b,c]/;tuHasAnyQ[s1,{1,-1}]&&tuHasAnyQ[s2,{1,-1}]]
+];
+
+If[op===productOps,
+tmp=tmp//.(pp:productOps)[c1___,op[a1_,p1___],op[a2_,p2___],c2___]->pp[c1,op[pp[a1,a2],p1,p2],c2];
 ];
 tmp
 ];
