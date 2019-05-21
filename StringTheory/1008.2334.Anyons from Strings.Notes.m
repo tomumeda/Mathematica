@@ -22,13 +22,8 @@
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
 tuItalics
-
-
-(* ::Input::Initialization:: *)
-Get[$InitialDirectory<>"/Mathematica/Gravity/gravityDefinitions.out"];
-$coordSolidAngle
-$metricSchwarzschildKruskalSzekeres;
-Get[$InitialDirectory<>"/Mathematica/units.out"];
+tuLoad["StringTheory/1008.2334.Anyons from Strings.Modules.m"]
+tuLoad["StringTheory/1008.2334.Anyons from Strings.out"];
 
 
 

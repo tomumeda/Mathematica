@@ -24,11 +24,4 @@
 tuItalics
 
 
-(* ::Input::Initialization:: *)
-Get[$InitialDirectory<>"/Mathematica/Gravity/gravityDefinitions.out"];
-$coordSolidAngle
-$metricSchwarzschildKruskalSzekeres;
-Get[$InitialDirectory<>"/Mathematica/units.out"];
-
-
 

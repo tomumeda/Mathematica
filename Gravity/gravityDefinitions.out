@@ -83,6 +83,204 @@ dotOps := Dot | xDot | CenterDot | Inactive[Dot]
  
 Attributes[CenterDot] = {Flat, OneIdentity}
  
+expandCom[subs_:{}][exp_] := Block[{tmp = exp}, 
+     tmp = expandDot[subs][tmp //. tuCommutatorExpand]; tmp = tmp /. toxDot; 
+      tmp = expandDot[toDot][tuMatrixOrderedMultiply[tmp]]; tmp]
+ 
+expandCom /: expandCom::usage = 
+     "expandCom[subs_:{}][exp_] expands Commutator expressions *22Mar2019*"
+ 
+expandDot[sub_:{}, scalar_:{}, func_:{}, iterate_:20][exp_] := 
+    tuRepeat[{sub, tuOpDistribute[dotOps], tuOpSimplify[dotOps, scalar]}, 
+      {func}, iterate][exp]
+ 
+expandDot /: expandDot::usage = "expandDot[sub_:{},scalar_:{},func_:{},iterat\
+e_:20] functional definition equivalent to \
+tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar]},{func},iter\
+ate]. This definition serves as an example of how to collect several repeated \
+operations into one statement.  *22Mar2019*"
+ 
+tuRepeat[rules_List:{}, operations_:{}, nInterate_:100][exp_] := 
+    Module[{$IterationLimit = 20, xrule, xop, tmp = exp, tmp0, icnt = 0}, 
+     xrule = tuRule[{rules}]; xop = Flatten[{operations}]; 
+      xPrint[xrule, xop, $IterationLimit]; While[tmp0 =!= tmp, 
+       tmp0 = tmp; xPrint[icnt, tmp]; icnt++; xPrint[xop]; 
+        If[xop =!= {}, tmp = (Composition[Sequence @@ xop])[tmp]]; 
+        If[xrule =!= {}, tmp = Fold[#1 //. Sequence[#2, MaxIterations -> 
+               nInterate] & , tmp, xrule]]; xPrint[operation =!= Null]; 
+        If[icnt >= nInterate, Return[tmp]]; xPrint[$IterationLimit]; ]; tmp]
+ 
+tuRepeat /: tuRepeat::usage = "tuRepeat[rules_List:{},operations_:{},nInterat\
+e_:100][exp_] applies rules_List and operations_ (may be List) repeatedly \
+until exp_ does not change. nInterate_ sets MaxInterations in ReplaceRepeated \
+and While[] loop. *22Feb2016*"
+ 
+$IterationLimit = 4096
+ 
+tuRule[rules_, negativePower_:False, simplerArg_:True] := 
+    Module[{$ = rules, rr$}, $ = Flatten[$]; 
+      $ = $ //. (head_)[CR[__] | CG[__] | CO[__] | CP[__] | CB[__]] -> head; 
+      $ = tuExtractPattern[(Rule[__]) | (RuleDelayed[__])][$]; 
+      If[simplerArg, $ = $ /. (rr:Rule | RuleDelayed)[-(a_), b_] -> 
+           rr[a, -b]; ]; If[negativePower, 
+       $ = {$, tuRulePositiveNegativePower[$], 
+         $ /. (rr:Rule | RuleDelayed)[a_, b_] -> rr[1/a, 1/b]}]; 
+      $ = Flatten[DeleteCases[(Rule | RuleDelayed)[a_, a_]][$]]; 
+      $ = Flatten[DeleteCases[FontFamily -> a_][$]]; DeleteDuplicates[$]]
+ 
+tuRule /: tuRule::usage = "tuRule[rules_,negativePower_:False,simplerArg_:Tru\
+e] produces a List of valid Rule[]s from rules_ and forms a Flatten[]d list \
+of Rules. Deletes imbedded comments in the form of head_[CG[__]] and other \
+non-Rule forms. If  If negativePower_\[Rule]True then negative Power of \
+Rule[]s are generated.  If simplerArg_\[Rule]True then Rules are transformed \
+from -a\[Rule]b \[Rule] a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \
+\(2\)]\)->b \[Implies] a\[Rule]Sqrt[b] . *7Aug2015*1Feb2018*"
+ 
+Attributes[rr$] = {Temporary}
+ 
+CR[a__] := style[Red, a]
+ 
+style[color_, exp__] := Module[{tmp = {exp}}, 
+     tmp = Thread[Style[tmp, color, FontFamily -> "Helvetica"]]; 
+      Sequence @@ tmp]
+ 
+CG[a__] := style[Darker[Green], a]
+ 
+CO[a__] := style[Orange, a]
+ 
+CP[a__] := style[Darker[Pink], a]
+ 
+CB[a__] := style[Blue, a]
+ 
+tuRulePositiveNegativePower[rules_] := Module[{$ = rules, rr$}, 
+     $ = $ /. (rr:Rule | RuleDelayed)[(a_)^(b_), c_] :> 
+        (rr$[a^(-b), c^(-1)] /. rr$ -> rr)]
+ 
+tuRulePositiveNegativePower /: tuRulePositiveNegativePower::usage = "tuRulePo\
+sitiveNegativePower[rules_] produces inverse Power in Rule[]s that include \
+Power[] in first arguement.  Mathematica does not recognize inversed Power \
+terms in pattern matching.  *2Feb2018*"
+ 
+tuOpDistribute[op_, over_:Plus] := 
+    {oo:(op /. Dot -> dotOps)[a1___, over[a_, ap__], a2___] :> 
+      Distribute[ExpandAll[oo], over]}
+ 
+tuOpDistribute /: tuOpDistribute::usage = "tuOpDistribute[op_,over_:Plus] \
+Rule for distributing op_ over over_. \
+EG.\na.(b-c).d/.tuOpDistribute[dotOps]->a.b.d+a.(-c).d. Works with op_s of \
+form  CommutatorM[arg__\!\(\*SubscriptBox[\(]\), \(\[Rho]\)]\) as well.  \
+*21May2015*23Jun2017*"
+ 
+tuOpSimplify[operator_, scalars_List:{}] := 
+    Flatten[{(op:operator)[a_] :> a /; MatchQ[op, dotOps], 
+      (op:operator)[a_] -> a, (op:operator)[] -> 1, 
+      (op:operator)[Longest[a___], (cc:(c_)^(n_:1))*(d_), Longest[e___]] :> 
+       cc*op[a, d, e] /; (NumericQ[c] || tuMemberQ[c, scalars]) && 
+         (NumericQ[n] || tuMemberQ[n, scalars]), 
+      (op:operator)[Longest[a___], cc:(c_)^(n_:1), Longest[d___]] :> 
+       cc*op[a, d] /; (NumericQ[c] || tuMemberQ[c, scalars]) && 
+         (NumericQ[n] || tuMemberQ[n, scalars]), 
+      Conjugate[(op:operator)[a__]] :> op @@ Thread[Conjugate[{a}]]}]
+ 
+tuOpSimplify /: tuOpSimplify::usage = "tuOpSimplify[operator_,scalars_List:{}\
+] Rule for simplifying operator[] expressions by removing NumericQ and \
+scalars_ from its arguements. NOTE: Some of these Rule[]s do not seem active \
+for some expressions. BUG: Does not catch some scalars_. \
+*26Sep2015**21Mar2018**12Mar2019*"
+ 
+cc[a_] := Conjugate[a]
+ 
+tuCommutatorExpand := {CommutatorP -> ACommutator, CommutatorM -> MCommutator}
+ 
+tuCommutatorExpand /: tuCommutatorExpand::usage = "tuCommutatorExpand is \
+Rule[] to replace Commutator expression into Dot[]d notation. *21Mar2016*"
+ 
+ACommutator[A_, B_] := tuCommutator[Dot, 1][A, B]
+ 
+tuCommutator[op_:Dot, sign_:-1][A_, B_] := op[A, B] + sign*op[B, A]
+ 
+tuCommutator /: tuCommutator::usage = "tuCommutator[op_:Dot,sign_:-1][A_,B_] \
+expands the commutator of matrices A and B using op_ as multiplicative \
+operator. *17Feb2016*"
+ 
+MCommutator[A_, B_] := tuCommutator[Dot][A, B]
+ 
+toxDot := dotOps -> xDot
+ 
+tuMatrixOrderedMultiply[exp_] := Module[{tmp, A$, head, pos, $p, i, $n, $}, 
+     pos = tuExtractPositionPattern[dotOps][exp]; xPrint[">>", pos]; 
+      pos = tuPositionNestDelete[pos]; xPrint[">>", pos]; 
+      Do[$p = pos[[i,1]]; xPrint[$p, "<<"]; $p = If[$p[[-1]] == 0, 
+          Delete[$p, -1]]; $ = exp[[Sequence @@ $p]]; xPrint["===", $]; 
+        pos[[i,1]] = $p; If[MatchQ[head = Head[$], dotOps], 
+         tmp = MapIndexed[Map[A$[#2], #1, {2}] & , $]; 
+          tmp = tmp /. head -> Dot; tmp = tmp /. Times -> head; 
+          tmp = tmp /. A$[_][a_] -> a]; pos[[i,2]] = tmp, {i, Length[pos]}]; 
+      tuReplacePart[exp, pos]]
+ 
+tuMatrixOrderedMultiply /: tuMatrixOrderedMultiply::usage = "tuMatrixOrderedM\
+ultiply[exp_] evaluates top Level matrix expressions (Head->dotOps) using Dot \
+for actual matrix multiply but maintaining order of elements from each \
+matrix.  The matrix inputs must have the same proper form and sizes. This \
+routine is useful when matrix elements are noncommuting matrices. \
+*18Feb2016*"
+ 
+Attributes[A$] = {Temporary}
+ 
+tuExtractPositionPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{xpattern = pattern, pos, list, tmp, xList}, 
+     If[Head[xpattern] == List, xpattern = Alternatives @@ xpattern; 
+        xPrint[xHead[xpattern]]]; pos = Position[exp, xpattern, 
+        {0, maxlevel}, Heads -> True]; list = Extract[exp, pos]; 
+      tmp = Thread[pos -> list]; xPrint["X ", tmp, ", ", xpattern, ", ", 
+       list, ", ", pos]; tmp]
+ 
+tuExtractPositionPattern /: tuExtractPositionPattern::usage = "tuExtractPosit\
+ionPattern[pattern_,maxlevel_:Infinity][exp_] extracts a List of \
+{Positions,items} that match pattern_ in exp_ up to Level maxlevel_.  Returns \
+a List[ pos1->match1,pos2->match2,... ]. pattern_ may be a List or \
+Alternatives. *3Nov2016*)"
+ 
+tuPositionNestDelete[position_List] := Module[{$ = position, $p, dup, $n, $t, 
+      i}, $p = $ = (#1 & ) /@ Sort[$]; xPrint[$p]; If[$p[[1,1]] == {}, 
+       Return[{$p[[1]]}]]; Do[$t = $p[[i,1]]; $n = FirstPosition[$t, 0][[1]]; 
+        $p[[i,1]] = $t[[1 ;; If[NumericQ[$n], $n - 1, -1]]], 
+       {i, Length[$p]}]; Do[If[MemberQ[SequencePosition[$p[[$j,1]], 
+          $p[[$i,1]]], {1, ___}], $[[$j]] = dup[$i, $[[$j]]]], 
+       {$i, Length[$] - 1}, {$j, $i + 1, Length[$]}]; DeleteCases[$, dup[__]]]
+ 
+tuPositionNestDelete /: tuPositionNestDelete::usage = "tuPositionNestDelete[p\
+osition_List] reduces the result of Position\[Rule] position_List so that \
+there is only top level positions. E.G. \
+{{1,2}\[Rule]a,{1}\[Rule]r[a]}\[Rule]{{1}->r[a]}. If pointer to whole \
+expression {} exists then that alone is returned.  *11Feb2017*"
+ 
+$t = {{ArcTan[7*E^25*Cosh[t/4] + 7*E^25*Sinh[t/4]], 
+      -ArcTan[7*E^25*Cosh[t/4] - 7*E^25*Sinh[t/4]]}, 
+     {ArcTan[(E^(3/4)*Cosh[t/4])/Sqrt[2] + (E^(3/4)*Sinh[t/4])/Sqrt[2]], 
+      -ArcTan[(E^(3/4)*Cosh[t/4])/Sqrt[2] - (E^(3/4)*Sinh[t/4])/Sqrt[2]]}, 
+     {ArcTan[0.011658511367138847*Cosh[t/4] + 0.011658511367138847*
+         Sinh[t/4]], -ArcTan[0.011658511367138847*Cosh[t/4] - 
+         0.011658511367138847*Sinh[t/4]]}, 
+     {ArcTan[0.011657928456130442*Cosh[t/4] + 0.011657928456130442*
+         Sinh[t/4]], ArcTan[0.011657928456130442*Cosh[t/4] - 
+        0.011657928456130442*Sinh[t/4]]}, 
+     {ArcTan[0.6671642868877901*Cosh[t/4] + 0.6671642868877901*Sinh[t/4]], 
+      ArcTan[0.6671642868877901*Cosh[t/4] - 0.6671642868877901*Sinh[t/4]]}, 
+     {ArcTan[0.9999999999937499*Cosh[t/4] + 0.9999999999937499*Sinh[t/4]], 
+      ArcTan[0.9999999999937499*Cosh[t/4] - 0.9999999999937499*Sinh[t/4]]}}
+ 
+tuReplacePart[exp_, pos_List] := Module[{$}, 
+     If[Length[$ = Cases[pos, ({} -> _) | ({} :> _)]] > 0, $[[1,2]], 
+      ReplacePart[exp, pos]]]
+ 
+tuReplacePart /: tuReplacePart::usage = "tuReplacePart[exp_,pos_List] like \
+ReplacePart[] except replaces whole exp_ when pos contains {{}->replacement} \
+in which case ReplacePart does nothing. *5Sep2015*"
+ 
+expandDC[sub_:{}, scalar_:{}, func_:{}, iterate_:20] := 
+    expandDot[sub, scalar, func, iterate]
+ 
 Attributes[exp$] = {Temporary}
  
 Attributes[eyd$] = {Temporary}
@@ -130,76 +328,6 @@ e.g.,T[Symbol,\"udd\"][i,j,k]->((\!\(\*SuperscriptBox[\(Symbol\), \
  
 $00 = {X, T}
  
-Attributes[$0$] = {Temporary}
- 
-Attributes[$0$2219] = {Temporary}
- 
-$0$2219 = {"spherical coordinates for "[S^"2"], Inequality[0, LessEqual, 
-      Tensor[\[Theta], {Void}, {2}], Less, 2*Pi], Inequality[0, LessEqual, 
-      Tensor[\[Theta], {Void}, {"1\[LessEqual]i\[LessEqual]1"}], Less, Pi], 
-     Tensor[\[Omega], {1}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {1}]], 
-     Tensor[\[Omega], {2}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {2}]]*
-       Sin[Tensor[\[Theta], {Void}, {1}]], Tensor[\[Omega], {3}, {Void}] -> 
-      Sin[Tensor[\[Theta], {Void}, {1}]]*Sin[Tensor[\[Theta], {Void}, {2}]]}
- 
-Attributes[$0$2319] = {Temporary}
- 
-$0$2319 = {"spherical coordinates for "[S^"2"], Inequality[0, LessEqual, 
-      Tensor[\[Theta], {Void}, {2}], Less, 2*Pi], Inequality[0, LessEqual, 
-      Tensor[\[Theta], {Void}, {"1\[LessEqual]i\[LessEqual]1"}], Less, Pi], 
-     Tensor[\[Omega], {1}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {1}]], 
-     Tensor[\[Omega], {2}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {2}]]*
-       Sin[Tensor[\[Theta], {Void}, {1}]], Tensor[\[Omega], {3}, {Void}] -> 
-      Sin[Tensor[\[Theta], {Void}, {1}]]*Sin[Tensor[\[Theta], {Void}, {2}]]}
- 
-Attributes[$1a$] = {Temporary}
- 
-Attributes[$1c$] = {Temporary}
- 
-Attributes[$1s$] = {Temporary}
- 
-Attributes[$1$] = {Temporary}
- 
-Attributes[$2a$] = {Temporary}
- 
-Attributes[$2b$] = {Temporary}
- 
-Attributes[$2c$] = {Temporary}
- 
-Attributes[$2m$] = {Temporary}
- 
-Attributes[$2td$] = {Temporary}
- 
-Attributes[$2t$] = {Temporary}
- 
-Attributes[$2$] = {Temporary}
- 
-Attributes[$4$] = {Temporary}
- 
-Attributes[$aa$] = {Temporary}
- 
-Attributes[$argn$] = {Temporary}
- 
-Attributes[$arg$] = {Temporary}
- 
-Attributes[$Arg$] = {Temporary}
- 
-Attributes[$a$] = {Temporary}
- 
-Attributes[$bb$] = {Temporary}
- 
-Attributes[$b$] = {Temporary}
- 
-Attributes[$cc$] = {Temporary}
- 
-Attributes[$common$] = {Temporary}
- 
-Attributes[$conserved$] = {Temporary}
- 
-Attributes[$constants$] = {Temporary}
- 
-Attributes[$const$] = {Temporary}
- 
 $coordEddingtonFinkelstein = 
     {{v -> t + SuperStar[r][Style["tortoise coordinate", RGBColor[0, 2/3, 0], 
            FontFamily -> "Helvetica"]]}[Style["ingoing null ray", 
@@ -246,9 +374,11 @@ $coordSolidAngle =
         d[Subscript[\[CapitalOmega], n_]]^2 -> 
          xSum[d[Tensor[\[Omega], {i}, {Void}]]^2, {i, 1, 1 + n}], 
         xSum[d[Tensor[\[Omega], {i}, {Void}]]*Tensor[\[Omega], {i}, {Void}], 
-          {i, 1, n}] -> 0}[Style["$coordSolidAngleDiff", RGBColor[0, 2/3, 0], 
-        FontFamily -> "Helvetica"]]}[Style["$coordSolidAngle", 
-      RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]
+          {i, 1, n}] -> 0}[Style[
+        "$coordSolidAngleDiff ref: tuCoordSolidAngle[n_]", 
+        RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]}[
+     Style["$coordSolidAngle", RGBColor[0, 2/3, 0], 
+      FontFamily -> "Helvetica"]]
  
 Attributes[Subscript] = {NHoldRest}
  
@@ -256,8 +386,9 @@ $coordSolidAngleDiff = {xSum[Tensor[\[Omega], {i}, {Void}]^2, {i, 1, n}] ->
        1, d[Subscript[\[CapitalOmega], n_]]^2 -> 
        xSum[d[Tensor[\[Omega], {i}, {Void}]]^2, {i, 1, 1 + n}], 
       xSum[d[Tensor[\[Omega], {i}, {Void}]]*Tensor[\[Omega], {i}, {Void}], 
-        {i, 1, n}] -> 0}[Style["$coordSolidAngleDiff", RGBColor[0, 2/3, 0], 
-      FontFamily -> "Helvetica"]]
+        {i, 1, n}] -> 0}[
+     Style["$coordSolidAngleDiff ref: tuCoordSolidAngle[n_]", 
+      RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]
  
 $coordTortoise = {SuperStar[r][Style["tortoise coordinate", 
         RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]] -> 
@@ -266,14 +397,6 @@ $coordTortoise = {SuperStar[r][Style["tortoise coordinate",
      ProductLog[E^(-1 + SuperStar[r]/(2*G*M))] -> -1 + r/(2*G*M), 
      SuperStar[r] -> 2*(G*M + G*M*Log[(E^(-1 + r/(2*G*M))*(-2*G*M + r))/
            (2*G*M)])}
- 
-Attributes[$c$] = {Temporary}
- 
-Attributes[$d0$] = {Temporary}
- 
-Attributes[$d1$] = {Temporary}
- 
-Attributes[$d2$] = {Temporary}
  
 $def["/Users/Tom/Mathematica/Gravity/gravityDefinitions"] = {}
  
@@ -284,43 +407,11 @@ NBname[type_String] := Module[{name = NotebookFileName[],
       base = FileBaseName[NotebookFileName[]]}, Switch[type, "name", name, 
       "dir", dir, "base", base, "stub", FileNameJoin[{dir, base}]]]
  
-Attributes[$deltas$] = {Temporary}
- 
-Attributes[$dependent$] = {Temporary}
- 
-Attributes[$dep$] = {Temporary}
- 
-Attributes[$detg$] = {Temporary}
- 
-Attributes[$de$] = {Temporary}
- 
-Attributes[$dif$] = {Temporary}
- 
-Attributes[$dm$] = {Temporary}
- 
-Attributes[$dn$] = {Temporary}
- 
-Attributes[$ds2$] = {Temporary}
- 
 $dsu = d[s]^2 -> -2*d[r]*d[u] + (-1 + (2*G*M)/r)*d[u]^2 + 
       r^2*d[\[CapitalOmega]]^2
  
 $dsv = d[s]^2 -> 2*d[r]*d[v] + (-1 + (2*G*M)/r)*d[v]^2 + 
       r^2*d[\[CapitalOmega]]^2
- 
-Attributes[$dummy$] = {Temporary}
- 
-Attributes[$dums$] = {Temporary}
- 
-Attributes[$dum$] = {Temporary}
- 
-Attributes[$dum$2573] = {Temporary}
- 
-Attributes[$dum$4192] = {Temporary}
- 
-Attributes[$dvars$] = {Temporary}
- 
-Attributes[$d$] = {Temporary}
  
 $einsteinEqn = {\[CapitalLambda]*Tensor[g, {Void, Void}, {\[Mu], \[Nu]}] - 
         (Tensor[g, {Void, Void}, {\[Mu], \[Nu]}]*Tensor[R, {}, {}])/2 + 
@@ -328,31 +419,20 @@ $einsteinEqn = {\[CapitalLambda]*Tensor[g, {Void, Void}, {\[Mu], \[Nu]}] -
        (8*G*Pi*Tensor[T, {Void, Void}, {\[Mu], \[Nu]}])/c^4}[
      Style["$einsteinEqn", RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]
  
-Attributes[$eulerequations$] = {Temporary}
- 
-Attributes[$e$] = {Temporary}
- 
-Attributes[$forms$] = {Temporary}
- 
-Attributes[$formvar$] = {Temporary}
- 
-Attributes[$f$] = {Temporary}
- 
-Attributes[$gdd$] = {Temporary}
- 
-Attributes[$generalForm$] = {Temporary}
- 
 $geodesicEqn := {tuDPartial[T[x, "u", {\[Mu]}], {\[Lambda], \[Lambda]}] + 
         T[\[CapitalGamma], "udd", {\[Mu], \[Rho]$, \[Sigma]$}]*
          tuDPartial[T[x, "u", {\[Rho]$}], \[Lambda]]*
          tuDPartial[T[x, "u", {\[Sigma]$}], \[Lambda]] -> 0 /. 
-      tuDExpandMultiVar, tuGeodesicEqn::usage = "tuGeodesicEqn[dsmetric_] \
-compute the geodesic equations from the dsmetric_ in the form \
-(d[s\!\(\*SuperscriptBox[\(]\), \(2\)]\)\[Rule]_).  This uses 'diffgeo.'(by \
-M. Headrick, available at \!\(\*FormBox[ButtonBox[RowBox[{RowBox[{\"http\", \
-\":\"}], \"//\", RowBox[{RowBox[{RowBox[{RowBox[{\"people\", \".\", \
-\"brandeis\", \".\", \"edu\"}], \"/\", RowBox[{\"~\", \"headrick\"}]}], \
-\"/\", \"Mathematica\"}], \
+      tuDExpandMultiVar, tuChristoffel[g_] := 
+      T[\[CapitalGamma], "udd", {i_, k_, l_}] -> (1/2)*T[g, "uu", {i, m$}]*
+        (tuDPartial[T[g, "dd", {m$, k}], l] + tuDPartial[T[g, "dd", {m$, l}], 
+          k] - tuDPartial[T[g, "dd", {k, l}], m$]), 
+     tuGeodesicEqn::usage = "tuGeodesicEqn[dsmetric_] compute the geodesic \
+equations from the dsmetric_ in the form (d[s\!\(\*SuperscriptBox[\(]\), \
+\(2\)]\)\[Rule]_).  This uses 'diffgeo.'(by M. Headrick, available at \
+\!\(\*FormBox[ButtonBox[RowBox[{RowBox[{\"http\", \":\"}], \"//\", \
+RowBox[{RowBox[{RowBox[{RowBox[{\"people\", \".\", \"brandeis\", \".\", \
+\"edu\"}], \"/\", RowBox[{\"~\", \"headrick\"}]}], \"/\", \"Mathematica\"}], \
 \"/\"}]}],BaseStyle->\"Hyperlink\",ButtonData->{URL[\"http://people.brandeis.\
 edu/~headrick/Mathematica/\"], \
 None},ButtonNote->\"http://people.brandeis.edu/~headrick/Mathematica/\"],Trad\
@@ -415,6 +495,8 @@ tuDerivOps := Flatten[tuDerivOpsD | tuDerivOpsU | tuDLie]
  
 tuDLie[a_, b_] := tuDDown["\[ScriptCapitalL]"][a, b]
  
+Attributes[m$] = {Temporary}
+ 
 tuMetricProperTime[exp_] := Module[{$ds2 = exp, $, $dvars, $vars, $gmatrix, 
       $gmatrixI, $gdd, $guu, $detg}, $ds2 = $ds2 /. (ds_ -> a_) -> a; 
       $dvars = DeleteDuplicates[tuExtractPattern[d[_]][$ds2]]; 
@@ -440,298 +522,9 @@ gmatrixuu\[Rule]full Matrix of T[g,uu,{_,_}],  NOTE: Only produces symmetric \
 Tensor[g].  The Det[g] that is often seen Det[-g] is the Det[] of the \
 T[g,dd,{_,_}] metric tensor. *17Feb2017*2Feb2018*22Feb2018*"
  
-Attributes[$gmatrixI$] = {Temporary}
- 
-Attributes[$gmatrix$] = {Temporary}
- 
-Attributes[$guu$] = {Temporary}
- 
-Attributes[$h1$] = {Temporary}
- 
-Attributes[$hcnt$] = {Temporary}
- 
-Attributes[$hcnt$2275] = {Temporary}
- 
-$hcnt$2275 = 2
- 
-Attributes[$hcnt$2357] = {Temporary}
- 
-$hcnt$2357 = 2
- 
-Attributes[$hcnt$2569] = {Temporary}
- 
-$hcnt$2569 = 2
- 
-Attributes[$hcnt$7720] = {Temporary}
- 
-$hcnt$7720 = 1
- 
-Attributes[$hcnt$7865] = {Temporary}
- 
-$hcnt$7865 = 2
- 
-Attributes[$hcnt$8392] = {Temporary}
- 
-$hcnt$8392 = 2
- 
-Attributes[$head$] = {Temporary}
- 
-Attributes[$h$] = {Temporary}
- 
-Attributes[$h$2275] = {Temporary}
- 
-$h$2275 = Inactive[tudExpand]
- 
-tudExpand[\[Delta]1_, constants_List:{}][exp_] := 
-    Module[{tmp = exp, sub, name, tmp0, $dum, n$, 
-      ProductOp = Flatten[BraKet | Times | dotOps | Wedge | xWedge | 
-         CircleTimes]}, 
-     sub = Flatten[{(name:\[Delta]1)[a_] :> 0 /; NumericQ[a], 
-         (name:\[Delta]1)[a_] :> 0 /; ListMemberQ[a, constants], 
-         (name:\[Delta]1)[(a_)^(n_)] :> 0 /; ListMemberQ[a, constants] && 
-            NumericQ[n], (name:\[Delta]1)[1/(a_)] :> 
-          0 /; ListMemberQ[a, constants], (name:\[Delta]1)[1/(a_)^(n_)] :> 
-          0 /; ListMemberQ[a, constants] && NumericQ[n], 
-         (name:\[Delta]1)[Conjugate[a_]] :> Conjugate[name[a]], 
-         (name:\[Delta]1)[ConjugateTranspose[a_]] :> ConjugateTranspose[
-           name[a]], (name:\[Delta]1)[Transpose[a_]] :> Transpose[name[a]], 
-         (name:\[Delta]1)[Tr[a_]] :> Tr[name[a]], (name:\[Delta]1)[a__] :> 
-          Thread[name[a]] /; Head[a] == List, 
-         (name:\[Delta]1)[(OP:DerivOps)[T_, i___]] -> OP[name[T], i], 
-         (name:\[Delta]1)[Exp[a_]] -> Exp[a]*name[a], 
-         (name:\[Delta]1)[Log[a_]] -> name[a]/a, 
-         (name:\[Delta]1)[(a_)^(n_)] :> n*name[a]*a^(n - 1), 
-         (name:\[Delta]1)[(tt:Alternatives @@ tuTrigFunc)[t_]] :> 
-          (D[tt[$dum], $dum]*name[t] /. $dum -> t), (0 & ) -> 0, 
-         (name:\[Delta]1)[(ww:Wedge | xWedge)[a_, b__]] -> 
-          ww[name[a], b] + ww[a, ww[b]]}]; While[tmp =!= tmp0, 
-       tmp0 = tmp; tmp = ExpandAll[tmp]; 
-        tmp = tmp //. (name:\[Delta]1)[(a_) + (b_)] -> name[a] + name[b]; 
-        tmp = tmp //. (name:\[Delta]1)[(oo:ProductOp)[a_, b__]] :> 
-           oo[name[a], b] + oo[a, If[Length[{b}] > 1, name[oo[b]], name[b]]]; 
-        tmp = tmp //. sub; tmp = tmp /. (dname:\[Delta]1)[a_] :> 
-           dname[a /. (h_)[(n_)?NumberQ] -> h[n, n$]]; 
-        tmp = tmp /. \[Delta]1 -> Dt /. Dt -> $Dt; 
-        tmp = tmp //. $Dt[n$]*Derivative[0, 1][z_][(m_)?NumberQ, n$] :> 
-           \[Delta]1[z[m]]; tmp = tmp //. $Dt[n$]^(n_:1)*
-            Derivative[0, 1][z_][(m_)?NumberQ, n$]^(nn_:1) :> 
-           \[Delta]1[z[m]]^nn*$Dt[n$]^(n - nn); 
-        tmp = tmp //. (z_)[(n_)?NumberQ, n$] :> z[n] /. $Dt -> \[Delta]1; 
-        tmp = tmp /. Derivative[__][dForm][__] -> 0]; tmp]
- 
-tudExpand /: tudExpand::usage = "tudExpand[\[Delta]1_,constants_List:{}][exp_\
-] expands differential operator \[Delta]1_ using basic Liebnitz Rule[]s. \
-*29Nov2012*12Nov2017*3Sep2018*"
- 
-Attributes[n$] = {Temporary}
- 
-ListMemberQ[variable_, patterns_List] := tuMemberQ[variable, patterns]
- 
-tuTrigFunc = {Cos, Sin, Tan, Tanh, Cot, Coth, Sinh, Cosh, Sec, Sech, Csc, 
-     Csch, ArcCos, ArcSin, ArcTan, ArcTanh, ArcCot, ArcCoth, ArcSinh, 
-     ArcCosh, ArcSec, ArcSech, ArcCsc, ArcCsch}
- 
-Attributes[Derivative] = {NHoldAll, ReadProtected}
- 
-Attributes[$h$2357] = {Temporary}
- 
-$h$2357 = Inactive[tudExpand]
- 
-Attributes[$h$2569] = {Temporary}
- 
-$h$2569 = Inactive[tudExpand]
- 
-Attributes[$h$7720] = {Temporary}
- 
-$h$7720 = Inactive[tuRuleSolve]
- 
-tuRuleSolve[rules_, vars_, domain_:Complexes, maxExtraCondition_:0, 
-     independentVars_List:{SubPlus[_], SubMinus[_], SuperPlus[_], 
-       SuperMinus[_], Subscript[_, _], Superscript[_, _], OverBar[_], 
-       UnderBar[_], OverTilde[_], OverHat[_], SubStar[_], SuperStar[_], 
-       OverVector[_], OverDot[_], OverDot[_, 1], OverDot[_, 2], 
-       Derivative[1][_], Derivative[2][_], Tensor[_, _, _], Sign[_], 
-       Style[__]}] := Module[{tmp, XXXX, varlist, Xs, subX, varPat, xrules, 
-      xvars = DeleteDuplicates[Flatten[{vars}]], independentPos, 
-      independents, independentLab, Is, IIII, subIIII, SolveArgs}, 
-     {varlist, xrules} = ExtractPatternXpat[xvars][
-        tuRule[{rules /. Equal -> Rule}, False]]; 
-      varlist = DeleteDuplicates[varlist]; 
-      subX = Thread[varlist -> (Xs = Array[XXXX, Length[varlist]])]; 
-      tmp = xrules //. subX; xPrint["> ", tmp]; 
-      tmp = Select[tmp,  !tuFreeQ[#1, Xs] & ]; SolveArgs = {tmp, Xs}; 
-      xPrint["> ", SolveArgs, "\n:: ", tmp, "\n:: ", Xs]; 
-      independentPos = tuExtractPositionPattern[independentVars][SolveArgs]; 
-      xPrint["independentPos > ", independentPos]; 
-      independents = DeleteDuplicates[(#1[[2]] & ) /@ independentPos]; 
-      independentLab = MapIndexed[#1 -> IIII[First[#2]] & , independents]; 
-      subIIII = independentPos //. independentLab; 
-      SolveArgs = tuReplacePart[SolveArgs, subIIII]; 
-      xPrint[SolveArgs, "\n:: subIIII ", subIIII]; 
-      SolveArgs = SolveArgs /. Rule -> Equal; 
-      tmp = Solve[Sequence @@ SolveArgs, domain, MaxExtraConditions -> 
-         maxExtraCondition]; xPrint[SolveArgs, ":", tmp]; 
-      tmp = RemovePatterns[tmp]; xPrint[tmp]; 
-      tmp = tmp //. Reverse /@ independentLab; 
-      tmp = tmp //. Reverse /@ subX //. Xpat[a_] -> a; Flatten[tmp]]
- 
-tuRuleSolve /: tuRuleSolve::usage = "tuRuleSolve[rules_,vars_,domain_:Complex\
-es,maxExtraCondition_:0,independentVars_List:tuRuleIndependentVarPattern] \
-Solve[]s rules_ (singley or List[]) for vars_ (Singlely or List[] of \
-Pattern[]s) and returns Rules for vars_.  independentVars_List can be set to \
-indicate independent variables that are Mathematica functions such as \
-OverBar[a]. NOTE: parameter list changed to include more Solve parameters \
-*23Mar2016*"
- 
-Attributes[Superscript] = {NHoldRest, ReadProtected}
- 
-ExtractPatternXpat[pattern_][exp_] := Module[{tmp = exp, $i, test, $pat = {}, 
-      list, sub, $npat, $ii, xpat, ipat, patterns, testpat}, 
-     patterns = Flatten[{pattern}]; For[$i = 1, test =!= tmp, $i++, 
-       Do[test = tmp; tmp = tmp /. pp:patterns[[ipat]] :> 
-            xpat[Last[AppendTo[$pat, Xpat[pp]]]]; 
-         tmp = tmp /. xpat[_] :> $npat[Length[$pat]], 
-        {ipat, Length[patterns]}]]; For[$ii = 1, $ii <= Length[$pat], $ii++, 
-       tmp = tmp /. $npat[$ii] :> $pat[[$ii]]]; {$pat, tmp}]
- 
 $ii = {0.3, 1, 4}
  
-tuRule[rules_, negativePower_:False, simplerArg_:True] := 
-    Module[{$ = rules, rr$}, $ = Flatten[$]; 
-      $ = $ //. (head_)[CR[__] | CG[__] | CO[__] | CP[__] | CB[__]] -> head; 
-      $ = tuExtractPattern[(Rule[__]) | (RuleDelayed[__])][$]; 
-      If[simplerArg, $ = $ /. (rr:Rule | RuleDelayed)[-(a_), b_] -> 
-           rr[a, -b]; ]; If[negativePower, 
-       $ = {$, tuRulePositiveNegativePower[$], 
-         $ /. (rr:Rule | RuleDelayed)[a_, b_] -> rr[1/a, 1/b]}]; 
-      $ = Flatten[DeleteCases[(Rule | RuleDelayed)[a_, a_]][$]]; 
-      $ = Flatten[DeleteCases[FontFamily -> a_][$]]; DeleteDuplicates[$]]
- 
-tuRule /: tuRule::usage = "tuRule[rules_,negativePower_:False,simplerArg_:Tru\
-e] produces a List of valid Rule[]s from rules_ and forms a Flatten[]d list \
-of Rules. Deletes imbedded comments in the form of head_[CG[__]] and other \
-non-Rule forms. If  If negativePower_\[Rule]True then negative Power of \
-Rule[]s are generated.  If simplerArg_\[Rule]True then Rules are transformed \
-from -a\[Rule]b \[Rule] a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \
-\(2\)]\)->b \[Implies] a\[Rule]Sqrt[b] . *7Aug2015*1Feb2018*"
- 
-Attributes[rr$] = {Temporary}
- 
-CR[a__] := style[Red, a]
- 
-style[color_, exp__] := Module[{tmp = {exp}}, 
-     tmp = Thread[Style[tmp, color, FontFamily -> "Helvetica"]]; 
-      Sequence @@ tmp]
- 
-CG[a__] := style[Darker[Green], a]
- 
-CO[a__] := style[Orange, a]
- 
-CP[a__] := style[Darker[Pink], a]
- 
-CB[a__] := style[Blue, a]
- 
-tuRulePositiveNegativePower[rules_] := Module[{$ = rules, rr$}, 
-     $ = $ /. (rr:Rule | RuleDelayed)[(a_)^(b_), c_] :> 
-        (rr$[a^(-b), c^(-1)] /. rr$ -> rr)]
- 
-tuRulePositiveNegativePower /: tuRulePositiveNegativePower::usage = "tuRulePo\
-sitiveNegativePower[rules_] produces inverse Power in Rule[]s that include \
-Power[] in first arguement.  Mathematica does not recognize inversed Power \
-terms in pattern matching.  *2Feb2018*"
- 
-tuFreeQ[items_][exp_] := tuFreeQ[exp, items]
- 
-tuFreeQ[exp_, items_] := And @@ (FreeQ[exp, #1] & ) /@ Flatten[{items}]
- 
-tuFreeQ /: tuFreeQ::usage = "tuFreeQ[exp_,items_] tests exp_ as FreeQ of all \
-items in items_List. Equivalent form: tuFreeQ[items_][exp_]  *18Jun2015*"
- 
-tuExtractPositionPattern[pattern_, maxlevel_:Infinity][exp_] := 
-    Module[{xpattern = pattern, pos, list, tmp, xList}, 
-     If[Head[xpattern] == List, xpattern = Alternatives @@ xpattern; 
-        xPrint[xHead[xpattern]]]; pos = Position[exp, xpattern, 
-        {0, maxlevel}, Heads -> True]; list = Extract[exp, pos]; 
-      tmp = Thread[pos -> list]; xPrint["X ", tmp, ", ", xpattern, ", ", 
-       list, ", ", pos]; tmp]
- 
-tuExtractPositionPattern /: tuExtractPositionPattern::usage = "tuExtractPosit\
-ionPattern[pattern_,maxlevel_:Infinity][exp_] extracts a List of \
-{Positions,items} that match pattern_ in exp_ up to Level maxlevel_.  Returns \
-a List[ pos1->match1,pos2->match2,... ]. pattern_ may be a List or \
-Alternatives. *3Nov2016*)"
- 
-tuReplacePart[exp_, pos_List] := Module[{$}, 
-     If[Length[$ = Cases[pos, ({} -> _) | ({} :> _)]] > 0, $[[1,2]], 
-      ReplacePart[exp, pos]]]
- 
-tuReplacePart /: tuReplacePart::usage = "tuReplacePart[exp_,pos_List] like \
-ReplacePart[] except replaces whole exp_ when pos contains {{}->replacement} \
-in which case ReplacePart does nothing. *5Sep2015*"
- 
-RemovePatterns[exp_] := tuPatternRemove[exp]
- 
-tuPatternRemove[exp_] := Module[{tmp = exp, xPattern}, 
-     tmp = tmp /. PatternTest -> xPatternTest /. xPatternTest[a_, b_] -> a; 
-      tmp = tmp //. Pattern -> xPattern //. Blank -> xBlank //. 
-        BlankSequence -> xBlankSequence; 
-      tmp = tmp //. xPattern[a_, xBlank[] | xBlankSequence[]] -> a; 
-      tmp = tmp /. xPattern -> Pattern]
- 
-tuPatternRemove /: tuPatternRemove::usage = "tuPatternRemove[exp_] removes \
-Pattern[a_,Blank[]|BlankSequence[]]:>a in all of exp_ *24Nov2013"
- 
-Attributes[$h$7865] = {Temporary}
- 
-$h$7865 = Inactive[tudExpand]
- 
-Attributes[$h$8392] = {Temporary}
- 
-$h$8392 = Inactive[tudExpand]
- 
-Attributes[$ii$] = {Temporary}
- 
-Attributes[$independent$] = {Temporary}
- 
-Attributes[$index$] = {Temporary}
- 
-Attributes[$indices$] = {Temporary}
- 
-Attributes[$indList$] = {Temporary}
- 
-Attributes[$indPos$] = {Temporary}
- 
-Attributes[$ind$] = {Temporary}
- 
-Attributes[$int$] = {Temporary}
- 
-Attributes[$in$] = {Temporary}
- 
-Attributes[$ivar0$] = {Temporary}
- 
-Attributes[$ivar$] = {Temporary}
- 
-Attributes[$i$] = {Temporary}
- 
-Attributes[$j$] = {Temporary}
- 
-Attributes[$keys$] = {Temporary}
- 
-Attributes[$keys$2233] = {Temporary}
- 
-$keys$2233 = {d[Subscript[\[CapitalOmega], _]]^2}
- 
-Attributes[$keys$2333] = {Temporary}
- 
-$keys$2333 = {d[Subscript[\[CapitalOmega], _]]^2}
- 
-Attributes[$k$] = {Temporary}
- 
 $label = {OverTilde[v], OverTilde[u]}
- 
-Attributes[$label$] = {Temporary}
- 
-Attributes[$lagrangian$] = {Temporary}
  
 $legend = {"r -> 100 M", "r -> 3 M", "r -> 2.0001 M", "r -> 1.9999 M", 
      "r -> 1.6 M", "r -> 0.00001 M"}
@@ -742,17 +535,7 @@ $line = {{{1.5, 1.5}, {3, 0}}, {{1.5, -1.5}, {3, 0}}, {{0, 0}, {0., 1.5}},
      {{-1.5, 1.5}, {0, 0}}, {{0, 0}, {1.5, 1.5}}, {{-3, 0}, {0, 0}}, 
      {{0, 0}, {3, 0}}, {{-3, 0}, {-1.5, 1.5}}, {{-3, 0}, {-1.5, -1.5}}}
  
-Attributes[$list$] = {Temporary}
- 
-Attributes[$low$] = {Temporary}
- 
 $luv = {OverTilde[v] -> ArcTan[v], OverTilde[u] -> ArcTan[u]}
- 
-Attributes[$L$] = {Temporary}
- 
-Attributes[$matches$] = {Temporary}
- 
-Attributes[$match$] = {Temporary}
  
 $metricEddingtonFinkelstein = 
     {{{v -> t + SuperStar[r][Style["tortoise coordinate", RGBColor[0, 2/3, 
@@ -934,43 +717,7 @@ $metricSchwarzschildKruskalSzekeres =
       Style["$metricKrukalSzekeresNull", RGBColor[0, 2/3, 0], 
        FontFamily -> "Helvetica"]]}
  
-Attributes[$momemtum$] = {Temporary}
- 
-Attributes[$newpair$] = {Temporary}
- 
-Attributes[$newvar$] = {Temporary}
- 
-Attributes[$npat$] = {Temporary}
- 
-Attributes[$n$] = {Temporary}
- 
-Attributes[$n$2219] = {Temporary}
- 
-$n$2219 = 3
- 
-Attributes[$n$2319] = {Temporary}
- 
-$n$2319 = 3
- 
 $offset = 0.3
- 
-Attributes[$out$] = {Temporary}
- 
-Attributes[$p0$] = {Temporary}
- 
-Attributes[$pair$] = {Temporary}
- 
-Attributes[$parts$] = {Temporary}
- 
-Attributes[$patterns$] = {Temporary}
- 
-Attributes[$Pattern$] = {Temporary}
- 
-Attributes[$pat$] = {Temporary}
- 
-Attributes[$pdum$] = {Temporary}
- 
-Attributes[$placeholder$] = {Temporary}
  
 $plotMinkowskiPenrose = Legended[Graphics[
       {{{}, {}, Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
@@ -1131,7 +878,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            -0.008236955713368596}, {1.446356791602282, 
            -0.005491372804148123}, {1.4463990762145424, 
            -0.0027457071013937844}, {1.446441332248135, 0.}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
           Line[{{-1.2490457723982544, -1.373400766945016}, 
@@ -1264,7 +1011,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.2479438565874532}, {1.3730834511525687, 1.2482200178277918}, 
            {1.37318933489732, 1.2484957234871799}, {1.373295106769855, 
            1.2487709746502293}, {1.373400766945016, 1.2490457723982544}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
           Line[{{-1.3068326031691921, -1.3422996875030344}, 
@@ -1324,7 +1071,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.3418762837909457, 1.3062707062114252}, {1.3420175895514974, 
            1.3064582645944196}, {1.3421587240203068, 1.3066455634052194}, 
            {1.3422996875030344, 1.3068326031691921}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
           Line[{{-1.3258176636680326, -1.3258176636680326}, 
@@ -1383,7 +1130,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.32516993955557, 1.32516993955557}, {1.3253321850101902, 
            1.3253321850101902}, {1.325494220581634, 1.325494220581634}, 
            {1.3256560466684078, 1.3256560466684078}, {1.3258176636680326, 
-           1.3258176636680326}}]}, "Charting`Private`Tag$11790#1"], 
+           1.3258176636680326}}]}, "Charting`Private`Tag$11804#1"], 
         Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.528488, 0.470624, 0.701351]], 
           Line[{{-1.3422996875030344, -1.3068326031691921}, 
@@ -1443,7 +1190,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.3062707062114252, 1.3418762837909457}, {1.3064582645944196, 
            1.3420175895514974}, {1.3066455634052194, 1.3421587240203068}, 
            {1.3068326031691921, 1.3422996875030344}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.772079, 0.431554, 0.102387]], 
           Line[{{-1.373400766945016, -1.2490457723982544}, 
@@ -1575,7 +1322,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.3729774553603986}, {1.2482200178277918, 1.3730834511525687}, 
            {1.2484957234871799, 1.37318933489732}, {1.2487709746502293, 
            1.373295106769855}, {1.2490457723982544, 1.373400766945016}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.363898, 0.618501, 0.782349]], 
           Line[{{-1.446441332248135, 0.}, {-1.4464035734596474, 
@@ -1731,7 +1478,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {-0.008236955713368596, 1.4463144783825024}, 
            {-0.005491372804148123, 1.446356791602282}, 
            {-0.0027457071013937844, 1.4463990762145424}, {0., 
-           1.446441332248135}}]}, "Charting`Private`Tag$11790#1"], 
+           1.446441332248135}}]}, "Charting`Private`Tag$11804#1"], 
         Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[1, 0.75, 0]], 
           Line[{{0., -1.446441332248135}, {0., -1.446365791852757}, {0., 
@@ -1773,7 +1520,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.44593236728654}, {0., 1.4461024821583268}, {0., 
            1.44618736678896}, {0., 1.4462721365263143}, {0., 
            1.446356791602282}, {0., 1.446441332248135}}]}, 
-         "Charting`Private`Tag$11790#1"], Annotation[
+         "Charting`Private`Tag$11804#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.647624, 0.37816, 0.614037]], 
           Line[{{-1.446441332248135, 0.}, {-1.446365791852757, 0.}, 
@@ -1815,7 +1562,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.44593236728654, 0.}, {1.4461024821583268, 0.}, 
            {1.44618736678896, 0.}, {1.4462721365263143, 0.}, 
            {1.446356791602282, 0.}, {1.446441332248135, 0.}}]}, 
-         "Charting`Private`Tag$11790#1"], {}}, {{}, {}, {}, {}, {}, {}, {}, 
+         "Charting`Private`Tag$11804#1"], {}}, {{}, {}, {}, {}, {}, {}, {}, 
         {}, {}, {}, {}}}, {DisplayFunction -> Identity, Axes -> {True, True}, 
        AxesLabel -> {OverTilde[v], OverTilde[u]}, AxesOrigin -> {0, 0}, 
        DisplayFunction :> Identity, FrameLabel -> {{None, None}, 
@@ -1901,7 +1648,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}, 
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}, 
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}}]}, 
-          "Charting`Private`Tag$12109#1"], Annotation[
+          "Charting`Private`Tag$12123#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
            Line[{{0., -1.570796326785619}, {0., -1.570796326779742}, {0., 
@@ -1993,7 +1740,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963262304048, 0.}, {1.5707963265812956, 0.}, 
             {1.5707963267204754, 0.}, {1.570796326767073, 0.}, 
             {1.57079632677883, 0.}, {1.570796326785619, 0.}}]}, 
-          "Charting`Private`Tag$12109#1"], Annotation[
+          "Charting`Private`Tag$12123#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
            Line[{{0., -1.5707963256036688}, {0., -1.5707963248490433}, {0., 
@@ -2587,7 +2334,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707961314786338, 0.}, {1.5707962543145209, 0.}, 
             {1.5707962993686724, 0.}, {1.570796317239265, 0.}, 
             {1.5707963232223803, 0.}, {1.5707963247319663, 0.}, 
-            {1.5707963256036688, 0.}}]}, "Charting`Private`Tag$12109#1"], 
+            {1.5707963256036688, 0.}}]}, "Charting`Private`Tag$12123#1"], 
          Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
            Line[{{0., 1.5707963256036093}, {0., 1.570796324848946}, {0., 
@@ -3178,7 +2925,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707961314688679, 0.}, {1.5707962543108969, 0.}, 
             {1.570796299367301, 0.}, {1.570796317238787, 0.}, 
             {1.5707963232222015, 0.}, {1.5707963247318633, 0.}, 
-            {1.5707963256036093, 0.}}]}, "Charting`Private`Tag$12109#1"], 
+            {1.5707963256036093, 0.}}]}, "Charting`Private`Tag$12123#1"], 
          Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.528488, 0.470624, 0.701351]], 
            Line[{{0., 1.5707963267740803}, {0., 1.5707963267608933}, {0., 
@@ -3280,7 +3027,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963255283222, 0.}, {1.570796326315631, 0.}, 
             {1.5707963266279146, 0.}, {1.5707963267324678, 0.}, 
             {1.5707963267588474, 0.}, {1.5707963267740803, 0.}}]}, 
-          "Charting`Private`Tag$12109#1"], Annotation[
+          "Charting`Private`Tag$12123#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.772079, 0.431554, 0.102387]], 
            Line[{{0., 1.5707963267810088}, {0., 1.570796326772211}, {0., 
@@ -3332,7 +3079,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963259498834, 0.}, {1.5707963264751477, 0.}, 
             {1.5707963266834921, 0.}, {1.5707963267532463, 0.}, 
             {1.570796326770846, 0.}, {1.5707963267810088, 0.}}]}, 
-          "Charting`Private`Tag$12109#1"]}}, {DisplayFunction -> Identity, 
+          "Charting`Private`Tag$12123#1"]}}, {DisplayFunction -> Identity, 
         Axes -> {True, True}, AxesLabel -> {OverTilde[v], OverTilde[u]}, 
         AxesOrigin -> {0, 0}, DisplayFunction :> Identity, 
         FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> 
@@ -3608,7 +3355,7 @@ $plotSchwarzschildKruskalSzekeres =
            {16.584843236500713, 16.360561392579807}, {16.612943559696582, 
            16.389046269345066}, {16.641092806370885, 16.417579410233355}, 
            {16.66929105942037, 16.44616089927194}}]}, 
-         "Charting`Private`Tag$12006#1"], Annotation[
+         "Charting`Private`Tag$12020#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
           Line[{{149.4131591025766, -147.4131591025766}, {149.18727844686126, 
@@ -3780,7 +3527,7 @@ $plotSchwarzschildKruskalSzekeres =
            {148.65622133259086, 146.64589835543964}, {148.90809515527064, 
            146.90121907717725}, {149.16040749758758, 147.15697240850017}, 
            {149.4131591025766, 147.4131591025766}}]}, 
-         "Charting`Private`Tag$12006#1"], Annotation[
+         "Charting`Private`Tag$12020#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
           Line[{{-2.175429101686378, 2.204943822284321}, 
@@ -3972,7 +3719,7 @@ $plotSchwarzschildKruskalSzekeres =
            2.190062886583683}, {2.1641063583976194, 2.1937734188887417}, 
            {2.1678742182800947, 2.1974904116399063}, {2.1716484623380894, 
            2.2012138757833553}, {2.175429101686378, 2.204943822284321}}]}, 
-         "Charting`Private`Tag$12006#1"], Annotation[
+         "Charting`Private`Tag$12020#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
           Line[{{-6.050204481001973, 6.132289479625358}, 
@@ -4150,7 +3897,7 @@ $plotSchwarzschildKruskalSzekeres =
            {6.0187141823157155, 6.101222861721725}, {6.029193182861892, 
            6.111560392915693}, {6.039689938786676, 6.121915922051568}, 
            {6.050204481001973, 6.132289479625358}}]}, 
-         "Charting`Private`Tag$12006#1"]}}, {DisplayFunction -> Identity, 
+         "Charting`Private`Tag$12020#1"]}}, {DisplayFunction -> Identity, 
        Axes -> {True, True}, AxesLabel -> {X, T}, AxesOrigin -> {0, 0}, 
        DisplayFunction :> Identity, FrameLabel -> {{None, None}, 
          {None, None}}, FrameTicks -> {{Automatic, Automatic}, 
@@ -4175,93 +3922,13 @@ $plotSchwarzschildKruskalSzekeres =
         "r -> 1.9 M", "r -> 0.00001 M"}, LegendMarkers -> None, 
        LabelStyle -> {}, LegendLayout -> "Column"], After, Identity]]
  
-Attributes[$pm$] = {Temporary}
- 
-Attributes[$pn$] = {Temporary}
- 
-Attributes[$pos1$] = {Temporary}
- 
-Attributes[$pos$] = {Temporary}
- 
-Attributes[$pvar1$] = {Temporary}
- 
-Attributes[$pvar$] = {Temporary}
- 
-Attributes[$p$] = {Temporary}
- 
-Attributes[$range$] = {Temporary}
- 
-Attributes[$rhead$] = {Temporary}
- 
-Attributes[$right$] = {Temporary}
- 
-Attributes[$rp$] = {Temporary}
- 
 $rs = {100*M, 3*M, 2.0001*M, 1.9999*M, 1.6*M, 0.00001*M}
- 
-Attributes[$rules$] = {Temporary}
- 
-Attributes[$rules$2233] = {Temporary}
- 
-$rules$2233 = {}
- 
-Attributes[$rules$2333] = {Temporary}
- 
-$rules$2333 = {}
- 
-Attributes[$rule$] = {Temporary}
- 
-Attributes[$r$] = {Temporary}
  
 $s = SuperStar[r] -> t - u
  
-Attributes[$s0$] = {Temporary}
- 
-Attributes[$s1$] = {Temporary}
- 
 $s2M = r > 2*G*M
  
-Attributes[$scal$] = {Temporary}
- 
-Attributes[$seq$] = {Temporary}
- 
-Attributes[$seq$2275] = {Temporary}
- 
-$seq$2275 = Sequence[0, 0]
- 
-Attributes[$seq$2357] = {Temporary}
- 
-$seq$2357 = Sequence[0, 0]
- 
-Attributes[$seq$2569] = {Temporary}
- 
-$seq$2569 = Sequence[0, 0]
- 
-Attributes[$seq$7720] = {Temporary}
- 
-$seq$7720 = Sequence[0]
- 
-Attributes[$seq$7865] = {Temporary}
- 
-$seq$7865 = Sequence[0, 0]
- 
-Attributes[$seq$8392] = {Temporary}
- 
-$seq$8392 = Sequence[0, 0]
- 
-Attributes[$sign$] = {Temporary}
- 
-Attributes[$sivar$] = {Temporary}
- 
-Attributes[$slots$] = {Temporary}
- 
 $sM = {M -> 1, G -> 1}
- 
-Attributes[$sNO$] = {Temporary}
- 
-Attributes[$sn$] = {Temporary}
- 
-Attributes[$sort$] = {Temporary}
  
 $SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
  
@@ -4274,292 +3941,8 @@ $sr2 = SuperStar[r] -> 2*(G*M + G*M*Log[(E^(-1 + r/(2*G*M))*(-2*G*M + r))/
  
 $srv = r -> 2*(G*M + G*M*ProductLog[E^(-1 + (t - u)/(2*G*M))])
  
-Attributes[$ss$] = {Temporary}
- 
-Attributes[$subRules$] = {Temporary}
- 
-Attributes[$subs$] = {Temporary}
- 
 $suv = {u -> T - X, v -> T + X}
- 
-Attributes[$swap$] = {Temporary}
- 
-Attributes[$sx0$] = {Temporary}
- 
-Attributes[$symTensor$] = {Temporary}
- 
-Attributes[$sym$] = {Temporary}
- 
-Attributes[$s\[Delta]$] = {Temporary}
- 
-Attributes[$s$] = {Temporary}
- 
-$t = {{ArcTan[7*E^25*Cosh[t/4] + 7*E^25*Sinh[t/4]], 
-      -ArcTan[7*E^25*Cosh[t/4] - 7*E^25*Sinh[t/4]]}, 
-     {ArcTan[(E^(3/4)*Cosh[t/4])/Sqrt[2] + (E^(3/4)*Sinh[t/4])/Sqrt[2]], 
-      -ArcTan[(E^(3/4)*Cosh[t/4])/Sqrt[2] - (E^(3/4)*Sinh[t/4])/Sqrt[2]]}, 
-     {ArcTan[0.011658511367138847*Cosh[t/4] + 0.011658511367138847*
-         Sinh[t/4]], -ArcTan[0.011658511367138847*Cosh[t/4] - 
-         0.011658511367138847*Sinh[t/4]]}, 
-     {ArcTan[0.011657928456130442*Cosh[t/4] + 0.011657928456130442*
-         Sinh[t/4]], ArcTan[0.011657928456130442*Cosh[t/4] - 
-        0.011657928456130442*Sinh[t/4]]}, 
-     {ArcTan[0.6671642868877901*Cosh[t/4] + 0.6671642868877901*Sinh[t/4]], 
-      ArcTan[0.6671642868877901*Cosh[t/4] - 0.6671642868877901*Sinh[t/4]]}, 
-     {ArcTan[0.9999999999937499*Cosh[t/4] + 0.9999999999937499*Sinh[t/4]], 
-      ArcTan[0.9999999999937499*Cosh[t/4] - 0.9999999999937499*Sinh[t/4]]}}
- 
-Attributes[$targetForm$] = {Temporary}
- 
-Attributes[$tensorsymbol$] = {Temporary}
- 
-Attributes[$tensors$] = {Temporary}
- 
-Attributes[$tensor$] = {Temporary}
- 
-Attributes[$terms$] = {Temporary}
- 
-Attributes[$test$] = {Temporary}
- 
-Attributes[$tmp$] = {Temporary}
  
 $tr = {t -> (u + v)/2, r -> (-u + v)/2}
  
-Attributes[$t$] = {Temporary}
- 
-Attributes[$u0$] = {Temporary}
- 
-Attributes[$u1$] = {Temporary}
- 
-Attributes[$u2$] = {Temporary}
- 
-Attributes[$up$] = {Temporary}
- 
 $uv = {u -> -r + t, v -> r + t}
- 
-Attributes[$u$] = {Temporary}
- 
-Attributes[$vars$] = {Temporary}
- 
-Attributes[$var$] = {Temporary}
- 
-Attributes[$without$] = {Temporary}
- 
-Attributes[$with$] = {Temporary}
- 
-Attributes[$xE$] = {Temporary}
- 
-Attributes[$XX$] = {Temporary}
- 
-Attributes[$x$] = {Temporary}
- 
-Attributes[$X$] = {Temporary}
- 
-Attributes[$y$] = {Temporary}
- 
-Attributes[$\[Sigma]$] = {Temporary}
- 
-Attributes[$$] = {Temporary}
- 
-Attributes[$$12227] = {Temporary}
- 
-$$12227 = {"e", "e1", "e2", "ed", "ee", "ee$", "elements", "eqn", "error", 
-     "error$", "eta", "evalDifferentialOps", "except", "exo", "exp", "exp0", 
-     "exp0$", "exp1", "exp1$", "expand2CT", "exp$", "ext", "extra", 
-     "extract", "eyd", "eyd$", "e$", "$", "$0", "$00", "$0$", "$0$2219", 
-     "$0$2319", "$1", "$1a", "$1a$", "$1c", "$1c$", "$1s", "$1s$", "$1t", 
-     "$1$", "$2", "$2a", "$2a$", "$2b", "$2b$", "$2c", "$2c$", "$2m", "$2m$", 
-     "$2t", "$2td", "$2td$", "$2t$", "$2$", "$4", "$4$", "$a", "$A", "$aa", 
-     "$aa$", "$arg", "$Arg", "$argn", "$argn$", "$arg$", "$Arg$", "$a$", 
-     "$b", "$bb", "$bb$", "$b$", "$c", "$cc", "$cc$", "$common", "$common$", 
-     "$conserved", "$conserved$", "$const", "$constants", "$constants$", 
-     "$const$", "$coordEddingtonFinkelstein", "$coordPenrose", 
-     "$coordSchwarzschildAddSolidAngle", 
-     "$coordSchwarzschildKruskalSzekeres", "$coordSolidAngle", 
-     "$coordSolidAngleDiff", "$coordTortoise", "$c$", "$d", "$d0", "$d0$", 
-     "$d1", "$d1$", "$d2", "$d2$", "$de", "$def", "$defID", "$deltas", 
-     "$deltas$", "$dep", "$dependent", "$dependent$", "$dep$", "$detg", 
-     "$detg$", "$de$", "$dif", "$dif$", "$dm", "$dm$", "$dn", "$dn$", "$ds", 
-     "$ds2", "$ds2$", "$dsu", "$dsv", "$Dt", "$dum", "$dummy", "$dummy$", 
-     "$dums", "$dums$", "$dum$", "$dum$2573", "$dum$4192", "$dvars", 
-     "$dvars$", "$d$", "$e", "$einsteinEqn", "$eulerequations", 
-     "$eulerequations$", "$exp", "$e$", "$f", "$forms", "$forms$", 
-     "$formvar", "$formvar$", "$f$", "$g", "$gdd", "$gdd$", "$generalForm", 
-     "$generalForm$", "$geodesicEqn", "$gmatrix", "$gmatrixI", "$gmatrixI$", 
-     "$gmatrix$", "$guu", "$guu$", "$h", "$h1", "$h1$", "$hcnt", "$hcnt$", 
-     "$hcnt$2275", "$hcnt$2357", "$hcnt$2569", "$hcnt$7720", "$hcnt$7865", 
-     "$hcnt$8392", "$head", "$head$", "$h$", "$h$2275", "$h$2357", "$h$2569", 
-     "$h$7720", "$h$7865", "$h$8392", "$i", "$ii", "$ii$", "$in", "$ind", 
-     "$independent", "$independent$", "$index", "$index$", "$indices", 
-     "$indices$", "$indList", "$indList$", "$indPos", "$indPosV", "$indPos$", 
-     "$ind$", "$int", "$int$", "$in$", "$ivar", "$ivar0", "$ivar0$", 
-     "$ivar$", "$i$", "$j", "$jacob", "$j$", "$k", "$keys", "$keys$", 
-     "$keys$2233", "$keys$2333", "$k$", "$L", "$label", "$label$", 
-     "$lagrangian", "$lagrangian$", "$legend", "$line", "$list", "$list$", 
-     "$low", "$low$", "$luv", "$L$", "$match", "$matches", "$matches$", 
-     "$match$", "$metricEddingtonFinkelstein", 
-     "$metricEddingtonFinkelsteinIn", "$metricEddingtonFinkelsteinOut", 
-     "$metricKrukalSzekeres", "$metricKrukalSzekeresNull", 
-     "$metricMinkowski", "$metricNullCoordinateMinkowski", "$metricPenrose", 
-     "$metricPenroseSchwarzschildKruskalSzekeres", "$metricRindler", 
-     "$metricSchwarzschild", "$metricSchwarzschildDeSitter", 
-     "$metricSchwarzschildKruskalSzekeres", "$momemtum", "$momemtum$", "$n", 
-     "$newpair", "$newpair$", "$newvar", "$newvar$", "$npat", "$npat$", 
-     "$n$", "$n$2219", "$n$2319", "$offset", "$options", "$out", "$out$", 
-     "$p", "$p0", "$p0$", "$pair", "$pair$", "$parm", "$parts", "$parts$", 
-     "$pat", "$Pattern", "$patterns", "$patterns$", "$Pattern$", "$pat$", 
-     "$pdum", "$pdum$", "$placeholder", "$placeholder$", 
-     "$plotMinkowskiPenrose", "$plotPenroseKruskalSzekeres", 
-     "$plotSchwarzschildConformalExtended", 
-     "$plotSchwarzschildKruskalSzekeres", "$pm", "$pm$", "$pn", "$pn$", 
-     "$pos", "$pos1", "$pos1$", "$pos$", "$pt", "$pvar", "$pvar1", "$pvar1$", 
-     "$pvar$", "$p$", "$r", "$range", "$range$", "$rhead", "$rhead$", 
-     "$right", "$right$", "$rp", "$rp$", "$rs", "$rule", "$rules", "$rules$", 
-     "$rules$2233", "$rules$2333", "$rule$", "$r$", "$s", "$s0", "$s0$", 
-     "$s1", "$s1$", "$s2M", "$scal", "$scal$", "$seq", "$seq$", "$seq$2275", 
-     "$seq$2357", "$seq$2569", "$seq$7720", "$seq$7865", "$seq$8392", 
-     "$sign", "$sign$", "$sivar", "$sivar$", "$slots", "$slots$", "$sM", 
-     "$sn", "$sNO", "$sNO$", "$sn$", "$sort", "$sort$", "$SpinorsPath", 
-     "$sr", "$sr1", "$sr2", "$srv", "$ss", "$ss$", "$string", "$subRules", 
-     "$subRules$", "$subs", "$subs$", "$suv", "$swap", "$swap$", "$sx0", 
-     "$sx0$", "$sym", "$symTensor", "$symTensor$", "$sym$", "$s\[Delta]", 
-     "$s\[Delta]$", "$s$", "$t", "$targetForm", "$targetForm$", "$tensor", 
-     "$tensors", "$tensorsymbol", "$tensorsymbol$", "$tensors$", "$tensor$", 
-     "$terms", "$terms$", "$test", "$test$", "$tmp", "$tmp$", "$tr", "$t$", 
-     "$u", "$u0", "$u0$", "$u1", "$u1$", "$u2", "$u2$", "$up", "$up$", 
-     "$UseTextSearchQ", "$uv", "$u$", "$var", "$vars", "$vars$", "$var$", 
-     "$with", "$without", "$without$", "$with$", "$x", "$X", "$xE", "$xE$", 
-     "$XX", "$XX$", "$x$", "$X$", "$y", "$y$", "$\[Alpha]", "$\[Beta]", 
-     "$\[Sigma]", "$\[Sigma]$", "$$", "$$12227", "$$2219", "$$2234", 
-     "$$2235", "$$2275", "$$2319", "$$2334", "$$2335", "$$2357", "$$2375", 
-     "$$2569", "$$7720", "$$7865", "$$8392", "$$a", "$$b", "$$c", "$$d", 
-     "$$i", "$$m", "$$n", "$$t", "$$ten", "$$t$", "$$XX", "$$XXX"}
- 
-Attributes[$$2219] = {Temporary}
- 
-$$2219 = d[Subscript[\[CapitalOmega], 2]]^2 -> 
-     d[Subscript[\[CapitalOmega], 2]]^2
- 
-Attributes[$$2234] = {Temporary}
- 
-$$2234 = {}
- 
-Attributes[$$2235] = {Temporary}
- 
-$$2235 = {}
- 
-Attributes[$$2275] = {Temporary}
- 
-$$2275 = d[Subscript[\[CapitalOmega], 2]]^2
- 
-Attributes[$$2319] = {Temporary}
- 
-$$2319 = d[Subscript[\[CapitalOmega], 2]]^2 -> 
-     d[Subscript[\[CapitalOmega], 2]]^2
- 
-Attributes[$$2334] = {Temporary}
- 
-$$2334 = {}
- 
-Attributes[$$2335] = {Temporary}
- 
-$$2335 = {}
- 
-Attributes[$$2357] = {Temporary}
- 
-$$2357 = d[Subscript[\[CapitalOmega], 2]]^2
- 
-Attributes[$$2375] = {Temporary}
- 
-$$2375 = {xSet$2375[Style["a", Italic], Style["a", Italic]], 
-     xSet$2375[Style["b", Italic], Style["b", Italic]], 
-     xSet$2375[Style["c", Italic], Style["c", Italic]], 
-     xSet$2375[Style["d", Italic], Style["d", Italic]], 
-     xSet$2375[Style["e", Italic], Style["e", Italic]], 
-     xSet$2375[Style["f", Italic], Style["f", Italic]], 
-     xSet$2375[Style["g", Italic], Style["g", Italic]], 
-     xSet$2375[Style["h", Italic], Style["h", Italic]], 
-     xSet$2375[Style["i", Italic], Style["i", Italic]], 
-     xSet$2375[Style["j", Italic], Style["j", Italic]], 
-     xSet$2375[Style["k", Italic], Style["k", Italic]], 
-     xSet$2375[Style["l", Italic], Style["l", Italic]], 
-     xSet$2375[Style["m", Italic], Style["m", Italic]], 
-     xSet$2375[Style["n", Italic], Style["n", Italic]], 
-     xSet$2375[Style["o", Italic], Style["o", Italic]], 
-     xSet$2375[Style["p", Italic], Style["p", Italic]], 
-     xSet$2375[Style["q", Italic], Style["q", Italic]], 
-     xSet$2375[Style["r", Italic], Style["r", Italic]], 
-     xSet$2375[Style["s", Italic], Style["s", Italic]], 
-     xSet$2375[Style["t", Italic], Style["t", Italic]], 
-     xSet$2375[Style["u", Italic], Style["u", Italic]], 
-     xSet$2375[Style["v", Italic], Style["v", Italic]], 
-     xSet$2375[Style["w", Italic], Style["w", Italic]], 
-     xSet$2375[Style["x", Italic], Style["x", Italic]], 
-     xSet$2375[Style["y", Italic], Style["y", Italic]], 
-     xSet$2375[Style["z", Italic], Style["z", Italic]], 
-     xSet$2375[Style["A", Italic], Style["A", Italic]], 
-     xSet$2375[Style["B", Italic], Style["B", Italic]], 
-     xSet$2375[Style["C", Italic], Style["C", Italic]], 
-     xSet$2375[Style["D", Italic], Style["D", Italic]], 
-     xSet$2375[Style["E", Italic], Style["E", Italic]], 
-     xSet$2375[Style["F", Italic], Style["F", Italic]], 
-     xSet$2375[Style["G", Italic], Style["G", Italic]], 
-     xSet$2375[Style["H", Italic], Style["H", Italic]], 
-     xSet$2375[Style["I", Italic], Style["I", Italic]], 
-     xSet$2375[Style["J", Italic], Style["J", Italic]], 
-     xSet$2375[Style["K", Italic], Style["K", Italic]], 
-     xSet$2375[Style["L", Italic], Style["L", Italic]], 
-     xSet$2375[Style["M", Italic], Style["M", Italic]], 
-     xSet$2375[Style["N", Italic], Style["N", Italic]], 
-     xSet$2375[Style["O", Italic], Style["O", Italic]], 
-     xSet$2375[Style["P", Italic], Style["P", Italic]], 
-     xSet$2375[Style["Q", Italic], Style["Q", Italic]], 
-     xSet$2375[Style["R", Italic], Style["R", Italic]], 
-     xSet$2375[Style["S", Italic], Style["S", Italic]], 
-     xSet$2375[Style["T", Italic], Style["T", Italic]], 
-     xSet$2375[Style["U", Italic], Style["U", Italic]], 
-     xSet$2375[Style["V", Italic], Style["V", Italic]], 
-     xSet$2375[Style["W", Italic], Style["W", Italic]], 
-     xSet$2375[Style["X", Italic], Style["X", Italic]], 
-     xSet$2375[Style["Y", Italic], Style["Y", Italic]], 
-     xSet$2375[Style["Z", Italic], Style["Z", Italic]]}
- 
-Attributes[xSet$2375] = {Temporary}
- 
-Attributes[$$2569] = {Temporary}
- 
-$$2569 = d[s]^2 -> (d[\[CapitalOmega]]^2*Tan[OverTilde[u]]^2)/4 - 
-      (d[\[CapitalOmega]]^2*Tan[OverTilde[u]]*Tan[OverTilde[v]])/2 + 
-      (d[\[CapitalOmega]]^2*Tan[OverTilde[v]]^2)/4
- 
-Attributes[$$7720] = {Temporary}
- 
-$$7720 = 
-    {r -> 2*(G*M + G*M*ProductLog[
-          E^(-1 + SuperStar[r][Style["tortoise coordinate", RGBColor[0, 2/3, 
-                0], FontFamily -> "Helvetica"]]/(2*G*M))])}
- 
-Attributes[$$7865] = {Temporary}
- 
-$$7865 = {d[s]^2 -> -d[t]^2 + 4*G^2*M^2*d[\[CapitalOmega]]^2 + 
-       8*G^2*M^2*d[\[CapitalOmega]]^2*ProductLog[
-         E^(-1 + SuperStar[r]/(2*G*M))] + 4*G^2*M^2*d[\[CapitalOmega]]^2*
-        ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]^2 + 
-       (G*M*d[t]^2)/(G*M + G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]) + 
-       (d[SuperStar[r]]^2*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]^2)/
-        (1 + 2*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))] + 
-         ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]^2 - 
-         (G*M)/(G*M + G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]) - 
-         (2*G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))])/
-          (G*M + G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]) - 
-         (G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]^2)/
-          (G*M + G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))])), 
-     Subscript[2*(G*M + G*M*ProductLog[E^(-1 + SuperStar[r]/(2*G*M))]), s] -> 
-      2*G*M}
- 
-Attributes[$$8392] = {Temporary}
- 
-$$8392 = {d[s]^2 -> -(d[u]*d[v]) + (2*G*M*d[u]*d[v])/r + 
-       r^2*d[\[CapitalOmega]]^2, Subscript[r, s] -> 2*G*M}
- 
-Attributes[$$t$] = {Temporary}
