@@ -20,6 +20,11 @@
 
 
 (* ::Input::Initialization:: *)
+<<Local`QFTToolKit2`
+tuItalics
+
+
+(* ::Input::Initialization:: *)
 $s\[Epsilon]:=T[\[Epsilon],"uuu",{i_,j_,k_}]:>LeviCivitaTensor[3][[i+1,j+1,k+1]];
 $order\[Mu]\[Mu]:={dd:Dot[a_,b_]:>If[tuHasAllQ[{a,b},\[Mu]]&&OrderedQ[{b,a}],Reverse[dd],
 dd],
@@ -45,49 +50,49 @@ $2=Select[$,tuHasNoneQ[#,XX]&];
 $2=Apply[xxDot,$2];
 $=$1**$2
 ];
-$scalar={T,\[Tau],\[Sigma],n,n1,n2,Tensor[p,_,_],Tensor[x,_,_],factor\[Theta],Tensor[\[Delta],_,_]};
-$scalarNon={T,\[Tau],\[Sigma],Tensor[p,_,_],Tensor[x,_,_],factor\[Theta]};
+$scalar={iT,\[Tau],\[Sigma],n,n1,n2,Tensor[p,_,_],Tensor[x,_,_],factor\[Theta],Tensor[\[Delta],_,_]};
+$scalarNon={iT,\[Tau],\[Sigma],Tensor[p,_,_],Tensor[x,_,_],factor\[Theta]};
 
-$constant={T,n,n1,n2};
+$constant={iT,n,n1,n2,m};
 $sPartial0={
-tuDPartial[xx_,\[Sigma]]:>0/;MatchQ[xx,Apply[Alternatives,{Tensor[x,_,_],Tensor[p,_,_],\[Tau],Tensor[\[Alpha],_,_],Tensor[\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\),_,_],\[Zeta],Tensor[\[Theta],_,_],factor\[Theta]}]]
-,tuDPartial[xx_,\[Tau]]:>0/;MatchQ[xx,\[Sigma]]
+tuDPartial[xx_,\[Sigma]]:>0/;MatchQ[xx,Apply[Alternatives,{n,n1,n2,iT,Tensor[x,_,_],Tensor[p,_,_],\[Tau],Tensor[\[Alpha]|\[Beta],_,_],Tensor[\!\(\*OverscriptBox[\(\[Alpha]\), \(~\)]\)|\!\(\*OverscriptBox[\(\[Beta]\), \(~\)]\),_,_],\[Zeta],Subscript[\[Beta], 0],Tensor[\[Theta],_,_],factor\[Theta]}]]
+,tuDPartial[\[Sigma],\[Tau]]->0
 ,tuDPartial[\[Tau],\[Tau]]->1
 ,tuDPartial[\[Sigma],\[Sigma]]->1
 };
-
-tuLightCone2//Clear
-tuLightCone2[step_][exp_]:=Module[{$,$s,$p,$sP},
-If[step==1,(*Sum over dummy \[Mu] indices *)
+Clear[$sIntegral0]
+$sIntegral0={
+xIntegral[\!\(\*OverscriptBox[\(Tensor[a_, _, _]\), \(_\)]\),\[Sigma]]:>0/;MemberQ[{p,x,iP,iX},a],
+xIntegral[\!\(\*OverscriptBox[\(u\), \(_\)]\),\[Sigma]]->0,
+xIntegral[tuDPartial[\!\(\*OverscriptBox[\(Tensor[a_, _, _]\), \(_\)]\),\[Tau]],\[Sigma]]->0,
+xIntegral[tuDPartial[aa:\!\(\*OverscriptBox[\(Tensor[a_, _, _]\), \(_\)]\),\[Sigma]],\[Sigma]]->aa,
+xIntegral[1,\[Sigma]]->2\[Pi],
+xIntegral[0,\[Sigma]]->0
+};
+(*****)
+tuLevel//Clear
+tuLevel[step_][exp_]:=Module[{$,$s,$p,$sP,$0,$1},
+(*1 Sum over dummy \[Mu] indices *)
+If[step==1,
 $=exp//Expand;
 If[tuHasAnyQ[$,Plus],$=$//(#/.pp:Plus[_,__]:>tuIndependentTerms[{\[Mu]}][pp]+Sum[tuDependentTerms[{\[Mu]}][pp],{\[Mu],0,2}]/;tuHasAllQ[pp,\[Mu]]&),
 $=Sum[$,{\[Mu],0,2}]
 ];
 ];
-If[step==2,(*convert to light-cone variables X^n\[Rule]iX^+-,P^n\[Rule]iP^+-, Overscript[\[CapitalTheta], _]\[Rule], no \[CapitalPi]'s*)
-$p={T[\[CapitalPi],"ud",{0,s_}]:>(T[\[CapitalPi],"ud",{"+",s}]-T[\[CapitalPi],"ud",{"-",s}])Sqrt[2],
-T[\[CapitalPi],"ud",{1,s_}]:>(T[\[CapitalPi],"ud",{"+",s}]+T[\[CapitalPi],"ud",{"-",s}])Sqrt[2],T[\[CapitalPi],"dd",{0,s_}]:>(T[\[CapitalPi],"dd",{"+",s}]-T[\[CapitalPi],"dd",{"-",s}])Sqrt[2],
-T[\[CapitalPi],"dd",{1,s_}]:>(T[\[CapitalPi],"dd",{"+",s}]+T[\[CapitalPi],"dd",{"-",s}])Sqrt[2]};
-$g=tuRule[{$gammaMetric,tuRuleSelect[{T[\[CapitalGamma],"u",{0}],T[\[CapitalGamma],"u",{1}]},{"+"}][$gammaLightCone]}];
+(*2 convert to light-cone variables X^n\[Rule]iX^+-,P^n\[Rule]iP^+-, Overscript[\[CapitalTheta], _]\[Rule], no \[CapitalPi]'s*)
+If[step==2,
+$=exp;
+$=$/.tuRule[$metric];
+$=$/.tuRule[$lightconeRelations];
+$0=$//expandDot[{e[3.6]//tuRuleSelect[{T[iX,"u",{_}],T[iP,"d",{_}]}],$sPartial0},{},{tuDerivativeExpand[],ExpandAll,Simplify},3];
 
-$sP={
-{$s=e[27]//tuRuleSelect[Tensor[\[CapitalPi],_,_]],
-$s//tuIndexLowerAll[\[Mu],\[Mu]]}//tuAddPatternVariable[\[Mu]],
-e[26]//tuRuleSelect[\!\(\*OverscriptBox[\(T[\[CapitalTheta], "\<\>", {}]\), \(_\)]\)],
-T[X,"u",{"+"}]->T[iX,"u",{"+"}],
-T[X,"d",{"+"}]->T[iX,"d",{"+"}],
-T[X,"u",{"-"}]->T[iX,"u",{"-"}],
-T[X,"d",{"-"}]->T[iX,"d",{"-"}],
-T[X,"u",{2}]->T[iX,"",{}],
-T[X,"d",{2}]->T[iX,"",{}]
-}//tuRule;
-$=exp/.(e[1]//tuRuleSelect[{T[X,"d",{0|1|2}],T[P,"u",{0|1|2}]},{},{T,pm}])(*metric*)
-/.(e[4]//tuRuleSelect[{T[X,"u",{0|1|2}],T[P,"d",{0|1|2}]},{},{T,pm}])(*lightcone*)
-;
-$=$//expandDot[{$g,$p,$sP},{},{tuDerivativeExpand[]},4]
+$=$0//tuExtractIntegrand;
+$[[2]]=Collect[$[[2]],{\[ScriptL]}];
+$=tuReplacePart[$0,{$}];
 ];
 
-If[step==3,(*expand the \[CapitalGamma]'s and \[CapitalTheta]*)
+(*3 expand the \[CapitalGamma]'s and \[CapitalTheta]*)
+If[step==3,
 If[tuHasNoneQ[exp,\[CapitalTheta]],Return[exp]];
 $s={
 T[\[CapitalTheta],"",{}]->{{\[Theta]1},{\[Theta]2}},
@@ -97,40 +102,37 @@ $=exp/.toxDot/.dd:xDot[__]:>tuDotVarSeparate[{\[CapitalGamma],\[CapitalTheta]}][
 $=$//expandDot[{$s},{},{tuDerivativeExpand[{}]},3]//tuMatrixOrderedMultiply//expandDot[{toDot,xxDot->xDot,NonCommutativeMultiply->Dot,{{a_}}->a,$sPartial0},{factor\[Theta]}]
 ];
 
-If[step==4,(*lightcone variable\[Rule]average+Overscript[deviation, _] variable, X^-\[Rule]x^-+Overscript[X^-, _]*)
-$s={
-e[4,1]//tuRuleSelect[{T[iX,"d",{"-"}],T[iX,"u",{"+"}],T[iX,"",{}],T[iX,"u",{"-"}],Tensor[iP,_,_]},{},{X,P,T},False],
-e[33]//tuRuleInTermsOf[{\[Zeta],\!\(\*OverscriptBox[\(\[Theta]\), \(_\)]\)},\[Theta]]
-}//tuRule;
-$=exp/.$s//expandDot[{$sPartial0},{},{tuDerivativeExpand[]},2](*BUG in using $s within expandDot[]*)
+(*4 lightcone variable\[Rule]average+Overscript[deviation, _] variable, X^-\[Rule]x^-+Overscript[X^-, _]*)
+If[step==4,
+$s=e[3.6]//tuRuleSelect[{\!\(\*OverscriptBox[\(T[a_, "\<u\>", {_}]\), \(_\)]\),\!\(\*OverscriptBox[\(T[a_, "\<d\>", {_}]\), \(_\)]\),\!\(\*OverscriptBox[\(T[a_, "\<\>", {}]\), \(_\)]\),\!\(\*OverscriptBox[\(u\), \(_\)]\)}];
+$s=tuRuleSolve[$s,{T[iX,"u",{"-"}],T[iP,"d",{"+"}],T[iP,"",{}],T[iX,"",{}],T[iP,"d",{"+"}](*,iu*)}];
+$=exp/.$s//expandDot[{$sPartial0,$sIntegral0(*,$su*)},{},{tuDerivativeExpand[],ExpandAll},3]
 ];
+
 If[step==5,(*Integrate over {\[Sigma],0,2\[Pi]}*)
 $=exp;
-$=$//expandDot[{$sIntegral0,e[4,1]//tuRuleSelect[xIntegral[__]],$sPartial0},{$scalar},{tuDerivativeExpand[],tuOpDistributeF[xIntegral],tuIntegralSimplify[{iP,iX,\[Theta]}]},6]
+$=$//expandDot[{$sPartial0,$sIntegral0},{$scalar},{tuDerivativeExpand[],tuOpDistributeF[xIntegral],tuIntegralSimplify[{iP,iX,\!\(\*OverscriptBox[\(iX\), \(_\)]\),\!\(\*OverscriptBox[\(u\), \(_\)]\),iu}]},6];(*
+$=$/.xIntegral[tuDPartial[Overscript[T[iX,"u",{"-"}], _],\[Sigma]] (uu:iu),\[Sigma]]->
+-xIntegral[Overscript[T[iX,"u",{"-"}], _] tuDPartial[uu,\[Sigma]],\[Sigma]]*)(*IntegrationByParts*)
 ];
 
 If[step==6,(*Fourier decompose Overscript[A, _] variables *)
-$s={e[12]//tuRuleSelect[\!\(\*OverscriptBox[\(a_\), \(_\)]\)],
-$sXminus,
-$sPplus,
-e[33]//tuRuleSelect[\!\(\*OverscriptBox[\(a_\), \(_\)]\),{n}]};
+$s={e[3.33],e[3.27]}//tuRuleSelect[\!\(\*OverscriptBox[\(a_\), \(_\)]\)];
 $sCombineSum={ Dot[xSum[a_,b_],xSum[a1_,b1_],xSum[a2_,b2_]]:>Dot[xSum[a,b],xSum[a1,b1]/.n->n1,xSum[a2,b2]/.n->n2]
 ,Dot[(c_:1)xSum[a_,b_],(c1_:1)xSum[a1_,b1_]]:>Dot[c xSum[a,b],c1 (xSum[a1,b1]/.n->n1)]
 ,Dot[xSum[a_,b_,c_],xSum[a1_,b1_]]:>Dot[xSum[a,b,c]/.n->n2,xSum[a1,b1]]
 ,Dot[xSum[a_,b_],xSum[a1_,b1_,c1_]]:>Dot[xSum[a,b],xSum[a1,b1,c1]/.n->n2]};
-
 $=exp//expandDot[tuRule[{$s,$sPartial0}],{$scalar},{tuDerivativeExpand[$constant]},4];
-
 $=$/.$sCombineSum/.xSum[a1_,c1__]. xSum[a2_,c2__]->xSum[ a1. a2,c1,c2]//expandDot[{},{$scalar,Exp[_]},{},4]
 ];
 
 If[step==7,(*Manipulate Sum,xIntegral for integration*)
-$=exp//expandDot[{tuOpDistribute[xIntegral],tuSumGatherR,$sPartial0},{Exp[_],$scalar(*,\[Zeta]*)},(** ?\[Zeta] Grassmanian **){tuIntegralSimplify[{}],Expand,tuOpGather[xSum,False],tuOpSwitch[xIntegral,xSum]},9];
+$=exp//expandDot[{$sPartial0,$sIntegral0,tuOpDistribute[xSum],tuOpDistribute[xIntegral],xSum[a1_,c1__]. xSum[a2_,c2__]->xSum[ a1. a2,c1,c2]},{$scalar,Exp[_]},{tuDerivativeExpand[$constant],tuIntegralSimplify[{\[Sigma]}],tuOpGather[xSum,False],tuOpSwitch[xIntegral,xSum]},6];
 ];
 
 If[step==8,(*Evaluate xIntegral over {\[Sigma],0,2\[Pi]}*)
 $=exp/.xIntegral[a_,\[Sigma]]->xIntegral[a,{\[Sigma],0,2\[Pi]}]//Activate;
-$=$/.(Exp[2I \[Pi] a_]-1)->a 2\[Pi] \[Delta][a]/.\[Delta][a_+b__:0]->T[\[Delta],"dd",{a,-b}]//expandDot[{},{$scalar},{},2]//tuSumKroneckerDelta[]
+$=$/.(Exp[2I \[Pi] a_]-1)->a 2\[Pi] \[Delta][a]/.\[Delta][a_+b__:0]->T[\[Delta],"dd",{a,-b}]//expandDot[{tuOpSimplify[xSum,{Subscript[u, 0]}]},{$scalar},{},2]//tuSumKroneckerDelta[]
 ];
 
 If[step==9,(*convert xSum {n,-\[Infinity],\[Infinity]}\[LongRightArrow]{n,1,\[Infinity]}*)

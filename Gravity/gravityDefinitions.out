@@ -6,25 +6,30 @@ evalDifferentialOps[opdef_][exp_] := Module[{$ = exp, op},
      $ = $ /. dd:xDot[a__] :> Fold[op, arg, Reverse[dd]]; 
       op[a_, b_] := b /. opdef[a]; $]
  
-$ = {d[s]^2 -> r^2*d[\[CapitalOmega]]^2 + d[r]^2/f[r] - d[t]^2*f[r], 
-      {{f[r] -> 1 - (2*a[M[Style["BH mass", RGBColor[0, 2/3, 0], 
-                 FontFamily -> "Helvetica"]]])/r}[
-         Style["Schwarzschild black hole space", RGBColor[0, 2/3, 0], 
-          FontFamily -> "Helvetica"]], 
-        {f[r] -> 1 - r^2*b[\[CapitalLambda][Style["cosmological constant", 
-                RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]]}[
-         Style["deSitter space", RGBColor[0, 2/3, 0], FontFamily -> 
-           "Helvetica"]], {f[r] -> 1 - (2*a[M])/r - r^2*b[\[CapitalLambda]]}[
-         Style["SchwarzschildDeSitter space", RGBColor[0, 2/3, 0], 
-          FontFamily -> "Helvetica"]]}[
-       Style["from vacuum Einstein equations", RGBColor[0, 2/3, 0], 
-        FontFamily -> "Helvetica"]], 
-      {d[s]^2 -> d[r]^2/(1 - (2*G*M)/r - (r^2*\[CapitalLambda])/3) + 
-          (-1 + (2*G*M)/r + (r^2*\[CapitalLambda])/3)*d[t]^2 + 
-          r^2*d[\[CapitalOmega]]^2}[Style["typical form", 
-        RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]}[
-     Style["$metricSchwarzschildDeSitter", RGBColor[0, 2/3, 0], 
-      FontFamily -> "Helvetica"]]
+$ = {d[s]^2 -> d[r]^2/h - h*d[t]^2 + 
+       r^2*d[Subscript[\[CapitalOmega], -2 + Style["D", Italic]]]^2, 
+     h -> 1 + \[Theta]^2/r^(2*(-3 + Style["D", Italic])) - 
+       2*r^(3 - Style["D", Italic])*\[Mu], 
+     M -> (\[Mu]*(-2 + Style["D", Italic])*Subscript[S, 
+         -2 + Style["D", Italic]])/(8*G*Pi), 
+     Q^2 -> (\[Theta]^2*(-3 + Style["D", Italic])*(-2 + Style["D", Italic])*
+        Subscript[S, -2 + Style["D", Italic]])/(8*G*Pi), 
+     Subscript[S, -2 + Style["D", Italic]] -> 
+      (Pi^((-1 + Style["D", Italic])/2)*(-1 + Style["D", Italic]))/
+       Gamma[1 + (-1 + Style["D", Italic])/2], 
+     d[s]^2 -> r^2*d[Subscript[\[CapitalOmega], -2 + Style["D", Italic]]]^2 + 
+       d[r]^2/(1 - (8*G*Pi^(3/2 - Style["D", Italic]/2)*
+           r^(3 - 2*Style["D", Italic])*Gamma[(1 + Style["D", Italic])/2]*
+           (-(Q^2*r^3) - 6*M*r^Style["D", Italic] + 2*M*r^Style["D", Italic]*
+             Style["D", Italic]))/((-3 + Style["D", Italic])*
+           (-2 + Style["D", Italic])*(-1 + Style["D", Italic]))) - 
+       d[t]^2*(1 - (8*G*Pi^(3/2 - Style["D", Italic]/2)*
+           r^(3 - 2*Style["D", Italic])*Gamma[(1 + Style["D", Italic])/2]*
+           (-(Q^2*r^3) - 6*M*r^Style["D", Italic] + 2*M*r^Style["D", Italic]*
+             Style["D", Italic]))/((-3 + Style["D", Italic])*
+           (-2 + Style["D", Italic])*(-1 + Style["D", Italic])))}
+ 
+Attributes[Subscript] = {NHoldRest}
  
 Attributes[xDot] = {Flat, OneIdentity}
  
@@ -356,31 +361,28 @@ $coordSchwarzschildKruskalSzekeres =
      Style["$coordSchwarzschildKruskalSzekeres", RGBColor[0, 2/3, 0], 
       FontFamily -> "Helvetica"]]
  
-$coordSolidAngle = 
-    {Style["Solid angle for sphere \!\(\*SuperscriptBox[\(S\), \(n - 1\)]\)", 
-       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"], 
-      {Tensor[\[Omega], {1}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {1}]], 
-        Tensor[\[Omega], {n_}, {Void}] -> 
-         Sin[Tensor[\[Theta], {Void}, {-1 + n}]]*xProduct[
-           Sin[Tensor[\[Theta], {Void}, {j}]], {j, 1, -2 + n}], 
-        {Tensor[\[Omega], {i_}, {Void}] -> Cos[Tensor[\[Theta], {Void}, {i}]]*
-           xProduct[Sin[Tensor[\[Theta], {Void}, {j}]], {j, 1, -1 + i}], 
-         {i, 1, -1 + n}}, {{Inequality[0, LessEqual, Tensor[\[Theta], {Void}, 
-            {i}], Less, Pi], Inequality[1, LessEqual, i, Less, -1 + n]}, 
-         Inequality[0, LessEqual, Tensor[\[Theta], {Void}, {-1 + n}], Less, 
-          2*Pi]}}[Style["define direction cosines", RGBColor[0, 2/3, 0], 
-        FontFamily -> "Helvetica"]], 
-      {xSum[Tensor[\[Omega], {i}, {Void}]^2, {i, 1, n}] -> 1, 
-        d[Subscript[\[CapitalOmega], n_]]^2 -> 
-         xSum[d[Tensor[\[Omega], {i}, {Void}]]^2, {i, 1, 1 + n}], 
-        xSum[d[Tensor[\[Omega], {i}, {Void}]]*Tensor[\[Omega], {i}, {Void}], 
-          {i, 1, n}] -> 0}[Style[
-        "$coordSolidAngleDiff ref: tuCoordSolidAngle[n_]", 
-        RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]}[
-     Style["$coordSolidAngle", RGBColor[0, 2/3, 0], 
-      FontFamily -> "Helvetica"]]
- 
-Attributes[Subscript] = {NHoldRest}
+$coordSolidAngle := 
+    {CG["Solid angle for sphere \!\(\*SuperscriptBox[\(S\), \(n - 1\)]\)"], 
+      {T[\[Omega], "u", {1}] -> Cos[T[\[Theta], "d", {1}]], 
+        T[\[Omega], "u", {n_}] -> xProduct[Sin[T[\[Theta], "d", {j}]], 
+           {j, 1, n - 2}]*Sin[T[\[Theta], "d", {n - 1}]], 
+        {T[\[Omega], "u", {i_}] -> xProduct[Sin[T[\[Theta], "d", {j}]], 
+            {j, 1, i - 1}]*Cos[T[\[Theta], "d", {i}]], {i, 1, n - 1}}, 
+        {{Inequality[0, LessEqual, T[\[Theta], "d", {i}], Less, Pi], 
+          Inequality[1, LessEqual, i, Less, n - 1]}, Inequality[0, LessEqual, 
+          T[\[Theta], "d", {n - 1}], Less, 2*Pi]}}[
+       CG["define direction cosines"]], $coordSolidAngleDiff = 
+       {xSum[T[\[Omega], "u", {i}]^2, {i, 1, n}] -> 1, 
+         d[Subscript[\[CapitalOmega], n_]]^2 -> xSum[d[T[\[Omega], "u", {i}]]^
+            2, {i, 1, n + 1}], xSum[T[\[Omega], "u", {i}]*
+            d[T[\[Omega], "u", {i}]], {i, 1, n}] -> 0}[
+        CG["$coordSolidAngleDiff ref: tuCoordSolidAngle[n_]"]], 
+      {tuSphereArea[d_] := Subscript[S, d - 1] -> 
+           d*(Pi^(d/2)/Gamma[d/2 + 1]); tuSphereArea[4], 
+        tuSphereVolume[d_] := Subscript[V, d] -> Pi^(d/2)/Gamma[d/2 + 1]; 
+         tuSphereVolume[4]}[
+       CG["definitions of Area and Volume of unit sphere in d-dimensions"]]}[
+     CG["$coordSolidAngle"]]
  
 $coordSolidAngleDiff = {xSum[Tensor[\[Omega], {i}, {Void}]^2, {i, 1, n}] -> 
        1, d[Subscript[\[CapitalOmega], n_]]^2 -> 
@@ -389,6 +391,10 @@ $coordSolidAngleDiff = {xSum[Tensor[\[Omega], {i}, {Void}]^2, {i, 1, n}] ->
         {i, 1, n}] -> 0}[
      Style["$coordSolidAngleDiff ref: tuCoordSolidAngle[n_]", 
       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]
+ 
+tuSphereArea[d_] := Subscript[S, d - 1] -> d*(Pi^(d/2)/Gamma[d/2 + 1])
+ 
+tuSphereVolume[d_] := Subscript[V, d] -> Pi^(d/2)/Gamma[d/2 + 1]
  
 $coordTortoise = {SuperStar[r][Style["tortoise coordinate", 
         RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]] -> 
@@ -636,6 +642,29 @@ $metricPenroseSchwarzschildKruskalSzekeres =
            (Cosh[t/(4*G*M)]*HeavisideTheta[2*G*M - r] + 
             HeavisideTheta[-2*G*M + r]*Sinh[t/(4*G*M)])]}}
  
+$metricReissnerNordstrom = {d[s]^2 -> d[r]^2/h - h*d[t]^2 + 
+       r^2*d[Subscript[\[CapitalOmega], -2 + Style["D", Italic]]]^2, 
+     h -> 1 + \[Theta]^2/r^(2*(-3 + Style["D", Italic])) - 
+       2*r^(3 - Style["D", Italic])*\[Mu], 
+     M -> (\[Mu]*(-2 + Style["D", Italic])*Subscript[S, 
+         -2 + Style["D", Italic]])/(8*G*Pi), 
+     Q^2 -> (\[Theta]^2*(-3 + Style["D", Italic])*(-2 + Style["D", Italic])*
+        Subscript[S, -2 + Style["D", Italic]])/(8*G*Pi), 
+     Subscript[S, -2 + Style["D", Italic]] -> 
+      (Pi^((-1 + Style["D", Italic])/2)*(-1 + Style["D", Italic]))/
+       Gamma[1 + (-1 + Style["D", Italic])/2], 
+     d[s]^2 -> r^2*d[Subscript[\[CapitalOmega], -2 + Style["D", Italic]]]^2 + 
+       d[r]^2/(1 - (8*G*Pi^(3/2 - Style["D", Italic]/2)*
+           r^(3 - 2*Style["D", Italic])*Gamma[(1 + Style["D", Italic])/2]*
+           (-(Q^2*r^3) - 6*M*r^Style["D", Italic] + 2*M*r^Style["D", Italic]*
+             Style["D", Italic]))/((-3 + Style["D", Italic])*
+           (-2 + Style["D", Italic])*(-1 + Style["D", Italic]))) - 
+       d[t]^2*(1 - (8*G*Pi^(3/2 - Style["D", Italic]/2)*
+           r^(3 - 2*Style["D", Italic])*Gamma[(1 + Style["D", Italic])/2]*
+           (-(Q^2*r^3) - 6*M*r^Style["D", Italic] + 2*M*r^Style["D", Italic]*
+             Style["D", Italic]))/((-3 + Style["D", Italic])*
+           (-2 + Style["D", Italic])*(-1 + Style["D", Italic])))}
+ 
 $metricRindler = {d[s]^2 -> d[\[Rho]]^2 - \[Rho]^2*d[\[Sigma]]^2, 
       \[Rho] -> a^(-1), \[Sigma] -> a*\[Tau][Style["observer's proper time", 
           RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
@@ -878,7 +907,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            -0.008236955713368596}, {1.446356791602282, 
            -0.005491372804148123}, {1.4463990762145424, 
            -0.0027457071013937844}, {1.446441332248135, 0.}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
           Line[{{-1.2490457723982544, -1.373400766945016}, 
@@ -1011,7 +1040,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.2479438565874532}, {1.3730834511525687, 1.2482200178277918}, 
            {1.37318933489732, 1.2484957234871799}, {1.373295106769855, 
            1.2487709746502293}, {1.373400766945016, 1.2490457723982544}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
           Line[{{-1.3068326031691921, -1.3422996875030344}, 
@@ -1071,7 +1100,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.3418762837909457, 1.3062707062114252}, {1.3420175895514974, 
            1.3064582645944196}, {1.3421587240203068, 1.3066455634052194}, 
            {1.3422996875030344, 1.3068326031691921}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
           Line[{{-1.3258176636680326, -1.3258176636680326}, 
@@ -1130,7 +1159,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.32516993955557, 1.32516993955557}, {1.3253321850101902, 
            1.3253321850101902}, {1.325494220581634, 1.325494220581634}, 
            {1.3256560466684078, 1.3256560466684078}, {1.3258176636680326, 
-           1.3258176636680326}}]}, "Charting`Private`Tag$11804#1"], 
+           1.3258176636680326}}]}, "Charting`Private`Tag$11820#1"], 
         Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.528488, 0.470624, 0.701351]], 
           Line[{{-1.3422996875030344, -1.3068326031691921}, 
@@ -1190,7 +1219,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.3062707062114252, 1.3418762837909457}, {1.3064582645944196, 
            1.3420175895514974}, {1.3066455634052194, 1.3421587240203068}, 
            {1.3068326031691921, 1.3422996875030344}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.772079, 0.431554, 0.102387]], 
           Line[{{-1.373400766945016, -1.2490457723982544}, 
@@ -1322,7 +1351,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.3729774553603986}, {1.2482200178277918, 1.3730834511525687}, 
            {1.2484957234871799, 1.37318933489732}, {1.2487709746502293, 
            1.373295106769855}, {1.2490457723982544, 1.373400766945016}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.363898, 0.618501, 0.782349]], 
           Line[{{-1.446441332248135, 0.}, {-1.4464035734596474, 
@@ -1478,7 +1507,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {-0.008236955713368596, 1.4463144783825024}, 
            {-0.005491372804148123, 1.446356791602282}, 
            {-0.0027457071013937844, 1.4463990762145424}, {0., 
-           1.446441332248135}}]}, "Charting`Private`Tag$11804#1"], 
+           1.446441332248135}}]}, "Charting`Private`Tag$11820#1"], 
         Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[1, 0.75, 0]], 
           Line[{{0., -1.446441332248135}, {0., -1.446365791852757}, {0., 
@@ -1520,7 +1549,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            1.44593236728654}, {0., 1.4461024821583268}, {0., 
            1.44618736678896}, {0., 1.4462721365263143}, {0., 
            1.446356791602282}, {0., 1.446441332248135}}]}, 
-         "Charting`Private`Tag$11804#1"], Annotation[
+         "Charting`Private`Tag$11820#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.647624, 0.37816, 0.614037]], 
           Line[{{-1.446441332248135, 0.}, {-1.446365791852757, 0.}, 
@@ -1562,7 +1591,7 @@ $plotMinkowskiPenrose = Legended[Graphics[
            {1.44593236728654, 0.}, {1.4461024821583268, 0.}, 
            {1.44618736678896, 0.}, {1.4462721365263143, 0.}, 
            {1.446356791602282, 0.}, {1.446441332248135, 0.}}]}, 
-         "Charting`Private`Tag$11804#1"], {}}, {{}, {}, {}, {}, {}, {}, {}, 
+         "Charting`Private`Tag$11820#1"], {}}, {{}, {}, {}, {}, {}, {}, {}, 
         {}, {}, {}, {}}}, {DisplayFunction -> Identity, Axes -> {True, True}, 
        AxesLabel -> {OverTilde[v], OverTilde[u]}, AxesOrigin -> {0, 0}, 
        DisplayFunction :> Identity, FrameLabel -> {{None, None}, 
@@ -1648,7 +1677,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}, 
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}, 
             {1.5707963267948966, 0.}, {1.5707963267948966, 0.}}]}, 
-          "Charting`Private`Tag$12123#1"], Annotation[
+          "Charting`Private`Tag$12139#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
            Line[{{0., -1.570796326785619}, {0., -1.570796326779742}, {0., 
@@ -1740,7 +1769,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963262304048, 0.}, {1.5707963265812956, 0.}, 
             {1.5707963267204754, 0.}, {1.570796326767073, 0.}, 
             {1.57079632677883, 0.}, {1.570796326785619, 0.}}]}, 
-          "Charting`Private`Tag$12123#1"], Annotation[
+          "Charting`Private`Tag$12139#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
            Line[{{0., -1.5707963256036688}, {0., -1.5707963248490433}, {0., 
@@ -2334,7 +2363,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707961314786338, 0.}, {1.5707962543145209, 0.}, 
             {1.5707962993686724, 0.}, {1.570796317239265, 0.}, 
             {1.5707963232223803, 0.}, {1.5707963247319663, 0.}, 
-            {1.5707963256036688, 0.}}]}, "Charting`Private`Tag$12123#1"], 
+            {1.5707963256036688, 0.}}]}, "Charting`Private`Tag$12139#1"], 
          Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
            Line[{{0., 1.5707963256036093}, {0., 1.570796324848946}, {0., 
@@ -2925,7 +2954,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707961314688679, 0.}, {1.5707962543108969, 0.}, 
             {1.570796299367301, 0.}, {1.570796317238787, 0.}, 
             {1.5707963232222015, 0.}, {1.5707963247318633, 0.}, 
-            {1.5707963256036093, 0.}}]}, "Charting`Private`Tag$12123#1"], 
+            {1.5707963256036093, 0.}}]}, "Charting`Private`Tag$12139#1"], 
          Annotation[{Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.528488, 0.470624, 0.701351]], 
            Line[{{0., 1.5707963267740803}, {0., 1.5707963267608933}, {0., 
@@ -3027,7 +3056,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963255283222, 0.}, {1.570796326315631, 0.}, 
             {1.5707963266279146, 0.}, {1.5707963267324678, 0.}, 
             {1.5707963267588474, 0.}, {1.5707963267740803, 0.}}]}, 
-          "Charting`Private`Tag$12123#1"], Annotation[
+          "Charting`Private`Tag$12139#1"], Annotation[
           {Directive[Opacity[1.], AbsoluteThickness[1.6], 
             FaceForm[Opacity[0.3]], RGBColor[0.772079, 0.431554, 0.102387]], 
            Line[{{0., 1.5707963267810088}, {0., 1.570796326772211}, {0., 
@@ -3079,7 +3108,7 @@ $plotPenroseKruskalSzekeres =
             {1.5707963259498834, 0.}, {1.5707963264751477, 0.}, 
             {1.5707963266834921, 0.}, {1.5707963267532463, 0.}, 
             {1.570796326770846, 0.}, {1.5707963267810088, 0.}}]}, 
-          "Charting`Private`Tag$12123#1"]}}, {DisplayFunction -> Identity, 
+          "Charting`Private`Tag$12139#1"]}}, {DisplayFunction -> Identity, 
         Axes -> {True, True}, AxesLabel -> {OverTilde[v], OverTilde[u]}, 
         AxesOrigin -> {0, 0}, DisplayFunction :> Identity, 
         FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> 
@@ -3355,7 +3384,7 @@ $plotSchwarzschildKruskalSzekeres =
            {16.584843236500713, 16.360561392579807}, {16.612943559696582, 
            16.389046269345066}, {16.641092806370885, 16.417579410233355}, 
            {16.66929105942037, 16.44616089927194}}]}, 
-         "Charting`Private`Tag$12020#1"], Annotation[
+         "Charting`Private`Tag$12036#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.880722, 0.611041, 0.142051]], 
           Line[{{149.4131591025766, -147.4131591025766}, {149.18727844686126, 
@@ -3527,7 +3556,7 @@ $plotSchwarzschildKruskalSzekeres =
            {148.65622133259086, 146.64589835543964}, {148.90809515527064, 
            146.90121907717725}, {149.16040749758758, 147.15697240850017}, 
            {149.4131591025766, 147.4131591025766}}]}, 
-         "Charting`Private`Tag$12020#1"], Annotation[
+         "Charting`Private`Tag$12036#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.560181, 0.691569, 0.194885]], 
           Line[{{-2.175429101686378, 2.204943822284321}, 
@@ -3719,7 +3748,7 @@ $plotSchwarzschildKruskalSzekeres =
            2.190062886583683}, {2.1641063583976194, 2.1937734188887417}, 
            {2.1678742182800947, 2.1974904116399063}, {2.1716484623380894, 
            2.2012138757833553}, {2.175429101686378, 2.204943822284321}}]}, 
-         "Charting`Private`Tag$12020#1"], Annotation[
+         "Charting`Private`Tag$12036#1"], Annotation[
          {Directive[Opacity[1.], AbsoluteThickness[1.6], 
            FaceForm[Opacity[0.3]], RGBColor[0.922526, 0.385626, 0.209179]], 
           Line[{{-6.050204481001973, 6.132289479625358}, 
@@ -3897,7 +3926,7 @@ $plotSchwarzschildKruskalSzekeres =
            {6.0187141823157155, 6.101222861721725}, {6.029193182861892, 
            6.111560392915693}, {6.039689938786676, 6.121915922051568}, 
            {6.050204481001973, 6.132289479625358}}]}, 
-         "Charting`Private`Tag$12020#1"]}}, {DisplayFunction -> Identity, 
+         "Charting`Private`Tag$12036#1"]}}, {DisplayFunction -> Identity, 
        Axes -> {True, True}, AxesLabel -> {X, T}, AxesOrigin -> {0, 0}, 
        DisplayFunction :> Identity, FrameLabel -> {{None, None}, 
          {None, None}}, FrameTicks -> {{Automatic, Automatic}, 
