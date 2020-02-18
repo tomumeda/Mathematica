@@ -22,6 +22,7 @@
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
 tuItalics
+rghtA[a_]:=Superscript[a,o]; (*symbol for canonical antilinear involution*)
 
 
 
