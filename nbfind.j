@@ -33,7 +33,7 @@ $pat=$ARGV[0];
 print colored("## $opt_grep : @ARGV ########################################\n",'green');
 open L1,">files.nbfind";
 foreach $file (@files)
-{ next if($file =~ /tests/);
+{ next if($file =~ /tests/ or $file =~ /tmp/ );
   $file=~s/ /\\ /g;
   $file=~s/&/\\&/g;
   #print "$file\n";
