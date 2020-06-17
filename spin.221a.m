@@ -21,15 +21,7 @@
 
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
-URL["https://en.wikipedia.org/wiki/Spin_connection"]
 tuItalics
-
-
-(* ::Input::Initialization:: *)
-$dID="Spin";
-$def[$dID]={};
-accumID=accum[$dID];
-selectID=select[$dID];
 
 
 

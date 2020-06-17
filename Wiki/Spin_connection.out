@@ -1,0 +1,366 @@
+Attributes[ee$] = {Temporary}
+ 
+Attributes[error$] = {Temporary}
+ 
+evalDifferentialOps[opdef_][exp_] := Module[{$ = exp, op}, 
+     $ = $ /. dd:xDot[a__] :> Fold[op, arg, Reverse[dd]]; 
+      op[a_, b_] := b /. opdef[a]; $]
+ 
+$ = {{Tensor[\[Gamma], {a}, {Void}]*Tensor[e, {\[Mu], Void}, {Void, a}][x] -> 
+        Tensor[\[Gamma], {\[Mu]}, {Void}][x]}[Style["Dirac matrices", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {\[Psi] -> E^(I*Tensor[\[Sigma], {Void, Void}, {a, b}]*
+           Tensor[\[Epsilon], {a, b}, {Void, Void}][x])*\[Psi]}[
+      Style["spinor", RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {tuDDown["\[Del]"][\[Psi], \[Mu]] -> 
+        ((-I/4)*Tensor[\[Sigma], {Void, Void}, {a, b}]*Tensor[\[Omega], 
+            {Void, a, b}, {\[Mu], Void, Void}] + tuDDown["\[PartialD]"][_, 
+           \[Mu]]) \[CenterDot] \[Psi]}[Style["covariant derivative", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {(-m + I*Tensor[\[Gamma], {\[Mu]}, {Void}]*tuDDown["\[Del]"][_, 
+            \[Mu]]) \[CenterDot] \[Psi] -> 0}[Style["Dirac equation", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]}
+ 
+Attributes[CenterDot] = {Flat, OneIdentity}
+ 
+Attributes[xDot] = {Flat, OneIdentity}
+ 
+Attributes[exp0$] = {Temporary}
+ 
+Attributes[exp1$] = {Temporary}
+ 
+expand2CT[ispace_Integer, ones_][exp_] := 
+    Module[{$scal, $ = exp, $1, $2 = {}, $4 = {}, $1s = ones}, 
+     $ = If[Length[$] < 2, xDot[$], $]; xPrint["exp: ", $]; 
+      $scal = tuExtractPattern[scal[_]][$]; xPrint["$scal: ", $scal]; 
+      $scal = Times @@ $scal /. scal[a_] -> a; If[$scal =!= 1, 
+       AppendTo[$2, $scal]]; $ = Select[List @@ $,  !MatchQ[#1, scal[_]] & ]; 
+      While[Length[$] > 0, {$1, $} = {$[[1]], $[[2 ;; All]]}; 
+        If[tuMemberQ[$1, {X[_]}], If[Length[$4] > 0, 
+           AppendTo[$2, xDot @@ $4]; $4 = {}]; AppendTo[$2, $1], 
+         AppendTo[$4, $1]]]; If[Length[$4] > 0, AppendTo[$2, xDot @@ $4]]; 
+      $ = (ReplacePart[$1s, ispace -> #1] & ) /@ $2 /. X[a__] -> a /. toDot; 
+      Dot @@ $]
+ 
+$1 = Tensor[\[Omega], {Void, b, dm[1]}, {\[Mu], Void, Void}] + 
+      Tensor[\[Omega], {Void, dm[1], b}, {\[Mu], Void, Void}] -> 0
+ 
+tuExtractPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{pos}, pos = Position[exp, pattern, {0, maxlevel}]; 
+      Extract[exp, pos]]
+ 
+tuExtractPattern /: tuExtractPattern::usage = "tuExtractPattern[pattern_,maxl\
+evel_:Infinity][exp_] extracts a List of items in exp_ that match pattern_ to \
+maxlevel_. *3Feb2014* "
+ 
+tuMemberQ[patterns_][variable_] := tuMemberQ[variable, patterns]
+ 
+tuMemberQ[variable_, patterns_] := 
+    Or @@ (MemberQ[Flatten[{variable}], #1] & ) /@ Flatten[{patterns}]
+ 
+tuMemberQ /: tuMemberQ::usage = "tuMemberQ[variable_,patterns_] True if any \
+variable_ (may be List[]) matches any in patterns_ (may be List). Equivalent \
+form: tuMemberQ[patterns_][variable_] *16May2015*"
+ 
+toDot := dotOps -> Dot
+ 
+dotOps := Dot | xDot | CenterDot | Inactive[Dot]
+ 
+expandCom[subs_:{}][exp_] := Block[{tmp = exp}, 
+     tmp = expandDot[subs][tmp //. tuCommutatorExpand]; tmp = tmp /. toxDot; 
+      tmp = expandDot[toDot][tuMatrixOrderedMultiply[tmp]]; tmp]
+ 
+expandCom /: expandCom::usage = 
+     "expandCom[subs_:{}][exp_] expands Commutator expressions *22Mar2019*"
+ 
+expandDot[sub_:{}, scalar_:{}, func_:{}, iterate_:20][exp_] := 
+    tuRepeat[{sub, tuOpDistribute[dotOps], tuOpSimplify[dotOps, scalar]}, 
+      {func}, iterate][exp]
+ 
+expandDot /: expandDot::usage = "expandDot[sub_:{},scalar_:{},func_:{},iterat\
+e_:20] functional definition equivalent to \
+tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar]},{func},iter\
+ate]. This definition serves as an example of how to collect several repeated \
+operations into one statement.  *22Mar2019*"
+ 
+tuRepeat[rules_List:{}, operations_:{}, nInterate_:100][exp_] := 
+    Module[{$IterationLimit = 20, xrule, xop, tmp = exp, tmp0, icnt = 0}, 
+     xrule = tuRule[{rules}]; xop = Flatten[{operations}]; 
+      xPrint[xrule, xop, $IterationLimit]; While[tmp0 =!= tmp, 
+       tmp0 = tmp; xPrint[icnt, tmp]; icnt++; xPrint[xop]; 
+        If[xop =!= {}, tmp = (Composition[Sequence @@ xop])[tmp]]; 
+        If[xrule =!= {}, tmp = Fold[#1 //. Sequence[#2, MaxIterations -> 
+               nInterate] & , tmp, xrule]]; xPrint[operation =!= Null]; 
+        If[icnt >= nInterate, Return[tmp]]; xPrint[$IterationLimit]; ]; tmp]
+ 
+tuRepeat /: tuRepeat::usage = "tuRepeat[rules_List:{},operations_:{},nInterat\
+e_:100][exp_] applies rules_List and operations_ (may be List) repeatedly \
+until exp_ does not change. nInterate_ sets MaxInterations in ReplaceRepeated \
+and While[] loop. *22Feb2016*"
+ 
+$IterationLimit = 4096
+ 
+tuRule[rules_, negativePower_:False, simplerArg_:True] := 
+    Module[{$ = rules, rr$}, $ = Flatten[$]; 
+      $ = tuExtractPattern[(Rule[__]) | (RuleDelayed[__])][$]; 
+      $ = tuNoComments[$]; If[simplerArg, 
+       $ = $ /. (rr:Rule | RuleDelayed)[-(a_), b_] -> rr[a, -b]; ]; 
+      If[negativePower, $ = {$, tuRulePositiveNegativePower[$], 
+         $ /. (rr:Rule | RuleDelayed)[a_, b_] -> rr[1/a, 1/b]}]; 
+      $ = Flatten[DeleteCases[(Rule | RuleDelayed)[a_, a_]][$]]; 
+      $ = Flatten[DeleteCases[FontFamily -> a_][$]]; DeleteDuplicates[$]]
+ 
+tuRule /: tuRule::usage = "tuRule[rules_,negativePower_:False,simplerArg_:Tru\
+e] produces a List of valid Rule[]s from rules_ and forms a Flatten[]d list \
+of Rules. Deletes imbedded comments in the form of head_[CG[__]] and other \
+non-Rule forms. If  If negativePower_\[Rule]True then negative Power of \
+Rule[]s are generated.  If simplerArg_\[Rule]True then Rules are transformed \
+from -a\[Rule]b \[Rule] a\[Rule]-b and \!\(\*SuperscriptBox[\(a\), \
+\(2\)]\)->b \[Implies] a\[Rule]Sqrt[b] . *7Aug2015*1Feb2018*"
+ 
+Attributes[rr$] = {Temporary}
+ 
+tuNoComments[exp_] := Module[{head, $s, $comments = {CR, CG, CO, CP, CB}}, 
+     $s = ((head_)[#1[_], ___] -> head & ) /@ $comments; exp //. $s]
+ 
+tuNoComments /: tuNoComments::usage := "tuNoComments[exp_] removes comments \
+from variables in exp_ where the comments are in the form of \
+variable[$comments[_,___]]. $comments={CR,CG,CO,CP,CB} *4Dec2019*"
+ 
+$s = tuDDown[Style["D", Italic]][Tensor[V_, {\[Nu]_, Void}, {Void, a_}], 
+      \[Mu]_] -> Tensor[V, {dm[1], Void}, {Void, a}]*Tensor[\[CapitalGamma], 
+        {Void, Void, \[Nu]}, {dm[1], \[Mu], Void}] - 
+      Tensor[V, {\[Nu], Void}, {Void, dm[1]}]*Tensor[\[Omega], 
+        {Void, Void, dm[1]}, {\[Mu], a, Void}] + tuDDown["\[PartialD]"][
+       Tensor[V, {\[Nu], Void}, {Void, a}], \[Mu]]
+ 
+CR[a__] := style[Red, a]
+ 
+style[color_, exp__] := Module[{tmp = {exp}}, 
+     tmp = Thread[Style[tmp, color, FontFamily -> "Helvetica"]]; 
+      Sequence @@ tmp]
+ 
+CG[a__] := style[Darker[Green], a]
+ 
+CO[a__] := style[Orange, a]
+ 
+CP[a__] := style[Darker[Pink], a]
+ 
+CB[a__] := style[Blue, a]
+ 
+tuRulePositiveNegativePower[rules_] := Module[{$ = rules, rr$}, 
+     $ = $ /. (rr:Rule | RuleDelayed)[(a_)^(b_), c_] :> 
+        (rr$[a^(-b), c^(-1)] /. rr$ -> rr)]
+ 
+tuRulePositiveNegativePower /: tuRulePositiveNegativePower::usage = "tuRulePo\
+sitiveNegativePower[rules_] produces inverse Power in Rule[]s that include \
+Power[] in first arguement.  Mathematica does not recognize inversed Power \
+terms in pattern matching.  *2Feb2018*"
+ 
+tuOpDistribute[op_, over_:Plus] := {oo:op[a1___, over[a_, ap__], a2___] :> 
+      Distribute[ExpandAll[oo], over], oo:op[over[a_, ap__], a2___] :> 
+      Distribute[ExpandAll[oo], over]}
+ 
+tuOpDistribute /: tuOpDistribute::usage = "tuOpDistribute[op_,over_:Plus] \
+Rule for distributing op_ over over_. \
+EG.\na.(b-c).d/.tuOpDistribute[dotOps]->a.b.d+a.(-c).d. Works with op_s of \
+form  CommutatorM[arg__\!\(\*SubscriptBox[\(]\), \(\[Rho]\)]\) as well.  \
+*21May2015*23Jun2017*15Jun2020*"
+ 
+tuOpSimplify[operator_, scalars_List:{}, oneIdentity_:{}] := 
+    tuRule[{(op:operator)[a_] :> a /; MatchQ[op, dotOps], 
+      (op:operator)[a_] :> a /; tuMemberQ[op, oneIdentity], 
+      (op:operator)[] -> 1, (op:operator)[Longest[a___], 
+        (cc:(c_)^(n_:1))*(d_), Longest[e___]] :> cc*op[a, d, e] /; 
+        (NumericQ[c] || tuMemberQ[c, scalars]) && (NumericQ[n] || 
+          tuMemberQ[n, scalars]), (op:operator)[Longest[a___], 
+        cc:(c_)^(n_:1), Longest[d___]] :> cc*op[a, d] /; 
+        (NumericQ[c] || tuMemberQ[c, scalars]) && (NumericQ[n] || 
+          tuMemberQ[n, scalars]), Conjugate[(op:operator)[a__]] :> 
+       op @@ Thread[Conjugate[{a}]]}]
+ 
+tuOpSimplify /: tuOpSimplify::usage = "tuOpSimplify[operator_,scalars_List:{}\
+,oneIdentity_:{}] Rule for simplifying operator[] expressions by removing \
+NumericQ and scalars_ from its arguements. \noneIdentity_:{} identifies \
+operators that behave like OneIdentity Attribute[]. NOTE: Some of these \
+Rule[]s do not seem active for some expressions. BUG: Does not Match some \
+scalars_. *26Sep2015**21Mar2018**12Mar2019*25Mar2020*"
+ 
+cc[a_] := Conjugate[a]
+ 
+tuCommutatorExpand := {CommutatorP -> ACommutator, CommutatorM -> MCommutator}
+ 
+tuCommutatorExpand /: tuCommutatorExpand::usage = "tuCommutatorExpand is \
+Rule[] to replace Commutator expression into Dot[]d notation. *21Mar2016*"
+ 
+ACommutator[A_, B_] := tuCommutator[Dot, 1][A, B]
+ 
+tuCommutator[op_:Dot, sign_:-1][A_, B_] := op[A, B] + sign*op[B, A]
+ 
+tuCommutator /: tuCommutator::usage = "tuCommutator[op_:Dot,sign_:-1][A_,B_] \
+expands the commutator of matrices A and B using op_ as multiplicative \
+operator. *17Feb2016*"
+ 
+MCommutator[A_, B_] := tuCommutator[Dot][A, B]
+ 
+toxDot := dotOps -> xDot
+ 
+tuMatrixOrderedMultiply[exp_] := Module[{tmp, A$, head, pos, $p, i, $n, $}, 
+     pos = tuExtractPositionPattern[dotOps][exp]; xPrint[">>", pos]; 
+      pos = tuPositionNestDelete[pos]; xPrint[">>", pos]; 
+      Do[$p = pos[[i,1]]; xPrint[$p, "<<"]; $p = If[$p[[-1]] == 0, 
+          Delete[$p, -1]]; $ = exp[[Sequence @@ $p]]; xPrint["===", $]; 
+        pos[[i,1]] = $p; If[MatchQ[head = Head[$], dotOps], 
+         tmp = MapIndexed[Map[A$[#2], #1, {2}] & , $]; 
+          tmp = tmp /. head -> Dot; tmp = tmp /. Times -> head; 
+          tmp = tmp /. A$[_][a_] -> a]; pos[[i,2]] = tmp, {i, Length[pos]}]; 
+      tuReplacePart[exp, pos]]
+ 
+tuMatrixOrderedMultiply /: tuMatrixOrderedMultiply::usage = "tuMatrixOrderedM\
+ultiply[exp_] evaluates top Level matrix expressions (Head->dotOps) using Dot \
+for actual matrix multiply but maintaining order of elements from each \
+matrix.  The matrix inputs must have the same proper form and sizes. This \
+routine is useful when matrix elements are noncommuting matrices. \
+*18Feb2016*"
+ 
+Attributes[A$] = {Temporary}
+ 
+tuExtractPositionPattern[pattern_, maxlevel_:Infinity][exp_] := 
+    Module[{xpattern = pattern, pos, list, tmp, xList}, 
+     If[Head[xpattern] == List, xpattern = Alternatives @@ xpattern; 
+        xPrint[xHead[xpattern]]]; pos = Position[exp, xpattern, 
+        {0, maxlevel}, Heads -> True]; list = Extract[exp, pos]; 
+      tmp = Thread[pos -> list]; xPrint["X ", tmp, ", ", xpattern, ", ", 
+       list, ", ", pos]; tmp]
+ 
+tuExtractPositionPattern /: tuExtractPositionPattern::usage = "tuExtractPosit\
+ionPattern[pattern_,maxlevel_:Infinity][exp_] extracts a List of \
+{Positions,items} that match pattern_ in exp_ up to Level maxlevel_.  Returns \
+a List[ pos1->match1,pos2->match2,... ]. pattern_ may be a List or \
+Alternatives. *3Nov2016*)"
+ 
+tuPositionNestDelete[position_List] := Module[{$ = position, $p, dup, $n, $t, 
+      i}, $p = $ = (#1 & ) /@ Sort[$]; xPrint[$p]; If[$p[[1,1]] == {}, 
+       Return[{$p[[1]]}]]; Do[$t = $p[[i,1]]; $n = FirstPosition[$t, 0][[1]]; 
+        $p[[i,1]] = $t[[1 ;; If[NumericQ[$n], $n - 1, -1]]], 
+       {i, Length[$p]}]; Do[If[MemberQ[SequencePosition[$p[[$j,1]], 
+          $p[[$i,1]]], {1, ___}], $[[$j]] = dup[$i, $[[$j]]]], 
+       {$i, Length[$] - 1}, {$j, $i + 1, Length[$]}]; DeleteCases[$, dup[__]]]
+ 
+tuPositionNestDelete /: tuPositionNestDelete::usage = "tuPositionNestDelete[p\
+osition_List] reduces the result of Position\[Rule] position_List so that \
+there is only top level positions. E.G. \
+{{1,2}\[Rule]a,{1}\[Rule]r[a]}\[Rule]{{1}->r[a]}. If pointer to whole \
+expression {} exists then that alone is returned.  *11Feb2017*"
+ 
+tuReplacePart[exp_, pos_List] := Module[{$}, 
+     If[Length[$ = Cases[pos, ({} -> _) | ({} :> _)]] > 0, $[[1,2]], 
+      ReplacePart[exp, pos]]]
+ 
+tuReplacePart /: tuReplacePart::usage = "tuReplacePart[exp_,pos_List] like \
+ReplacePart[] except replaces whole exp_ when pos contains {{}->replacement} \
+in which case ReplacePart does nothing. *5Sep2015*"
+ 
+expandDC[sub_:{}, scalar_:{}, func_:{}, iterate_:20] := 
+    expandDot[sub, scalar, func, iterate]
+ 
+Attributes[exp$] = {Temporary}
+ 
+Attributes[eyd$] = {Temporary}
+ 
+Attributes[e$] = {Temporary}
+ 
+$def["Spin"] = {Tensor[e, {Void, a}, {\[Mu], Void}][
+      Style["vierbein", RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     Tensor[g, {Void, Void}, {\[Mu], \[Nu]}][Style["spacetime metric", 
+        RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]] -> 
+      Tensor[e, {Void, a}, {\[Mu], Void}]*Tensor[e, {Void, b}, {\[Nu], Void}]*
+       Tensor[\[Eta], {Void, Void}, {a, b}][Style["Minkowski metric", 
+         RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     Tensor[g, {\[Mu], \[Nu]}, {Void, Void}] -> 
+      Tensor[e, {\[Mu], Void}, {Void, a}]*Tensor[e, {\[Nu], Void}, {Void, b}]*
+       Tensor[\[Eta], {a, b}, {Void, Void}], 
+     "Greek indices refer to general coordinate", 
+     "Latin indices refer to local Lorentz coordinate", 
+     {Tensor[e, {Void, a}, {\[Mu], Void}]*Tensor[e, {\[Mu], Void}, 
+          {Void, b}] -> Tensor[\[Delta], {a, Void}, {Void, b}], 
+       Tensor[e, {\[Mu], Void}, {Void, b}]*tuDDown["\[PartialD]"][
+           Tensor[e, {Void, a}, {\[Mu], Void}], \[Nu]] + 
+         Tensor[e, {Void, a}, {\[Mu], Void}]*tuDDown["\[PartialD]"][
+           Tensor[e, {\[Mu], Void}, {Void, b}], \[Nu]] -> 0, 
+       Tensor[e, {Void, b}, {\[Mu], Void}]*Tensor[e, {\[Nu], Void}, 
+          {Void, b}] -> Tensor[\[Delta], {\[Nu], Void}, {Void, \[Mu]}], 
+       Tensor[e, {\[Nu], Void}, {Void, b}]*tuDDown["\[PartialD]"][
+           Tensor[e, {Void, b}, {\[Mu], Void}], \[Nu]] + 
+         Tensor[e, {Void, b}, {\[Mu], Void}]*tuDDown["\[PartialD]"][
+           Tensor[e, {\[Nu], Void}, {Void, b}], \[Nu]] -> 0, 
+       Tensor[e, {\[Mu], a}, {Void, Void}] -> 
+        Tensor[e, {Void, a}, {\[Nu], Void}]*Tensor[g, {\[Mu], \[Nu]}, 
+          {Void, Void}], Tensor[e, {Void, Void}, {\[Mu], a}] -> 
+        Tensor[e, {Void, b}, {\[Mu], Void}]*Tensor[\[Eta], {Void, Void}, 
+          {a, b}], tuDDown[Style["D", Italic]][Tensor[\[Eta], {Void, Void}, 
+          {a, b}], \[Mu]] -> 0, tuDDown[Style["D", Italic]][
+         Tensor[g, {Void, Void}, {\[Nu], \[Sigma]}], \[Mu]] -> 0}[
+      Style["defined relationships", RGBColor[0, 2/3, 0], 
+       FontFamily -> "Helvetica"]], 
+     {Tensor[\[Omega], {Void, a, b}, {\[Mu], Void, Void}] -> 
+        Tensor[e, {Void, a}, {\[Nu], Void}]*Tensor[e, {\[Sigma], b}, 
+           {Void, Void}]*Tensor[\[CapitalGamma], {\[Nu], Void, Void}, 
+           {Void, \[Sigma], \[Mu]}] + Tensor[e, {Void, a}, {\[Nu], Void}]*
+          tuDDown["\[PartialD]"][Tensor[e, {\[Nu], b}, {Void, Void}], \[Mu]], 
+       Tensor[\[Omega], {Void, a, b}, {\[Mu], Void, Void}] -> 
+        Tensor[e, {Void, a}, {\[Nu], Void}]*Tensor[e, {\[Sigma], b}, 
+           {Void, Void}]*Tensor[\[CapitalGamma], {\[Nu], Void, Void}, 
+           {Void, \[Sigma], \[Mu]}] - Tensor[e, {\[Nu], b}, {Void, Void}]*
+          tuDDown["\[PartialD]"][Tensor[e, {Void, a}, {\[Nu], Void}], \[Mu]]}[
+      Style["connections", RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     Tensor[\[CapitalGamma], {\[Nu], Void, Void}, {Void, \[Sigma], \[Mu]}][
+      Style["Christoffel symbol", RGBColor[0, 2/3, 0], 
+       FontFamily -> "Helvetica"]], 
+     {tuDDown[Style["D", Italic]][Tensor[V, {Void, a}, {\[Nu], Void}], 
+         \[Mu]] -> -(Tensor[V, {Void, a}, {\[Sigma], Void}]*
+           Tensor[\[CapitalGamma], {\[Sigma], Void, Void}, 
+            {Void, \[Mu], \[Nu]}]) + Tensor[V, {Void, b}, {\[Nu], Void}]*
+          Tensor[\[Omega], {Void, a, Void}, {\[Mu], Void, b}] + 
+         tuDDown["\[PartialD]"][Tensor[V, {Void, a}, {\[Nu], Void}], \[Mu]], 
+       tuDDown[Style["D", Italic]][Tensor[V, {\[Nu], Void}, {Void, a}], 
+         \[Mu]] -> Tensor[V, {\[Sigma], Void}, {Void, a}]*
+          Tensor[\[CapitalGamma], {Void, Void, \[Nu]}, {\[Sigma], \[Mu], 
+            Void}] - Tensor[V, {\[Nu], Void}, {Void, b}]*
+          Tensor[\[Omega], {Void, Void, b}, {\[Mu], a, Void}] + 
+         tuDDown["\[PartialD]"][Tensor[V, {\[Nu], Void}, {Void, a}], \[Mu]]}[
+      Style["covariant derivative index prototype, (-) summed index up.", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]], 
+     {Tensor[\[Omega], {Void, a, b}, {\[Mu], Void, Void}] -> 
+        -(Tensor[e, {\[Nu], b}, {Void, Void}]*(-tuDDown["\[PartialD]"][Tensor[
+                e, {Void, a}, {\[Mu], Void}], \[Nu]] + tuDDown["\[PartialD]"][
+              Tensor[e, {Void, a}, {\[Nu], Void}], \[Mu]]))/2 + 
+         (Tensor[e, {\[Nu], a}, {Void, Void}]*
+           (-tuDDown["\[PartialD]"][Tensor[e, {Void, b}, {\[Mu], Void}], 
+              \[Nu]] + tuDDown["\[PartialD]"][Tensor[e, {Void, b}, 
+              {\[Nu], Void}], \[Mu]]))/2 - 
+         (Tensor[e, {Void, c}, {\[Mu], Void}]*Tensor[e, {\[Rho], a}, 
+            {Void, Void}]*Tensor[e, {\[Sigma], b}, {Void, Void}]*
+           (-tuDDown["\[PartialD]"][Tensor[e, {Void, Void}, {\[Rho], c}], 
+              \[Sigma]] + tuDDown["\[PartialD]"][Tensor[e, {Void, Void}, 
+              {\[Sigma], c}], \[Rho]]))/2}[Style["from GSW(12.1.5)", 
+       RGBColor[0, 2/3, 0], FontFamily -> "Helvetica"]]}
+ 
+$def["/Users/Tom/Mathematica/Wiki/Spin_connection"] = {}
+ 
+$defID := NBname["stub"]
+ 
+NBname[type_String] := Module[{name = NotebookFileName[], 
+      dir = FileNameDrop[NotebookFileName[], -1], 
+      base = FileBaseName[NotebookFileName[]]}, Switch[type, "name", name, 
+      "dir", dir, "base", base, "stub", FileNameJoin[{dir, base}]]]
+ 
+$dID = "Spin"
+ 
+$g = tuDDown[Style["D", Italic]][Tensor[g, {\[Nu], \[Sigma]}, {Void, Void}], 
+      \[Mu]] -> 0
+ 
+$SpinorsPath = "/Users/Tom/Library/Mathematica/Applications"
+ 
+$\[Eta] = tuDDown[Style["D", Italic]][Tensor[\[Eta], {a, b}, {Void, Void}], 
+      \[Mu]] -> 0
