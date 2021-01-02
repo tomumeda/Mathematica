@@ -21,6 +21,9 @@
 
 (* ::Input::Initialization:: *)
 <<Local`QFTToolKit2`
+tuItalics
+tuLoad["Gravity/gravityDefinitions.out"]
+$geodesicEqn
 
 
 (* ::Input::Initialization:: *)
@@ -30,32 +33,7 @@ selectBH=select["BH"];
 
 
 (* ::Input::Initialization:: *)
-rghtA[a_]:=Superscript[a,o]
-cl[a_]:=Subscript[\[LeftAngleBracket]a\[RightAngleBracket], cl];
-clB[a_]:=Subscript[{a}, cl];
-ct[a_]:=ConjugateTranspose[a];
-cc[a_]:=Conjugate[a];
-star[a_]:=Superscript[a,"*"];
-cross[a_]:=Superscript[a,"\[Times]"];
-deg[a_]:=\[LeftBracketingBar]a\[RightBracketingBar];
-it[a_]:=Style[a,Italic]
-iD:=it[D]
-iA:=it[A]
-iB:=it[B]
-iJ:=it[J]
-iK:=it[K]
-iL:=it[L]
-iH:=it[H]
-iI:=it["I"]
-iE:=it["E"]
-iO:=it["O"]
-iN:=it["N"]
-il:=it["l"]
 iEE:=it["EE"]
-
-C\[Infinity]:=\!\(\*SuperscriptBox[\(C\), \("\<\[Infinity]\>"\)]\)
-aBa:="\[DoubleLongLeftRightArrow]"
-bnd:="\[PartialD]"
 
 expandDC[sub_:{},scalar_:{},func_:{}]:=tuRepeat[{sub,tuOpDistribute[dotOps],tuOpSimplify[dotOps,scalar],tuOpDistribute[CircleTimes]},{tuCircleTimesSimplify,func}]
 Clear[expandCom]
@@ -69,7 +47,7 @@ tmp
 $sgeneral:={
 T[\[Gamma],"d",{5}]->Product[T[\[Gamma],"u",{\[Mu]}],{\[Mu],4}],
 T[\[Gamma],"d",{5}].T[\[Gamma],"d",{5}]->1,ConjugateTranspose[T[\[Gamma],"d",{5}]]->T[\[Gamma],"d",{5}],CommutatorP[T[\[Gamma],"d",{5}],T[\[Gamma],"u",{\[Mu]}]]->0,T["\[Del]","d",{_}][Subscript[1, n_]]->0,a_ . Subscript[1, n_]->a,Subscript[1, n_] . a_->a}
-$sgeneral//ColumnBar;
+$sgeneral//ColumnBar
 
 Clear[$symmetries]
 $symmetries:={tt:T[g,"uu",{\[Mu]_,\[Nu]_}]:>tuIndexSwap[{\[Mu],\[Nu]}][tt]/;OrderedQ[{\[Nu],\[Mu]}],
@@ -79,7 +57,7 @@ CommutatorM[a_,b_]:>-CommutatorM[b,a]/;OrderedQ[{b,a}],
 CommutatorP[a_,b_]:>CommutatorP[b,a]/;OrderedQ[{b,a}],
 tt:T[\[Gamma],"u",{\[Mu]}] . T[\[Gamma],"d",{5}] :>Reverse[tt]
 };
-$symmetries//ColumnBar;
+$symmetries//ColumnBar
 
 
 
